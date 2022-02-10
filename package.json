@@ -59,5 +59,9 @@
 		"*.+(js|json|ts|svelte)": [
 			"yarn run format"
 		]
+	},
+	"dependencies": {
+		"daisyui": "^1.25.4",
+		"theme-change": "^2.0.2"
 	}
 }

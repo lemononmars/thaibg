@@ -6,7 +6,6 @@
 /* purge start ignore */
 @layer base {
     body {
-        @apply antialiased text-gray-600 bg-gray-100;
         @apply leading-normal tracking-normal text-base font-normal break-words;
         @apply font-sans text-base lg:text-xl;
     }
@@ -17,14 +16,9 @@
     }
 
     a {
-        @apply text-green-600;
+        @apply link link-primary;
         @apply no-underline hover:underline focus:outline-none focus:underline;
-    }
-
-    button {
-        @apply py-1 px-4 my-2 rounded border border-gray-500;
-        @apply cursor-pointer focus:outline-none;
-    }
+    } 
 }
   
   /* purge end ignore */

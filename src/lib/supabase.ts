@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 
-type SupaTable = 'profiles'
+type SupaTable = 'profiles' | 'boardgame' | 'designer'
 type SupaStorageBucket = 'avatars'
 
 

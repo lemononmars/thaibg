@@ -12,8 +12,8 @@
 </script>
 
 <div class="avatar relative">
-    <label class="block text-gray-500 text-sm my-1 hover:opacity-80" for="single">
-        <img class="w-28 h-28 ring-4 ring-gray-300 rounded-full bg-gray-900 bg-opacity-10 mb-2" alt="{title}" src="{src}" />
+    <label class="w-32 h-32 block text-gray-500 text-sm my-1 hover:opacity-80" for="single">
+        <img class="w-32 h-32 ring-4 ring-gray-300 rounded-full bg-gray-900 bg-opacity-10 mb-2" alt="{title}" src="{src}" />
       {loading ? 'Updating..' : '(click to update)'}
     </label>
     <input

@@ -42,7 +42,6 @@
     import { signOut, getCurrUserProfile, updCurrUserProfile, updCurrUserAvatar, getAvatar, profile } from '$lib/user'
     import { handleAlert } from '$lib/alert'
     import Seo from '$lib/components/SEO.svelte'
-    import Modal from '$lib/components/Modal.svelte'
     import Avatar from '$lib/components/Avatar.svelte'
     import { URL_DICEBEAR } from '$lib/constants'
 
