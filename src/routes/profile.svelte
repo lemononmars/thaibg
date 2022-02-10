@@ -99,7 +99,6 @@
         } catch (error) {
             handleAlert({ type: 'error', text: error.message })
         } finally {
-            isModalOpened = false
             loading = false
         }
     }
@@ -129,12 +128,6 @@
 
     onMount(getProfile)
 
-    let isModalOpened = false
-
-    function toggleModal() {
-        isModalOpened = !isModalOpened;
-    }
-
     $: username = $profile.username ? $profile.username : ( user ? user?.email : 'Explorer' )
     $: avatar_url = $profile.avatar_url ? $profile.avatar_url : URL_DICEBEAR + username + '.svg'
 
@@ -147,11 +140,9 @@
             <Avatar on:change={updAvatar} src="{avatar_url}" title={username} loading={loading} />
         </div>
       </div>
-    <div class="profile-detail my-4" on:click={toggleModal}>
         <h2 class="text-4xl mb-1">Howdie, { username }!</h2>
         <span class="inline-block px-2 py-1 bg-gray-400 text-white rounded-full"><ChromeIcon class="inline-block" size="1x"/> {$profile.website}</span>
         <div class="text-gray-500 text-sm my-1">(click to update)</div>
-    </div>
 
     {#if !user}
         <small>You've landed on a protected page. Please <a href="/">log in</a> to view the page's full content </small>
@@ -167,36 +158,3 @@
         </div>
     {/if}
 </div>
-
-{#if isModalOpened}
-	<Modal {toggleModal}>
-        <h2 class="text-3xl my-4">Update Profile</h2>
-        <hr class="my-4"/>
-        <div class="">
-            <div class="mb-4">
-                <label for="username" class="block text-green-100 mb-2 text-left">Username</label>
-                <input
-                id="username"
-                name="username"
-                type="text"
-                class="h-12 px-4 py-2 bg-white rounded shadow-inner border-gray-300 w-full border  hover:border-gray-400 text-gray-700"
-                placeholder="Your Username"
-                required
-                bind:value={profileState.username}
-                />
-            </div>
-            <div class="mb-4">
-                <label for="website" class="block text-green-100 mb-2 text-left">Website</label>
-                <input
-                id="website"
-                name="website"
-                type="website"
-                class="h-12 px-4 py-2 bg-white rounded shadow-inner border-gray-300 w-full border hover:border-gray-400 text-gray-700"
-                placeholder="Your website"
-                bind:value={profileState.website}
-                />
-            </div>
-        </div>
-		<button class="px-6 py-3 bg-green-200 text-gray-800" on:click={updProfile}>Update Profile</button>
-	</Modal>
-{/if}

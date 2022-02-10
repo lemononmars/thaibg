@@ -54,5 +54,8 @@
             <Spinner/>
          {/if}
       {/if}
+      {#if user && !user.guest}
+         <button class="btn">Suggest edit</button>
+      {/if}
    </div>
 </div>
