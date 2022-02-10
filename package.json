@@ -1,5 +1,5 @@
 {
-	"name": "svelte-starter-kit",
+	"name": "thaibg",
 	"version": "0.0.1",
 	"scripts": {
 		"dev": "svelte-kit dev",
@@ -13,9 +13,9 @@
 		"prepare": "husky install"
 	},
 	"devDependencies": {
-		"@supabase/supabase-js": "^1.8.0",
+		"@supabase/supabase-js": "^1.30.0",
 		"@sveltejs/adapter-node": "^1.0.0-next.24",
-		"@sveltejs/adapter-vercel": "next",
+		"@sveltejs/adapter-vercel": "^1.0.0-next.43",
 		"@sveltejs/kit": "^1.0.0-next.85",
 		"@tailwindcss/forms": "^0.4.0",
 		"@types/cookie": "^0.4.1",
