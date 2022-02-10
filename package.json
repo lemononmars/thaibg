@@ -4,7 +4,7 @@
 	"scripts": {
 		"dev": "svelte-kit dev",
 		"build": "svelte-kit build",
-		"start": "svelte-kit start",
+		"start": "node build/index.js",
 		"type-check": "tsc --project tsconfig.json --pretty --noEmit",
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
@@ -44,7 +44,8 @@
 	},
 	"type": "module",
 	"engines": {
-		"node": ">= 12.17.0"
+		"node": "16.x",
+      "npm": "8.x"
 	},
 	"husky": {
 		"hooks": {
