@@ -15,7 +15,6 @@
 	"devDependencies": {
 		"@supabase/supabase-js": "^1.30.0",
 		"@sveltejs/adapter-node": "^1.0.0-next.24",
-		"@sveltejs/adapter-vercel": "^1.0.0-next.43",
 		"@sveltejs/kit": "^1.0.0-next.85",
 		"@tailwindcss/forms": "^0.4.0",
 		"@types/cookie": "^0.4.1",
