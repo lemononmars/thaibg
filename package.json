@@ -14,7 +14,7 @@
 	},
 	"devDependencies": {
 		"@supabase/supabase-js": "^1.30.0",
-		"@sveltejs/adapter-node": "^1.0.0-next.24",
+		"@sveltejs/adapter-node": "^1.0.0-next.68",
 		"@sveltejs/kit": "^1.0.0-next.85",
 		"@tailwindcss/forms": "^0.4.0",
 		"@types/cookie": "^0.4.1",
@@ -45,7 +45,7 @@
 	"type": "module",
 	"engines": {
 		"node": "16.x",
-      "npm": "8.x"
+		"npm": "8.x"
 	},
 	"husky": {
 		"hooks": {
