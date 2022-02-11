@@ -4,8 +4,7 @@
    import {onMount} from 'svelte'
    import Spinner from '$lib/components/Spinner.svelte'
    import {SearchIcon} from 'svelte-feather-icons'
-import { disableScrollHandling } from '$app/navigation'
-
+   import DesignerLink from '$lib/components/DesignerLink.svelte'
    
    let designers = []
    onMount(async () => {
@@ -16,7 +15,7 @@ import { disableScrollHandling } from '$app/navigation'
    
 </script>
 
-<Seo title="Boardgame"/>
+<Seo title="Designer"/>
 <div class="flex flex-col justify-center items-center relative">
    <div class="form-control m-4">
       <div class="relative">
@@ -26,16 +25,7 @@ import { disableScrollHandling } from '$app/navigation'
    </div> 
    <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-4 gap-4">
       {#each designers as ds}
-         <a href="/designer/{ds.id}">
-         <div class="card shadow-xl image-full">
-            <figure>
-               <img src="https://picsum.photos/300/300" alt="cover of {ds.name}">
-            </figure> 
-            <div class="justify-end card-body">
-               <h2 class="card-title">{ds.name}</h2> 
-            </div>
-          </div> 
-         </a>
+         <DesignerLink name={ds.name} id={ds.id} thumbnail_url={ds.thumbnail_url}/>
       {:else}
          <Spinner/>
       {/each}

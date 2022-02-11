@@ -4,6 +4,7 @@
    import {onMount} from 'svelte'
    import Spinner from '$lib/components/Spinner.svelte'
    import {SearchIcon} from 'svelte-feather-icons'
+   import BoardgameLink from '$lib/components/BoardgameLink.svelte'
 
    let boardgames = []
    onMount(async () => {
@@ -24,16 +25,7 @@
     </div> 
     <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-4 gap-4">
       {#each boardgames as bg}
-         <a href="./boardgame/{bg.id}">
-         <div class="card shadow-xl image-full">
-            <figure>
-               <img src="https://picsum.photos/300/300" alt="cover of {bg.title}">
-            </figure> 
-            <div class="justify-end card-body">
-               <h2 class="card-title">{bg.title} ({bg.year || "unknown"})</h2> 
-            </div>
-          </div> 
-         </a>
+         <BoardgameLink {...bg}/>
       {:else}
          <Spinner/>
       {/each}

@@ -3,15 +3,15 @@ export const config = {
 }
 
 export const siteSeoBase = {
-    title: 'Svelte Starter Kit',
-    description: 'Svelte with brilliant bells and useful whistles',
-    keywords: 'svelte, svelte-kit, starter-kit, typescript, supabase',
-    canonical: import.meta.env ? import.meta.env.VITE_SITE_URL : 'https://www.example.com'
+    title: 'Thai BG Database',
+    description: 'Database for boardgames from Thai designers',
+    keywords: 'boardgame, thailand, designer, database',
+    canonical: import.meta.env ? import.meta.env.VITE_SITE_URL : 'https://thaibg.herokuapp.com'
 };
 
 export const siteSeoOpenGraphBase = {
-    title: 'Svelte Starter Kit',
-    description: 'Svelte with brilliant bells and useful whistles',
+    title: 'Thai BG Database',
+    description: 'Database for boardgames from Thai designers',
     url: import.meta.env ? import.meta.env.VITE_SITE_URL : '',
     type: 'website',
     images: [
