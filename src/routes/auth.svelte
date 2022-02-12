@@ -1,6 +1,6 @@
 <script lang="ts">
     import { tick } from 'svelte'
-    import { LockIcon, GithubIcon } from 'svelte-feather-icons'
+    import { LockIcon, FacebookIcon } from 'svelte-feather-icons'
     import { auth } from '$lib/supabase'
     import { createQueryStore } from '$lib/utils/query'
     import Seo from '$lib/components/SEO.svelte'
@@ -66,42 +66,36 @@
 <div class="flex flex-col justify-center items-center relative">
 <!-- <img src="/static/undraw_access_denied_re_awnf.svg" alt="" /> -->
 <!-- App logo and tagline -->
-<div class="w-full text-center mb-4 flex  flex-col place-items-center">
-    <div>
-        <LockIcon size="3x" class="w-12 h-12 text-gray-600" />
-    </div>
-    <h3 class="text-5xl text-red-500"><strong>Svelte</strong></h3>
-    <h3 class="px-3 py-1 bg-gray-400 text-white uppercase mb-2">Starter Kit</h3>
-    <!-- <h3 class="text-3xl text-gray-600">Supa<strong>Auth</strong>&nbsp;</h3> -->
-    <small>Please provide your <strong>email</strong> and <strong>password</strong> and {isSignIn ? 'Log In' : 'Sign Up' }</small>
-</div>
 <!-- Sign Up form -->
 <form class="w-full sm:w-1/2 xl:w-5/12" method="post" on:submit|preventDefault={signUpOrSignIn} >
-    <div class="border-teal p-8 border-t-12 bg-white mb-6 rounded-lg shadow-lg" style="background: url(/undraw_access_denied_re_awnf.svg) no-repeat rgba(76, 175, 80, 0.1)">
-    <button type="button" class="flex-1 bg-gray-200 text-green-700 py-3 rounded w-full text-center shadow" on:click|preventDefault={() => handleProviderSignIn('github')}>
-        <GithubIcon size="1x" class="inline-block "/> {isSignIn ? 'Log In' : 'Sign Up' } with <strong>Github</strong>
+    <div class="form-control order-teal p-8 border-t-12 mb-6 rounded-lg">
+    <button type="button" class="btn btn-secondary" on:click|preventDefault={() => handleProviderSignIn('facebook')}>
+        <FacebookIcon size="1x" class="inline-block "/> {isSignIn ? 'Log In' : 'Sign Up' } with <strong>facebook</strong>
     </button>
     <hr class="my-4"/>
     <div class="mb-4">
-        <label for="email" class="block font-semibold text-gray-800 mb-2 text-left">Email</label>
+        <label for="email" class="label">
+            <span class="label-text">Email</span>
+        </label>
         <input
         id="email"
         name="email"
         type="email"
-        class="h-12 px-4 py-2 bg-white rounded shadow-inner border-gray-300 w-full border  hover:border-gray-400"
+        class="input"
         placeholder="Your Email"
         required
         bind:value={email}
         />
     </div>
     <div class="mb-4">
-        <label for="password" class="block font-semibold text-gray-800 mb-2 text-left">Password</label>
-
+        <label for="email" class="label">
+            <span class="label-text">Password</span>
+        </label>
         <input
         id="password"
         name="password"
         type="password"
-        class="h-12 px-4 py-2 bg-white rounded shadow-inner border-gray-300 w-full border hover:border-gray-400"
+        class="input"
         placeholder="Your password. Leave empty for password-less login"
         bind:value={password}
         />
@@ -110,12 +104,12 @@
     <!-- Sign Up & Sign In form: Actions -->
 
     <div class="flex pt-4 gap-2">
-        <button type="submit" class="flex-1 bg-gray-500 border border-gray-600 text-white py-3 rounded w-full text-center shadow"
+        <button type="submit" class="flex-1 btn"
         >
             {isSignIn ? 'Log In' : 'Sign Up'}
         </button>
         <div class="flex-1 text-right">
-        <small class="block text-gray-600">
+        <small>
             {isSignIn ? 'Not a member yet?' : 'Already a member?'}
         </small>
         <a class="block font-semibold" href="/auth" on:click|preventDefault={toggleView} >
@@ -123,11 +117,10 @@
         </a>
         </div>
     </div>
-    </div>
-    </form>
-    <div class="h-12 w-12 relative">
-        {#if loading}
-            <Spinner/>
-        {/if}
-    </div>
+</form>
+<div class="h-12 w-12 relative">
+    {#if loading}
+        <Spinner/>
+    {/if}
+</div>
 </div>

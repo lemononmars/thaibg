@@ -1,6 +1,6 @@
 <script lang="ts">
    import Seo from '$lib/components/SEO.svelte'
-   import {from} from '$lib/supabase'
+   import {from, fromBucket} from '$lib/supabase'
    import {onMount} from 'svelte'
    import Spinner from '$lib/components/Spinner.svelte'
    import {SearchIcon} from 'svelte-feather-icons'
@@ -10,6 +10,10 @@
    onMount(async () => {
       let {data, error} = await from('designer').select('*')
       designers = data
+      const urlPrefix = fromBucket('images').getPublicUrl('designer/').publicURL
+      designers.forEach((d)=>{
+         d.thumbnail_url = urlPrefix + d.slug + ".jpg"
+      })
       if(error) {}
    })
    

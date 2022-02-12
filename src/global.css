@@ -16,9 +16,17 @@
     }
 
     a {
-        @apply link link-primary;
+        @apply link link-accent;
         @apply no-underline hover:underline focus:outline-none focus:underline;
     } 
+
+    h1 {
+        @apply text-5xl text-primary
+    }
+
+    h2 {
+        @apply text-3xl text-secondary
+    }
 }
   
   /* purge end ignore */

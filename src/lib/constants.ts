@@ -16,6 +16,7 @@ export const RESP_USER_GUEST = {
 // 3rd Party Website/App URIs
 
 export const URL_DICEBEAR = 'https://avatars.dicebear.com/api/avataaars/'
+export const URL_IMAGE = 'https://llhkvvndjjpbdtdvxnvn.supabase.in/storage/v1/object/public/images/'
 
 export const COOKIE_NAME = 'sb:token'
 export const COOKIE_OPTIONS: CookieSerializeOptions = {

@@ -150,11 +150,7 @@
 
     {#if user}
         <div>
-            <button on:click={signOut} class="border bg-gray-500 border-gray-600 text-white px-3 py-2 rounded w-full text-center transition duration-150 shadow-lg">Sign Out</button>
-        </div>
-        <div class="rounded-md shadow-2xl bg-green-800 w-3/5 overflow-hidden mt-4">
-            <h3 class="px-2 py-1 text-white">User from Supabase</h3>
-            <small class="bg-gray-800 text-white px-4 py-2 w-full inline-block">{JSON.stringify(user)}</small>
+            <button on:click={signOut} class="btn">Sign Out</button>
         </div>
     {/if}
 </div>

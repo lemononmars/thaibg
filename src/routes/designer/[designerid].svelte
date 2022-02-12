@@ -1,5 +1,5 @@
 <script lang="ts" context="module">
-   import {from} from '$lib/supabase'
+   import {from, fromBucket} from '$lib/supabase'
 
    export async function load({ session, params }) {
        const { user } = session
@@ -29,41 +29,53 @@
       if(error)
          throw error
       boardgameData = data
-      console.log("designer data is", designerData)
-      console.log("board game data is", boardgameData)
+      const urlPrefix = fromBucket('images').getPublicUrl('boardgame/').publicURL
+      boardgameData.forEach((bg)=>{
+         bg.slug = urlPrefix + bg.slug + ".jpg"
+      })
+
+      const designerUrlPrefix = fromBucket('images').getPublicUrl('designer/').publicURL
+      designerData.slug = designerUrlPrefix + designerData.slug + ".jpg"
    })
    
 </script>
 
 <Seo title="Designer"/>
 <div class="flex flex-col justify-center items-center relative">
-   <div class="w-full text-center mb-4 flex flex-col place-items-center">
+   <div class="w-full text-left m-4 flex flex-col">
       {#if !designerData}
          Invalid designer ID!
       {:else}
          {#if boardgameData}
-            <div>
-               <h1 class="text-3xl">{designerData.name} {designerData.thainame? "(" + designerData.thainame + ")": ""}</h1><br>
-               Bio:
-               <p>{@html designerData.bio}</p>
-               <div class="divider"></div>
-               Past works:
-               <div class="w-full text-center mb-4 flex flex-row justify-left items-center gap-4">
-                  {#each boardgameData as bg}
-                    <BoardgameLink id={bg.id} title={bg.title} release={bg.release} thumbnail_url={bg.thumbnail_url}/>
-                  {:else}
-                     N/A
-                  {/each}
+            <div class="flex flex-col lg:flex-row gap-4 w-full p-8 border-2 shadow-lg rounded-xl">
+               <img src="{designerData.slug}" alt="image of {designerData.name}" class="w-72 mask mask-hexagon-2"/>
+               <div>
+                  <h1>{designerData.name}</h1>
+                  <h2>{designerData.thainame? "(" + designerData.thainame + ")": ""}</h2>
                </div>
-               <div class="divider"></div>
-               Contact:
+            </div>
+            <div>
+               <h2>Bio</h2>
+               <p>{@html designerData.bio}</p>
+            </div>
+            <div class="divider"></div>
+            <h2>Past works</h2>
+            <div class="w-full text-center mb-4 flex flex-row justify-left items-center gap-4">
+               {#each boardgameData as bg}
+                  <BoardgameLink id={bg.id} title={bg.title} release={bg.release} slug={bg.slug}/>
+               {:else}
+                  N/A
+               {/each}
+            </div>
+            <div class="divider"></div>
+            <h2>Contact</h2>
                {#if designerData.email}
                <div>e-mail: {designerData.email}</div>
                {/if}
                {#if designerData.website}
                <div>website: {designerData.website}</div>
                {/if}
-            </div>
+            
          {:else}
             <Spinner/>
          {/if}
