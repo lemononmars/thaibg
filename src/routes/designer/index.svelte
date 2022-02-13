@@ -1,20 +1,23 @@
 <script lang="ts">
    import Seo from '$lib/components/SEO.svelte'
-   import {from, fromBucket} from '$lib/supabase'
+   import {from} from '$lib/supabase'
    import {onMount} from 'svelte'
    import Spinner from '$lib/components/Spinner.svelte'
    import {SearchIcon} from 'svelte-feather-icons'
    import DesignerLink from '$lib/components/DesignerLink.svelte'
+   import {DIR_IMAGE, URL_BLANK_DESIGNER_IMAGE} from '$lib/constants'
    
    let designers = []
    onMount(async () => {
       let {data, error} = await from('designer').select('*')
-      designers = data
-      const urlPrefix = fromBucket('images').getPublicUrl('designer/').publicURL
-      designers.forEach((d)=>{
-         d.thumbnail_url = urlPrefix + d.slug + ".jpg"
-      })
-      if(error) {}
+      designers = data.map((d)=>({
+         id: d.id,
+         name: d.name,
+         slug: d.slug,
+         thumbnail_url: DIR_IMAGE + '/designer/' + (d.thumbnail_url || URL_BLANK_DESIGNER_IMAGE)
+      }))
+
+      if(error) throw(error)
    })
    
 </script>
@@ -29,7 +32,7 @@
    </div> 
    <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-4 gap-4">
       {#each designers as ds}
-         <DesignerLink name={ds.name} id={ds.id} thumbnail_url={ds.thumbnail_url}/>
+         <DesignerLink {...ds}/>
       {:else}
          <Spinner/>
       {/each}

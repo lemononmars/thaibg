@@ -1,9 +1,9 @@
 <script lang="ts" context="module">
-   import {from, fromBucket} from '$lib/supabase'
+   import {from} from '$lib/supabase'
 
    export async function load({ session, params }) {
        const { user } = session
-       const {data, error} = await from('designer').select('*').eq('id', params.designerid)
+       const {data, error} = await from('designer').select('*').eq('id', params.id)
        if(error) {}
        return {
            props: {
@@ -19,6 +19,7 @@
    import Spinner from '$lib/components/Spinner.svelte'
    import {onMount} from 'svelte'
    import BoardgameLink from '$lib/components/BoardgameLink.svelte'
+   import {DIR_IMAGE, URL_BLANK_BG_IMAGE, URL_BLANK_DESIGNER_IMAGE} from '$lib/constants'
 
    export let user, designerData
    let boardgameData
@@ -26,16 +27,17 @@
       const {data, error} = await from('boardgame')
          .select('*, boardgame_designer_relation!inner(*)')
          .eq('boardgame_designer_relation.designer', designerData.name)
-      if(error)
-         throw error
-      boardgameData = data
-      const urlPrefix = fromBucket('images').getPublicUrl('boardgame/').publicURL
-      boardgameData.forEach((bg)=>{
-         bg.slug = urlPrefix + bg.slug + ".jpg"
-      })
+         
+      if(error) throw error
+      boardgameData = data.map((d)=> ({
+         id: d.id,
+         slug: d.slug,
+         thumbnail_url: DIR_IMAGE + '/boardgame/' + (d.thumbnail_url || URL_BLANK_BG_IMAGE),
+         title: d.title,
+         release: d.release
+      }))
 
-      const designerUrlPrefix = fromBucket('images').getPublicUrl('designer/').publicURL
-      designerData.slug = designerUrlPrefix + designerData.slug + ".jpg"
+      designerData.thumbnail_url = DIR_IMAGE + '/designer/' + (designerData.thumbnail_url || URL_BLANK_DESIGNER_IMAGE)
    })
    
 </script>
@@ -47,8 +49,8 @@
          Invalid designer ID!
       {:else}
          {#if boardgameData}
-            <div class="flex flex-col lg:flex-row gap-4 w-full p-8 border-2 shadow-lg rounded-xl">
-               <img src="{designerData.slug}" alt="image of {designerData.name}" class="w-72 mask mask-hexagon-2"/>
+            <div class="flex flex-col lg:flex-row lg:gap-4 w-full p-8 border-2 shadow-lg rounded-xl">
+               <img src="{designerData.thumbnail_url}" alt="image of {designerData.name}" class="w-72 mask mask-hexagon-2"/>
                <div>
                   <h1>{designerData.name}</h1>
                   <h2>{designerData.thainame? "(" + designerData.thainame + ")": ""}</h2>
@@ -62,7 +64,7 @@
             <h2>Past works</h2>
             <div class="w-full text-center mb-4 flex flex-row justify-left items-center gap-4">
                {#each boardgameData as bg}
-                  <BoardgameLink id={bg.id} title={bg.title} release={bg.release} slug={bg.slug}/>
+                  <BoardgameLink {...bg}/>
                {:else}
                   N/A
                {/each}

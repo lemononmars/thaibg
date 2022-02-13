@@ -1,5 +1,6 @@
 <script lang="ts" context="module">
-   import {from, fromBucket} from '$lib/supabase'
+   import {from} from '$lib/supabase'
+   import {URL_BLANK_BG_IMAGE, DIR_IMAGE} from '$lib/constants'
 
    export async function load({ session, params }) {
        const { user } = session
@@ -20,7 +21,7 @@
    import {onMount} from 'svelte'
 
    export let user, bg
-   let thumbnailImageUrl
+   let thumbnailUrl
    let designers
    let links
    let videos
@@ -39,10 +40,8 @@
          .select('*')
          .eq('boardgame', bg.title)
       videos = res.data
-      console.log(designers, links, videos)
 
-      const urlPrefix = fromBucket('images').getPublicUrl('boardgame/').publicURL
-      thumbnailImageUrl = urlPrefix + bg.slug + "_thumbnail.jpg"
+      thumbnailUrl = DIR_IMAGE + '/boardgame/' + (bg.thumbnail_url? bg.thumbnail_url : URL_BLANK_BG_IMAGE)
    })
 </script>
 
@@ -54,11 +53,12 @@
       {:else}
          {#if bg && designers && links && videos}
             <div class="flex flex-col lg:flex-row gap-4 w-full p-8 border-2 shadow-lg">
-               <div class="flex flex-col items-center">
-                  <img src="{thumbnailImageUrl}" alt="cover of {bg.title}" class="w-fit">
+               <div class="flex flex-col items-center max-h-xs max-w-xs">
+                  <img src="{thumbnailUrl}" alt="cover of {bg.title}">
                </div>
                <div class="grow">
                   <h1>{bg.title} ({bg.release})</h1>
+                  {#if bg.title_th} <h2>({bg.title_th})</h2> {/if}
                   <ur>
                      <li>Designer: 
                         {#each designers as d, idx} 
@@ -75,7 +75,8 @@
             </div>
 
             <h2>Description</h2>
-            <p class="text-left">{@html bg.description}</p>
+            {#if bg.description}<p class="text-left">{@html bg.description}</p>{/if}
+            {#if bg.description_th}<p class="text-left">{@html bg.description_th}</p>{/if}
             <div class="divider"></div>
             <div>
                <h2>Links</h2><br> 
@@ -103,7 +104,9 @@
                <button class="btn">Suggest edit</button>
             {/if}
          {:else}
-            <Spinner/>
+            <div>
+               <Spinner/>
+            </div>
          {/if}
       {/if}
    </div>

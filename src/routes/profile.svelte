@@ -141,12 +141,14 @@
         </div>
       </div>
         <h2 class="text-4xl mb-1">Howdie, { username }!</h2>
-        <span class="inline-block px-2 py-1 bg-gray-400 text-white rounded-full"><ChromeIcon class="inline-block" size="1x"/> {$profile.website}</span>
-        <div class="text-gray-500 text-sm my-1">(click to update)</div>
 
     {#if !user}
         <small>You've landed on a protected page. Please <a href="/">log in</a> to view the page's full content </small>
     {/if}
+    <div class="divider"></div>
+    <h1>Profile</h1>
+    <div class="divider"></div>
+    <h1>Contribution</h1>
 
     {#if user}
         <div>
