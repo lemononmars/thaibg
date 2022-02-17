@@ -27,6 +27,10 @@
       const {data, error} = await from('boardgame')
          .select('*, boardgame_designer_relation!inner(*)')
          .eq('boardgame_designer_relation.designer', designerData.name)
+
+      // const {data, error} = await from('boardgame')
+      // .select('*, boardgame_designer_relation!inner(*)')
+      // .eq('boardgame_designer_relation.designer', designerData.name)
          
       if(error) throw error
       boardgameData = data.map((d)=> ({
@@ -56,6 +60,7 @@
                   <h2>{designerData.thainame? "(" + designerData.thainame + ")": ""}</h2>
                </div>
             </div>
+            <!-- <div>{likes.length}</div> -->
             <div>
                <h2>Bio</h2>
                <p>{@html designerData.bio}</p>
