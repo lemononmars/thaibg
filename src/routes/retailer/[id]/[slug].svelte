@@ -19,7 +19,7 @@
    import Spinner from '$lib/components/Spinner.svelte'
    import {onMount} from 'svelte'
    import BoardgameLink from '$lib/components/BoardgameLink.svelte'
-   import {DIR_IMAGE, URL_BLANK_BG_IMAGE, URL_BLANK_DESIGNER_IMAGE} from '$lib/constants'
+   import {DIR_IMAGE, URL_BLANK_BG_IMAGE, URL_BLANK_IMAGE} from '$lib/constants'
 
    export let user, designerData
    let boardgameData
@@ -37,7 +37,7 @@
          release: bg.TBG_released
       }))
 
-      designerData.Designer_thumbnail_url = DIR_IMAGE + '/designer/' + (designerData.Designer_thumbnail_url || URL_BLANK_DESIGNER_IMAGE)
+      designerData.Designer_thumbnail_url = DIR_IMAGE + '/designer/' + (designerData.Designer_thumbnail_url || URL_BLANK_IMAGE)
    })
    
 </script>

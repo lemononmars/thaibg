@@ -5,7 +5,7 @@
    import Spinner from '$lib/components/Spinner.svelte'
    import {SearchIcon} from 'svelte-feather-icons'
    import DesignerLink from '$lib/components/PersonLink.svelte'
-   import {DIR_IMAGE, URL_BLANK_DESIGNER_IMAGE} from '$lib/constants'
+   import {DIR_IMAGE, URL_BLANK_IMAGE} from '$lib/constants'
    
    let designers = []
    onMount(async () => {
@@ -14,7 +14,7 @@
          id: d.Designer_ID,
          name: d.Designer_name,
          slug: d.Designer_slug,
-         thumbnail_url: DIR_IMAGE + '/designer/' + (d.Designer_thumbnail_url || URL_BLANK_DESIGNER_IMAGE)
+         thumbnail_url: DIR_IMAGE + '/designer/' + (d.Designer_thumbnail_url || URL_BLANK_IMAGE)
       }))
 
       if(error) throw(error)
