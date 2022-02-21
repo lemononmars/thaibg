@@ -3,7 +3,7 @@
 
    export async function load({ session, params }) {
        const { user } = session
-       const {data, error} = await from('designer').select('*').eq('id', params.id)
+       const {data, error} = await from('Designer').select('*').eq('Designer_ID', params.id)
        if(error) {}
        return {
            props: {
@@ -24,24 +24,20 @@
    export let user, designerData
    let boardgameData
    onMount(async ()=>{
-      const {data, error} = await from('boardgame')
-         .select('*, boardgame_designer_relation!inner(*)')
-         .eq('boardgame_designer_relation.designer', designerData.name)
-
-      // const {data, error} = await from('boardgame')
-      // .select('*, boardgame_designer_relation!inner(*)')
-      // .eq('boardgame_designer_relation.designer', designerData.name)
+      const {data, error} = await from('Boardgame')
+         .select('*, Designer_Relation!inner(*)')
+         .eq('Designer_Relation.Designer_ID', designerData.Designer_ID)
          
       if(error) throw error
-      boardgameData = data.map((d)=> ({
-         id: d.id,
-         slug: d.slug,
-         thumbnail_url: DIR_IMAGE + '/boardgame/' + (d.thumbnail_url || URL_BLANK_BG_IMAGE),
-         title: d.title,
-         release: d.release
+      boardgameData = data.map((bg)=> ({
+         id: bg.TBG_ID,
+         slug: bg.TBG_slug,
+         thumbnail_url: DIR_IMAGE + '/boardgame/' + (bg.TBG_thumbnail_url || URL_BLANK_BG_IMAGE),
+         name: bg.TBG_name,
+         release: bg.TBG_released
       }))
 
-      designerData.thumbnail_url = DIR_IMAGE + '/designer/' + (designerData.thumbnail_url || URL_BLANK_DESIGNER_IMAGE)
+      designerData.Designer_thumbnail_url = DIR_IMAGE + '/designer/' + (designerData.Designer_thumbnail_url || URL_BLANK_DESIGNER_IMAGE)
    })
    
 </script>
@@ -54,35 +50,36 @@
       {:else}
          {#if boardgameData}
             <div class="flex flex-col lg:flex-row lg:gap-4 w-full p-8 border-2 shadow-lg rounded-xl">
-               <img src="{designerData.thumbnail_url}" alt="image of {designerData.name}" class="w-72 mask mask-hexagon-2"/>
+               <img src="{designerData.Designer_thumbnail_url}" alt="image of {designerData.Designer_name}" class="w-72 mask mask-hexagon-2"/>
                <div>
-                  <h1>{designerData.name}</h1>
-                  <h2>{designerData.thainame? "(" + designerData.thainame + ")": ""}</h2>
+                  <h1>{designerData.Designer_name}</h1>
+                  <h2>{designerData.Designer_name_th? "(" + designerData.Designer_name_th + ")": ""}</h2>
+                  <ul>
+                     <li>Team: {designerData.Designer_team || 'N/A'}</li>
+                     <li>Official link: 
+                        {#if designerData.Designer_link}
+                           <a href="{designerData.Designer_link}" target="_blank">{designerData.Designer_link}</a>
+                        {:else}
+                           N/A
+                        {/if}
+                     </li>
+                  </ul>
                </div>
             </div>
             <!-- <div>{likes.length}</div> -->
             <div>
-               <h2>Bio</h2>
-               <p>{@html designerData.bio}</p>
+               <h2>Description</h2>
+               <p>{@html designerData.Designer_description}</p>
             </div>
             <div class="divider"></div>
             <h2>Past works</h2>
-            <div class="w-full text-center mb-4 flex flex-row justify-left items-center gap-4">
+            <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-4 gap-4">
                {#each boardgameData as bg}
                   <BoardgameLink {...bg}/>
                {:else}
                   N/A
                {/each}
             </div>
-            <div class="divider"></div>
-            <h2>Contact</h2>
-               {#if designerData.email}
-               <div>e-mail: {designerData.email}</div>
-               {/if}
-               {#if designerData.website}
-               <div>website: {designerData.website}</div>
-               {/if}
-            
          {:else}
             <Spinner/>
          {/if}

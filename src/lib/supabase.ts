@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 
-type SupaTable = 'profiles' | 'boardgame' | 'designer' | 'boardgame_designer_relation' | 'link' | 'video' | 'artist'
+type SupaTable = 'profiles' | 'Artist' | 'Artist_Relation' | 'Award' | 'Award_Relation' | 'Boardgame' | 'Category' | 'Category_Relation' | 'Content' | 'Designer' | 'Designer_Relation' | 'Event' | 'Event_Relation' | 'Influencer' | 'Mechanics' | 'Mechanics_Relation' | 'Printing' | 'Printing_Relation' | 'Publisher' | 'Publisher_Relation' | 'Retailer' | 'Sponsor' | 'Sponsor_Relation' | 'Type' | 'Type_Relation'
 type SupaStorageBucket = 'avatars' | 'images'
 
 

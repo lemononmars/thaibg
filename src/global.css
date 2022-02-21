@@ -21,11 +21,11 @@
     } 
 
     h1 {
-        @apply text-5xl text-primary
+        @apply text-5xl text-primary m-4
     }
 
     h2 {
-        @apply text-3xl text-secondary
+        @apply text-3xl text-secondary m-4
     }
 }
   

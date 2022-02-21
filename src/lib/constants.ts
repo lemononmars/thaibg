@@ -18,7 +18,8 @@ export const RESP_USER_GUEST = {
 export const URL_DICEBEAR = 'https://avatars.dicebear.com/api/avataaars/'
 export const DIR_IMAGE = 'https://llhkvvndjjpbdtdvxnvn.supabase.in/storage/v1/object/public/images'
 export const URL_BLANK_BG_IMAGE = 'no_cover.jpg'
-export const URL_BLANK_DESIGNER_IMAGE = 'no_cover.jpg'
+export const URL_BLANK_PERSON_IMAGE = 'no_cover.jpg'
+export const URL_BLANK_IMAGE = 'question_mark.jpg'
 
 export const COOKIE_NAME = 'sb:token'
 export const COOKIE_OPTIONS: CookieSerializeOptions = {

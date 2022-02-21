@@ -4,18 +4,18 @@
    import {onMount} from 'svelte'
    import Spinner from '$lib/components/Spinner.svelte'
    import {SearchIcon} from 'svelte-feather-icons'
-   import DesignerLink from '$lib/components/PersonLink.svelte'
-   import {DIR_IMAGE, URL_BLANK_PERSON_IMAGE} from '$lib/constants'
+   import ListLink from '$lib/components/ListLink.svelte'
+   import {DIR_IMAGE, URL_BLANK_IMAGE} from '$lib/constants'
    
-   let designers = []
+   let categories = []
    onMount(async () => {
-      let {data, error} = await from('Designer').select('*').eq('Designer_show', true)
-      designers = data.map((d)=>({
-         id: d.Designer_ID,
-         name: d.Designer_name,
-         slug: d.Designer_slug,
-         picture: DIR_IMAGE + '/designer/' + (d.Designer_picture || URL_BLANK_PERSON_IMAGE),
-         type: 'designer'
+      let {data, error} = await from('Category').select('*')
+      categories = data.map((c)=>({
+         id: c.Cat_ID,
+         name: c.Cat_name,
+         slug: c.Cat_slug,
+         picture: DIR_IMAGE + '/category/' + (c.Cat_picture || URL_BLANK_IMAGE),
+         type: 'category'
       }))
 
       if(error) throw(error)
@@ -23,7 +23,7 @@
    
 </script>
 
-<Seo title="Designer"/>
+<Seo title="Category"/>
 <div class="flex flex-col justify-center items-center relative">
    <div class="form-control m-4">
       <div class="relative">
@@ -31,9 +31,9 @@
         <button class="absolute top-0 right-0 rounded-l-none btn btn-primary"><SearchIcon size=20/></button>
       </div>
    </div> 
-   <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-4 gap-4">
-      {#each designers as ds}
-         <DesignerLink {...ds}/>
+   <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-4 lg:gap-4">
+      {#each categories as ds}
+         <ListLink {...ds}/>
       {:else}
          <Spinner/>
       {/each}
