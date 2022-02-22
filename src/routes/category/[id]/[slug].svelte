@@ -19,7 +19,7 @@
    import Spinner from '$lib/components/Spinner.svelte'
    import {onMount} from 'svelte'
    import BoardgameLink from '$lib/components/BoardgameLink.svelte'
-   import {DIR_IMAGE, URL_BLANK_BG_IMAGE, URL_BLANK_IMAGE} from '$lib/constants'
+   import {DIR_IMAGE, URL_BLANK_IMAGE} from '$lib/constants'
 
    export let user, catData
    let boardgameData
@@ -29,24 +29,17 @@
          .eq('Category_Relation.Cat_ID', catData.Cat_ID)
          
       if(error) throw error
-      boardgameData = data.map((bg)=> ({
-         id: bg.TBG_ID,
-         slug: bg.TBG_slug,
-         picture: DIR_IMAGE + '/boardgame/' + (bg.TBG_picture || URL_BLANK_BG_IMAGE),
-         name: bg.TBG_name,
-         release: bg.TBG_released
-      }))
-
-      catData.Cat_picture = DIR_IMAGE + '/designer/' + (catData.Cat_picture || URL_BLANK_IMAGE)
+      boardgameData = data
+      catData.Cat_picture = DIR_IMAGE + '/category/' + (catData.Cat_picture || URL_BLANK_IMAGE)
    })
    
 </script>
 
-<Seo title="Designer"/>
+<Seo title="Category"/>
 <div class="flex flex-col justify-center items-center relative">
    <div class="w-full text-left m-4 flex flex-col">
       {#if !catData}
-         Invalid designer ID!
+         Invalid cateogry ID!
       {:else}
          {#if boardgameData}
             <div class="flex flex-col lg:flex-row lg:gap-4 w-full p-8 border-2 shadow-lg rounded-xl">
@@ -74,7 +67,7 @@
             <h2>Boardgames in this category</h2>
             <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-4 gap-4">
                {#each boardgameData as bg}
-                  <BoardgameLink {...bg}/>
+                  <BoardgameLink {bg}/>
                {:else}
                   N/A
                {/each}

@@ -16,16 +16,16 @@
     }
 
     a {
-        @apply link link-accent;
+        @apply link link-primary;
         @apply no-underline hover:underline focus:outline-none focus:underline;
     } 
 
     h1 {
-        @apply text-5xl text-primary m-4
+        @apply text-5xl text-primary my-4
     }
 
     h2 {
-        @apply text-3xl text-secondary m-4
+        @apply text-3xl text-secondary my-2
     }
 }
   

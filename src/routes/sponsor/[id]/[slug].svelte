@@ -3,12 +3,12 @@
 
    export async function load({ session, params }) {
        const { user } = session
-       const {data, error} = await from('Designer').select('*').eq('Designer_ID', params.id)
+       const {data, error} = await from('Sponsor').select('*').eq('Sponsor_ID', params.id)
        if(error) {}
        return {
            props: {
                user,
-               designerData: data[0] || null
+               sponsorData: data[0] || null
            }
        };
    }
@@ -19,46 +19,38 @@
    import Spinner from '$lib/components/Spinner.svelte'
    import {onMount} from 'svelte'
    import BoardgameLink from '$lib/components/BoardgameLink.svelte'
-   import {DIR_IMAGE, URL_BLANK_BG_IMAGE, URL_BLANK_IMAGE} from '$lib/constants'
+   import {DIR_IMAGE, URL_BLANK_IMAGE} from '$lib/constants'
 
-   export let user, designerData
+   export let user, sponsorData
    let boardgameData
    onMount(async ()=>{
       const {data, error} = await from('Boardgame')
-         .select('*, Designer_Relation!inner(*)')
-         .eq('Designer_Relation.Designer_ID', designerData.Designer_ID)
+         .select('*, Sponsor_Relation!inner(*)')
+         .eq('Sponsor_Relation.Sponsor_ID', sponsorData.Sponsor_ID)
          
       if(error) throw error
-      boardgameData = data.map((bg)=> ({
-         id: bg.TBG_ID,
-         slug: bg.TBG_slug,
-         thumbnail_url: DIR_IMAGE + '/boardgame/' + (bg.TBG_thumbnail_url || URL_BLANK_BG_IMAGE),
-         name: bg.TBG_name,
-         release: bg.TBG_released
-      }))
-
-      designerData.Designer_thumbnail_url = DIR_IMAGE + '/designer/' + (designerData.Designer_thumbnail_url || URL_BLANK_IMAGE)
+      boardgameData = data
+      sponsorData.Sponsor_thumbnail_url = DIR_IMAGE + '/sponsor/' + (sponsorData.Sponsor_thumbnail_url || URL_BLANK_IMAGE)
    })
    
 </script>
 
-<Seo title="Designer"/>
+<Seo title="Sponsor"/>
 <div class="flex flex-col justify-center items-center relative">
    <div class="w-full text-left m-4 flex flex-col">
-      {#if !designerData}
-         Invalid designer ID!
+      {#if !sponsorData}
+         Invalid Sponsor ID!
       {:else}
          {#if boardgameData}
             <div class="flex flex-col lg:flex-row lg:gap-4 w-full p-8 border-2 shadow-lg rounded-xl">
-               <img src="{designerData.Designer_thumbnail_url}" alt="image of {designerData.Designer_name}" class="w-72 mask mask-hexagon-2"/>
+               <img src="{sponsorData.Sponsor_thumbnail_url}" alt="image of {sponsorData.Sponsor_name}" class="w-72 mask mask-hexagon-2"/>
                <div>
-                  <h1>{designerData.Designer_name}</h1>
-                  <h2>{designerData.Designer_name_th? "(" + designerData.Designer_name_th + ")": ""}</h2>
+                  <h1>{sponsorData.Sponsor_name}</h1>
+                  <h2>{sponsorData.Sponsor_name_th? "(" + sponsorData.Sponsor_name_th + ")": ""}</h2>
                   <ul>
-                     <li>Team: {designerData.Designer_team || 'N/A'}</li>
                      <li>Official link: 
-                        {#if designerData.Designer_link}
-                           <a href="{designerData.Designer_link}" target="_blank">{designerData.Designer_link}</a>
+                        {#if sponsorData.Sponsor_link}
+                           <a href="{sponsorData.Sponsor_link}" target="_blank">{sponsorData.Sponsor_link}</a>
                         {:else}
                            N/A
                         {/if}
@@ -69,13 +61,13 @@
             <!-- <div>{likes.length}</div> -->
             <div>
                <h2>Description</h2>
-               <p>{@html designerData.Designer_description}</p>
+               <p>{@html sponsorData.Sponsor_description || 'N/A'}</p>
             </div>
             <div class="divider"></div>
-            <h2>Past works</h2>
+            <h2>Sponsoring</h2>
             <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-4 gap-4">
                {#each boardgameData as bg}
-                  <BoardgameLink {...bg}/>
+                  <BoardgameLink {bg}/>
                {:else}
                   N/A
                {/each}

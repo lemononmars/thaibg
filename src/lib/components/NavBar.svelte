@@ -45,33 +45,33 @@
         </label>
     </div>  
     <div class="flex-1 px-2 mx-2">
-        <div class="items-stretch hidden gap-4 lg:flex lg:flex-row items-center">
-            <div><HomeIcon size=20/><a rel="prefetch" href="/">Home</a></div>
-            <div class="flex">
+        <div class="items-stretch hidden lg:flex lg:flex-row items-center">
+            <a rel="prefetch" href="/"><span><HomeIcon size=20 class="mx-2"/> Home</span></a>
                 {#each groups as g, idx} 
-                    {#if idx == 0} <PlayCircleIcon size=20/>
-                        {:else if idx == 1} <UserIcon size=20/>
-                        {:else if idx == 2} <InfoIcon size=20/>
-                        {:else if idx == 3} <ToolIcon size=20/>
-                    {/if}
-                    <div class="dropdown dropdown-hover">
-                        <label tabindex="{idx}" class="m-1 btn">{g}</label>
-                        <ul tabindex="0" class="p-2 shadow menu dropdown-content bg-base-100 rounded-box w-52">
+                    <div class="dropdown dropdown-hover">        
+                        <label tabindex="0" class="m-1 btn">
+                            {#if idx == 0} <PlayCircleIcon size=20 class="mx-2"/>
+                                {:else if idx == 1} <UserIcon size=20 class="mx-2"/>
+                                {:else if idx == 2} <ToolIcon size=20 class="mx-2"/>
+                                {:else if idx == 3} <InfoIcon size=20 class="mx-2"/>
+                            {/if} 
+                            {g}
+                        </label>
+                        <ul tabindex="0" class="p-2 shadow menu dropdown-content bg-neutral text-neutral-content rounded-box w-52">
                             {#each subgroups[idx] as sg}
-                                <li><a rel="prefetch" href="{sg.path}">{sg.title}</a></li>
+                                <li><a href="{sg.path}">{sg.title}</a></li>
                             {:else}
                                 <p>huh</p>
                             {/each}
                         </ul>
                     </div>
                 {/each}
-            </div>
         </div>
     </div> 
-    <div class="flex-none">
+    <div class="flex-none hidden lg:flex">
         <ToggleTheme/>
     </div> 
-    <div class="flex-none gap-4">
+    <div class="flex-none gap-4 hidden lg:flex lg:flex-row">
         {#if $user}
             <div>
                 <a rel="prefetch" href="/profile/">
@@ -87,7 +87,7 @@
             </div>
             <div>
                 <a rel="prefetch" href="/auth?reg=true" title="Sign Up">
-                    Sign Up
+                    Join Us
                 </a>
             </div>
         {/if}

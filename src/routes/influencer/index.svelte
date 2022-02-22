@@ -5,7 +5,7 @@
    import Spinner from '$lib/components/Spinner.svelte'
    import {SearchIcon} from 'svelte-feather-icons'
    import PersonLink from '$lib/components/PersonLink.svelte'
-   import {DIR_IMAGE, URL_BLANK_PERSON_IMAGE} from '$lib/constants'
+   import {DIR_IMAGE, URL_BLANK_IMAGE} from '$lib/constants'
    
    let influencers = []
    onMount(async () => {
@@ -14,7 +14,7 @@
          id: i.Influencer_ID,
          name: i.Influencer_name_th, // change to eng?
          slug: i.Influencer_slug,
-         picture: DIR_IMAGE + '/influencer/' + (i.Influencer_picture || URL_BLANK_PERSON_IMAGE),
+         picture: DIR_IMAGE + '/influencer/' + (i.Influencer_picture || URL_BLANK_IMAGE),
          type: 'influencer'
       }))
 

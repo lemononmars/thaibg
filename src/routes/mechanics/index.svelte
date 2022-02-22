@@ -4,17 +4,18 @@
    import {onMount} from 'svelte'
    import Spinner from '$lib/components/Spinner.svelte'
    import {SearchIcon} from 'svelte-feather-icons'
-   import DesignerLink from '$lib/components/PersonLink.svelte'
+   import ListLink from '$lib/components/ListLink.svelte'
    import {DIR_IMAGE, URL_BLANK_IMAGE} from '$lib/constants'
    
-   let designers = []
+   let mechanics = []
    onMount(async () => {
-      let {data, error} = await from('Designer').select('*').eq('Designer_show', true)
-      designers = data.map((d)=>({
-         id: d.Designer_ID,
-         name: d.Designer_name,
-         slug: d.Designer_slug,
-         thumbnail_url: DIR_IMAGE + '/designer/' + (d.Designer_thumbnail_url || URL_BLANK_IMAGE)
+      let {data, error} = await from('Mechanics').select('*')
+      mechanics = data.map((m)=>({
+         id: m.Mech_ID,
+         name: m.Mech_name,
+         slug: m.Mech_slug,
+         picture: DIR_IMAGE + '/mechanics/' + (m.Mech_picture || URL_BLANK_IMAGE),
+         type: 'mechanics'
       }))
 
       if(error) throw(error)
@@ -22,7 +23,7 @@
    
 </script>
 
-<Seo title="Designer"/>
+<Seo title="Mechanics"/>
 <div class="flex flex-col justify-center items-center relative">
    <div class="form-control m-4">
       <div class="relative">
@@ -31,8 +32,8 @@
       </div>
    </div> 
    <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-4 gap-4">
-      {#each designers as ds}
-         <DesignerLink {...ds}/>
+      {#each mechanics as m}
+         <ListLink {...m}/>
       {:else}
          <Spinner/>
       {/each}

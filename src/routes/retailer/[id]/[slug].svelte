@@ -3,12 +3,12 @@
 
    export async function load({ session, params }) {
        const { user } = session
-       const {data, error} = await from('Designer').select('*').eq('Designer_ID', params.id)
+       const {data, error} = await from('Retailer').select('*').eq('Retailer_ID', params.id)
        if(error) {}
        return {
            props: {
                user,
-               designerData: data[0] || null
+               retailerData: data[0] || null
            }
        };
    }
@@ -18,47 +18,41 @@
    import Seo from '$lib/components/SEO.svelte'
    import Spinner from '$lib/components/Spinner.svelte'
    import {onMount} from 'svelte'
-   import BoardgameLink from '$lib/components/BoardgameLink.svelte'
-   import {DIR_IMAGE, URL_BLANK_BG_IMAGE, URL_BLANK_IMAGE} from '$lib/constants'
+   // import BoardgameLink from '$lib/components/BoardgameLink.svelte'
+   import {DIR_IMAGE, URL_BLANK_IMAGE} from '$lib/constants'
 
-   export let user, designerData
+   export let user, retailerData
    let boardgameData
    onMount(async ()=>{
-      const {data, error} = await from('Boardgame')
-         .select('*, Designer_Relation!inner(*)')
-         .eq('Designer_Relation.Designer_ID', designerData.Designer_ID)
+      // const {data, error} = await from('Boardgame')
+      //    .select('*, Retailer_Relation!inner(*)')
+      //    .eq('Retailer_Relation.Retailer_ID', retailerData.Retailer_ID)
          
-      if(error) throw error
-      boardgameData = data.map((bg)=> ({
-         id: bg.TBG_ID,
-         slug: bg.TBG_slug,
-         thumbnail_url: DIR_IMAGE + '/boardgame/' + (bg.TBG_thumbnail_url || URL_BLANK_BG_IMAGE),
-         name: bg.TBG_name,
-         release: bg.TBG_released
-      }))
+      // if(error) throw error
+      // boardgameData = data
 
-      designerData.Designer_thumbnail_url = DIR_IMAGE + '/designer/' + (designerData.Designer_thumbnail_url || URL_BLANK_IMAGE)
+      retailerData.Retailer_picture = DIR_IMAGE + '/retailer/' + (retailerData.Retailer_picture || URL_BLANK_IMAGE)
    })
    
 </script>
 
-<Seo title="Designer"/>
+<Seo title="Retailer"/>
 <div class="flex flex-col justify-center items-center relative">
    <div class="w-full text-left m-4 flex flex-col">
-      {#if !designerData}
-         Invalid designer ID!
+      {#if !retailerData}
+         Invalid Retailer ID!
       {:else}
-         {#if boardgameData}
+         <!-- {#if boardgameData} -->
             <div class="flex flex-col lg:flex-row lg:gap-4 w-full p-8 border-2 shadow-lg rounded-xl">
-               <img src="{designerData.Designer_thumbnail_url}" alt="image of {designerData.Designer_name}" class="w-72 mask mask-hexagon-2"/>
+               <img src="{retailerData.Retailer_picture}" alt="image of {retailerData.Retailer_name}" class="w-72 mask mask-hexagon-2"/>
                <div>
-                  <h1>{designerData.Designer_name}</h1>
-                  <h2>{designerData.Designer_name_th? "(" + designerData.Designer_name_th + ")": ""}</h2>
+                  <h1>{retailerData.Retailer_name}</h1>
+                  <h2>{retailerData.Retailer_name_th? "(" + retailerData.Retailer_name_th + ")": ""}</h2>
                   <ul>
-                     <li>Team: {designerData.Designer_team || 'N/A'}</li>
+                     <li>Location: {retailerData.Retailer_location || 'N/A'}</li>
                      <li>Official link: 
-                        {#if designerData.Designer_link}
-                           <a href="{designerData.Designer_link}" target="_blank">{designerData.Designer_link}</a>
+                        {#if retailerData.Retailer_link}
+                           <a href="{retailerData.Retailer_link}" target="_blank">{retailerData.Retailer_link}</a>
                         {:else}
                            N/A
                         {/if}
@@ -69,20 +63,20 @@
             <!-- <div>{likes.length}</div> -->
             <div>
                <h2>Description</h2>
-               <p>{@html designerData.Designer_description}</p>
+               <p>{@html retailerData.Retailer_description || 'N/A'}</p>
             </div>
             <div class="divider"></div>
-            <h2>Past works</h2>
-            <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- <h2>Board games available</h2> -->
+            <!-- <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-4 gap-4">
                {#each boardgameData as bg}
                   <BoardgameLink {...bg}/>
                {:else}
                   N/A
                {/each}
-            </div>
-         {:else}
+            </div> -->
+         <!-- {:else}
             <Spinner/>
-         {/if}
+         {/if} -->
       {/if}
       {#if user && !user.guest}
          <button class="btn">Suggest edit</button>

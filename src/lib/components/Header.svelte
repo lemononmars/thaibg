@@ -2,6 +2,6 @@
     import NavBar from './NavBar.svelte'
 </script>
 
-<header class="w-full fixed z-10">
+<header class="w-full fixed z-10 overflow-x-clip">
     <NavBar />
 </header>

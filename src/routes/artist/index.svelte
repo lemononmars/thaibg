@@ -5,7 +5,7 @@
    import Spinner from '$lib/components/Spinner.svelte'
    import {SearchIcon} from 'svelte-feather-icons'
    import PersonLink from '$lib/components/PersonLink.svelte'
-   import {DIR_IMAGE, URL_BLANK_PERSON_IMAGE} from '$lib/constants'
+   import {DIR_IMAGE, URL_BLANK_IMAGE} from '$lib/constants'
    
    let artists = []
    onMount(async () => {
@@ -14,7 +14,7 @@
          id: a.Artist_ID,
          name: a.Artist_name,
          slug: a.Artist_slug,
-         thumbnail_url: DIR_IMAGE + '/artist/' + (a.Artist_thumbnail_url || URL_BLANK_PERSON_IMAGE),
+         picture: DIR_IMAGE + '/artist/' + (a.picture || URL_BLANK_IMAGE),
          type: 'artist'
       }))
 

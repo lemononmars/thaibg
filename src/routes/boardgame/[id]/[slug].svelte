@@ -1,6 +1,5 @@
 <script lang="ts" context="module">
    import {from} from '$lib/supabase'
-   import {URL_BLANK_BG_IMAGE, DIR_IMAGE} from '$lib/constants'
 
    export async function load({ session, params }) {
        const { user } = session
@@ -19,13 +18,10 @@
    import Seo from '$lib/components/SEO.svelte'
    import Spinner from '$lib/components/Spinner.svelte'
    import {onMount} from 'svelte'
+   import {DIR_IMAGE, URL_BLANK_IMAGE} from '$lib/constants'
 
    export let user, bg
-   let thumbnailUrl
-   let designers
-   let artists
-   let publishers
-   let contents
+   let designers, artists, publishers, contents, types
    // let artists
 
    onMount(async ()=>{
@@ -45,8 +41,10 @@
          .select('*')
          .eq('TBG_ID', bg.TBG_ID)
       contents = res.data
-
-      thumbnailUrl = DIR_IMAGE + '/boardgame/' + (bg.TBG_picture || URL_BLANK_BG_IMAGE)
+      res = await from('Type')
+         .select('*, Type_Relation!inner(*)')
+         .eq('Type_Relation.TBG_ID', bg.TBG_ID)
+      types = res.data
    })
 </script>
 
@@ -56,10 +54,11 @@
       {#if !bg}
          Invalid board game ID!
       {:else}
-         {#if bg && designers && artists && publishers && contents}
+         {#if bg && designers && artists && publishers && contents && types}
             <div class="flex flex-col lg:flex-row gap-4 w-full p-8 border-2 shadow-lg">
                <div class="flex flex-col items-center max-h-xs max-w-xs">
-                  <img src="{thumbnailUrl}" alt="cover of {bg.TBG_name}">
+                  <img src="{DIR_IMAGE + '/boardgame/' + (bg.TBG_picture || URL_BLANK_IMAGE)
+               }" alt="cover of {bg.TBG_name}">
                </div>
                <div class="grow">
                   <h1>{bg.TBG_name} ({bg.TBG_released})</h1>
@@ -81,10 +80,19 @@
                            N/A
                         {/each}
                      </li>
+                     <li>Type:
+                        {#each types as t, idx} 
+                           {#if idx > 0},{/if}
+                           <a href="/type/{t.Type_ID}">{t.Type_name}</a>
+                        {:else} 
+                           N/A
+                        {/each}
+                     </li>
                      <li>Age: {bg.TBG_age} </li>
                      <li>Players: {bg.TBG_player_min || ''} - {bg.TBG_player_max || ''} </li>
-                     <li>Playtime: {bg.TBG_playtime_min || ''} - {bg.TBG_playtime_max || ''} minutes </li>
-                     <li>Weight: {bg.TBG_weight || '-'} </li>
+                     <li>Playtime: 
+                        {bg.TBG_playtime_min || ''} {bg.TBG_playtime_max? '-' + bg.TBG_playtime_max : ''} minutes </li>
+                     <li>Weight: {bg.TBG_weight || 'N/A'} </li>
                      <li>Official link: {#if bg.TBG_link} <a href="{bg.TBG_link}" target="_blank">{bg.TBG_link}</a> {:else} - {/if}</li>
                      <li>Publisher: 
                         {#each publishers as p, idx} 

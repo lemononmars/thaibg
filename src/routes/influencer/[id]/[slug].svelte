@@ -18,7 +18,7 @@
    import Seo from '$lib/components/SEO.svelte'
    import Spinner from '$lib/components/Spinner.svelte'
    import {onMount} from 'svelte'
-   import {DIR_IMAGE, URL_BLANK_PERSON_IMAGE} from '$lib/constants'
+   import {DIR_IMAGE, URL_BLANK_IMAGE} from '$lib/constants'
 
    export let user, influencerData
    let contentData = []
@@ -29,7 +29,7 @@
       if(error) throw error
       contentData = data
 
-      influencerData.Influencer_picture = DIR_IMAGE + '/influencer/' + (influencerData.Influencer_picture || URL_BLANK_PERSON_IMAGE)
+      influencerData.Influencer_picture = DIR_IMAGE + '/influencer/' + (influencerData.Influencer_picture || URL_BLANK_IMAGE)
    })
    
 </script>
