@@ -5,7 +5,6 @@
    import Spinner from '$lib/components/Spinner.svelte'
    import {SearchIcon} from 'svelte-feather-icons'
    import BoardgameLink from '$lib/components/BoardgameLink.svelte'
-   import { goto } from '$app/navigation';
 
    let boardgames = []
    let loaded = false
@@ -55,7 +54,7 @@
             {/each}
          </ul>
       </div>
-      <!-- <a href="./boardgame/create"><div class="flex-2 btn btn-secondary">Add new game</div></a> -->
+      <a href="./boardgame/create"><div class="flex-2 btn btn-secondary">Create new page</div></a>
    </div>
    <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-4 gap-4">
          {#each boardgamesSorted as bg}
