@@ -1,30 +1,19 @@
-<script lang="ts" context="module">
-
-    export async function load({ session }) {
-        const { user } = session
-        return {
-            props: {
-                user
-            }
-        };
-    }
-</script>
-
 <script lang="ts">
   
   import Seo from '$lib/components/SEO.svelte'
   import Spinner from '$lib/components/Spinner.svelte'
   import {from} from '$lib/supabase'
   import {onMount} from 'svelte'
-  import BoardgameLink from '$lib/components/BoardgameLink.svelte'
+  import BoardgameCard from '$lib/components/BoardgameCard.svelte'
   import {PlayCircleIcon, UserCheckIcon, CoffeeIcon, ChevronRightIcon, FilmIcon} from 'svelte-feather-icons'
+  import ContentCard from '$lib/components/ContentCard.svelte'
+import EventCard from '$lib/components/EventCard.svelte'
 
-   export let user
    let boardgames
    let contents
    let events
    let loaded = false
-   let numDesginers, numBoardgames, numActivities
+   let numDesginers = 4, numBoardgames = 0, numActivities = 0
    // let artists
    const boardgameCarouselWidth = 96
 
@@ -43,9 +32,14 @@
       }
       boardgames = bgindex.map((idx)=>res.data[idx])
 
+      res = await from('Event')
+         .select('*')
+      numActivities += res.data.length
+      events = res.data.slice(-3)
+
       res = await from('Content')
          .select('*')
-      numActivities = res.data.length
+      numActivities += res.data.length
       contents = res.data.slice(-10)
       loaded = true
 
@@ -70,7 +64,7 @@
     <div class="stats stats-vertical lg:stats-horizontal overflow-visible my-10 bg-transparent">
       <div class="stat mx-4">
         <div class="stat-value">{numBoardgames}</div>
-        <div class="stat-title">Thai Board Games</div>
+        <div class="stat-title">Board Games</div>
         <div class="stat-figure text-secondary">
           <PlayCircleIcon size="40"/>
         </div>
@@ -113,13 +107,10 @@
   <h1 class="w-full text-center">Upcoming Events</h1>
   <div class="grid grid-cols-1 lg:grid-cols-3">
     {#if loaded}
-      {#each contents as c}
-        <div>
-          <div class="badge">{c.Content_channel}</div>
-          <a href="{c.Content_link}" class="text-ellipsis" target="_blank">{c.Content_name}</a>
-        </div>
+      {#each events as event}
+        <EventCard {event}/>
         {:else}
-        <p>Nothing to see</p>
+        <p>No upcoming events. Stay tuned!</p>
       {/each}
     {:else}
       <Spinner/>
@@ -138,11 +129,8 @@
   </div>
   <div class="flex-grow grid grid-cols-2 gap-4 p-20">
     {#if loaded}
-      {#each contents as c}
-        <div>
-          <div class="badge">{c.Content_channel}</div>
-          <a href="{c.Content_link}" class="text-ellipsis" target="_blank">{c.Content_name}</a>
-        </div>
+      {#each contents as content}
+        <ContentCard {content}/>
       {/each}
     {:else}
       <Spinner/>
@@ -151,7 +139,7 @@
 </div>
 
 <div class="flex flex-col w-full py-4 px-4 lg:px-20">
-  <div class="flex flex-row justify-between items-center">
+  <div class="flex flex-row w-full justify-between items-center">
     <div>
       <h1>Hotness Board Game</h1>
     </div>
@@ -169,7 +157,7 @@
       {#if loaded}
         {#each boardgames as bg}
         <div class="w-36 lg:w-72 aspect-auto shrink-0 snap-start">
-            <BoardgameLink {bg}/>
+            <BoardgameCard {bg}/>
         </div>
         {/each}
       {:else}

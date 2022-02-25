@@ -4,7 +4,7 @@
    import {onMount} from 'svelte'
    import Spinner from '$lib/components/Spinner.svelte'
    import {SearchIcon} from 'svelte-feather-icons'
-   import DesignerLink from '$lib/components/PersonLink.svelte'
+   import DesignerLink from '$lib/components/PersonCard.svelte'
    import {DIR_IMAGE, URL_BLANK_IMAGE} from '$lib/constants'
    
    let designers = []

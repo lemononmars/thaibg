@@ -1,3 +1,14 @@
+<script lang="ts" context="module">
+    export async function load({ session }) {
+        const { user } = session
+        return {
+            props: {
+                user
+            }
+        };
+    }
+</script>
+
 <script lang="ts">
     import { user, profile, signOut } from '$lib/user'
     import {ChevronDownIcon, MenuIcon, UserIcon, SearchIcon, ChevronUpIcon} from 'svelte-feather-icons'
@@ -20,13 +31,13 @@
     const supporterMenu = [
         {path: '/publisher',title:'Publishers'},
         {path: '/sponsor',title:'Sponsors'},
-        {path: '/contentcreators',title:'Content Creators'},
+        {path: '/contentcreator',title:'Content Creators'},
         {path: '/place', title:'Places'}
     ]
     const activityMenu = [
         {path: '/event',title:'Events'},
         {path: '/award',title:'Awards'},
-        {path: '/content',title:'Content'},
+        {path: '/content',title:'Contents'},
     ]
 
     const username = $profile.username ? $profile.username : ( user ? user?.email : 'Explorer' )

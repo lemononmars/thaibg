@@ -4,7 +4,7 @@
    import {onMount} from 'svelte'
    import Spinner from '$lib/components/Spinner.svelte'
    import {SearchIcon} from 'svelte-feather-icons'
-   import PersonLink from '$lib/components/PersonLink.svelte'
+   import PersonCard from '$lib/components/PersonCard.svelte'
    import {DIR_IMAGE, URL_BLANK_IMAGE} from '$lib/constants'
    
    let influencers = []
@@ -15,7 +15,7 @@
          name: i.Influencer_name_th, // change to eng?
          slug: i.Influencer_slug,
          picture: DIR_IMAGE + '/influencer/' + (i.Influencer_picture || URL_BLANK_IMAGE),
-         type: 'influencer'
+         type: 'content creator'
       }))
 
       if(error) throw(error)
@@ -33,7 +33,7 @@
    </div> 
    <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-4 gap-4">
       {#each influencers as i}
-         <PersonLink {...i}/>
+         <PersonCard {...i}/>
       {:else}
          <Spinner/>
       {/each}

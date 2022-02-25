@@ -9,11 +9,11 @@
   })
 
   const toggleTheme = () => {
-    $theme = $theme === 'dark' ? 'emerald' : 'dark'
+    $theme = $theme === 'business' ? 'emerald' : 'business'
     themeChange($theme)
   }
 
-  let checked = $theme === 'dark'
+  let checked = $theme === 'business'
 </script>
 
 <div>

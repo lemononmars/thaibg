@@ -4,8 +4,7 @@ module.exports = {
 	content: ['./src/**/*.{html,js,svelte,ts}'],
 	theme: {
 		fontFamily: {
-			//sans: ['Varela Round', ...fontFamily.sans],
-			sans:['Prompt'],
+			sans:['Prompt', ...fontFamily.sans],
 		},
 		extend: {
 		}
@@ -16,5 +15,5 @@ module.exports = {
 	plugins: [
 		require('@tailwindcss/forms'),
 		require('daisyui'),
-	]
-};
+	],
+}

@@ -14,13 +14,13 @@
     const supporterMenu = [
         {path: '/publisher',title:'Publishers'},
         {path: '/sponsor',title:'Sponsors'},
-        {path: '/contentcreators',title:'Content Creators'},
+        {path: '/contentcreator',title:'Content Creators'},
         {path: '/place', title:'Places'}
     ]
     const activityMenu = [
         {path: '/event',title:'Events'},
         {path: '/award',title:'Awards'},
-        {path: '/content',title:'Content'},
+        {path: '/content',title:'Contents'},
     ]
     const websiteMenu = [
         {path:'/about', title:'About us'},

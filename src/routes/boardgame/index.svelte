@@ -4,7 +4,7 @@
    import {onMount} from 'svelte'
    import Spinner from '$lib/components/Spinner.svelte'
    import {SearchIcon} from 'svelte-feather-icons'
-   import BoardgameLink from '$lib/components/BoardgameLink.svelte'
+   import BoardgameCard from '$lib/components/BoardgameCard.svelte'
 
    let boardgames = []
    let loaded = false
@@ -58,7 +58,7 @@
    </div>
    <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-4 gap-4">
          {#each boardgamesSorted as bg}
-            <BoardgameLink {bg}/>
+            <BoardgameCard {bg}/>
          {:else}
             {#if !boardgames}
                <div class="w-full justify-center">

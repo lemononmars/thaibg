@@ -4,7 +4,7 @@
    import {onMount} from 'svelte'
    import Spinner from '$lib/components/Spinner.svelte'
    import {SearchIcon} from 'svelte-feather-icons'
-   import PersonLink from '$lib/components/PersonLink.svelte'
+   import PersonCard from '$lib/components/PersonCard.svelte'
    import {DIR_IMAGE, URL_BLANK_IMAGE} from '$lib/constants'
    
    let artists = []
@@ -33,7 +33,7 @@
    </div> 
    <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-4 gap-4">
       {#each artists as ds}
-         <PersonLink {...ds}/>
+         <PersonCard {...ds}/>
       {:else}
          <Spinner/>
       {/each}

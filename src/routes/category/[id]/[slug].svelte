@@ -18,7 +18,7 @@
    import Seo from '$lib/components/SEO.svelte'
    import Spinner from '$lib/components/Spinner.svelte'
    import {onMount} from 'svelte'
-   import BoardgameLink from '$lib/components/BoardgameLink.svelte'
+   import BoardgameCard from '$lib/components/BoardgameCard.svelte'
    import {DIR_IMAGE, URL_BLANK_IMAGE} from '$lib/constants'
 
    export let user, catData
@@ -67,7 +67,7 @@
             <h2>Boardgames in this category</h2>
             <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-4 gap-4">
                {#each boardgameData as bg}
-                  <BoardgameLink {bg}/>
+                  <BoardgameCard {bg}/>
                {:else}
                   N/A
                {/each}
