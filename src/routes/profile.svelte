@@ -37,7 +37,6 @@
 
 <script lang="ts">
     import { onMount } from 'svelte'
-    import { ChromeIcon } from 'svelte-feather-icons'
     import type{ ProfileAttrs } from '$lib/user'
     import { signOut, getCurrUserProfile, updCurrUserProfile, updCurrUserAvatar, getAvatar, profile } from '$lib/user'
     import { handleAlert } from '$lib/alert'

@@ -11,7 +11,7 @@
     }
 
     main {
-        @apply p-8 pt-32 md:pt-24 mx-auto max-w-4xl;
+        @apply pt-24 max-w-7xl mx-auto;
         @apply text-center;
     }
 

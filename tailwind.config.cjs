@@ -4,7 +4,8 @@ module.exports = {
 	content: ['./src/**/*.{html,js,svelte,ts}'],
 	theme: {
 		fontFamily: {
-			sans: ['Varela Round', ...fontFamily.sans],
+			//sans: ['Varela Round', ...fontFamily.sans],
+			sans:['Prompt'],
 		},
 		extend: {
 		}

@@ -36,7 +36,7 @@
 </script>
 
 <Seo title="Boardgame"/>
-<div class="flex flex-col justify-center items-center relative">
+<div class="flex flex-col justify-center items-center relative mx-auto">
    <div class="flex flex-row items-center justify-between">
       <div class="form-control m-4">
          <div class="relative">
