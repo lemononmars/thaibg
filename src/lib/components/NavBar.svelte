@@ -15,7 +15,7 @@
     import { URL_DICEBEAR } from '$lib/constants'
     import ToggleTheme from '$lib/components/ToggleTheme.svelte'
     import {fly} from 'svelte/transition'
-    import TBGAlogo from '/static/TBGA-logo-color.png'
+    import TBGAlogo from '$lib/assets/TBGA-logo-color.png'
 
     const boardgameMenu = [
         {path: '/boardgame',title:'Thai Board Game List'},

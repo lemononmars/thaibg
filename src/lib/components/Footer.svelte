@@ -1,5 +1,6 @@
 <script lang='ts'>
     import TBGAlogo from '$lib/assets/TBGA-logo-color.png'
+    
     const boardgameMenu = [
         {path: '/boardgame',title:'Thai Board Game List'},
         {path: '/type',title:'Types'},
