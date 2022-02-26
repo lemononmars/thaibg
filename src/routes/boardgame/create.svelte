@@ -111,12 +111,14 @@
 
 <Seo title="Create Boardgame"/>
 
-<div class="flex flex-col flex-wrap place-items-start">
+<div class="grid grid-flow-row flex-wrap place-items-start">
    {#each basicCategories as c}
       <div class="form-control">
+         <!-- svelte-ignore a11y-label-has-associated-control -->
          <label class="label">
             <span class="label-text">{c.text}</span>
          </label>
+         <!-- svelte-ignore a11y-label-has-associated-control -->
          <label class="label">
             {#if c.type === 'text'}
                <input type="text" class="input input-bordered" bind:value={basicInput[c.cat]}>
@@ -128,6 +130,7 @@
    {/each}
          
    <div class="form-control">
+      <!-- svelte-ignore a11y-label-has-associated-control -->
       <label class="label">
          <span class="label-text">จำนวนผู้เล่น</span>
       </label>
@@ -139,6 +142,7 @@
       </label>
    </div>
    <div>
+      <!-- svelte-ignore a11y-label-has-associated-control -->
       <label class="label">
          <span class="label-text">ใช้เวลาเล่น</span>
       </label>

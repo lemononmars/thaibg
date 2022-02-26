@@ -15,6 +15,7 @@
     import { URL_DICEBEAR } from '$lib/constants'
     import ToggleTheme from '$lib/components/ToggleTheme.svelte'
     import {fly} from 'svelte/transition'
+    import TBGAlogo from '/static/TBGA-logo-color.png'
 
     const boardgameMenu = [
         {path: '/boardgame',title:'Thai Board Game List'},
@@ -67,7 +68,7 @@
         </div>
         <div class="hidden lg:flex lg:flex-row items-center gap-4">
             <div>
-                <img class="h-20" src="/static/TBGA-logo-color.png" alt="logo">
+                <img class="h-20" src={TBGAlogo} alt="logo">
             </div>
             <div class="flex flex-col">
                 <a rel="prefetch link-hover" href="/">

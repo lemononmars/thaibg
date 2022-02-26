@@ -16,7 +16,7 @@
       <figure><img src="{picture}" class="object-cover h-48 aspect-auto group-hover:scale-120 " alt="picture of {name}"></figure>
       <div class="card-body">
          <div class='flex flex-row gap-1'>
-            <div class='-translate-y-2 w-12 h-16 border border-t-red-400 border-t-8'>
+            <div class='-translate-y-1 w-20 h-12 border border-t-red-400 border-t-8'>
                {duration || '1 JAN'}
             </div>
             <h2 class="card-title">{name}</h2>

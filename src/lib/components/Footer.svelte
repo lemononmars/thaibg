@@ -1,4 +1,5 @@
 <script lang='ts'>
+    import TBGAlogo from '$lib/assets/TBGA-logo-color.png'
     const boardgameMenu = [
         {path: '/boardgame',title:'Thai Board Game List'},
         {path: '/type',title:'Types'},
@@ -34,7 +35,7 @@
 
 <footer class="mx-auto w-screen max-w-7xl sm:px-6 lg:px-8 p-10 footer bg-base-200 text-base-content">
     <div>
-        <img class="h-20" src="./static/TBGA-logo-color.png" alt="logo">
+        <img class="h-20" src={TBGAlogo} alt="logo">
         <p>Thailand Board Game <br> Association</p>
     </div>
     {#each menuTitles as mt, idx} 

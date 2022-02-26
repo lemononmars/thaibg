@@ -47,7 +47,7 @@
          {#each designerPictureUrls as url}
             <div class="relative avatar group-hover:animate-pulse">
                <div class="w-12">
-                  <img src="{url}">
+                  <img src="{url}" alt="designer images">
                </div>
             </div>
          {:else}

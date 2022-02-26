@@ -28,5 +28,8 @@ export default {
 		// 		noExternal: Object.keys(pkg.dependencies || {})
 		// 	}
 		// }
+		files:{
+			assets: 'static',
+		}
 	}
 };

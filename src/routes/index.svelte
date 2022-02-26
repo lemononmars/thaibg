@@ -7,7 +7,7 @@
   import BoardgameCard from '$lib/components/BoardgameCard.svelte'
   import {PlayCircleIcon, UserCheckIcon, CoffeeIcon, ChevronRightIcon, FilmIcon} from 'svelte-feather-icons'
   import ContentCard from '$lib/components/ContentCard.svelte'
-import EventCard from '$lib/components/EventCard.svelte'
+  import EventCard from '$lib/components/EventCard.svelte'
 
    let boardgames
    let contents
