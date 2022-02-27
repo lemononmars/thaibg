@@ -32,7 +32,7 @@
     const supporterMenu = [
         {path: '/publisher',title:'Publishers'},
         {path: '/sponsor',title:'Sponsors'},
-        {path: '/contentcreator',title:'Content Creators'},
+        {path: '/creator',title:'Content Creators'},
         {path: '/place', title:'Places'}
     ]
     const activityMenu = [
@@ -57,7 +57,7 @@
 <svelte:window bind:scrollY on:mousemove={mouseMove}/>
 
 {#if scrollY < 40 || mouseY < 300}
-<div class="navbar mb-2 bg-base-300 w-screen" out:fly="{{ y: -10, duration: 500 }}" in:fly="{{ y: -10, duration: 500 }}">
+<div class="navbar mb-2 bg-base-300 w-screen" transition:fly="{{ y: -10, duration: 500 }}">
     <div class="navbar-start">
         <div class="dropdown">
             <div class="flex-none lg:hidden">
@@ -86,7 +86,7 @@
             </label> 
             <ul tabindex="0" class="p-2 shadow menu dropdown-content w-52 bg-warning">
                 {#each boardgameMenu as m}
-                    <li><a href="{m.path}">{m.title}</a></li>
+                    <li><a href="{m.path}" class="text-warning-content">{m.title}</a></li>
                 {/each}
             </ul>
         </div>
@@ -100,7 +100,7 @@
                     <div>
                         <ul class="p-2 shadow w-52">
                             {#each peopleMenu as m}
-                                <li><a href="{m.path}">{m.title}</a></li>
+                                <li><a href="{m.path}" class="text-success-content">{m.title}</a></li>
                             {/each}
                         </ul>
                     </div>
@@ -108,7 +108,7 @@
                     <div>
                         <ul class="p-2 shadow w-52">
                             {#each supporterMenu as m}
-                                <li><a href="{m.path}">{m.title}</a></li>
+                                <li><a href="{m.path}" class="text-success-content">{m.title}</a></li>
                             {/each}
                         </ul>
                     </div>
@@ -122,7 +122,7 @@
             </span>
             <ul tabindex="0" class="p-2 shadow menu dropdown-content w-52 bg-error">
                 {#each activityMenu as m}
-                    <li><a href="{m.path}">{m.title}</a></li>
+                    <li><a href="{m.path}" class="text-error-content">{m.title}</a></li>
                 {/each}
             </ul>
         </div>

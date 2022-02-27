@@ -4,7 +4,7 @@
    import {onMount} from 'svelte'
    import Spinner from '$lib/components/Spinner.svelte'
    import {SearchIcon} from 'svelte-feather-icons'
-   import ListLink from '$lib/components/ListLink.svelte'
+   import ListCard from '$lib/components/ListCard.svelte'
    import {DIR_IMAGE, URL_BLANK_IMAGE} from '$lib/constants'
    
    let categories = []
@@ -27,13 +27,13 @@
 <div class="flex flex-col justify-center items-center relative">
    <div class="form-control m-4">
       <div class="relative">
-        <input type="text" placeholder="Search designer" class="w-full pr-16 input input-primary input-bordered"> 
+        <input type="text" placeholder="Search category" class="w-full pr-16 input input-primary input-bordered"> 
         <button class="absolute top-0 right-0 rounded-l-none btn btn-primary"><SearchIcon size=20/></button>
       </div>
    </div> 
-   <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-4 lg:gap-4">
+   <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-3 lg:gap-4">
       {#each categories as ds}
-         <ListLink {...ds}/>
+         <ListCard {...ds}/>
       {:else}
          <Spinner/>
       {/each}

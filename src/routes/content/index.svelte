@@ -4,29 +4,29 @@
    import {onMount} from 'svelte'
    import Spinner from '$lib/components/Spinner.svelte'
    import {SearchIcon} from 'svelte-feather-icons'
-   import EventCard from '$lib/components/EventCard.svelte'
+   import ContentCard from '$lib/components/ContentCard.svelte'
    
-   let events = []
+   let contents = []
    onMount(async () => {
-      let {data, error} = await from('Event').select('*').eq('Event_show', true)
-      events = data
+      let {data, error} = await from('Content').select('*')
+      contents = data
 
       if(error) throw(error)
    })
    
 </script>
 
-<Seo title="Event"/>
+<Seo title="Content"/>
 <div class="flex flex-col justify-center items-center relative">
    <div class="form-control m-4">
       <div class="relative">
-        <input type="text" placeholder="Search event" class="w-full pr-16 input input-primary input-bordered"> 
+        <input type="text" placeholder="Search Content" class="w-full pr-16 input input-primary input-bordered"> 
         <button class="absolute top-0 right-0 rounded-l-none btn btn-primary"><SearchIcon size=20/></button>
       </div>
    </div> 
    <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-4 gap-4">
-      {#each events as event}
-         <EventCard {event}/>
+      {#each contents as content}
+         <ContentCard {content}/>
       {:else}
          <Spinner/>
       {/each}

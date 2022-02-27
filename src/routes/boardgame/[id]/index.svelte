@@ -3,7 +3,7 @@ import {from} from '$lib/supabase'
 
 export async function load({ params }) {
     // ignore page's [slug] and redirect to the proper location
-    const {data, error} = await from('Boardgame').select('*').eq('id', params.id)
+    const {data, error} = await from('Boardgame').select('TBG_slug').eq('TBG_ID', params.id)
     if(error || !data[0])
         return {
             redirect: "/boardgame",
@@ -11,7 +11,7 @@ export async function load({ params }) {
         }
     else
         return {
-            redirect: `/boardgame/${params.bgid}/${data[0].TBG_slug}`,
+            redirect: `/boardgame/${params.id}/${data[0].TBG_slug}`,
             status: 303
         }
 }

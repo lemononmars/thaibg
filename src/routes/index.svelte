@@ -13,7 +13,7 @@
    let contents
    let events
    let loaded = false
-   let numDesginers = 4, numBoardgames = 0, numActivities = 0
+   let numPeople = 4, numBoardgames = 0, numActivities = 0
    // let artists
    const boardgameCarouselWidth = 96
 
@@ -36,6 +36,10 @@
          .select('*')
       numActivities += res.data.length
       events = res.data.slice(-3)
+
+      res = await from('Person')
+         .select('*')
+      numPeople = res.data.length
 
       res = await from('Content')
          .select('*')
@@ -74,7 +78,7 @@
         <div class="stat-figure text-secondary">
           <UserCheckIcon size="40"/>
         </div>
-        <div class="stat-value">{numDesginers}</div>
+        <div class="stat-value">{numPeople}</div>
         <div class="stat-title">People</div>
       </div>
       
@@ -88,7 +92,7 @@
     </div>
     {/if}
     <p class="text-2xl">
-      รวมทุกข้อมูลเกี่ยวกับบอร์ดเกมไทย ในเครือข่ายของสมาคมบอร์ดเกม
+      รวมทุกข้อมูลเกี่ยวกับบอร์ดเกมไทย <br> ในเครือข่ายของสมาคมบอร์ดเกม
     </p>
     <div class="flex flex-row items-center justify-center mt-4">
       <div class="btn btn-primary">Contribute</div>
@@ -105,7 +109,7 @@
 
 <div class="flex flex-col w-full p-10">
   <h1 class="w-full text-center">Upcoming Events</h1>
-  <div class="grid grid-cols-1 lg:grid-cols-3">
+  <div class="grid grid-cols-2 lg:grid-cols-4">
     {#if loaded}
       {#each events as event}
         <EventCard {event}/>

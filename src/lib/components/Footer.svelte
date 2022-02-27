@@ -16,7 +16,7 @@
     const supporterMenu = [
         {path: '/publisher',title:'Publishers'},
         {path: '/sponsor',title:'Sponsors'},
-        {path: '/contentcreator',title:'Content Creators'},
+        {path: '/creator',title:'Content Creators'},
         {path: '/place', title:'Places'}
     ]
     const activityMenu = [

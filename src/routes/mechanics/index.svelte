@@ -4,7 +4,7 @@
    import {onMount} from 'svelte'
    import Spinner from '$lib/components/Spinner.svelte'
    import {SearchIcon} from 'svelte-feather-icons'
-   import ListLink from '$lib/components/ListLink.svelte'
+   import ListCard from '$lib/components/ListCard.svelte'
    import {DIR_IMAGE, URL_BLANK_IMAGE} from '$lib/constants'
    
    let mechanics = []
@@ -31,9 +31,9 @@
         <button class="absolute top-0 right-0 rounded-l-none btn btn-primary"><SearchIcon size=20/></button>
       </div>
    </div> 
-   <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-4 gap-4">
+   <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-3 gap-4">
       {#each mechanics as m}
-         <ListLink {...m}/>
+         <ListCard {...m}/>
       {:else}
          <Spinner/>
       {/each}

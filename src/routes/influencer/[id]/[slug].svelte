@@ -69,7 +69,7 @@
                <ul>
                   {#each contentData as c}
                   <li>
-                     <div class="badge">{c.Content_channel}</div>
+                     <div class="badge">{c.Content_type}</div>
                      <a href="{c.Content_link}" class="text-ellipsis" target="_blank">{c.Content_name}</a> 
                   </li>
                   {:else}

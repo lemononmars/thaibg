@@ -25,15 +25,6 @@
       )
    })
 </script>
-<!-- 
-<a href="/boardgame/{id}/{slug}">
-   <div class="relative aspect-square shadow-xl transition ease-in-out hover:opacity-80 hover:scale-105 duration-300 rounded-xl lg:bg-origin-border bg-cover"
-   style="background-image:url({picture})">
-      <div class='absolute bottom-2 inset-x-2 p-auto glass rounded-lg'>
-         <p class="text-sm lg:text-xl text-primary-content">{name} ({released})</p> 
-      </div>
-   </div> 
-</a> -->
 
 <a href="/boardgame/{id}/{slug}">
    <div class="relative card w-72 pt-8 bg-base-100 card-compact shadow-xl transition ease-in-out hover:opacity-80 hover:scale-105 duration-30 group">

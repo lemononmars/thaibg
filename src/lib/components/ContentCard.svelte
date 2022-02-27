@@ -6,30 +6,28 @@
    export let content
 
    let id = content.Content_ID
-   let link = content.Content_link
-   let type = content.Content_channel
+   let type = content.Content_type
    let name = content.Content_name
    let picture // auto-generate thumbnail?
    let creatorPictureUrls = []
 
    onMount(async()=>{
-      let {data, error} = await from('Influencer')
-         .select('*, Influencer_Relation!inner(*)')
-         .eq('Influencer_Relation.Content_ID', id)
-
-      console.log(data)
-      if(error) 
+      let {data, error} = await from('Creator')
+         .select('*, Creator_Relation!inner(*)')
+         .eq('Creator_Relation.Content_ID', id)
+      
+      if(error)
          throw(error)
       else
          creatorPictureUrls = data.map((d)=>
-         DIR_IMAGE + '/influencer/' + (d.Influencer_picture || URL_BLANK_IMAGE)
+         DIR_IMAGE + '/creator/' + (d.Creator_picture || URL_BLANK_IMAGE)
       )
    })
 </script>
 
-<a href="{link}" target="_/">
+<a href="/content/{content.Content_ID}">
    <div class="relative group card w-72 pt-8 bg-base-100 card-compact shadow-xl transition ease-in-out hover:opacity-80 hover:scale-105 duration-30 group">
-      <figure><img src="{picture}" class="object-cover h-48 aspect-auto group-hover:scale-120 " alt="picture of {name}"></figure>
+      <figure><img src="{picture}" class="object-cover h-48 aspect-auto group-hover:scale-120 " alt="content thumbnail"></figure>
       <div class="card-body">
       <h2 class="card-title truncate">{name}</h2>
       <div class="badge">{type}</div>
@@ -39,7 +37,7 @@
          {#each creatorPictureUrls as url}
             <div class="relative avatar group-hover:animate-pulse">
                <div class="w-12">
-                  <img src="{url}">
+                  <img src="{url}" alt="creator thumbnail">
                </div>
             </div>
          {:else}

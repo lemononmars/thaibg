@@ -11,7 +11,7 @@
             }
         else
             return {
-                redirect: `/designer/${params.id}/${data[0].slug}`,
+                redirect: `/designer/${params.id}/${data[0].Designer_slug}`,
                 status: 303
             }
     }

@@ -4,18 +4,18 @@
    import {onMount} from 'svelte'
    import Spinner from '$lib/components/Spinner.svelte'
    import {SearchIcon} from 'svelte-feather-icons'
-   import ListCard from '$lib/components/ListCard.svelte'
+   import PersonCard from '$lib/components/PersonCard.svelte'
    import {DIR_IMAGE, URL_BLANK_IMAGE} from '$lib/constants'
    
-   let types = []
+   let retailers = []
    onMount(async () => {
-      let {data, error} = await from('Type').select('*')
-      types = data.map((t)=>({
-         id: t.Type_ID,
-         name: t.Type_name,
-         slug: t.Type_slug,
-         picture: DIR_IMAGE + '/type/' + (t.Type_picture || URL_BLANK_IMAGE),
-         type: 'type'
+      let {data, error} = await from('Retailer').select('*').eq('Retailer_show', true)
+      retailers = data.map((d)=>({
+         id: d.Retailer_ID,
+         name: d.Retailer_name,
+         slug: d.Retailer_slug,
+         picture: DIR_IMAGE + '/retailer/' + (d.Retailer_picture || URL_BLANK_IMAGE),
+         type: 'retailer'
       }))
 
       if(error) throw(error)
@@ -23,17 +23,17 @@
    
 </script>
 
-<Seo title="Type"/>
+<Seo title="Retailer"/>
 <div class="flex flex-col justify-center items-center relative">
    <div class="form-control m-4">
       <div class="relative">
-        <input type="text" placeholder="Search Type" class="w-full pr-16 input input-primary input-bordered"> 
+        <input type="text" placeholder="Search Retailer" class="w-full pr-16 input input-primary input-bordered"> 
         <button class="absolute top-0 right-0 rounded-l-none btn btn-primary"><SearchIcon size=20/></button>
       </div>
    </div> 
-   <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-3 gap-4">
-      {#each types as ds}
-         <ListCard {...ds}/>
+   <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-4 gap-4">
+      {#each retailers as ds}
+         <PersonCard {...ds}/>
       {:else}
          <Spinner/>
       {/each}
