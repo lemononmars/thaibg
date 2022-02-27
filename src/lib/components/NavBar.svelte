@@ -1,4 +1,4 @@
-<script lang="ts" context="module">
+<!-- <script lang="ts" context="module">
     export async function load({ session }) {
         const { user } = session
         return {
@@ -7,16 +7,19 @@
             }
         };
     }
-</script>
+</script> -->
 
 <script lang="ts">
+    import {getAvatar, getCurrUserProfile} from '$lib/user/profile'
     import { user, profile, signOut } from '$lib/user'
     import {ChevronDownIcon, MenuIcon, UserIcon, SearchIcon, ChevronUpIcon} from 'svelte-feather-icons'
     import { URL_DICEBEAR } from '$lib/constants'
     import ToggleTheme from '$lib/components/ToggleTheme.svelte'
     import {fly} from 'svelte/transition'
     import TBGAlogo from '$lib/assets/TBGA-logo-color.png'
+    import {onMount} from 'svelte'
 
+    //export let user
     const boardgameMenu = [
         {path: '/boardgame',title:'Thai Board Game List'},
         {path: '/type',title:'Types'},
@@ -37,12 +40,24 @@
     ]
     const activityMenu = [
         {path: '/event',title:'Events'},
-        {path: '/award',title:'Awards'},
+        {path: '/honor',title:'Honors'},
         {path: '/content',title:'Contents'},
     ]
 
-    const username = $profile.username ? $profile.username : ( user ? user?.email : 'Explorer' )
-    const avatar_url = $profile.avatar_url ? $profile.avatar_url : URL_DICEBEAR + username + '.svg'
+    let avatar = URL_DICEBEAR + 'randombear' + '.svg'
+    // onMount (async ()=>{
+    //     let { data: { username, website, avatar_url } , error } = await getCurrUserProfile()
+    //     if(!error) {
+    //         avatar = await getAvatar(avatar_url)
+    //         avatar = URL_DICEBEAR + 'randombear' + '.svg'
+    //         console.log('navbar', avatar, profile, username)
+    //         profile.set({avatar_url: avatar})
+    //     }
+    //     else {
+    //         avatar = URL_DICEBEAR + 'randombear' + '.svg'
+    //     }
+    // })
+    
     let scrollY, mouseY
 
     function scrollTop(){
@@ -80,6 +95,7 @@
     </div> 
     <div class="navbar-center hidden lg:flex gap-4">
         <div class="dropdown dropdown-hover">
+            <!-- svelte-ignore a11y-label-has-associated-control -->
             <label tabindex="0" class="hover:text-warning flex flex-row items-center">
                 Board Game
                 <ChevronDownIcon size="20"/>
@@ -134,6 +150,7 @@
             <ToggleTheme/>
         </div> 
         <div class="dropdown dropdown-hover dropdown-end">
+            <!-- svelte-ignore a11y-label-has-associated-control -->
             <label tabindex="0" class="m-1 btn"><SearchIcon size="20"/></label>
             <ul tabindex="0" class="p-2 shadow menu dropdown-content w-52 text-neutral">
               <input type="text" placeholder="search"/>
@@ -143,16 +160,17 @@
         <div>
             {#if $user}
                 <div class="dropdown dropdown-hover dropdown-end">
+                    <!-- svelte-ignore a11y-label-has-associated-control -->
                     <label tabindex="0">
                         <div class="avatar">
                             <div class="w-12 h-12 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-                                <img src="{avatar_url}" alt="user avatar"/>
+                                <img src="{avatar}" alt="user avatar"/>
                             </div>
                         </div>
                     </label>
                     <ul tabindex="0" class="p-2 shadow menu dropdown-content w-52 bg-info">
                         <li><a href="/profile">Profile</a></li>
-                        <li><a on:click={signOut}>Sign Out</a></li>
+                        <li><a on:click={signOut} href="/">Sign Out</a></li>
                     </ul>
                 </div>
             {:else}

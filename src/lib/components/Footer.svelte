@@ -21,7 +21,7 @@
     ]
     const activityMenu = [
         {path: '/event',title:'Events'},
-        {path: '/award',title:'Awards'},
+        {path: '/honor',title:'Honors'},
         {path: '/content',title:'Contents'},
     ]
     const websiteMenu = [

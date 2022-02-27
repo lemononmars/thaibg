@@ -8,7 +8,6 @@
    let slug: string = bg.TBG_slug
    let picture: string = DIR_IMAGE + '/boardgame/' + (bg.TBG_picture || URL_BLANK_IMAGE)
    let name: string  = bg.TBG_name
-   //let released: number = bg.TBG_released
    let description: string = bg.TBG_description?.slice(50) || ''
    let designerPictureUrls: string[] = []
 
@@ -21,7 +20,7 @@
          throw(error)
       else
          designerPictureUrls = data.map((d)=>
-            DIR_IMAGE + '/designer/' + (d.Designer_picture || URL_BLANK_IMAGE)
+            DIR_IMAGE + '/person/' + (d.Designer_picture || URL_BLANK_IMAGE)
       )
    })
 </script>

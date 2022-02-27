@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 
-type SupaTable = 'profiles' | 'Artist' | 'Artist_Relation' | 'Award' | 'Award_Relation' | 'Boardgame' | 'Category' | 'Category_Relation' | 'Content' | 'Creator' | 'Creator_Relation' | 'Designer' | 'Designer_Relation' | 'Event' | 'Event_Relation' | 'Mechanics' | 'Mechanics_Relation' | 'Manufacturer' | 'Manufacturer_Relation' | 
+type SupaTable = 'profiles' | 'Artist' | 'Artist_Relation' | 'Honor' | 'Honor_Relation' | 'Boardgame' | 'Category' | 'Category_Relation' | 'Comment' | 'Content' | 'Creator' | 'Creator_Relation' | 'Designer' | 'Designer_Relation' | 'Event' | 'Event_Relation' | 'Graphicdesigner' | 'Graphicdesigner_Relation' | 'Mechanics' | 'Mechanics_Relation' | 'Manufacturer' | 'Manufacturer_Relation' | 
 'Person' | 'Place' | 'Place_Relation' | 'Publisher' | 'Publisher_Relation' | 'Retailer' | 'Sponsor' | 'Sponsor_Relation' | 'Type' | 'Type_Relation' 
 type SupaStorageBucket = 'avatars' | 'images'
 
@@ -19,7 +19,7 @@ export const storage = supabaseClient.storage
 /**
  *
  * @param table The Supabase table to act upon
- * @returns
+ * @returns {data, error}
  */
 export const from = (table: SupaTable) => supabaseClient.from(table)
 /**

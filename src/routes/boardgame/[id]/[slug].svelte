@@ -1,5 +1,6 @@
 <script lang="ts" context="module">
-   import {from} from '$lib/supabase'
+   // TODO: delegate some heavy loading to client-side
+   import {from, fromBucket} from '$lib/supabase'
 
    export async function load({ session, params }) {
       const { user } = session
@@ -49,6 +50,31 @@
          }
       };
    }
+
+// /** @type {import('@sveltejs/kit').RequestHandler} */
+//    export async function post({request, params}){
+//       const {data, error} = from('Comment')
+//          .insert([
+//             {
+//                TBG_ID: params.id,
+//                Comment_text: request.text(),
+//                Comment_user_ID: '001'
+//             }
+//          ])
+
+//       if(error)
+//          return {
+//             status:400
+//          }
+
+//       return {
+//          status:200,
+//          body:{
+//             message: 'posted!',
+//             data
+//          }
+//       }
+//    }
 </script>
 
 <script lang="ts">
@@ -57,9 +83,29 @@
    import {StarIcon, UserIcon, UsersIcon, ClockIcon, FeatherIcon, EditIcon, HomeIcon} from 'svelte-feather-icons'
    import {DIR_IMAGE, URL_BLANK_IMAGE} from '$lib/constants'
    import Social from '$lib/components/Social.svelte'
+   import {onMount} from 'svelte'
+   import Spinner from '$lib/components/Spinner.svelte'
 
    export let user
    export let bg, designers, artists, publishers, contents, types, mechanics, categories
+
+   let comments
+   let commentsLoaded = false
+   onMount (async ()=>{
+      const {data, error} = await from('Comment').select('*').eq('TBG_ID', bg.TBG_ID)
+      comments = data
+      if(data) {
+         for(let c in comments)  {
+            const {data: commentData, error} = await from('profiles').select('avatar_url, username').eq('id', data[c].Comment_user_ID)
+            const {signedURL, error: error2} = await fromBucket('avatars')
+               .createSignedUrl(commentData[0].avatar_url, 30) // add new key-value pair
+            comments[c]['Comment_avatar_url'] = signedURL
+            comments[c]['Comment_username'] = commentData[0].username
+         }
+      }
+      console.log(comments)
+      commentsLoaded = true
+   })
 
    let favorite: boolean = false // to be fetched from user
    $: numFavorites = 9 + (favorite?1:0)
@@ -72,15 +118,15 @@
       if(option == 0)
          filteredContents = contents
       else
-         filteredContents = contents.filter((c)=>c.Content_type === contentTitle[option])
+         filteredContents = contents.filter((c)=>c.Content_media === contentTitle[option])
       filteredContents = filteredContents
    }
 </script>
 
 <Seo title="Boardgame"/>
 
-<div class="w-full h-32">
-   <img src="https://picsum.photos/seed/picsum/800/600" alt="cover image" class="object-cover w-full h-60">
+<div class="w-full h-36">
+   <img src="https://picsum.photos/seed/picsum/800/600" class="object-cover w-full h-60" alt="cover" >
 </div>
 
 <div class="flex flex-row text-left gap-6">
@@ -96,10 +142,10 @@
             <div class="flex flex-row items-center gap-2">
                <div class="avatar">
                   <div class="w-16 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 hover:scale-105 duration-300">
-                  <img src="{DIR_IMAGE + '/designer/' + (d.Designer_picture || URL_BLANK_IMAGE)}" alt="avatar">
+                  <img src="{DIR_IMAGE + '/person/' + (d.Designer_picture || URL_BLANK_IMAGE)}" alt="avatar">
                   </div>
                </div>
-               <a href="/designer/{d.Designer_ID}">{d.Designer_name}</a>
+               <a href="/person/{d.Designer_ID}">{d.Designer_name}</a>
             </div>
          {:else} 
             N/A
@@ -112,7 +158,7 @@
          <div class="flex flex-row items-center gap-2">
             <div class="avatar">
                <div class="w-16 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 hover:scale-105 duration-300">
-               <img src="{DIR_IMAGE + '/artist/' + (a.Artist_picture || URL_BLANK_IMAGE)}" alt="avatar">
+               <img src="{DIR_IMAGE + '/person/' + (a.Artist_picture || URL_BLANK_IMAGE)}" alt="avatar">
                </div>
             </div>
             <a href="/artist/{a.Artist_ID}">{a.Artist_name}</a>
@@ -245,10 +291,38 @@
       </div>
       <div class="divider"></div>
       <h3>Comments</h3>
-      {#if user}
+      {#if commentsLoaded}
+         {#each comments as c}
+            <div class="flex flex-row items-center border-2 border-primary p-2 gap-2 rounded-lg">
+               <div class="flex flex-col justify-center gap-1 text-center m-2">
+                  <div class="avatar">
+                     <div class=" w-20 h-20 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+                        <img src="{c.Comment_avatar_url}" alt="user avatar">
+                     </div>
+                  </div>
+                  <div class="truncate">
+                     {c.Comment_username}
+                  </div>
+               </div>
+               <div>
+                  {c.Comment_text}
+               </div>
+            </div>
+         {:else}
+            <p>Be the first person to comment!</p>
+         {/each}
+      {:else}
+         <Spinner/>
+      {/if}
+
+      {#if user && !user.guest}
          <div class="form-control" method="post">
             <textarea class="textarea h-24 textarea-bordered" placeholder="Add comment"></textarea>
-            <div class="btn" >Submit</div>
+            <div class="btn" type="submit">Submit</div>
+         </div>
+      {:else}
+         <div>
+         <a href="/auth">Sign in</a> to comment
          </div>
       {/if}
    </div>

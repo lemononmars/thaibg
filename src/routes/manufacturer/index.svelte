@@ -5,16 +5,17 @@
    import Spinner from '$lib/components/Spinner.svelte'
    import {SearchIcon} from 'svelte-feather-icons'
    import PlainCard from '$lib/components/PlainCard.svelte'
+   import {DIR_IMAGE, URL_BLANK_IMAGE} from '$lib/constants'
    
-   let publishers = []
+   let manufacturers = []
    onMount(async () => {
-      let {data, error} = await from('Publisher').select('*')
-      publishers = data.map((d)=>({
-         id: d.Publisher_ID,
-         name: d.Publisher_name,
-         slug: d.Publisher_slug,
-         picture: d.Publisher_picture,
-         type: 'publisher'
+      let {data, error} = await from('Manufacturer').select('*')
+      manufacturers = data.map((d)=>({
+         id: d.Manufacturer_ID,
+         name: d.Manufacturer_name,
+         slug: d.Manufacturer_slug,
+         picture: DIR_IMAGE + '/Manufacturer/' + (d.Manufacturer_picture || URL_BLANK_IMAGE),
+         type: 'manufacturer'
       }))
 
       if(error) throw(error)
@@ -22,19 +23,23 @@
    
 </script>
 
-<Seo title="Publisher"/>
+<Seo title="Manufacturer"/>
 <div class="flex flex-col justify-center items-center relative">
    <div class="form-control m-4">
       <div class="relative">
-        <input type="text" placeholder="Search Publisher" class="w-full pr-16 input input-primary input-bordered"> 
+        <input type="text" placeholder="Search Manufacturer" class="w-full pr-16 input input-primary input-bordered"> 
         <button class="absolute top-0 right-0 rounded-l-none btn btn-primary"><SearchIcon size=20/></button>
       </div>
    </div> 
    <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-4 gap-4">
-      {#each publishers as object}
+      {#each manufacturers as object}
          <PlainCard {object}/>
       {:else}
-         <Spinner/>
+         {#if manufacturers}
+            No Manufacturer found.
+         {:else}
+            <Spinner/>
+         {/if}
       {/each}
    </div>
 </div>

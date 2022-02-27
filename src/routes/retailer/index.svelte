@@ -4,8 +4,7 @@
    import {onMount} from 'svelte'
    import Spinner from '$lib/components/Spinner.svelte'
    import {SearchIcon} from 'svelte-feather-icons'
-   import PersonCard from '$lib/components/PersonCard.svelte'
-   import {DIR_IMAGE, URL_BLANK_IMAGE} from '$lib/constants'
+   import PlainCard from '$lib/components/PlainCard.svelte'
    
    let retailers = []
    onMount(async () => {
@@ -14,7 +13,7 @@
          id: d.Retailer_ID,
          name: d.Retailer_name,
          slug: d.Retailer_slug,
-         picture: DIR_IMAGE + '/retailer/' + (d.Retailer_picture || URL_BLANK_IMAGE),
+         picture: d.Retailer_picture,
          type: 'retailer'
       }))
 
@@ -32,8 +31,8 @@
       </div>
    </div> 
    <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-4 gap-4">
-      {#each retailers as ds}
-         <PersonCard {...ds}/>
+      {#each retailers as object}
+         <PlainCard {object}/>
       {:else}
          <Spinner/>
       {/each}

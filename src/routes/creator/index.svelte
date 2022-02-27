@@ -7,15 +7,15 @@
    import PersonCard from '$lib/components/PersonCard.svelte'
    import {DIR_IMAGE, URL_BLANK_IMAGE} from '$lib/constants'
    
-   let printings = []
+   let artists = []
    onMount(async () => {
-      let {data, error} = await from('Printing').select('*').eq('Printing_show', true)
-      printings = data.map((d)=>({
-         id: d.Printing_ID,
-         name: d.Printing_name,
-         slug: d.Printing_slug,
-         picture: DIR_IMAGE + '/printing/' + (d.Printing_picture || URL_BLANK_IMAGE),
-         type: 'printing'
+      let {data, error} = await from('Artist').select('*').eq('Artist_show', true)
+      artists = data.map((a)=>({
+         id: a.Artist_ID,
+         name: a.Artist_name,
+         slug: a.Artist_slug,
+         picture: DIR_IMAGE + '/artist/' + (a.picture || URL_BLANK_IMAGE),
+         type: 'artist'
       }))
 
       if(error) throw(error)
@@ -23,23 +23,19 @@
    
 </script>
 
-<Seo title="Printing"/>
+<Seo title="Artist"/>
 <div class="flex flex-col justify-center items-center relative">
    <div class="form-control m-4">
       <div class="relative">
-        <input type="text" placeholder="Search Printing" class="w-full pr-16 input input-primary input-bordered"> 
+        <input type="text" placeholder="Search artist" class="w-full pr-16 input input-primary input-bordered"> 
         <button class="absolute top-0 right-0 rounded-l-none btn btn-primary"><SearchIcon size=20/></button>
       </div>
    </div> 
    <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-4 gap-4">
-      {#each printings as ds}
+      {#each artists as ds}
          <PersonCard {...ds}/>
       {:else}
-         {#if printings}
-            No printing found.
-         {:else}
-            <Spinner/>
-         {/if}
+         <Spinner/>
       {/each}
    </div>
 </div>
