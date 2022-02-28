@@ -8,15 +8,15 @@
         {path: '/category',title:'Categories'},
     ]
     const peopleMenu = [
-        {path: '/designer',title:'Designers'},
-        {path: '/artist',title:'Artists'},
-        {path: '/graphicdesigner', title:'Graphic Designers'},
+        {path: '/person?role=Designer',title:'Designers'},
+        {path: '/person?role=Artist',title:'Artists'},
+        {path: '/person?role=Graphicdesigner', title:'Graphic Designers'},
         {path: '/manufacturer',title:'Manufaturers'},
     ]
     const supporterMenu = [
         {path: '/publisher',title:'Publishers'},
         {path: '/sponsor',title:'Sponsors'},
-        {path: '/creator',title:'Content Creators'},
+        {path: '/person?role=Creator',title:'Content Creators'},
         {path: '/place', title:'Places'}
     ]
     const activityMenu = [

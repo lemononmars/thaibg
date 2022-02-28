@@ -36,8 +36,8 @@
       <div class="avatar-group -space-x-6 absolute top-0 right-0 m-1 ">
          {#each designerPictureUrls as url}
             <div class="relative avatar group-hover:animate-pulse">
-               <div class="w-12">
-                  <img src="{url}" alt="designer images">
+               <div class="w-12 h-12">
+                  <img src="{url}" alt="designer images" class="object-contain">
                </div>
             </div>
          {:else}

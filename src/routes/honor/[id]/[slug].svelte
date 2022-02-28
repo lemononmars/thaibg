@@ -4,11 +4,18 @@
    export async function load({ session, params }) {
        const { user } = session
        const {data, error} = await from('Honor').select('*').eq('Honor_ID', params.id)
-       if(error) {}
+       const {data: honorees, error: error2} = await from ('Honor_Relation')
+         .select('*')
+         .eq('Honor_ID', params.id)
+
+       if(error || error2) 
+         return { status: 404 }
+      
        return {
            props: {
                user,
-               honorData: data[0] || null
+               honorData: data[0],
+               honorees
            }
        };
    }
@@ -17,92 +24,62 @@
 <script lang="ts">
    import Seo from '$lib/components/SEO.svelte'
    import Spinner from '$lib/components/Spinner.svelte'
-   import {onMount} from 'svelte'
    import {DIR_IMAGE, URL_BLANK_IMAGE} from '$lib/constants'
 
-   export let user, honorData
-   
-   let boardgameData
-   let loaded = false
-   onMount(async ()=>{
-      // TODO: also filter board game ID and create the card
-      //
-      // const {data, error} = await from('Boardgame')
-      //    .select('*, Honor_Relation!inner(*)')
-      //    .eq('Honor_Relation.TBG_ID', honorData.TBG_ID)
-         
-      const {data, error} = await from ('Honor_Relation')
-         .select('*')
-         .eq('Honor_ID', honorData.Honor_ID)
-
-      if(error) throw error
-      boardgameData = data
-      honorData.Honor_picture = DIR_IMAGE + '/honor/' + (honorData.Honor_picture || URL_BLANK_IMAGE)
-      loaded = true
-
-   })
-   
+   export let user, honorData, honorees
+   honorData.Honor_picture = DIR_IMAGE + '/honor/' + (honorData.Honor_picture || URL_BLANK_IMAGE)
 </script>
 
 <Seo title="Honor"/>
-<div class="flex flex-col justify-center items-center relative">
-   <div class="w-full text-left m-4 flex flex-col">
-      {#if !honorData}
-         Invalid honor ID!
+<div class="flex flex-row justify-center items-center relative">
+   <div class="flex flex-col gap-2 text-left m-4 w-1/3">
+      <img src="{honorData.Honor_picture}" alt="image of {honorData.Honor_name}" class="w-72 h-72 mask mask-hexagon-2 object-contain"/>
+      <h1>{honorData.Honor_name}</h1>
+      <h2>{honorData.Honor_name_th? "(" + honorData.Honor_name_th + ")": ""}</h2>
+      {#if honorData.Honor_link}
+         <a href="{honorData.Honor_link}" target="_blank">{honorData.Honor_link}</a>
       {:else}
-         {#if honorData}
-            <div class="flex flex-col lg:flex-row lg:gap-4 w-full p-8 border-2 shadow-lg rounded-xl">
-               <img src="{honorData.Honor_picture}" alt="image of {honorData.Honor_name}" class="w-72 mask mask-hexagon-2"/>
-               <div>
-                  <h1>{honorData.Honor_name}</h1>
-                  <h2>{honorData.Honor_name_th? "(" + honorData.Honor_name_th + ")": ""}</h2>
-                  <ul>
-                     <li>Official link: 
-                        {#if honorData.Honor_link}
-                           <a href="{honorData.Honor_link}" target="_blank">{honorData.Honor_link}</a>
-                        {:else}
-                           N/A
-                        {/if}
-                     </li>
-                  </ul>
-               </div>
-            </div>
-            <!-- <div>{likes.length}</div> -->
-            <div>
-               <h2>Description</h2>
-               <p>{@html honorData.Honor_description || 'N/A'}</p>
-            </div>
-            <div class="divider"></div>
-            {#if loaded}
-               <h2>Winners</h2>
-               <div class="overflow-x-auto">
-                  <table class="table table-zebra">
-                  <!-- head -->
-                  <thead>
-                     <tr>
-                        <th>Position</th>
-                        <th>Winner</th>
-                     </tr>
-                  </thead>
-                     <tbody>
-                        {#each boardgameData as bg}
-                           <tr>
-                              <td>{bg.Honor_position}</td>
-                              <td>{bg.TBG_name}</td>
-                           </tr>
-                        {/each}
-                     </tbody>
-                  </table>
-               </div>
-            {:else}
-               <Spinner/>
-            {/if}
-         {:else}
-            <Spinner/>
-         {/if}
+         N/A
       {/if}
+      <h2>Description</h2>
+      <p>{@html honorData.Honor_description || 'N/A'}</p>
+      <div class="divider"></div>
+      <!-- social share-->
       {#if user && !user.guest}
          <button class="btn">Suggest edit</button>
       {/if}
    </div>
+   <div>
+      {#if honorees}
+         <h2>Winners</h2>
+         <div class="overflow-x-auto">
+            <table class="table table-zebra">
+            <!-- head -->
+            <thead>
+               <tr>
+                  <th>Position</th>
+                  <th>Winner</th>
+               </tr>
+            </thead>
+               <tbody>
+                  {#each honorees as h}
+                     <tr>
+                        <td>{h.Honor_position}</td>
+                        <td>
+                           {#if h.TBG_ID}
+                              <a href="/boardgame/{h.TBG_ID}">{h.TBG_name}</a>
+                           {:else}
+                              {h.TBG_name}
+                           {/if}
+                        </td>
+                     </tr>
+                  {/each}
+               </tbody>
+            </table>
+         </div>
+      {:else}
+         <Spinner/>
+      {/if}
+   </div>
+   
 </div>

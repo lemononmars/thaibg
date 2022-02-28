@@ -10,26 +10,11 @@
          status: 404,
       }
 
-      let designers, artists, publishers, contents
       let types, mechanics, categories
       let bg = data[0]
-      const BGID = bg.TBG_ID
-      let res = await from('Designer')
-         .select('*, Designer_Relation!inner(*)')
-         .eq('Designer_Relation.TBG_ID', BGID)
-      designers = res.data
-      res = await from('Artist')
-         .select('*, Artist_Relation!inner(*)')
-         .eq('Artist_Relation.TBG_ID', BGID)
-      artists = res.data
-      res = await from('Publisher')
-         .select('*, Publisher_Relation!inner(*)')
-         .eq('Publisher_Relation.TBG_ID', BGID)
-      publishers = res.data
-      res = await from('Content')
-         .select('*')
-         .eq('TBG_ID', BGID)
-      contents = res.data
+      let BGID = bg.TBG_ID
+      let res
+     
       res = await from('Type')
          .select('*, Type_Relation!inner(*)')
          .eq('Type_Relation.TBG_ID', BGID)
@@ -46,9 +31,58 @@
       return {
          props: {
             user,
-            bg, designers, artists, publishers, contents, types, mechanics, categories
+            bg, types, mechanics, categories
          }
       };
+   }
+
+   export async function getBasicInfo(BGID) {
+      let res = await from('Designer')
+         .select('*, Designer_Relation!inner(*)')
+         .eq('Designer_Relation.TBG_ID', BGID)
+      let designers = res.data
+      res = await from('Artist')
+         .select('*, Artist_Relation!inner(*)')
+         .eq('Artist_Relation.TBG_ID', BGID)
+      let artists = res.data
+      res = await from('Graphicdesigner')
+         .select('*, Graphicdesigner_Relation!inner(*)')
+         .eq('Graphicdesigner_Relation.TBG_ID', BGID)
+      let graphicdesigners = res.data
+      res = await from('Publisher')
+         .select('*, Publisher_Relation!inner(*)')
+         .eq('Publisher_Relation.TBG_ID', BGID)
+      let publishers = res.data
+      
+
+      return {designers, artists, publishers, graphicdesigners}
+   }
+
+   export async function getContents(BGID) {
+      let res = await from('Content')
+         .select('*')
+         .eq('TBG_ID', BGID)
+      return {contents: res.data}
+   }
+
+   export async function getEvents(BGID){
+      return null
+   }
+
+   export async function getComments(BGID){
+      const {data, error} = await from('Comment').select('*').eq('TBG_ID', BGID)
+      let comments = data
+      if(data) {
+         for(let c in comments)  {
+            // fetch username and profile pic
+            const {data: commentData, error} = await from('profiles').select('avatar_url, username').eq('id', data[c].Comment_user_ID)
+            const {signedURL, error: error2} = await fromBucket('avatars')
+               .createSignedUrl(commentData[0].avatar_url, 30) 
+            comments[c]['Comment_avatar_url'] = signedURL
+            comments[c]['Comment_username'] = commentData[0].username // add new key-value pair
+         }
+      }
+      return {comments}
    }
 
 // /** @type {import('@sveltejs/kit').RequestHandler} */
@@ -83,28 +117,22 @@
    import {StarIcon, UserIcon, UsersIcon, ClockIcon, FeatherIcon, EditIcon, HomeIcon} from 'svelte-feather-icons'
    import {DIR_IMAGE, URL_BLANK_IMAGE} from '$lib/constants'
    import Social from '$lib/components/Social.svelte'
-   import {onMount} from 'svelte'
    import Spinner from '$lib/components/Spinner.svelte'
+   import {fly} from 'svelte/transition'
+   import {onMount} from 'svelte'
 
    export let user
-   export let bg, designers, artists, publishers, contents, types, mechanics, categories
+   export let bg, types, mechanics, categories, graphicdesigners
+   const BGID = bg.TBG_ID
+   let contents = []
+   let promiseBasicInfo, promiseContents, promiseEvents, promiseComments
 
-   let comments
-   let commentsLoaded = false
-   onMount (async ()=>{
-      const {data, error} = await from('Comment').select('*').eq('TBG_ID', bg.TBG_ID)
-      comments = data
-      if(data) {
-         for(let c in comments)  {
-            const {data: commentData, error} = await from('profiles').select('avatar_url, username').eq('id', data[c].Comment_user_ID)
-            const {signedURL, error: error2} = await fromBucket('avatars')
-               .createSignedUrl(commentData[0].avatar_url, 30) // add new key-value pair
-            comments[c]['Comment_avatar_url'] = signedURL
-            comments[c]['Comment_username'] = commentData[0].username
-         }
-      }
-      console.log(comments)
-      commentsLoaded = true
+   onMount(async ()=>{
+      promiseBasicInfo = await getBasicInfo(BGID)
+      promiseContents = await getContents(BGID)
+      contents = promiseContents.data
+      promiseEvents = await getEvents(BGID)
+      promiseComments = await getComments(BGID)
    })
 
    let favorite: boolean = false // to be fetched from user
@@ -126,7 +154,7 @@
 <Seo title="Boardgame"/>
 
 <div class="w-full h-36">
-   <img src="https://picsum.photos/seed/picsum/800/600" class="object-cover w-full h-60" alt="cover" >
+   <img src="{DIR_IMAGE + '/boardgame/' + (bg.TBG_picture_cover || URL_BLANK_IMAGE)}" class="object-cover w-full h-60" alt="cover" >
 </div>
 
 <div class="flex flex-row text-left gap-6">
@@ -135,53 +163,74 @@
       <div class="mx-auto">
          <img src="{DIR_IMAGE + '/boardgame/' + (bg.TBG_picture || URL_BLANK_IMAGE)}" alt="cover of {bg.TBG_name}" class="hover:scale-110 w-60 aspect-auto duration-300"/>
       </div>
-      <div>
-         <h3>Designer</h3>
-         {#await designers then designers}
-         {#each designers as d} 
-            <div class="flex flex-row items-center gap-2">
-               <div class="avatar">
-                  <div class="w-16 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 hover:scale-105 duration-300">
-                  <img src="{DIR_IMAGE + '/person/' + (d.Designer_picture || URL_BLANK_IMAGE)}" alt="avatar">
+      {#await promiseBasicInfo}
+         <Spinner/>
+      {:then res}
+         {#if res}
+            <div>
+               <h3>Designer</h3>
+               {#each res.designers as d} 
+                  <div class="flex flex-row items-center gap-2">
+                     <div class="avatar">
+                        <div class="w-16 h-16 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 hover:scale-105 duration-300">
+                        <img src="{DIR_IMAGE + '/person/' + (d.Designer_picture || URL_BLANK_IMAGE)}" alt="avatar" class="object-contain">
+                        </div>
+                     </div>
+                     <a href="/person/{d.Designer_ID}">{d.Designer_name}</a>
                   </div>
-               </div>
-               <a href="/person/{d.Designer_ID}">{d.Designer_name}</a>
+               {:else} 
+                  -
+               {/each}
             </div>
-         {:else} 
-            N/A
-         {/each}
-         {/await}
-      </div>
-      <div>
-      <h3>Artist</h3>
-         {#each artists as a} 
-         <div class="flex flex-row items-center gap-2">
-            <div class="avatar">
-               <div class="w-16 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 hover:scale-105 duration-300">
-               <img src="{DIR_IMAGE + '/person/' + (a.Artist_picture || URL_BLANK_IMAGE)}" alt="avatar">
+            <div>
+            <h3>Artist</h3>
+               {#each res.artists as a} 
+               <div class="flex flex-row items-center gap-2">
+                  <div class="avatar">
+                     <div class="w-16 h-16 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 hover:scale-105 duration-300">
+                     <img src="{DIR_IMAGE + '/person/' + (a.Artist_picture || URL_BLANK_IMAGE)}" alt="avatar">
+                     </div>
+                  </div>
+                  <a href="/person/{a.Artist_ID}">{a.Artist_name}</a>
                </div>
+               {:else} 
+                  -
+               {/each}
             </div>
-            <a href="/artist/{a.Artist_ID}">{a.Artist_name}</a>
-         </div>
-         {:else} 
-            N/A
-         {/each}
-      </div>
-      <div>
-         <h3>Publisher</h3>
-         {#each publishers as p} 
-         <div class="flex flex-row items-center gap-2">
-            <div class="avatar">
-               <div class="w-16 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 hover:scale-105 duration-300">
-               <img src="{DIR_IMAGE + '/publisher/' + (p.Publisher_picture || URL_BLANK_IMAGE)}" alt="avatar">
+            <div>
+            <h3>Graphic Designer</h3>
+               {#each res.graphicdesigners as g} 
+               <div class="flex flex-row items-center gap-2">
+                  <div class="avatar">
+                     <div class="w-16 h-16 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 hover:scale-105 duration-300">
+                     <img src="{DIR_IMAGE + '/person/' + (g.Graphicdesigner_picture || URL_BLANK_IMAGE)}" alt="avatar">
+                     </div>
+                  </div>
+                  <a href="/person/{g.Graphicdesigner_ID}">{g.Graphicdesigner_name}</a>
                </div>
+               {:else} 
+                  -
+               {/each}
             </div>
-            <a href="/designer/{p.Publisher_ID}">{p.Publisher_name}</a>
-         </div>
-         {:else} 
-            -
-         {/each}
-      </div>
+            <div>
+               <h3>Publisher</h3>
+               {#each res.publishers as p} 
+               <div class="flex flex-row items-center gap-2">
+                  <div class="avatar">
+                     <div class="w-16 h-16 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 hover:scale-105 duration-300">
+                     <img src="{DIR_IMAGE + '/publisher/' + (p.Publisher_picture || URL_BLANK_IMAGE)}" alt="avatar">
+                     </div>
+                  </div>
+                  <a href="/publisher/{p.Publisher_ID}">{p.Publisher_name}</a>
+               </div>
+               {:else} 
+                  -
+               {/each}
+            </div>
+         {/if}
+      {:catch}
+         <p>Server unavailable. Please try again later.</p>
+      {/await}
       <div class="divider"></div>
       <div>
          <h3>Playable at</h3>
@@ -208,13 +257,15 @@
          <div>
             <h1>{bg.TBG_name}</h1>
             {#if bg.TBG_name_th} <h2>({bg.TBG_name_th})</h2> {/if}
-            <h2>({bg.TBG_released})</h2>
+            <h2>{'(' + bg.TBG_released + ')' || ''}</h2>
          </div>
          <div class="tooltip" data-tip="{favorite? 'Unlike':'Like'}">
             <label>
                <input type="checkbox" bind:checked={favorite} class="hidden">
                <div class:text-yellow-300={favorite}><StarIcon size="40" /></div>
-               {numFavorites}
+               {#key numFavorites}
+                  <div in:fly>{numFavorites}</div>
+               {/key}
             </label>
          </div>
       </div>
@@ -283,37 +334,43 @@
             {/each}
          </div>
          <br> 
-         {#each filteredContents as content}
-            <ContentCard {content}/>
+         {#if contents}
+            {#each filteredContents as content}
+               <ContentCard {content}/>
+            {:else}
+               N/A
+            {/each}
          {:else}
-            N/A
-         {/each}
+            -
+         {/if}
       </div>
       <div class="divider"></div>
       <h3>Comments</h3>
-      {#if commentsLoaded}
-         {#each comments as c}
-            <div class="flex flex-row items-center border-2 border-primary p-2 gap-2 rounded-lg">
-               <div class="flex flex-col justify-center gap-1 text-center m-2">
-                  <div class="avatar">
-                     <div class=" w-20 h-20 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-                        <img src="{c.Comment_avatar_url}" alt="user avatar">
+      {#await promiseComments}
+         <Spinner/>
+      {:then res}
+         {#if res}
+            {#each res.comments as c}
+               <div class="flex flex-row items-center border-2 border-primary p-2 gap-2 rounded-lg">
+                  <div class="flex flex-col justify-center gap-1 text-center m-2">
+                     <div class="avatar">
+                        <div class=" w-20 h-20 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+                           <img src="{c.Comment_avatar_url}" alt="user avatar">
+                        </div>
+                     </div>
+                     <div class="truncate">
+                        {c.Comment_username}
                      </div>
                   </div>
-                  <div class="truncate">
-                     {c.Comment_username}
+                  <div>
+                     {c.Comment_text}
                   </div>
                </div>
-               <div>
-                  {c.Comment_text}
-               </div>
-            </div>
-         {:else}
-            <p>Be the first person to comment!</p>
-         {/each}
-      {:else}
-         <Spinner/>
-      {/if}
+            {:else}
+               <p>Be the first person to comment!</p>
+            {/each}
+         {/if}
+      {/await}
 
       {#if user && !user.guest}
          <div class="form-control" method="post">

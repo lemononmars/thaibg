@@ -17,7 +17,6 @@
     import ToggleTheme from '$lib/components/ToggleTheme.svelte'
     import {fly} from 'svelte/transition'
     import TBGAlogo from '$lib/assets/TBGA-logo-color.png'
-    import {onMount} from 'svelte'
 
     //export let user
     const boardgameMenu = [
@@ -27,15 +26,15 @@
         {path: '/category',title:'Categories'},
     ]
     const peopleMenu = [
-        {path: '/designer',title:'Designers'},
-        {path: '/artist',title:'Artists'},
-        {path: '/graphicdesigner', title:'Graphic Designers'},
+        {path: '/person?role=Designer',title:'Designers'},
+        {path: '/person?role=Artist',title:'Artists'},
+        {path: '/person?role=Graphicdesigner', title:'Graphic Designers'},
         {path: '/manufacturer',title:'Manufaturers'},
     ]
     const supporterMenu = [
         {path: '/publisher',title:'Publishers'},
         {path: '/sponsor',title:'Sponsors'},
-        {path: '/creator',title:'Content Creators'},
+        {path: '/person?role=Creator',title:'Content Creators'},
         {path: '/place', title:'Places'}
     ]
     const activityMenu = [
@@ -143,7 +142,6 @@
             </ul>
         </div>
     </div>
-    
 
     <div class="navbar-end flex flex-row items-center gap-4 mx-4">
         <div>
@@ -153,7 +151,7 @@
             <!-- svelte-ignore a11y-label-has-associated-control -->
             <label tabindex="0" class="m-1 btn"><SearchIcon size="20"/></label>
             <ul tabindex="0" class="p-2 shadow menu dropdown-content w-52 text-neutral">
-              <input type="text" placeholder="search"/>
+              <input role="text" placeholder="search"/>
             </ul>
         </div>
  

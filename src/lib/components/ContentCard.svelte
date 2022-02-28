@@ -4,17 +4,21 @@
    import {from} from '$lib/supabase'
 
    export let content
-
    let id = content.Content_ID
+   let media = content.Content_media
    let type = content.Content_type
    let name = content.Content_name
-   let picture // auto-generate thumbnail?
+   let link = content.Content_link
+   let picture = content.Content_picture || DIR_IMAGE + '/content/' + URL_BLANK_IMAGE
    let creatorPictureUrls = []
 
+   console.log('about to mount')
    onMount(async()=>{
       let {data, error} = await from('Creator')
          .select('*, Creator_Relation!inner(*)')
          .eq('Creator_Relation.Content_ID', id)
+
+      // TODO: scrape og:image
       
       if(error)
          throw(error)
@@ -30,7 +34,10 @@
       <figure><img src="{picture}" class="object-cover h-48 aspect-auto group-hover:scale-120 " alt="content thumbnail"></figure>
       <div class="card-body">
       <h2 class="card-title truncate">{name}</h2>
-      <div class="badge">{type}</div>
+      <div>
+         <div class="badge">{media}</div>
+         <div class="badge badge-outline">{type}</div>
+      </div>
       </div>
 
       <div class="avatar-group -space-x-6 absolute top-0 right-0 m-1 ">

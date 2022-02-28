@@ -11,6 +11,7 @@
    let slug = person.Person_slug
    let picture = DIR_IMAGE + "/person/" + (person.Person_picture || URL_BLANK_IMAGE)
    let name = person.Person_name
+   let name_th = person.Person_name_th
    const roleTitles = ['designer', 'artist', 'creator', 'graphicdesigner'] // to be replaced by proper icons
    const roleIcons = [designerIcon, artistIcon, creatorIcon, graphicdesignerIcon]
    let roles = [ // true if the id is not null
@@ -26,6 +27,7 @@
       <figure><img src="{picture}" class="object-cover h-48 aspect-auto group-hover:scale-120 " alt="picture of {name}"></figure>
       <div class="card-body">
       <h2 class="card-title truncate">{name}</h2>
+      <h3 class="card-title truncate">{name_th}</h3>
       </div>
       <div class="avatar-group -space-x-6 absolute top-0 right-0 m-1 ">
          {#each roles as role, idx}
