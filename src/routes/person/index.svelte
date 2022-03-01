@@ -38,8 +38,8 @@
    $: peopleFiltered = people.filter((p)=> 
          (option == 0 || !!p[peopleTitle[option] + '_ID']) // no role, or has ID of that role
             && 
-         (p.Person_name.toLowerCase().includes(searchString.toLowerCase()) // name or name_th contains the string
-            || p.Person_name_th.includes(searchString))
+         (p.Person_name?.toLowerCase().includes(searchString.toLowerCase()) // name or name_th contains the string
+            || p.Person_name_th?.includes(searchString))
       )
 
    function resetSearch(){

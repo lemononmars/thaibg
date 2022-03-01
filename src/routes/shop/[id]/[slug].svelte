@@ -3,56 +3,66 @@
 
    export async function load({ session, params }) {
        const { user } = session
-       const {data, error} = await from('Retailer').select('*').eq('Retailer_ID', params.id)
+       const {data, error} = await from('Shop').select('*').eq('Shop_ID', params.id)
        if(error) {}
        return {
            props: {
                user,
-               retailerData: data[0] || null
+               shopData: data[0] || null
            }
        };
+   }
+
+   export async function getPlayableBoardgames(id){
+      const {data, error} = await from('Boardgame')
+         .select('*, Shop_Relation!inner(*)')
+         .eq('Shop_Relation.Shop_ID', id) //add another eq
+         
+      if(error) throw error
+      return data
+   }
+
+   export async function getBuyableBoardgames(id){
+      const {data, error} = await from('Boardgame')
+         .select('*, Shop_Relation!inner(*)')
+         .eq('Shop_Relation.Shop_ID', id) //add another eq
+         
+      if(error) throw error
+      return data
    }
 </script>
 
 <script lang="ts">
    import Seo from '$lib/components/SEO.svelte'
    import Spinner from '$lib/components/Spinner.svelte'
-   import {onMount} from 'svelte'
    // import BoardgameCard from '$lib/components/BoardgameCard.svelte'
-   import {DIR_IMAGE, URL_BLANK_IMAGE} from '$lib/constants'
+   import {getImageURL, getDefaultImageURL} from '$lib/supabase'
 
-   export let user, retailerData
+   export let user, shopData
    let boardgameData
    onMount(async ()=>{
-      // const {data, error} = await from('Boardgame')
-      //    .select('*, Retailer_Relation!inner(*)')
-      //    .eq('Retailer_Relation.Retailer_ID', retailerData.Retailer_ID)
-         
-      // if(error) throw error
-      // boardgameData = data
+      
 
-      retailerData.Retailer_picture = DIR_IMAGE + '/retailer/' + (retailerData.Retailer_picture || URL_BLANK_IMAGE)
+      shopData.Shop_picture =  '/Shop/' + (shopData.Shop_picture )
    })
    
 </script>
 
-<Seo title="Retailer"/>
+<Seo title="Shop"/>
 <div class="flex flex-col justify-center items-center relative">
    <div class="w-full text-left m-4 flex flex-col">
-      {#if !retailerData}
-         Invalid Retailer ID!
-      {:else}
-         <!-- {#if boardgameData} -->
             <div class="flex flex-col lg:flex-row lg:gap-4 w-full p-8 border-2 shadow-lg rounded-xl">
-               <img src="{retailerData.Retailer_picture}" alt="image of {retailerData.Retailer_name}" class="w-72 mask mask-hexagon-2"/>
+               <img src="{getImageURL('shop',shopData.Shop_picture)}" alt="image of {shopData.Shop_name}" class="w-72 mask mask-hexagon-2"
+                  on:error|once={(ev)=>ev.target.src = getDefaultImageURL('shop')}
+               />
                <div>
-                  <h1>{retailerData.Retailer_name}</h1>
-                  <h2>{retailerData.Retailer_name_th? "(" + retailerData.Retailer_name_th + ")": ""}</h2>
+                  <h1>{shopData.Shop_name}</h1>
+                  <h2>{shopData.Shop_name_th? "(" + shopData.Shop_name_th + ")": ""}</h2>
                   <ul>
-                     <li>Location: {retailerData.Retailer_location || 'N/A'}</li>
+                     <li>Location: {shopData.Shop_location || 'N/A'}</li>
                      <li>Official link: 
-                        {#if retailerData.Retailer_link}
-                           <a href="{retailerData.Retailer_link}" target="_blank">{retailerData.Retailer_link}</a>
+                        {#if shopData.Shop_link}
+                           <a href="{shopData.Shop_link}" target="_blank">{shopData.Shop_link}</a>
                         {:else}
                            N/A
                         {/if}
@@ -63,7 +73,7 @@
             <!-- <div>{likes.length}</div> -->
             <div>
                <h2>Description</h2>
-               <p>{@html retailerData.Retailer_description || 'N/A'}</p>
+               <p>{@html shopData.Shop_description || 'N/A'}</p>
             </div>
             <div class="divider"></div>
             <!-- <h2>Board games available</h2> -->
@@ -77,7 +87,7 @@
          <!-- {:else}
             <Spinner/>
          {/if} -->
-      {/if}
+
       {#if user && !user.guest}
          <button class="btn">Suggest edit</button>
       {/if}

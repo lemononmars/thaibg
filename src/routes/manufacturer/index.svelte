@@ -5,7 +5,7 @@
    import Spinner from '$lib/components/Spinner.svelte'
    import {SearchIcon} from 'svelte-feather-icons'
    import PlainCard from '$lib/components/PlainCard.svelte'
-   import {DIR_IMAGE, URL_BLANK_IMAGE} from '$lib/constants'
+   import {getImageURL, getDefaultImageURL} from '$lib/supabase'
    
    let manufacturers = []
    onMount(async () => {
@@ -14,7 +14,7 @@
          id: d.Manufacturer_ID,
          name: d.Manufacturer_name,
          slug: d.Manufacturer_slug,
-         picture: DIR_IMAGE + '/Manufacturer/' + (d.Manufacturer_picture || URL_BLANK_IMAGE),
+         picture:  '/Manufacturer/' + (d.Manufacturer_picture ),
          type: 'manufacturer'
       }))
 

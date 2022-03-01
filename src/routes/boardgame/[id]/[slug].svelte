@@ -1,6 +1,5 @@
 <script lang="ts" context="module">
-   // TODO: delegate some heavy loading to client-side
-   import {from, fromBucket} from '$lib/supabase'
+   import {from, fromBucket, getImageURL, getDefaultImageURL} from '$lib/supabase'
 
    export async function load({ session, params }) {
       const { user } = session
@@ -37,6 +36,7 @@
    }
 
    export async function getBasicInfo(BGID) {
+      
       let res = await from('Designer')
          .select('*, Designer_Relation!inner(*)')
          .eq('Designer_Relation.TBG_ID', BGID)
@@ -115,14 +115,13 @@
    import Seo from '$lib/components/SEO.svelte'
    import ContentCard from '$lib/components/ContentCard.svelte'
    import {StarIcon, UserIcon, UsersIcon, ClockIcon, FeatherIcon, EditIcon, HomeIcon} from 'svelte-feather-icons'
-   import {DIR_IMAGE, URL_BLANK_IMAGE} from '$lib/constants'
    import Social from '$lib/components/Social.svelte'
    import Spinner from '$lib/components/Spinner.svelte'
    import {fly} from 'svelte/transition'
    import {onMount} from 'svelte'
 
    export let user
-   export let bg, types, mechanics, categories, graphicdesigners
+   export let bg, types, mechanics, categories
    const BGID = bg.TBG_ID
    let contents = []
    let promiseBasicInfo, promiseContents, promiseEvents, promiseComments
@@ -131,7 +130,7 @@
       promiseBasicInfo = await getBasicInfo(BGID)
       promiseContents = await getContents(BGID)
       contents = promiseContents.data
-      promiseEvents = await getEvents(BGID)
+      promiseEvents = await getEvents(BGID) // to be added
       promiseComments = await getComments(BGID)
    })
 
@@ -154,14 +153,18 @@
 <Seo title="Boardgame"/>
 
 <div class="w-full h-36">
-   <img src="{DIR_IMAGE + '/boardgame/' + (bg.TBG_picture_cover || URL_BLANK_IMAGE)}" class="object-cover w-full h-60" alt="cover" >
+   <img src="{getImageURL('boardgame', bg.TBG_picture_cover)}" class="object-cover w-full h-60" alt="cover" 
+      on:error|once={(ev)=>ev.target.src = getDefaultImageURL('boardgame')}
+   >
 </div>
 
 <div class="flex flex-row text-left gap-6">
    <!-- First column-->
    <div class="flex flex-col gap-4">
       <div class="mx-auto">
-         <img src="{DIR_IMAGE + '/boardgame/' + (bg.TBG_picture || URL_BLANK_IMAGE)}" alt="cover of {bg.TBG_name}" class="hover:scale-110 w-60 aspect-auto duration-300"/>
+         <img src="{getImageURL('boardgame', bg.TBG_picture)}" alt="cover of {bg.TBG_name}" class="hover:scale-110 w-60 aspect-auto duration-300"
+            on:error|once={(ev)=>ev.target.src = getDefaultImageURL('boardgame')}
+         />
       </div>
       {#await promiseBasicInfo}
          <Spinner/>
@@ -173,7 +176,9 @@
                   <div class="flex flex-row items-center gap-2">
                      <div class="avatar">
                         <div class="w-16 h-16 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 hover:scale-105 duration-300">
-                        <img src="{DIR_IMAGE + '/person/' + (d.Designer_picture || URL_BLANK_IMAGE)}" alt="avatar" class="object-contain">
+                        <img src="{getImageURL('person', d.Designer_picture)}" alt="avatar" class="object-contain"
+                           on:error|once={(ev)=>ev.target.src = getDefaultImageURL('person')}
+                        />
                         </div>
                      </div>
                      <a href="/person/{d.Designer_ID}">{d.Designer_name}</a>
@@ -188,7 +193,9 @@
                <div class="flex flex-row items-center gap-2">
                   <div class="avatar">
                      <div class="w-16 h-16 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 hover:scale-105 duration-300">
-                     <img src="{DIR_IMAGE + '/person/' + (a.Artist_picture || URL_BLANK_IMAGE)}" alt="avatar">
+                     <img src="{getImageURL('person', a.Artist_picture)}" alt="avatar" class="object-contain"
+                        on:error|once={(ev)=>ev.target.src = getDefaultImageURL('person')}
+                     />
                      </div>
                   </div>
                   <a href="/person/{a.Artist_ID}">{a.Artist_name}</a>
@@ -203,7 +210,9 @@
                <div class="flex flex-row items-center gap-2">
                   <div class="avatar">
                      <div class="w-16 h-16 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 hover:scale-105 duration-300">
-                     <img src="{DIR_IMAGE + '/person/' + (g.Graphicdesigner_picture || URL_BLANK_IMAGE)}" alt="avatar">
+                     <img src="{getImageURL('person', g.Graphicdesigner_picture)}" alt="avatar" class="object-contain"
+                        on:error|once={(ev)=>ev.target.src = getDefaultImageURL('person')}
+                     />
                      </div>
                   </div>
                   <a href="/person/{g.Graphicdesigner_ID}">{g.Graphicdesigner_name}</a>
@@ -218,7 +227,9 @@
                <div class="flex flex-row items-center gap-2">
                   <div class="avatar">
                      <div class="w-16 h-16 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 hover:scale-105 duration-300">
-                     <img src="{DIR_IMAGE + '/publisher/' + (p.Publisher_picture || URL_BLANK_IMAGE)}" alt="avatar">
+                     <img src="{getImageURL('publisher', p.Publisher_picture)}" alt="avatar" class="object-contain"
+                        on:error|once={(ev)=>ev.target.src = getDefaultImageURL('publisher')}
+                     />
                      </div>
                   </div>
                   <a href="/publisher/{p.Publisher_ID}">{p.Publisher_name}</a>
@@ -246,7 +257,7 @@
          
          {#if bg.TBG_link} 
             <a href="{bg.TBG_link}" target="_blank">
-               <div class="btn"><HomeIcon size="20"/></div>
+               <div class="btn btn-xs"><HomeIcon/></div>
             </a>
          {/if}
          {#if user && !user.guest}
@@ -255,9 +266,11 @@
       </div>
       <div class="flex flex-row justify-between items-center">
          <div>
-            <h1>{bg.TBG_name}</h1>
-            {#if bg.TBG_name_th} <h2>({bg.TBG_name_th})</h2> {/if}
-            <h2>{'(' + bg.TBG_released + ')' || ''}</h2>
+            <h1>{bg.TBG_name || bg.TBG_name_th}</h1>
+            {#if (bg.TBG_name && bg.TBG_name_th)} 
+               <h2>({bg.TBG_name_th})</h2> 
+            {/if}
+            <h2>{bg.TBG_released? '(' + bg.TBG_released + ')' : ''}</h2>
          </div>
          <div class="tooltip" data-tip="{favorite? 'Unlike':'Like'}">
             <label>

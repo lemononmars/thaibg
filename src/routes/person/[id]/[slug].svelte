@@ -1,6 +1,7 @@
 <script lang="ts" context="module">
    import {from} from '$lib/supabase'
-
+   import {getImageURL, getDefaultImageURL} from '$lib/supabase'
+   
    export async function load({ session, params, url }) {
        const { user } = session
        const {data, error} = await from('Person').select('*').eq('Person_ID', params.id)
@@ -87,6 +88,7 @@
             contents = res.data
             break;
          default: 
+            role='Person'
             break;
       }
 
@@ -99,7 +101,6 @@
          role,
          contents
       }
-      console.log(returnedData)
       return returnedData
    }
    
@@ -111,7 +112,6 @@
    import {onMount} from 'svelte'
    import BoardgameCard from '$lib/components/BoardgameCard.svelte'
    import ContentCard from '$lib/components/ContentCard.svelte'
-   import {DIR_IMAGE, URL_BLANK_IMAGE} from '$lib/constants'
    import ContactLinks from '$lib/components/ContactLinks.svelte'
 
    export let user, person, role
@@ -126,11 +126,9 @@
       activeTab = 0 // if all else fails, just use first index
       
    let rolePromise
-   person.Person_picture = DIR_IMAGE + '/person/' + (person.Person_picture || URL_BLANK_IMAGE)
 
    onMount(async ()=>{
       rolePromise = await getRoleContent(roleTitles[activeTab], person) // initial loader
-      console.log(rolePromise.data)
    })
    
    function changeTab(idx: number) {
@@ -150,7 +148,9 @@
    <div class="text-left m-4 flex flex-col -mt-32 w-1/3">
       <div class="avatar">
          <div class="h-72 mask mask-circle hover:scale-110 duration-200">
-            <img src="{person.Person_picture}" alt="image of {person.Person_name}"/>
+            <img src="{getImageURL('person', person.Person_picture)}" alt="image of {person.Person_name}"
+               on:error|once={(ev)=>ev.target.src = getDefaultImageURL('person')}
+            />
          </div>
       </div>
       <div>
@@ -174,7 +174,7 @@
             <a class="tab tab-lg tab-lifted text-xl" 
                class:text-success={!!activeroleTitles[idx]} 
                class:tab-active={idx == activeTab}
-               class:text-primary={idx == activeTab}
+               class:text-bold={idx == activeTab}
                on:click={()=>changeTab(idx)}
             >
                {r}

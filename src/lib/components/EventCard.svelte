@@ -1,19 +1,23 @@
-<script lang="ts">
-   import {DIR_IMAGE, URL_BLANK_IMAGE} from '$lib/constants'
+<script lang="ts" context="module">
+   import {getImageURL, getDefaultImageURL} from '$lib/supabase'
+</script>
 
+<script lang="ts">
    export let event
 
    let id = event.Event_ID
    let name = event.Event_name
    let description = event.Event_description
    let duration = event.Duration
-   let picture = DIR_IMAGE + '/event/' + (event.Event_picture || URL_BLANK_IMAGE)
-   let creatorPictureUrls = []
+   let picture = getImageURL('event', event.Event_picture)
+   // let creatorPictureUrls = []
 </script>
 
 <a href="/event/{id}">
    <div class="relative group card w-72 pt-8 bg-base-100 card-compact shadow-xl transition ease-in-out hover:opacity-80 hover:scale-105 duration-30 group">
-      <figure><img src="{picture}" class="object-cover h-48 aspect-auto group-hover:scale-120 " alt="picture of {name}"></figure>
+      <figure><img src="{picture}" class="object-cover h-48 aspect-auto group-hover:scale-120 " alt="picture of {name}"
+         on:error|once={(ev)=>ev.target.src = getDefaultImageURL('event')}
+      ></figure>
       <div class="card-body">
          <div class='flex flex-row gap-1'>
             <div class='-translate-y-1 w-20 h-12 border border-t-red-400 border-t-8'>

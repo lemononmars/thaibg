@@ -1,19 +1,19 @@
+<script lang=ts context=module>
+   import {from} from '$lib/supabase'
+
+   export async function getContents(){
+      let {data, error} = await from('Content').select('*')
+      return data
+   }
+</script>
+
 <script lang="ts">
    import Seo from '$lib/components/SEO.svelte'
-   import {from} from '$lib/supabase'
-   import {onMount} from 'svelte'
    import Spinner from '$lib/components/Spinner.svelte'
    import {SearchIcon} from 'svelte-feather-icons'
    import ContentCard from '$lib/components/ContentCard.svelte'
    
-   let contents = []
-   onMount(async () => {
-      let {data, error} = await from('Content').select('*')
-      contents = data
-
-      if(error) throw(error)
-   })
-   
+   let promise = getContents()
 </script>
 
 <Seo title="Content"/>
@@ -25,10 +25,14 @@
       </div>
    </div> 
    <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-4 gap-4">
-      {#each contents as content}
-         <ContentCard {content}/>
-      {:else}
+      {#await promise}
          <Spinner/>
-      {/each}
+      {:then contents}
+         {#each contents as content}
+            <ContentCard {content}/>
+         {:else}
+            No content
+         {/each}
+      {/await}
    </div>
 </div>

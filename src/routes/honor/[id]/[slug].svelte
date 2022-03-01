@@ -24,16 +24,20 @@
 <script lang="ts">
    import Seo from '$lib/components/SEO.svelte'
    import Spinner from '$lib/components/Spinner.svelte'
-   import {DIR_IMAGE, URL_BLANK_IMAGE} from '$lib/constants'
+   import {getImageURL, getDefaultImageURL} from '$lib/supabase'
 
    export let user, honorData, honorees
-   honorData.Honor_picture = DIR_IMAGE + '/honor/' + (honorData.Honor_picture || URL_BLANK_IMAGE)
 </script>
 
 <Seo title="Honor"/>
 <div class="flex flex-row justify-center items-center relative">
-   <div class="flex flex-col gap-2 text-left m-4 w-1/3">
-      <img src="{honorData.Honor_picture}" alt="image of {honorData.Honor_name}" class="w-72 h-72 mask mask-hexagon-2 object-contain"/>
+   <div class="flex flex-col flex-start gap-2 text-left m-4 w-1/3">
+      <img 
+         src="{getImageURL('honor', honorData.Honor_picture)}" 
+         alt="image of {honorData.Honor_name}" 
+         class="w-72 h-72 mask mask-hexagon-2 object-contain"
+         on:error|once={(ev)=>ev.target.src = getDefaultImageURL('honor')}
+      />
       <h1>{honorData.Honor_name}</h1>
       <h2>{honorData.Honor_name_th? "(" + honorData.Honor_name_th + ")": ""}</h2>
       {#if honorData.Honor_link}

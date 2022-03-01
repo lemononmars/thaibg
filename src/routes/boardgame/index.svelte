@@ -68,8 +68,8 @@
          ) // no type, or has ID of that type
             && 
          (searchString === ''
-            || !bg.TBG_name || bg.TBG_name.toLowerCase().includes(searchString.toLowerCase() // name or name_th contains the string
-            || !bg.TBG_name_th || bg.TBG_name_th.includes(searchString)) 
+            || bg.TBG_name?.toLowerCase().includes(searchString.toLowerCase() // name or name_th contains the string
+            || bg.TBG_name_th?.includes(searchString)) 
          )
       )
 

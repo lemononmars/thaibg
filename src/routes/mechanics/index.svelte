@@ -5,7 +5,7 @@
    import Spinner from '$lib/components/Spinner.svelte'
    import {SearchIcon} from 'svelte-feather-icons'
    import ListCard from '$lib/components/ListCard.svelte'
-   import {DIR_IMAGE, URL_BLANK_IMAGE} from '$lib/constants'
+   import {getImageURL, getDefaultImageURL} from '$lib/supabase'
    
    let mechanics = []
    onMount(async () => {
@@ -14,7 +14,7 @@
          id: m.Mech_ID,
          name: m.Mech_name,
          slug: m.Mech_slug,
-         picture: DIR_IMAGE + '/mechanics/' + (m.Mech_picture || URL_BLANK_IMAGE),
+         picture:  '/mechanics/' + (m.Mech_picture ),
          type: 'mechanics'
       }))
 

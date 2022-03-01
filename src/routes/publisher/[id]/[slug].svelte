@@ -19,7 +19,7 @@
    import Spinner from '$lib/components/Spinner.svelte'
    import {onMount} from 'svelte'
    import BoardgameCard from '$lib/components/BoardgameCard.svelte'
-   import {DIR_IMAGE, URL_BLANK_IMAGE} from '$lib/constants'
+   import {getImageURL, getDefaultImageURL} from '$lib/supabase'
 
    export let user, publisherData
    let boardgameData
@@ -30,7 +30,7 @@
          
       if(error) throw error
       boardgameData = data
-      publisherData.Publisher_picture = DIR_IMAGE + '/publisher/' + (publisherData.Publisher_picture || URL_BLANK_IMAGE)
+      publisherData.Publisher_picture =  '/publisher/' + (publisherData.Publisher_picture )
    })
    
 </script>

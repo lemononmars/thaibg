@@ -19,7 +19,7 @@
    import Spinner from '$lib/components/Spinner.svelte'
    import {onMount} from 'svelte'
    import BoardgameCard from '$lib/components/BoardgameCard.svelte'
-   import {DIR_IMAGE, URL_BLANK_IMAGE} from '$lib/constants'
+   import {getImageURL, getDefaultImageURL} from '$lib/supabase'
 
    export let user, printingData
    let boardgameData
@@ -30,7 +30,7 @@
          
       if(error) throw error
       boardgameData = data
-      printingData.Printing_thumbnail_url = DIR_IMAGE + '/printing/' + (printingData.Printing_thumbnail_url || URL_BLANK_IMAGE)
+      printingData.Printing_thumbnail_url =  '/printing/' + (printingData.Printing_thumbnail_url )
    })
    
 </script>

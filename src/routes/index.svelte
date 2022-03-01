@@ -15,7 +15,7 @@
     export async function getHotnessBoardgames(){
       let res = await from('Boardgame')
           .select('*')
-          .eq('TBG_show', true)
+          //.eq('TBG_show', true)
       let numBoardgames = res.data.length
       const NUM_BOARDGAMES_SHOWN = 10
       let bgindex = []

@@ -35,7 +35,7 @@
         {path: '/publisher',title:'Publishers'},
         {path: '/sponsor',title:'Sponsors'},
         {path: '/person?role=Creator',title:'Content Creators'},
-        {path: '/place', title:'Places'}
+        {path: '/shop', title:'Shops'}
     ]
     const activityMenu = [
         {path: '/event',title:'Events'},

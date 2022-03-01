@@ -1,19 +1,19 @@
+<script lang=ts context=module>
+   import {from} from '$lib/supabase'
+
+   export async function getEvents(){
+      let {data, error} = await from('Event').select('*').eq('Event_show', true)
+      return data
+   }
+</script>
 <script lang="ts">
    import Seo from '$lib/components/SEO.svelte'
-   import {from} from '$lib/supabase'
-   import {onMount} from 'svelte'
    import Spinner from '$lib/components/Spinner.svelte'
    import {SearchIcon} from 'svelte-feather-icons'
    import EventCard from '$lib/components/EventCard.svelte'
    
-   let events = []
-   onMount(async () => {
-      let {data, error} = await from('Event').select('*').eq('Event_show', true)
-      events = data
+   let promise = getEvents()
 
-      if(error) throw(error)
-   })
-   
 </script>
 
 <Seo title="Event"/>
@@ -25,10 +25,14 @@
       </div>
    </div> 
    <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-4 gap-4">
-      {#each events as event}
-         <EventCard {event}/>
-      {:else}
+      {#await promise}
          <Spinner/>
-      {/each}
+      {:then events}
+         {#each events as event}
+            <EventCard {event}/>
+         {:else}
+            No event
+         {/each}
+      {/await}
    </div>
 </div>

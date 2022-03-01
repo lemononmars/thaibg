@@ -1,22 +1,20 @@
 <script lang="ts" context="module">
     import {from} from '$lib/supabase'
 
-    export async function load({ params }) {
+    export async function load({ params, url }) {
         // allow urls like person/DGS001 or person/ART019
         // redirect to the corresponding person at person/PERSXXXX/Person_slug
 
         // determine this person's role based on [id]:
         // artist, creator, graphicdesigner, designer
         let id = params.id
-        let role = 'Person'
-        if(id.startsWith('DSG')) role = 'Designer'
-        if(id.startsWith('CRT')) role = 'Creator'
-        if(id.startsWith('ART')) role = 'Artist'
-        if(id.startsWith('GDSG')) role = 'Graphicdesigner'
+        let role = url.searchParams.get('role')
+        let roles = ['Artist', 'Designer', 'Creator', 'Graphicdesigner']
+        if(!role || !roles.includes(role))
+            role = 'Person'
 
         let ROLE_ID = `${role}_ID`
         let SEL_COL = `Person_ID, Person_slug, Person_show`
-        console.log(role, id, ROLE_ID)
         const {data, error} = await from('Person')
             .select(SEL_COL)
             .eq(ROLE_ID, id)

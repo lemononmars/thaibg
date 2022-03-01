@@ -2,25 +2,25 @@
    import {from} from '$lib/supabase'
 
    export async function load({}) {
-   let {data, error} = await from('Honor').select('*')
-   
-   if(error) 
-      return {
-         status: 404
-      }
-
-   let honors =  data.map((h)=>({
-      id: h.Honor_ID,
-      type: 'honor',
-      picture: h.Honor_picture,
-      slug: h.Honor_slug,
-      name: h.Honor_name
-   }))
-      return {
-         props: {
-            honors
+      let {data, error} = await from('Honor').select('*')
+      
+      if(error) 
+         return {
+            status: 404
          }
-      }
+
+      let honors =  data.map((h)=>({
+         id: h.Honor_ID,
+         type: 'honor',
+         picture: h.Honor_picture,
+         slug: h.Honor_slug,
+         name: h.Honor_name
+      }))
+         return {
+            props: {
+               honors
+            }
+         }
    }
 </script>
 

@@ -59,9 +59,7 @@
     async function getProfile() {
         try {
             loading = true
-            console.log('about to get profile')
             let { data: { username, website, avatar_url } , error } = await getCurrUserProfile()
-            console.log('profile page: get avatar_url', avatar_url)
             if (error) {
                 handleAlert({ type: 'default', text: 'First login? You wanna update your profile details? 🙂' })
             }

@@ -16,7 +16,6 @@ export const RESP_USER_GUEST = {
 // 3rd Party Website/App URIs
 
 export const URL_DICEBEAR = 'https://avatars.dicebear.com/api/avataaars/'
-export const DIR_IMAGE = 'https://llhkvvndjjpbdtdvxnvn.supabase.in/storage/v1/object/public/images'
 export const DIR_AVATAR = 'https://llhkvvndjjpbdtdvxnvn.supabase.in/storage/v1/object/public/avatars'
 export const URL_BLANK_IMAGE = 'no_cover.jpg'
 

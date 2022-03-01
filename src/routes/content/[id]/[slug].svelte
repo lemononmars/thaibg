@@ -37,18 +37,19 @@
 <script lang="ts">
    import Seo from '$lib/components/SEO.svelte'
    import BoardgameCard from '$lib/components/BoardgameCard.svelte'
-   import {DIR_IMAGE, URL_BLANK_IMAGE} from '$lib/constants'
+   import {getImageURL, getDefaultImageURL} from '$lib/supabase'
    import PersonCard from '$lib/components/PersonCard.svelte'
 
    export let user, content, bg, creators
-   console.log(bg)
-   content.Content_picture = DIR_IMAGE + '/event/' + (content.Content_picture || URL_BLANK_IMAGE)
+   content.Content_picture =  getImageURL('event', content.Content_picture )
 </script>
 
 <Seo title="Event"/>
 <div class="flex flex-col lg:flex-row justify-center mt-10">
    <div class="flex flex-col lg:gap-4 px-4 text-left w-1/3">
-      <!-- <img src="{content.Content_picture}" alt="image of {content.Content_name}" class="w-72 h-72 object-contain mask mask-hexagon-2"/> -->
+      <!-- <img src="{content.Content_picture}" alt="image of {content.Content_name}" class="w-72 h-72 object-contain mask mask-hexagon-2"
+         on:error|once={(ev)=>ev.target.src = getDefaultImageURL('event')}
+      /> -->
       <h1>{content.Content_name}</h1>
       <h2>{content.Content_name_th? "(" + content.Content_name_th + ")": ""}</h2>
       <div class="flex flex-row gap-2">

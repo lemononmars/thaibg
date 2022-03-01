@@ -1,26 +1,27 @@
-<script lang="ts">
-   import Seo from '$lib/components/SEO.svelte'
-   import {from} from '$lib/supabase'
-   import {onMount} from 'svelte'
-   import Spinner from '$lib/components/Spinner.svelte'
-   import {SearchIcon} from 'svelte-feather-icons'
-   import ListCard from '$lib/components/ListCard.svelte'
-   import {DIR_IMAGE, URL_BLANK_IMAGE} from '$lib/constants'
-   
-   let categories = []
-   onMount(async () => {
+<script lang=ts context=module>
+   export async function getCategories(){
       let {data, error} = await from('Category').select('*')
-      categories = data.map((c)=>({
+      
+      let categories = data.map((c)=>({
          id: c.Cat_ID,
          name: c.Cat_name,
          slug: c.Cat_slug,
-         picture: DIR_IMAGE + '/category/' + (c.Cat_picture || URL_BLANK_IMAGE),
+         picture: c.Cat_picture,
          type: 'category'
       }))
 
-      if(error) throw(error)
-   })
+      return categories
+   }
+</script>
+
+<script lang="ts">
+   import Seo from '$lib/components/SEO.svelte'
+   import {from} from '$lib/supabase'
+   import Spinner from '$lib/components/Spinner.svelte'
+   import {SearchIcon} from 'svelte-feather-icons'
+   import ListCard from '$lib/components/ListCard.svelte'
    
+   let promise = getCategories()
 </script>
 
 <Seo title="Category"/>
@@ -32,10 +33,14 @@
       </div>
    </div> 
    <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-3 lg:gap-4">
-      {#each categories as ds}
-         <ListCard {...ds}/>
-      {:else}
+      {#await promise}
          <Spinner/>
-      {/each}
+      {:then categories}
+         {#each categories as ds}
+            <ListCard {...ds}/>
+         {:else}
+            None
+         {/each}
+      {/await}
    </div>
 </div>
