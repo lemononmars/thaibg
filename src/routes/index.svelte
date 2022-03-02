@@ -47,7 +47,6 @@
 </script>
 
 <script lang="ts">
-  
   import Seo from '$lib/components/SEO.svelte'
   import Spinner from '$lib/components/Spinner.svelte'
   import {from} from '$lib/supabase'
@@ -56,6 +55,7 @@
   import {PlayCircleIcon, UserCheckIcon, CoffeeIcon, ChevronRightIcon, ChevronLeftIcon, FilmIcon} from 'svelte-feather-icons'
   import ContentCard from '$lib/components/ContentCard.svelte'
   import EventCard from '$lib/components/EventCard.svelte'
+import { _ } from 'svelte-i18n';
 
   let promiseEvents, promiseContents, promiseBoardgames, promiseStats
   onMount(async()=>{
@@ -75,7 +75,7 @@
 <Seo title="Home"/>
 <div class="flex flex-col lg:flex-row w-full bg-gradient-to-b from-slate-100 to-slate-500 rounded-b-3xl lg:rounded-b-full py-10 lg:py-20 px-8 lg:px-32">
   <div class="flex flex-col">
-    <h1>We have it all!</h1>
+    <h1>{$_('page.home.welcome.intro')}</h1>
     {#await promiseStats}
       <Spinner/>
     {:then res}
@@ -83,7 +83,7 @@
         <div class="stats stats-vertical lg:stats-horizontal overflow-visible my-10 bg-transparent">
           <div class="stat mx-4">
             <div class="stat-value">{res.numBoardgames}</div>
-            <div class="stat-title">Board Games</div>
+            <div class="stat-title">{$_('page.home.welcome.boardgames')}</div>
             <div class="stat-figure text-secondary">
               <PlayCircleIcon size="40"/>
             </div>
@@ -94,7 +94,7 @@
               <UserCheckIcon size="40"/>
             </div>
             <div class="stat-value">{res.numPeople}</div>
-            <div class="stat-title">People</div>
+            <div class="stat-title">{$_('page.home.welcome.people')}</div>
           </div>
           
           <div class="stat mx-4">
@@ -102,17 +102,18 @@
               <CoffeeIcon size="40"/>
             </div>
             <div class="stat-value">{res.numContents}</div>
-            <div class="stat-title">Contents</div>
+            <div class="stat-title">{$_('page.home.welcome.contents')}</div>
           </div>
         </div>
       {/if}
     {/await}
     <p class="text-2xl">
-      รวมทุกข้อมูลเกี่ยวกับบอร์ดเกมไทย <br> ในเครือข่ายของสมาคมบอร์ดเกม
+      {$_('page.home.welcome.text1')} <br>
+      {$_('page.home.welcome.text2')} 
     </p>
     <div class="flex flex-row items-center justify-center mt-4">
-      <div class="btn btn-primary">Contribute</div>
-      <div class="btn btn-ghost">Contact Us</div>
+      <div class="btn btn-primary">{$_('page.home.welcome.contribute')}</div>
+      <div class="btn btn-ghost">{$_('page.home.welcome.contact')}</div>
     </div>
   </div>
 

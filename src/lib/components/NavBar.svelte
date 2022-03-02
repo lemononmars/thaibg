@@ -10,7 +10,8 @@
 </script> -->
 
 <script lang="ts">
-    import {getAvatar, getCurrUserProfile} from '$lib/user/profile'
+    import { _, locale, locales } from 'svelte-i18n'
+    //import {getAvatar} from '$lib/user/profile'
     import { user, profile, signOut } from '$lib/user'
     import {ChevronDownIcon, MenuIcon, UserIcon, SearchIcon, ChevronUpIcon} from 'svelte-feather-icons'
     import { URL_DICEBEAR } from '$lib/constants'
@@ -20,27 +21,27 @@
 
     //export let user
     const boardgameMenu = [
-        {path: '/boardgame',title:'Thai Board Game List'},
-        {path: '/type',title:'Types'},
-        {path: '/mechanics',title:'Mechanics'},
-        {path: '/category',title:'Categories'},
+        {path: '/boardgame',title:$_('navbar.boardgame.list')},
+        {path: '/type',title:$_('navbar.boardgame.type')},
+        {path: '/mechanics',title:$_('navbar.boardgame.mechanics')},
+        {path: '/category',title:$_('navbar.boardgame.category')},
     ]
     const peopleMenu = [
-        {path: '/person?role=Designer',title:'Designers'},
-        {path: '/person?role=Artist',title:'Artists'},
-        {path: '/person?role=Graphicdesigner', title:'Graphic Designers'},
-        {path: '/manufacturer',title:'Manufaturers'},
+        {path: '/person?role=Designer',title:$_('navbar.person.designer')},
+        {path: '/person?role=Artist',title:$_('navbar.person.artist')},
+        {path: '/person?role=Graphicdesigner', title:$_('navbar.person.graphicdesigner')},
+        {path: '/manufacturer',title:$_('navbar.person.manufacturer')},
     ]
     const supporterMenu = [
-        {path: '/publisher',title:'Publishers'},
-        {path: '/sponsor',title:'Sponsors'},
-        {path: '/person?role=Creator',title:'Content Creators'},
-        {path: '/shop', title:'Shops'}
+        {path: '/publisher',title:$_('navbar.supporter.publisher')},
+        {path: '/sponsor',title:$_('navbar.supporter.sponsor')},
+        {path: '/person?role=Creator',title:$_('navbar.supporter.creator')},
+        {path: '/shop', title:$_('navbar.supporter.shop')}
     ]
     const activityMenu = [
-        {path: '/event',title:'Events'},
-        {path: '/honor',title:'Honors'},
-        {path: '/content',title:'Contents'},
+        {path: '/event',title:$_('navbar.activity.event')},
+        {path: '/honor',title:$_('navbar.activity.honor')},
+        {path: '/content',title:$_('navbar.activity.content')},
     ]
 
     let avatar = URL_DICEBEAR + 'randombear' + '.svg'
@@ -66,6 +67,8 @@
     function mouseMove(event) {
         mouseY = event.clientY
     }
+
+    $: locale.set($locale)
 </script>
 
 <svelte:window bind:scrollY on:mousemove={mouseMove}/>
@@ -86,8 +89,8 @@
             </div>
             <div class="flex flex-col">
                 <a rel="prefetch link-hover" href="/">
-                    <div class="text-secondary text-sm">Thailand Board Game</div>
-                    <div class="text-primary text-2xl">Database</div>
+                    <div class="text-secondary text-sm">{$_('navbar.title.tbg')}</div>
+                    <div class="text-primary text-2xl">{$_('navbar.title.db')}</div>
                 </a>
             </div>
         </div>
@@ -96,7 +99,7 @@
         <div class="dropdown dropdown-hover">
             <!-- svelte-ignore a11y-label-has-associated-control -->
             <label tabindex="0" class="hover:text-warning flex flex-row items-center">
-                Board Game
+                {$_('navbar.boardgame._')}
                 <ChevronDownIcon size="20"/>
             </label> 
             <ul tabindex="0" class="p-2 shadow menu dropdown-content w-52 bg-warning">
@@ -107,7 +110,7 @@
         </div>
         <div class="dropdown dropdown-hover">
             <span tabindex="0" class="hover:text-success flex flex-row items-center">
-                People
+                {$_('navbar.person._')}
                 <ChevronDownIcon size="20"/>
             </span>
             <div tabindex="0" class="p-2 dropdown-content w-104 bg-success">
@@ -132,7 +135,7 @@
         </div>
         <div class="dropdown dropdown-hover">
             <span tabindex="0" class="hover:text-error flex flex-row items-center">
-                Activities
+                {$_('navbar.activity._')}
                 <ChevronDownIcon size="20"/>
             </span>
             <ul tabindex="0" class="p-2 shadow menu dropdown-content w-52 bg-error">
@@ -145,13 +148,20 @@
 
     <div class="navbar-end flex flex-row items-center gap-4 mx-4">
         <div>
+            <select class="select select-md max-w-xs" bind:value={$locale}>
+                {#each $locales as locale}
+                  <option value={locale}>{locale}</option>
+                {/each}
+            </select>
+        </div>
+        <div>
             <ToggleTheme/>
         </div> 
         <div class="dropdown dropdown-hover dropdown-end">
             <!-- svelte-ignore a11y-label-has-associated-control -->
             <label tabindex="0" class="m-1 btn"><SearchIcon size="20"/></label>
             <ul tabindex="0" class="p-2 shadow menu dropdown-content w-52 text-neutral">
-              <input role="text" placeholder="search"/>
+              <input type="text" placeholder="search"/>
             </ul>
         </div>
  

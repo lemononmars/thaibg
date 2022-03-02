@@ -1,7 +1,10 @@
 <script lang="ts">
     import Seo from '$lib/components/SEO.svelte'
+    import {_, isLoading} from 'svelte-i18n'
+
 </script>
 
+{#if !$isLoading}
 <Seo title="About"/>
 <div class="flex flex-col justify-left text-left">
     <div>
@@ -22,3 +25,4 @@
         <p>e-mail: sakulbuth (at) gmail.com</p>
     </div>
 </div>
+{/if}

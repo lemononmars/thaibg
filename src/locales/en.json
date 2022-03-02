@@ -1,0 +1,64 @@
+{
+   "page": {
+     "home": {
+       "title": "Homepage",
+       "welcome":{
+         "intro": "We have it all!",
+         "boardgames": "Board Games",
+         "people": "People",
+         "contents": "Contents",
+         "text1": "All information",
+         "text2": "on Thailand board game industry",
+         "contribute": "Contribute",
+         "contact": "Contact Us" 
+       }
+     },
+     "about": {
+       "title": "About",
+       "nav": "About"
+     },
+     "contact": {
+       "title": "Contact",
+       "nav": "Contact Us"
+     }
+   },
+   "navbar":{
+    "boardgame":{
+      "_": "Board Game",
+      "list": "Thai Board Game List",
+      "type": "Types",
+      "mechanics": "Mechanics",
+      "category": "Categories"
+    },
+    "person":{
+      "_": "People",
+      "designer": "Designers",
+      "artist": "Artists",
+      "graphicdesigner": "Graphic Designers",
+      "manufacturer": "Manufacturers"
+    },
+    "supporter":{
+       "_":"Supporters",
+      "publisher": "Publishers",
+      "sponsor": "Sponsors",
+      "creator": "Content Creators",
+      "shop": "Shops"
+    },
+    "activity":{
+      "_": "Activity",
+      "event": "Events",
+      "honor": "Hornors",
+      "content": "Contents"
+    },
+    "website":{
+      "_": "Website",
+      "about": "About us",
+      "legal": "Legal",
+      "contact": "Contact"
+    },
+    "title":{
+      "tbg": "Thailand Boardgame",
+      "db": "Database"
+    }
+  }
+ }
