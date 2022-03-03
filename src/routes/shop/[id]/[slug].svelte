@@ -1,5 +1,5 @@
 <script lang="ts" context="module">
-   import {from} from '$lib/supabase'
+   import {from, getImageURL, getDefaultImageURL} from '$lib/supabase'
 
    export async function load({ session, params }) {
        const { user } = session
@@ -35,15 +35,15 @@
 <script lang="ts">
    import Seo from '$lib/components/SEO.svelte'
    import Spinner from '$lib/components/Spinner.svelte'
-   // import BoardgameCard from '$lib/components/BoardgameCard.svelte'
-   import {getImageURL, getDefaultImageURL} from '$lib/supabase'
+   import BoardgameCard from '$lib/components/BoardgameCard.svelte'
+   import {onMount} from 'svelte'
 
    export let user, shopData
-   let boardgameData
+   let playableBoardgames
+   let buyableBoardgames
    onMount(async ()=>{
-      
-
-      shopData.Shop_picture =  '/Shop/' + (shopData.Shop_picture )
+      // playableBoardgames = getPlayableBoardgames(shopData.Shop_ID)
+      // buyableBoardgames = getBuyableBoardgames(shopData.Shop_ID)
    })
    
 </script>

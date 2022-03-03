@@ -1,22 +1,21 @@
 <script lang="ts">
    import {getImageURL, getDefaultImageURL} from '$lib/supabase'
-   interface plainObject{
-      id: string,
-      slug: string,
-      type: string,
-      picture: string,
-      name: string
-   }
-   export let object: plainObject
+   export let object, type
+   const typeVar = type[0].toUpperCase() + type.slice(1,type.length) //capitalize first letter
+
+   let id = object[typeVar + '_ID']
+   let slug = object[typeVar + '_slug']
+   let picture = object[typeVar + '_picture']
+   let name = object[typeVar + '_name']
 </script>
 
-<a href="/{object.type}/{object.id}/{object.slug}">
+<a href="/{type}/{id}/{slug}">
    <div class="relative card w-72 pt-8 bg-base-100 card-compact shadow-xl transition ease-in-out hover:opacity-80 hover:scale-105 duration-30 group">
-      <figure><img src="{getImageURL(object.type, object.picture)}" class="object-cover h-48 aspect-auto" alt="picture of {object.name}"
-         on:error|once={(ev)=>ev.target.src = getDefaultImageURL(object.type)}
+      <figure><img src="{getImageURL(type, picture)}" class="object-cover h-48 aspect-auto" alt="picture of {name}"
+         on:error|once={(ev)=>ev.target.src = getDefaultImageURL(type)}
       ></figure>
       <div class="card-body">
-      <h2 class="card-title truncate">{object.name}</h2>
+      <h2 class="card-title truncate">{name}</h2>
       </div>
    </div>
 </a>

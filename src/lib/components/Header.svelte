@@ -3,5 +3,5 @@
 </script>
 
 <header class="w-screen fixed overflow-x-clip z-20">
-    <NavBar />
+    <NavBar/>
 </header>

@@ -10,13 +10,17 @@ A nodejs database front-end made with Svelte and Svelte Kit. Data and auth suppl
 
 Create an env file at the root folder manually, or run the following code
 
-      sudo .env.local
+      touch .env.local
 
-Then, add the following environments for dev
+Then, add the following environment variables to `.env.local` for development
 
       VITE_SUPABASE_URL= YOUR-SUPABASE-URL
       VITE_SUPABASE_ANON_KEY= YOUR-SECRET-ANON-KEY
       VITE_SITE_URL = YOUR-DEPLOYMENT-WEBSITE
+
+For deployment, use platform specific configuration. For example, if you deploy to [heroku](https://devcenter.heroku.com/articles/config-vars), you will need to use the command
+
+      heroku config:set VITE_SUPABASE_URL=YOUR-SUPABASE-URL  VITE_SUPABASE_ANON_KEY=YOUR-SECRET-ANON-KEY
 
 `ANON-KEY` can be accessed at 
 `https://app.supabase.io/project/YOUR-PROJECT-SLUG/settings/api`, or found on website at Settings > API.
@@ -27,70 +31,13 @@ Now, you are ready to test via
 
 and monitor at `localhost:3000`
 
-# Directory
-
-There are several folders here.
-
-## Board Game
-
-## Category
-
-## Content
-
-## Event
-
-## Honor
-
-## Manufacturer
-
-## Mechanics
-
-## Person
-
-## Place
-
-Might be removed later
-
-## Publisher
-
-## Retailer
-
-## Sponsor
-
-# Relation
-
-In addition, there are several relational tables
-
-## Designer_Relation
-## Graphicdesigner_Relation
-## Artist_Relation
-## Creator_Relation
-## Publisher_Relation
-## Sponsor_Relation
-
-Linked with board games via `TBG_ID`
-
-## Category_Relation
-## Mechanics_Relation
-## Type_Relation
-
-Linked with board games via `TBG_ID`
-
-## Person
-
-Contains `Designer_ID`, `Graphicdesigner_ID`, `Artist_ID` and `Creator_ID` of the same person
-
-## Honor_Relation
-
-Linked with board games via `TBG_ID`. Also contains specific information of each honor, such as honor type (e.g. award, contest), position (e.g. winnter, runner-up)
-
-## Content_Relation
-
-Linked with content creators via `Creator_ID`
-
 # API
 
-To be implemented
+To be added
+
+# How to use database
+
+See this project's [wiki](https://github.com/lemononmars/thaibg/wiki).
 
 # Resources
 

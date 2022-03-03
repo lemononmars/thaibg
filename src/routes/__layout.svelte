@@ -5,20 +5,9 @@
 	import Header from '$lib/components/Header.svelte'
 	import AlertList from '$lib/alert/AlertList.svelte'
 	import Footer from '$lib/components/Footer.svelte'
+	import {initialize} from '../i18n'
 
-	import { init, addMessages, getLocaleFromNavigator } from 'svelte-i18n';
-	import en from '../locales/en.json'
-	import th from '../locales/th.json'
-
-	addMessages('en', en)
-	addMessages('th', th)
-
-	init({
-		fallbackLocale: 'th',
-		initialLocale: getLocaleFromNavigator(),
-	});
- 
-	
+	initialize()
 </script>
 
 {#if $navigating}

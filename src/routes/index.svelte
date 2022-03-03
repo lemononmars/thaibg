@@ -55,7 +55,7 @@
   import {PlayCircleIcon, UserCheckIcon, CoffeeIcon, ChevronRightIcon, ChevronLeftIcon, FilmIcon} from 'svelte-feather-icons'
   import ContentCard from '$lib/components/ContentCard.svelte'
   import EventCard from '$lib/components/EventCard.svelte'
-import { _ } from 'svelte-i18n';
+  import { _ } from 'svelte-i18n';
 
   let promiseEvents, promiseContents, promiseBoardgames, promiseStats
   onMount(async()=>{

@@ -1,38 +1,38 @@
 <script lang=ts context=module>
    import {from} from '$lib/supabase'
 
-   export async function getEvents(){
-      let {data, error} = await from('Event').select('*').eq('Event_show', true)
-      return data
+   export async function load() {
+      let {data, error} = await from('Event').select('*')//.eq('Event_Show', true)
+
+      if(error) 
+         return {status: 404}
+      return {
+         props: {
+            events: data,
+         }
+      }
    }
 </script>
 <script lang="ts">
    import Seo from '$lib/components/SEO.svelte'
-   import Spinner from '$lib/components/Spinner.svelte'
-   import {SearchIcon} from 'svelte-feather-icons'
-   import EventCard from '$lib/components/EventCard.svelte'
+   import SearchBar from '$lib/components/SearchBar.svelte'
+   import DataView from '$lib/components/DataView.svelte'
    
-   let promise = getEvents()
-
+   export let events
+   let searchString = ''
+   $: eventFiltered = events.filter((e)=> 
+         (e.Event_name?.toLowerCase().includes(searchString.toLowerCase()) // name or name_th contains the string
+            || e.Event_name_th?.includes(searchString))
+      )
+   const tableInfo = {
+      headers: ['Start', 'End', 'Organizer'],
+      body: ['Event_start', 'Event_end', 'Event_organizer']
+   }
 </script>
 
 <Seo title="Event"/>
-<div class="flex flex-col justify-center items-center relative">
-   <div class="form-control m-4">
-      <div class="relative">
-        <input type="text" placeholder="Search event" class="w-full pr-16 input input-primary input-bordered"> 
-        <button class="absolute top-0 right-0 rounded-l-none btn btn-primary"><SearchIcon size=20/></button>
-      </div>
-   </div> 
-   <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-4 gap-4">
-      {#await promise}
-         <Spinner/>
-      {:then events}
-         {#each events as event}
-            <EventCard {event}/>
-         {:else}
-            No event
-         {/each}
-      {/await}
-   </div>
+<div class="flex flex-col justify-center mx-auto">
+   <DataView data={eventFiltered} type='event' {tableInfo}>
+      <SearchBar placeholder="Search event (en/th)" bind:searchString/>
+   </DataView>
 </div>

@@ -1,8 +1,24 @@
 {
-   "page": {
+  "boardgame": "บอร์ดเกม",
+  "type": "ประเภท",
+  "mechanics": "กลไก",
+  "category": "หมวดหมู่",
+  "designer": "นักออกแบบ",
+  "artist": "ศิลปิน",
+  "graphicdesigner": "นักออกแบบกราฟิก",
+  "playtester": "นักทดสอบ",
+  "manufacturer": "ผู้ผลิต",
+  "publisher": "ค่ายเกม",
+  "sponsor": "สปอนเซอร์",
+  "contentcreator": "ผู้ผลิตสื่อ",
+  "shop": "ร้านค้า",
+  "event": "งาน",
+  "honor": "เกียรติยศ",
+  "content": "สื่อ",
+  "page": {
     "home": {
       "title": "หน้าแรก",
-      "welcome":{
+      "welcome": {
         "intro": "ยกมาทั้งกระดาน!",
         "boardgames": "บอร์ดเกม",
         "people": "คน",
@@ -10,55 +26,56 @@
         "text1": "รวมทุกข้อมูลเกี่ยวกับบอร์ดเกมไทย",
         "text2": "ในเครือข่ายของสมาคมบอร์ดเกม",
         "contribute": "ช่วยเหลือ",
-        "contact": "ติดต่อ" 
+        "contact": "ติดต่อ"
       }
-     },
-     "about": {
-       "title": "เกี่ยวกับเรา",
-       "nav": "about"
-     },
-     "contact": {
-       "title": "ติดต่อ",
-       "nav": "contact"
-     }
-   },
-   "navbar":{
-     "boardgame":{
-       "_": "บอร์ดเกม",
-       "list": "รายชื่อบอร์ดเกมไทย",
-       "type": "ประเภท",
-       "mechanics": "กลไก",
-       "category": "หมวดหมู่"
-     },
-     "person":{
-       "_": "ชุมชน",
-       "designer": "นักออกแบบ",
-       "artist": "ศิลปิน",
-       "graphicdesigner": "นักออกแบบกราฟฟิค",
-       "manufacturer": "ผู้ผลิต"
-     },
-     "supporter":{
-        "_":"ผู้สนับสนุน",
-       "publisher": "ค่ายเกม",
-       "sponsor": "สปอนเซอร์",
-       "creator": "ผู้ผลิตสื่อ",
-       "shop": "ร้านค้า"
-     },
-     "activity":{
-       "_": "กิจกรรม",
-       "event": "งาน",
-       "honor": "เกียรติยศ",
-       "content": "สื่อ"
-     },
-     "website":{
-       "_": "เว็บไซต์",
+    },
+    "about": {
+      "title": "เกี่ยวกับเรา",
+      "nav": "about"
+    },
+    "contact": {
+      "title": "ติดต่อ",
+      "nav": "contact"
+    }
+  },
+  "navbar": {
+    "boardgame": {
+      "_": "บอร์ดเกม",
+      "list": "รายชื่อบอร์ดเกมไทย",
+      "type": "ประเภท",
+      "mechanics": "กลไก",
+      "category": "หมวดหมู่"
+    },
+    "person": {
+      "_": "ชุมชน",
+      "designer": "นักออกแบบ",
+      "artist": "ศิลปิน",
+      "graphicdesigner": "นักออกแบบกราฟิก",
+      "manufacturer": "ผู้ผลิต"
+    },
+    "supporter": {
+      "_": "ผู้สนับสนุน",
+      "publisher": "ค่ายเกม",
+      "sponsor": "สปอนเซอร์",
+      "creator": "ผู้ผลิตสื่อ",
+      "shop": "ร้านค้า"
+    },
+    "activity": {
+      "_": "กิจกรรม",
+      "event": "งาน",
+      "honor": "เกียรติยศ",
+      "content": "สื่อ"
+    },
+    "website": {
+      "_": "เว็บไซต์",
       "about": "เกี่ยวกับพวกเรา",
       "legal": "กฏหมาย",
       "contact": "ติดต่อ"
     },
-     "title":{
-       "tbg": "บอร์ดเกมไทย",
-       "db": "ฐานข้อมูล"
-     }
-   }
-  }
+    "title": {
+      "tbg": "บอร์ดเกมไทย",
+      "db": "ฐานข้อมูล"
+    }
+  },
+  "TBGA": "สมาคมบอร์ดเกมแห่งประเทศไทย"
+}

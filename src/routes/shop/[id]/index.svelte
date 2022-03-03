@@ -3,15 +3,15 @@
 
     export async function load({ params }) {
         // ignore page's [slug] and redirect to the proper location
-        const {data, error} = await from('Retailer').select('*').eq('Retailer_ID', params.id)
-        if(error || !data[0] || !data[0].Retailer_show)
+        const {data, error} = await from('Shop').select('*').eq('Shop_ID', params.id)
+        if(error || !data[0])
             return {
-                redirect: "/retailer",
+                redirect: "/shop",
                 status: 303
             }
         else
             return {
-                redirect: `/retailer/${params.id}/${data[0].slug}`,
+                redirect: `/shop/${params.id}/${data[0].Shop_slug || 'blank'}`,
                 status: 303
             }
     }
