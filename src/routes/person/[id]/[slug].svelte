@@ -1,24 +1,23 @@
 <script lang="ts" context="module">
    import {from} from '$lib/supabase'
-   import {getImageURL, getDefaultImageURL} from '$lib/supabase'
-   
+
    export async function load({ session, params, url }) {
-       const { user } = session
-       const {data, error} = await from('Person').select('*').eq('Person_ID', params.id)
-       if(error)
+      const {user} = session
+      const {data, error} = await from('Person').select('*').eq('Person_ID', params.id)
+      if(error)
          return {
             status:404
          }
 
-       return {
-           props: {
-               user,
-               person: data[0] || null,
-               role: url.searchParams.get('role'),
-           }
-       };
+      return {
+         props: {
+            user,
+            person: data[0] || null,
+            role: url.searchParams.get('role'),
+         }
+      };
    }
-
+   
    export async function getRoleContent(role: string, person){
       let res, data, contents 
       let returnedData
@@ -28,70 +27,47 @@
             res = await from('Designer')
                .select('*')
                .eq('Designer_ID', person.Designer_ID)
-
-            if(res.error)  return {status: 404}
-
-            data = res.data[0]
-            res = await from('Boardgame')
-               .select('*,Designer_Relation!inner(*)')
-               .eq('Designer_Relation.Designer_ID', person.Designer_ID)
-
-            if(res.error)  return {status: 404}
-            contents = res.data
             break;
 
          case "Creator":
-         res = await from('Creator')
-               .select('*')
-               .eq('Creator_ID', person.Creator_ID)
-
-            if(res.error)  return {status: 404}
-
-            data = res.data[0]
-            res = await from('Content')
-               .select('*,Creator_Relation!inner(*)')
-               .eq('Creator_Relation.Creator_ID', person.Creator_ID)
-
-            if(res.error)  return {status: 404}
-            contents = res.data
+            res = await from('Creator')
+                  .select('*')
+                  .eq('Creator_ID', person.Creator_ID)
             break;
 
          case "Graphicdesigner":
-         res = await from('Graphicdesigner')
-               .select('*')
-               .eq('Graphicdesigner_ID', person.Graphicdesigner_ID)
-
-            if(res.error)  return {status: 404}
-
-            data = res.data[0]
-            res = await from('Boardgame')
-               .select('*,Graphicdesigner_Relation!inner(*)')
-               .eq('Graphicdesigner_Relation.Graphicdesigner_ID', person.Graphicdesigner_ID)
-
-            if(res.error)  return {status: 404}
-            contents = res.data
+            res = await from('Graphicdesigner')
+                  .select('*')
+                  .eq('Graphicdesigner_ID', person.Graphicdesigner_ID)
             break;
 
          case "Artist":
             res = await from('Artist')
                .select('*')
                .eq('Artist_ID', person.Artist_ID)
-
-            if(res.error)  return {status: 404}
-
-            data = res.data[0]
-            res = await from('Boardgame')
-               .select('*,Artist_Relation!inner(*)')
-               .eq('Artist_Relation.Artist_ID', person.Artist_ID)
-
-            if(res.error)  return {status: 404}
-            contents = res.data
             break;
+
+         case "Playtester":
+            res = await from('Playtester')
+               .select('*')
+               .eq('Playtester_ID', person.Playtester_ID)
+            break;
+
          default: 
+            data = []
             role='Person'
             break;
       }
 
+      if(!res)  return {status: 404}
+      data = res.data[0]
+      res = await from('Boardgame')
+         .select(`*,${role}_Relation!inner(*)`)
+         .eq(`${role}_Relation.${role}_ID`, person[`${role}` + '_ID'])
+
+      if(res.error)  return {status: 404}
+      contents = res.data
+      console.log(contents)
       returnedData = {
          description: data[role + '_description'],
          id: data[role + '_ID'],
@@ -103,10 +79,10 @@
       }
       return returnedData
    }
-   
 </script>
 
 <script lang="ts">
+   import {getImageURL, getDefaultImageURL} from '$lib/supabase'
    import Seo from '$lib/components/SEO.svelte'
    import Spinner from '$lib/components/Spinner.svelte'
    import {onMount} from 'svelte'
@@ -114,8 +90,9 @@
    import ContentCard from '$lib/components/ContentCard.svelte'
    import ContactLinks from '$lib/components/ContactLinks.svelte'
 
-   export let user, person, role
-   const roleTitles = ['Artist', 'Creator', 'Designer', 'Graphicdesigner']
+   // from endpoint [slug].ts
+   export let user, person, role 
+   const roleTitles = ['Artist', 'Creator', 'Designer', 'Graphicdesigner', 'Playtester']
    let activeroleTitles = roleTitles.map((r)=>!!person[r + '_ID'])
    let activeTab
    if(role) 
@@ -131,10 +108,10 @@
       rolePromise = await getRoleContent(roleTitles[activeTab], person) // initial loader
    })
    
-   function changeTab(idx: number) {
+   async function changeTab(idx: number) {
       activeTab = idx
       if(activeroleTitles[activeTab])
-         rolePromise = getRoleContent(roleTitles[activeTab], person)
+         rolePromise = await getRoleContent(roleTitles[activeTab], person)
    }
 </script>
 
@@ -170,15 +147,17 @@
    <div class="flex flex-col w-2/3 text-left m-4 justify-center">
       <div class="tabs w-full m-10 mx-auto flex-grow">
          {#each roleTitles as r, idx}
-            <!-- svelte-ignore a11y-missing-attribute -->
-            <a class="tab tab-lg tab-lifted text-xl" 
-               class:text-success={!!activeroleTitles[idx]} 
-               class:tab-active={idx == activeTab}
-               class:text-bold={idx == activeTab}
-               on:click={()=>changeTab(idx)}
-            >
-               {r}
-            </a> 
+            {#if activeroleTitles[idx]}
+               <!-- svelte-ignore a11y-missing-attribute -->
+               <a class="tab tab-lg tab-lifted text-xl" 
+                  class:text-success={!!activeroleTitles[idx]} 
+                  class:tab-active={idx == activeTab}
+                  class:text-bold={idx == activeTab}
+                  on:click={()=>changeTab(idx)}
+               >
+                  {r}
+               </a> 
+            {/if}
          {/each}
       </div>
       <div class="flex flex-col justify-center">
@@ -203,7 +182,7 @@
                   <div class="divider"></div>
                   {#if roleTitles[activeTab] === 'Creator'}
                      <h2>Contents creator of</h2>
-                     <div class="w-full text-center mb-4 grid grid-cols-2 gap-4">
+                     <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-3 gap-4">
                         {#each res.contents as content}
                            <ContentCard {content}/>
                         {:else}
@@ -212,7 +191,7 @@
                      </div>
                   {:else}
                      <h2>{res.role} of</h2>
-                     <div class="w-full text-center mb-4 grid grid-cols-2 gap-4">
+                     <div class="w-full text-center mb-4 grid grid-cols-2 grid-cols-3 gap-4">
                         {#each res.contents as bg}
                            <BoardgameCard {bg}/>
                         {:else}

@@ -41,8 +41,8 @@ export const siteSeoOpenGraphArticle = {
 
 export const siteSeoTwitter = {
     site: "@username",
-    title: "Twitter Card Title",
-    description: "Description of Twitter Card",
+    title: "Thai BG Database",
+    description: "Database for boardgames from Thai designersd",
     image: "https://www.example.com/images/cover.jpg",
-    imageAlt: "Alt text for the card!",
+    imageAlt: "Cover image",
 }

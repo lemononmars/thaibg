@@ -10,14 +10,15 @@
 </script> -->
 
 <script lang="ts">
-    import { _, locale, locales } from 'svelte-i18n'
-    //import {getAvatar} from '$lib/user/profile'
-    import { user, profile, signOut } from '$lib/user'
+    import { _, locale, locales, isLoading } from 'svelte-i18n'
+    import {getAvatar, getCurrUserProfile} from '$lib/user/profile'
+    import {user, signOut } from '$lib/user'
     import {ChevronDownIcon, MenuIcon, UserIcon, SearchIcon, ChevronUpIcon} from 'svelte-feather-icons'
     import { URL_DICEBEAR } from '$lib/constants'
     import ToggleTheme from '$lib/components/ToggleTheme.svelte'
     import {fly} from 'svelte/transition'
     import TBGAlogo from '$lib/assets/TBGA-logo-color.png'
+    import {onMount} from 'svelte'
 
     //export let user
     
@@ -50,19 +51,20 @@
         {path: '/contact',title:$_('navbar.website.contact')},
     ]
 
-    let avatar = URL_DICEBEAR + 'randombear' + '.svg'
-    // onMount (async ()=>{
-    //     let { data: { username, website, avatar_url } , error } = await getCurrUserProfile()
-    //     if(!error) {
-    //         avatar = await getAvatar(avatar_url)
-    //         avatar = URL_DICEBEAR + 'randombear' + '.svg'
-    //         console.log('navbar', avatar, profile, username)
-    //         profile.set({avatar_url: avatar})
-    //     }
-    //     else {
-    //         avatar = URL_DICEBEAR + 'randombear' + '.svg'
-    //     }
-    // })
+    const languageName = {
+        'en': 'ENG',
+        'th': 'ไทย'
+    }
+    let avatar 
+    onMount (async ()=>{
+        if($user) {
+            const { data: avatar_url , error } = await getCurrUserProfile()
+            if(!error)
+                avatar = await getAvatar(avatar_url)
+            else
+                avatar = URL_DICEBEAR + 'randombear' + '.svg'
+        }
+    })
     
     let scrollY, mouseY
 
@@ -152,11 +154,13 @@
 
     <div class="navbar-end flex flex-row items-center gap-4 mx-4">
         <div>
-            <select class="select select-md max-w-xs" bind:value={$locale}>
-                {#each $locales as locale}
-                  <option value={locale}>{locale}</option>
-                {/each}
-            </select>
+            {#if !$isLoading}
+                <select class="select select-md max-w-xs" bind:value={$locale}>                    
+                    {#each $locales as locale}
+                        <option value={locale}>{languageName[locale]}</option>
+                    {/each}
+                </select>
+            {/if}
         </div>
         <div>
             <ToggleTheme/>
@@ -174,11 +178,15 @@
                 <div class="dropdown dropdown-hover dropdown-end">
                     <!-- svelte-ignore a11y-label-has-associated-control -->
                     <label tabindex="0">
-                        <div class="avatar">
-                            <div class="w-12 h-12 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-                                <img src="{avatar}" alt="user avatar"/>
+                        {#await avatar}
+                            loading
+                        {:then avatar}
+                            <div class="avatar">
+                                <div class="w-12 h-12 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+                                    <img src="{avatar}" alt="user avatar"/>
+                                </div>
                             </div>
-                        </div>
+                        {/await}
                     </label>
                     <ul tabindex="0" class="p-2 shadow menu dropdown-content w-52 bg-info">
                         <li><a href="/profile">Profile</a></li>

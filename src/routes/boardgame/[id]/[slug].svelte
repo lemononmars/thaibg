@@ -68,52 +68,12 @@
    export async function getEvents(BGID){
       return null
    }
-
-   export async function getComments(BGID){
-      const {data, error} = await from('Comment').select('*').eq('TBG_ID', BGID)
-      let comments = data
-      if(data) {
-         for(let c in comments)  {
-            // fetch username and profile pic
-            const {data: commentData, error} = await from('profiles').select('avatar_url, username').eq('id', data[c].Comment_user_ID)
-            const {signedURL, error: error2} = await fromBucket('avatars')
-               .createSignedUrl(commentData[0].avatar_url, 30) 
-            comments[c]['Comment_avatar_url'] = signedURL
-            comments[c]['Comment_username'] = commentData[0].username // add new key-value pair
-         }
-      }
-      return {comments}
-   }
-
-// /** @type {import('@sveltejs/kit').RequestHandler} */
-//    export async function post({request, params}){
-//       const {data, error} = from('Comment')
-//          .insert([
-//             {
-//                TBG_ID: params.id,
-//                Comment_text: request.text(),
-//                Comment_user_ID: '001'
-//             }
-//          ])
-
-//       if(error)
-//          return {
-//             status:400
-//          }
-
-//       return {
-//          status:200,
-//          body:{
-//             message: 'posted!',
-//             data
-//          }
-//       }
-//    }
 </script>
 
 <script lang="ts">
    import Seo from '$lib/components/SEO.svelte'
    import ContentCard from '$lib/components/ContentCard.svelte'
+   import CommentSection from '$lib/components/CommentSection.svelte'
    import {StarIcon, UserIcon, UsersIcon, ClockIcon, FeatherIcon, EditIcon, HomeIcon} from 'svelte-feather-icons'
    import Social from '$lib/components/Social.svelte'
    import Spinner from '$lib/components/Spinner.svelte'
@@ -131,7 +91,6 @@
       promiseContents = await getContents(BGID)
       contents = promiseContents.data
       promiseEvents = await getEvents(BGID) // to be added
-      promiseComments = await getComments(BGID)
    })
 
    let favorite: boolean = false // to be fetched from user
@@ -358,43 +317,7 @@
          {/if}
       </div>
       <div class="divider"></div>
-      <h3>Comments</h3>
-      {#await promiseComments}
-         <Spinner/>
-      {:then res}
-         {#if res}
-            {#each res.comments as c}
-               <div class="flex flex-row items-center border-2 border-primary p-2 gap-2 rounded-lg">
-                  <div class="flex flex-col justify-center gap-1 text-center m-2">
-                     <div class="avatar">
-                        <div class=" w-20 h-20 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-                           <img src="{c.Comment_avatar_url}" alt="user avatar">
-                        </div>
-                     </div>
-                     <div class="truncate">
-                        {c.Comment_username}
-                     </div>
-                  </div>
-                  <div>
-                     {c.Comment_text}
-                  </div>
-               </div>
-            {:else}
-               <p>Be the first person to comment!</p>
-            {/each}
-         {/if}
-      {/await}
-
-      {#if user && !user.guest}
-         <div class="form-control" method="post">
-            <textarea class="textarea h-24 textarea-bordered" placeholder="Add comment"></textarea>
-            <div class="btn" type="submit">Submit</div>
-         </div>
-      {:else}
-         <div>
-         <a href="/auth">Sign in</a> to comment
-         </div>
-      {/if}
+      <CommentSection type='boardgame' ID={BGID}/>
    </div>
    <!-- third column-->
    <div class="flex flex-col gap-4 pt-28">

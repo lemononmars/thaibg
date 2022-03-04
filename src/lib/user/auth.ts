@@ -12,5 +12,5 @@ export async function signOut() {
 
 export async function setServerSessionAndRedir(session: AuthSession) {
     await setAuthCookie(session)
-    goto(ROUTE_PROFILE)
+    goto(ROUTE_HOME) // used to be ROUTE_PROFILE
 }

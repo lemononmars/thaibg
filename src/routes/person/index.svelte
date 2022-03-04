@@ -2,7 +2,7 @@
    import {from} from '$lib/supabase' 
 
    export async function load({url}) {
-      let {data, error} = await from('Person').select('*')
+      let {data, error} = await from('Person').select('*')//.eq('Person_show', true || null)
 
       if(error) 
          return {status: 404}
@@ -27,7 +27,7 @@
 
    export let people, search
    export let role // null, Designer, Artist, Graphicdesigner, Creator
-   const personRoles = ['All', 'Designer', 'Artist', 'Graphicdesigner','Creator']
+   const personRoles = ['All', 'Designer', 'Artist', 'Graphicdesigner','Creator', 'Playtester']
    
    let option
    // initialize option (0,1,2,3,4)
@@ -72,16 +72,6 @@
 <div class="flex flex-col justify-center mx-auto">
    <DataView data={peopleSorted} type="person" {tableInfo}>
       <div class="flex flex-row items-center justify-between gap-2">
-         <!-- Role search -->
-         <div class="btn-group">
-            <button class="btn btn-info"> Select role </button>
-            {#each personRoles as pr, idx}
-               <button class="btn" 
-                  class:btn-active={option === idx}
-                  on:click={()=>option = idx}>{pr}
-               </button>
-            {/each}
-         </div>
          <!-- Search box -->
          <div class="form-control m-4">
             <div class="relative">
@@ -119,7 +109,7 @@
 
    {#if peopleSorted?.length == 0}
       <div>
-         No result for "{searchString}". Try <div class="btn btn-outline" on:click={resetSearch}>resetting</div> your search query.
+         No result. Try <div class="btn btn-outline" on:click={resetSearch}>resetting</div> your search query.
       </div>
    {/if}
 </div>
