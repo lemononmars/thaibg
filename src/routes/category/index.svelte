@@ -3,10 +3,10 @@
       let {data, error} = await from('Category').select('*')
       
       let categories = data.map((c)=>({
-         id: c.Cat_ID,
-         name: c.Cat_name,
-         slug: c.Cat_slug,
-         picture: c.Cat_picture,
+         id: c.Category_ID,
+         name: c.Category_name,
+         slug: c.Category_slug,
+         picture: c.Category_picture,
          type: 'category'
       }))
 

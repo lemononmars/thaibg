@@ -4,7 +4,7 @@
    export async function load({ session }) {
        const { user } = session
        const {data:types, error:error_2} = await from('Type').select('Type_ID, Type_name')
-       const {data:categories, error:error_3} = await from('Category').select('Cat_ID, Cat_name')
+       const {data:categories, error:error_3} = await from('Category').select('Category_ID, Cat_name')
        const {data:mechanics, error:error_4} = await from('Mechanics').select('Mech_ID, Mech_name')
        const {data:publishers, error:error_5} = await from('Publisher').select('Publisher_ID, Publisher_name')
        const {data:artists, error:error_7} = await from('Artist').select('Artist_ID, Artist_name, Artist_name_th')

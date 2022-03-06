@@ -3,6 +3,7 @@
 
    export async function getContents(){
       let {data, error} = await from('Content').select('*')
+      if(error) throw error
       return data
    }
 </script>

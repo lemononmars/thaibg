@@ -3,7 +3,7 @@
 
    export async function load({ session, params }) {
        const { user } = session
-       const {data, error} = await from('Category').select('*').eq('Cat_ID', params.id)
+       const {data, error} = await from('Category').select('*').eq('Category_ID', params.id)
        if(error) {}
        return {
            props: {
@@ -16,7 +16,7 @@
    export async function getBoardgames(id) {
       const {data, error} = await from('Boardgame')
          .select('*, Category_Relation!inner(*)')
-         .eq('Category_Relation.Cat_ID', id)
+         .eq('Category_Relation.Category_ID', id)
 
       return data
    }
@@ -32,7 +32,7 @@
    export let user, catData
    let promiseBoardgames
    onMount(async ()=>{
-      promiseBoardgames = getBoardgames(catData.Cat_ID)
+      promiseBoardgames = getBoardgames(catData.Category_ID)
    })
 </script>
 
@@ -43,16 +43,16 @@
          Invalid cateogry ID!
       {:else}
             <div class="flex flex-col lg:flex-row lg:gap-4 w-full p-8 border-2 shadow-lg rounded-xl">
-               <img src="{getImageURL('category',catData.Cat_picture)}" alt="image of {catData.Cat_name}" class="w-72 mask mask-hexagon-2"
+               <img src="{getImageURL('category',catData.Category_picture)}" alt="image of {catData.Category_name}" class="w-72 mask mask-hexagon-2"
                   on:error|once={(ev)=>ev.target.src = getDefaultImageURL('category')}
                />
                <div>
-                  <h1>{catData.Cat_name}</h1>
-                  <h2>{catData.Cat_name_th? "(" + catData.Cat_name_th + ")": ""}</h2>
+                  <h1>{catData.Category_name}</h1>
+                  <h2>{catData.Category_name_th? "(" + catData.Category_name_th + ")": ""}</h2>
                   <ul>
                      <li>BGG link: 
-                        {#if catData.Cat_link}
-                           <a href="{catData.Cat_link}" target="_blank">{catData.Cat_link}</a>
+                        {#if catData.Category_link}
+                           <a href="{catData.Category_link}" target="_blank">{catData.Category_link}</a>
                         {:else}
                            N/A
                         {/if}
@@ -63,7 +63,7 @@
             <!-- <div>{likes.length}</div> -->
             <div>
                <h2>Description</h2>
-               <p>{@html catData.Cat_description}</p>
+               <p>{@html catData.Category_description}</p>
             </div>
             <div class="divider"></div>
             <h2>Boardgames in this category</h2>

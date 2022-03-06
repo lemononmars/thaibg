@@ -1,8 +1,5 @@
-<script lang="ts" context="module">
-   import {getImageURL, getDefaultImageURL} from '$lib/supabase'
-</script>
-
 <script lang="ts">
+   import {getImageURL, getDefaultImageURL} from '$lib/supabase'
    export let event
 
    let id = event.Event_ID

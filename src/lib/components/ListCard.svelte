@@ -5,8 +5,6 @@
    export let picture: string
    export let name: string
    export let type: string
-
-   
 </script>
 
 <a href="/{type}/{id}/{slug}">

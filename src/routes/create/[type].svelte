@@ -36,6 +36,8 @@
 
    export let blankData, type, keys, user
    let comment = ''
+
+   // filter out some keys, like ID and slug that needs to be generated on server or Supabase
    keys = keys.map((k)=>k.slice(k.indexOf('_')+1,k.length))
    keys = keys.filter((k)=>
       (!k.endsWith('ID') && !k.endsWith('slug'))
@@ -88,14 +90,14 @@
             >
          </div>
       {/each}
-      <div class="justify-self-end mx-2">Comment (to admin)</div>
-         <div class="justify-self-start">
-            <input type="text" 
-               class="input input-bordered" 
-               bind:value={comment}
-            >
-         </div>
    </div>
+   <div class="divider"></div>
+   <div class="justify-self-end mx-2">Comment</div>
+   <textarea 
+      class="textarea textarea-bordered" 
+      placeholder="comment to admin"
+      bind:value={comment}
+   /><br>
    {#if submitState == 0}
       <div class="btn" on:click|preventDefault={submitEntry}>Submit</div>
    {:else if submitState == 1}

@@ -3,7 +3,7 @@
 
     export async function load({ params }) {
         // ignore page's [slug] and redirect to the proper location
-        const {data, error} = await from('Category').select('*').eq('Cat_ID', params.id)
+        const {data, error} = await from('Category').select('*').eq('Category_ID', params.id)
         if(error || !data[0])
             return {
                 redirect: "/category",

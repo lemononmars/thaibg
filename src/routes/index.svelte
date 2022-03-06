@@ -44,6 +44,14 @@
       return {numBoardgames, numPeople, numContents}
     }
 
+    export async function getDevelopers(){
+      // Person IDs for First, Poom and X
+      let res = await from ('Person')
+        .select('*')
+        .filter('Person_ID', 'in', '(8,10,11)')
+      let sorted = res.data.sort((a,b)=> a.Person_ID - b.Person_ID)
+      return {developers: sorted}
+    }
 </script>
 
 <script lang="ts">
@@ -52,17 +60,19 @@
   import {from} from '$lib/supabase'
   import {onMount} from 'svelte'
   import BoardgameCard from '$lib/components/BoardgameCard.svelte'
+  import PersonCard from '$lib/components/PersonCard.svelte'
   import {PlayCircleIcon, UserCheckIcon, CoffeeIcon, ChevronRightIcon, ChevronLeftIcon, FilmIcon} from 'svelte-feather-icons'
   import ContentCard from '$lib/components/ContentCard.svelte'
   import EventCard from '$lib/components/EventCard.svelte'
   import { _ } from 'svelte-i18n';
 
-  let promiseEvents, promiseContents, promiseBoardgames, promiseStats
+  let promiseEvents, promiseContents, promiseBoardgames, promiseStats, promiseDevs
   onMount(async()=>{
     promiseEvents = await getEvents()
     promiseContents = await getContents()
     promiseBoardgames = await getHotnessBoardgames()
     promiseStats = await getStats()
+    promiseDevs = await getDevelopers()
   })
   const boardgameCarouselWidth = 200
 
@@ -73,53 +83,51 @@
 </script>
 
 <Seo title="Home"/>
-<div class="flex flex-col lg:flex-row w-full bg-gradient-to-b from-slate-100 to-slate-500 rounded-b-3xl lg:rounded-b-full py-10 lg:py-20 px-8 lg:px-32">
+<div class="flex flex-col lg:flex-row w-full bg-base-200 py-10 lg:py-20 px-8 lg:px-32">
   <div class="flex flex-col">
     <h1>{$_('page.home.welcome.intro')}</h1>
     {#await promiseStats}
       <Spinner/>
     {:then res}
       {#if res}
-        <div class="stats stats-vertical lg:stats-horizontal overflow-visible my-10 bg-transparent">
-          <div class="stat mx-4">
-            <div class="stat-value">{res.numBoardgames}</div>
-            <div class="stat-title">{$_('page.home.welcome.boardgames')}</div>
-            <div class="stat-figure text-secondary">
-              <PlayCircleIcon size="40"/>
+        <div class="grid grid-cols-1 lg:grid-cols-3 place-items-center py-8 m-2">
+          <div class="flex flex-col place-items-center">
+            <div class="flex flex-row items-center gap-2">
+              <div class="text-2xl">{res.numBoardgames} </div>
+              <div> <PlayCircleIcon size="40"/></div>
             </div>
+            <div>{$_('page.home.welcome.boardgames')}</div>
           </div>
-          
-          <div class="stat mx-4">
-            <div class="stat-figure text-secondary">
-              <UserCheckIcon size="40"/>
+          <div class="flex flex-col place-items-center">
+            <div class="flex flex-row items-center gap-2">
+              <div class="text-2xl">{res.numPeople}</div>
+              <div><UserCheckIcon size="40"/></div>
             </div>
-            <div class="stat-value">{res.numPeople}</div>
-            <div class="stat-title">{$_('page.home.welcome.people')}</div>
+            <div>{$_('page.home.welcome.people')} </div>
           </div>
-          
-          <div class="stat mx-4">
-            <div class="stat-figure text-secondary">
-              <CoffeeIcon size="40"/>
+          <div class="flex flex-col place-items-center">
+            <div class="flex flex-row items-center gap-2">
+              <div class="text-2xl">{res.numContents}</div>
+              <div><CoffeeIcon size="40"/></div>
             </div>
-            <div class="stat-value">{res.numContents}</div>
-            <div class="stat-title">{$_('page.home.welcome.contents')}</div>
+            <div>{$_('page.home.welcome.contents')}</div>
           </div>
         </div>
       {/if}
     {/await}
-    <p class="text-2xl">
+    <p class="text-2xl text-secondary">
       {$_('page.home.welcome.text1')} <br>
       {$_('page.home.welcome.text2')} 
     </p>
     <div class="flex flex-row items-center justify-center mt-4">
-      <div class="btn btn-primary">{$_('page.home.welcome.contribute')}</div>
-      <div class="btn btn-ghost">{$_('page.home.welcome.contact')}</div>
+      <a href="/create"><div class="btn btn-primary">{$_('page.home.welcome.contribute')}</div></a>
+      <a href="/contact"><div class="btn btn-ghost">{$_('page.home.welcome.contact')}</div></a>
     </div>
   </div>
 
   <div class="flex flex-grow justify-center place-items-center">
     <div>
-      <UserCheckIcon size="400"/>
+      <UserCheckIcon size="200"/>
     </div>
   </div>
 </div>
@@ -163,7 +171,7 @@
   </div>
 </div>
 
-<div class="flex flex-col w-full py-4 px-4 lg:px-20">
+<div class="flex flex-col w-full">
   <div class="flex flex-row w-full justify-between items-center">
     <div>
       <h1>Hotness Board Game</h1>
@@ -174,7 +182,7 @@
       </a>
     </div>
   </div>
-  <div class="relative">
+  <div class="relative lg:ml-20">
     <div class="btn btn-accent absolute rounded-full left-0 bottom-0 z-10 opacity-20 hover:opacity-80" 
       on:click={()=>scrollCarousel(-1)}
       class:hidden={bgCarousel?.scrollLeft <= boardgameCarouselWidth}
@@ -190,7 +198,7 @@
     
     <div 
       id="bg-carousel" 
-      class="flex flex-row flex-nowrap gap-4 p-4 overflow-x-scroll overflow-y-none snap-x scroll-smooth relative"
+      class="flex flex-row flex-nowrap gap-4 p-4 overflow-x-hidden overflow-y-none snap-center scroll-smooth relative"
       bind:this={bgCarousel}
     >
       {#await promiseBoardgames}
@@ -207,3 +215,25 @@
     </div>
   </div>
 </div>
+
+<!-- database creators -->
+<div class="flex flex-col w-full mx-4 mt-40">
+  <h1 class="text-left my-4">Team of Developers</h1>
+  {#await promiseDevs}
+    <Spinner/>
+  {:then res}
+    {#if res}
+    <div class="flex flex-row gap-4">
+      {#each res.developers as d, idx}
+        {@const developerRoles = ['UI Designer', 'Web Designer', 'Database Engineer']}
+        <div>
+          <PersonCard person={d}/>
+          <div class='my-4'>{developerRoles[idx]}</div>
+        </div>
+      {/each}
+    </div>
+    {/if}
+  {/await}
+</div>
+<!-- <div class="relative bg-error skew-y-12 h-60 -translate-y-80 -z-10"></div>
+<div class="relative bg-error h-60 -z-10 -translate-y-96"></div> -->
