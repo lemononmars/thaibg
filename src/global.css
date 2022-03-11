@@ -17,19 +17,19 @@
 
     a {
         @apply link link-primary;
-        @apply no-underline hover:underline focus:outline-none focus:underline;
+        @apply no-underline hover:no-underline focus:outline-none focus:underline;
     } 
 
     h1 {
-        @apply text-5xl text-primary my-4
+        @apply text-2xl text-primary my-4
     }
 
     h2 {
-        @apply text-3xl text-secondary my-2
+        @apply text-xl font-semibold text-secondary my-2 
     }
 
     h3{
-        @apply text-xl text-accent my-2
+        @apply text-base font-semibold text-accent my-2
     }
 }
   

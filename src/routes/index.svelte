@@ -120,7 +120,7 @@
       {$_('page.home.welcome.text2')} 
     </p>
     <div class="flex flex-row items-center justify-center mt-4">
-      <a href="/create"><div class="btn btn-primary">{$_('page.home.welcome.contribute')}</div></a>
+      <a href="/create"><div class="btn btn-secondary">{$_('page.home.welcome.contribute')}</div></a>
       <a href="/contact"><div class="btn btn-ghost">{$_('page.home.welcome.contact')}</div></a>
     </div>
   </div>
