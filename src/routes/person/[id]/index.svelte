@@ -1,36 +1,28 @@
-<script lang='ts' context='module'>
-    import {from} from '$lib/supabase'
+<script context=module lang=ts>
+// Note: should have been an endpoint, but I couldn't get fetch to work :/
+export async function load({ params, url, fetch }) {
+    let id = params.id
 
-    export async function load({ params, url }) {
-        // allow urls like person/DGS001 or person/ART019
-        // redirect to the corresponding person at person/PERSXXXX/Person_slug
+    // make sure the query is valid
+    let role = url.searchParams.get('role')?.toLowerCase() || 'person'
+    let roles = ['artist', 'designer', 'contentcreator', 'graphicdesigner', 'playtester']
+    let roleURLparam = `?role=${role}`
+    if(!role || !roles.includes(role))
+        roleURLparam = ''
 
-        // determine this person's role based on [id]:
-        // artist, creator, graphicdesigner, designer, playtester
-        let id = params.id
-        let role = url.searchParams.get('role') || 'Person'
-        let roles = ['Artist', 'Designer', 'Creator', 'Graphicdesigner', 'Playtester']
-        let roleURLparam = `?role=${role}`
-        if(!role || !roles.includes(role))
-            roleURLparam = ''
-
-        let ROLE_ID = `${role}_ID`
-        let SEL_COL = `Person_ID, Person_slug`
-        const {data, error} = await from('Person')
-            .select(SEL_COL)
-            .eq(ROLE_ID, id)
-        // redirect to the page
-        if(error || !data[0])
-            return {
-                redirect: "/person",
-                status: 303
-            }
-        
-        let person_ID = data[0].Person_ID
-        let person_slug = data[0].Person_slug
+    let res = await fetch(`/api/person/${id}`)
+    // redirect to the default page
+    if(!res.ok)
         return {
             status: 303,
-            redirect: `/person/${person_ID}/${person_slug}${roleURLparam}`
+            redirect: "/person",
         }
+
+    let data = await res.json()
+    
+    return {
+        status: 303,
+        redirect: `/person/${id}/${data.Person_slug}${roleURLparam}`,
     }
+}
 </script>

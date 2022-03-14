@@ -1,34 +1,15 @@
 <script context=module>
-   import {from, getImageURL, getDefaultImageURL} from '$lib/supabase' 
+   export async function load({url, fetch}) {
+      const res = await fetch('/api/boardgame')
+      if(!res.ok) return {status: 404}
 
-   export async function load({url}) {
-      let {data, error} = await from('Boardgame').select('TBG_name, TBG_name_th, TBG_released, TBG_picture, TBG_slug, TBG_ID, TBG_status')
-   
-      if(error) 
-         return {status: 404}
-
+      const data = await res.json()
       return {
          props: {
             boardgames: data,
-            type: url.searchParams.get('type'),
             search: url.searchParams.get('name')
          }
       }
-   }
-
-   export async function getPublisher(data) {
-       // publisher info for search query
-       for(let id in data) {
-         let {data:publisher, error} = await from ('Publisher')
-            .select('*, Publisher_Relation!inner(*)')
-            .eq('Publisher_Relation.TBG_ID', id)
-
-         let p = error? 'Uncredited' : publisher[0].Publisher_name
-         if(p !== 'Unpublished' && p !== 'Self published' && p!== "Uncredited")
-            p = 'Published' // traditional publisher
-         data[id] = p
-      }
-      return data
    }
 </script>
 
@@ -40,19 +21,13 @@
    import { quintOut } from 'svelte/easing';
    import { _ } from 'svelte-i18n'
    import DataView from '$lib/components/DataView.svelte'
-   import {onMount} from 'svelte'
    import Spinner from '$lib/components/Spinner.svelte'
 
    export let boardgames
-   export let search, type // from url params
+   export let search// from url params
 
    const boardgamePublisherTitle = ['All',  'Published', 'Self published', 'Uncredited', 'Unpublished']
-   let option
-   // initialize option (0,1,2,3)
-   if(!type || boardgamePublisherTitle.indexOf(type) == -1)
-      option = 0
-   else
-      option = boardgamePublisherTitle.indexOf(type)
+   let option = 0
 
    $: boardgamesFiltered = boardgames.filter((bg)=> 
          (option == 0

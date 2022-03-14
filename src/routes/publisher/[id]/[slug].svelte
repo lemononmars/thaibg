@@ -3,12 +3,14 @@
 
    export async function load({ session, params }) {
        const { user } = session
-       const {data, error} = await from('Publisher').select('*').eq('Publisher_ID', params.id)
-       if(error) {throw(error)}
+       const res = await fetch(`/api/publisher/${params.id}`)
+       if(!res.ok) return {status:400}
+
+       const data = await res.json()
        return {
            props: {
                user,
-               publisherData: data[0] || null
+               publisherData: data || null
            }
        };
    }
@@ -43,7 +45,9 @@
       {:else}
          {#if boardgameData}
             <div class="flex flex-col lg:flex-row lg:gap-4 w-full p-8 border-2 shadow-lg rounded-xl">
-               <img src="{publisherData.Publisher_picture}" alt="image of {publisherData.Publisher_name}" class="w-72 mask mask-hexagon-2"/>
+               <img src="{publisherData.Publisher_picture}" alt="image of {publisherData.Publisher_name}" class="w-72" 
+                  on:error|once={(ev)=>ev.target.src = getDefaultImageURL('publisher')}
+               />
                <div>
                   <h1>{publisherData.Publisher_name}</h1>
                   <h2>{publisherData.Publisher_name_th? "(" + publisherData.Publisher_name_th + ")": ""}</h2>

@@ -1,14 +1,17 @@
 <script lang="ts" context="module">
-   import {from, getImageURL, getDefaultImageURL} from '$lib/supabase'
+   import {getImageURL, getDefaultImageURL} from '$lib/supabase'
 
    export async function getDesignerImageURLs(id) {
-      const {data, error} = await from('Designer')
-         .select('Designer_picture, Designer_Relation!inner(*)')
-         .eq('Designer_Relation.TBG_ID', id)
+      const res = await fetch(`/api/boardgame/${id}/designer`)
+      if(!res.ok) return []
 
+      let data = await res.json()
       let URLs = []
-      for(let d in data)
-         URLs = [...URLs, getImageURL('person', data[d].Designer_picture)]
+      for(let d in data) {
+         const resDesigner = await fetch(`/api/designer/${data[d].Designer_ID}/person`)
+         const person = await resDesigner.json()
+         URLs = [...URLs, getImageURL('person', person[0].Person_picture)]
+      }
 
       return URLs
    }
@@ -21,7 +24,7 @@
    let slug: string = bg.TBG_slug
    let picture = getImageURL('boardgame', bg.TBG_picture)
    let name: string  = bg.TBG_name || bg.TBG_name_th || ''
-   let description: string = bg.TBG_description?.slice(50) || ''
+   let description: string = bg.TBG_description?.slice(0,50) || ''
 
    let promiseDesignerImageURLs = getDesignerImageURLs(id)
 </script>

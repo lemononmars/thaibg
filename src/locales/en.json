@@ -8,7 +8,7 @@
   "graphicdesigner": "Graphic Designer",
   "manufacturer": "Manufacturer",
   "publisher": "Publisher",
-  "sponsor": "Sponsor",
+  "investor": "investor",
   "contentcreator": "Content Creator",
   "shop": "Shop",
   "event": "Event",
@@ -57,7 +57,7 @@
     "supporter": {
       "_": "Supporters",
       "publisher": "Publishers",
-      "sponsor": "Sponsors",
+      "investor": "Investors",
       "creator": "Content Creators",
       "shop": "Shops"
     },
@@ -78,5 +78,9 @@
       "db": "Database"
     }
   },
-  "page.home.welcome.intro": "WE HAVE THEM ALL!"
+  "page.home.welcome.intro": "WE HAVE THEM ALL!",
+  "rulebookeditor": "Rulebook Editor",
+  "crowdfunding": "Crowdfunding",
+  "navbar.creator._": "Creator",
+  "navbar.supporter._": "Supporter"
 }

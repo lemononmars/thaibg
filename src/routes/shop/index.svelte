@@ -1,10 +1,8 @@
 <script context=module>
-   import {from} from '$lib/supabase'
-
    export async function getShops() {
-      let {data:shops, error} = await from('Shop').select('*')
-      if(error) throw(error)
-      return shops
+      let res = await fetch('/api/shop')
+      if(res.ok) return await res.json()
+      return {status: 404}
    }
 </script>
 
@@ -36,7 +34,7 @@
 <div class="flex flex-col justify-center mx-auto">
    {#if loaded}
       <DataView data={shopFiltered} type='shop' {tableInfo}>
-         <SearchBar placeholder="Search store (en/th)" {searchString}/>
+         <SearchBar placeholder="Search shop (en/th)" bind:searchString/>
       </DataView>
    {/if}
 </div>

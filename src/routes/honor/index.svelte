@@ -1,10 +1,9 @@
 <script context=module>
-   import {from} from '$lib/supabase'
-
    export async function getHonor() {
-      let {data:honors, error} = await from('Honor').select('*')
-      if(error) throw(error)
-      return honors
+      const res = await fetch('/api/honor')
+      if(!res.ok) return {status: 404}
+      const honors = res.json()
+      return honors   
    }
 </script>
 

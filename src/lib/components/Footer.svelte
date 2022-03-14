@@ -16,7 +16,7 @@
     ]
     $: supporterMenu = [
         {path: '/publisher',title:$_('publisher')},
-        {path: '/sponsor',title:$_('sponsor')},
+        {path: '/investor',title:$_('investor')},
         {path: '/person?role=Creator',title:$_('contentcreator')},
         {path: '/shop', title:$_('shop')}
     ]

@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 
 type SupaTable = 'profiles' | 'Artist' | 'Artist_Relation' | 'Honor' | 'Honor_Relation' | 'Boardgame' | 'Category' | 'Category_Relation' | 'Comment' | 'Content' | 'Creator' | 'Creator_Relation' | 'Designer' | 'Designer_Relation' | 'Event' | 'Event_Relation' | 'Graphicdesigner' | 'Graphicdesigner_Relation' | 'Mechanics' | 'Mechanics_Relation' | 'Manufacturer' | 'Manufacturer_Relation' | 
-'Person' | 'Place' | 'Place_Relation' | 'Playtester' | 'Playtester_Relation' | 'Publisher' | 'Publisher_Relation' | 'Shop' | 'Shop_Relation' | 'Sponsor' | 'Sponsor_Relation' | 'Type' | 'Type_Relation' 
+'Person' | 'Place' | 'Place_Relation' | 'Playtester' | 'Playtester_Relation' | 'Publisher' | 'Publisher_Relation' | 'Shop' | 'Shop_Relation' | 'investor' | 'Investor_Relation' | 'Type' | 'Type_Relation' 
 type SupaStorageBucket = 'avatars' | 'images'
 
 // TODO: not hard-coded this?
@@ -33,6 +33,16 @@ export const from = (table) => supabaseClient.from(table)
  */
 export const fromBucket = (bucket: SupaStorageBucket) => supabaseClient.storage.from(bucket)
 
+export function getTableName (type: string){
+  return type[0].toUpperCase() + type.slice(1)
+}
+
+export function getVarPrefix (type: string){
+  if(type?.toLowerCase() === "boardgame")
+      return 'TBG'
+   else
+      return type[0].toUpperCase() + type.slice(1)
+}
 
 /**
  * Load image from a public folder in images/

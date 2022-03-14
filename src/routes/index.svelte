@@ -1,22 +1,39 @@
 <script context=module lang="ts">
+    export async function load({fetch}) {
+      let numBoardgames, numPeople, numContents
+      await fetch('/api/boardgame')
+        .then(res => res.json())
+        .then(data => numBoardgames = data.length)
+      await fetch('/api/person')
+        .then(res => res.json())
+        .then(data => numPeople = data.length)
+      await fetch('/api/content')
+        .then(res => res.json())
+        .then(data => numContents = data.length)
+      // TODO: add more stats
+      return {
+        props:{
+          numBoardgames, numPeople, numContents
+        }
+      }
+    }
+
     export async function getEvents(){
-      let res = await from('Event')
-          .select('*')
-      
-      return {events: res.data.slice(-3)}
+      const res = await fetch('/api/event')
+      const data = await res.json()
+      return {events: data.slice(-3)}
     }
 
     export async function getContents(){
-      let res = await from('Content')
-         .select('*')
-      return {contents: res.data.slice(-10)}
+      const res = await fetch('/api/content')
+      const data = await res.json()
+      return {contents: data.slice(-10)}
     }
 
     export async function getHotnessBoardgames(){
-      let res = await from('Boardgame')
-          .select('*')
-          //.eq('TBG_show', true)
-      let numBoardgames = res.data.length
+      const resBG = await fetch('/api/boardgame')
+      const dataBG = await resBG.json()
+      const numBoardgames = dataBG.length
       const NUM_BOARDGAMES_SHOWN = 10
       let bgindex = []
 
@@ -27,21 +44,7 @@
         if(!bgindex.includes(randomIdx))
           bgindex = [...bgindex, randomIdx]
       }
-      return {boardgames: bgindex.map((idx)=>res.data[idx])}
-    }
-   
-    export async function getStats() {
-      let res = await from('Boardgame')
-          .select('TBG_ID')
-      let numBoardgames = res.data.length
-      res = await from('Person')
-         .select('Person_ID')
-      let numPeople = res.data.length
-      res =await from('Content')
-        .select('Content_ID')
-      let numContents = res.data.length
-      // TODO: add more stats
-      return {numBoardgames, numPeople, numContents}
+      return {boardgames: bgindex.map((idx)=>dataBG[idx])}
     }
 
     export async function getDevelopers(){
@@ -66,12 +69,12 @@
   import EventCard from '$lib/components/EventCard.svelte'
   import { _ } from 'svelte-i18n';
 
-  let promiseEvents, promiseContents, promiseBoardgames, promiseStats, promiseDevs
+  export let numBoardgames, numContents, numPeople
+  let promiseEvents, promiseContents, promiseBoardgames, promiseDevs
   onMount(async()=>{
     promiseEvents = await getEvents()
     promiseContents = await getContents()
     promiseBoardgames = await getHotnessBoardgames()
-    promiseStats = await getStats()
     promiseDevs = await getDevelopers()
   })
   const boardgameCarouselWidth = 200
@@ -86,35 +89,29 @@
 <div class="flex flex-col lg:flex-row w-full bg-base-200 py-10 lg:py-20 px-8 lg:px-32">
   <div class="flex flex-col">
     <h1>{$_('page.home.welcome.intro')}</h1>
-    {#await promiseStats}
-      <Spinner/>
-    {:then res}
-      {#if res}
-        <div class="grid grid-cols-1 lg:grid-cols-3 place-items-center py-8 m-2">
-          <div class="flex flex-col place-items-center">
-            <div class="flex flex-row items-center gap-2">
-              <div class="text-2xl">{res.numBoardgames} </div>
-              <div> <PlayCircleIcon size="40"/></div>
-            </div>
-            <div>{$_('page.home.welcome.boardgames')}</div>
+      <div class="grid grid-cols-1 lg:grid-cols-3 place-items-center py-8 m-2">
+        <div class="flex flex-col place-items-center">
+          <div class="flex flex-row items-center gap-2">
+              <div class="text-2xl">{numBoardgames} </div>
+            <div> <PlayCircleIcon size="40"/></div>
           </div>
-          <div class="flex flex-col place-items-center">
-            <div class="flex flex-row items-center gap-2">
-              <div class="text-2xl">{res.numPeople}</div>
-              <div><UserCheckIcon size="40"/></div>
-            </div>
-            <div>{$_('page.home.welcome.people')} </div>
-          </div>
-          <div class="flex flex-col place-items-center">
-            <div class="flex flex-row items-center gap-2">
-              <div class="text-2xl">{res.numContents}</div>
-              <div><CoffeeIcon size="40"/></div>
-            </div>
-            <div>{$_('page.home.welcome.contents')}</div>
-          </div>
+          <div>{$_('page.home.welcome.boardgames')}</div>
         </div>
-      {/if}
-    {/await}
+        <div class="flex flex-col place-items-center">
+          <div class="flex flex-row items-center gap-2">
+            <div class="text-2xl">{numPeople} </div>
+            <div><UserCheckIcon size="40"/></div>
+          </div>
+          <div>{$_('page.home.welcome.people')} </div>
+        </div>
+        <div class="flex flex-col place-items-center">
+          <div class="flex flex-row items-center gap-2">
+            <div class="text-2xl">{numContents} </div>
+            <div><CoffeeIcon size="40"/></div>
+          </div>
+          <div>{$_('page.home.welcome.contents')}</div>
+        </div>
+      </div>
     <p class="text-2xl text-secondary">
       {$_('page.home.welcome.text1')} <br>
       {$_('page.home.welcome.text2')} 

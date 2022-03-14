@@ -24,26 +24,26 @@
     
     $: boardgameMenu = [
         {path: '/boardgame',title:$_('navbar.boardgame.list')},
-        {path: '/type',title:$_('type')},
-        {path: '/mechanics',title:$_('mechanics')},
-        {path: '/category',title:$_('category')},
     ]
-    $: peopleMenu = [
-        {path: '/person?role=Designer',title:$_('designer')},
-        {path: '/person?role=Artist',title:$_('artist')},
-        {path: '/person?role=Graphicdesigner', title:$_('graphicdesigner')},
+    $: creatorMenu = [
+        {path: '/person?role=designer',title:$_('designer')},
+        {path: '/person?role=graphicdesigner', title:$_('graphicdesigner')},
+        {path: '/person?role=artist',title:$_('artist')},
+        {path: '/person?role=playtester', title:$_('playtester')},
         {path: '/manufacturer',title:$_('manufacturer')},
+        {path: '/person?role=rulebookeditor', title:$_('rulebookeditor')},
     ]
     $: supporterMenu = [
+        {path: '/shop', title:$_('shop')},
+        {path: '/person?role=contentcreator',title:$_('contentcreator')},
         {path: '/publisher',title:$_('publisher')},
-        {path: '/sponsor',title:$_('sponsor')},
-        {path: '/person?role=Creator',title:$_('contentcreator')},
-        {path: '/shop', title:$_('shop')}
+        {path: '/investor',title:$_('investor')},
     ]
     $: activityMenu = [
-        {path: '/event',title:$_('event')},
-        {path: '/honor',title:$_('honor')},
         {path: '/content',title:$_('content')},
+        {path: '/honor',title:$_('honor')},
+        {path: '/event',title:$_('event')},
+        {path: '/crowdfunding',title:$_('crowdfunding')},
     ]
     $: websiteMenu = [
         {path: '/about',title:$_('navbar.website.about')},
@@ -58,9 +58,9 @@
     let avatar 
     onMount (async ()=>{
         if($user) {
-            const { data: avatar_url , error } = await getCurrUserProfile()
+            const { data, error } = await getCurrUserProfile()
             if(!error)
-                avatar = await getAvatar(avatar_url)
+                avatar = await getAvatar(data.avatar_url)
             else
                 avatar = URL_DICEBEAR + 'randombear' + '.svg'
         }
@@ -103,11 +103,10 @@
     </div> 
     <div class="navbar-center hidden lg:flex gap-4">
         <div class="dropdown dropdown-hover">
-            <!-- svelte-ignore a11y-label-has-associated-control -->
-            <label tabindex="0" class="hover:text-warning flex flex-row items-center">
+            <span tabindex="0" class="hover:text-warning flex flex-row items-center">
                 {$_('navbar.boardgame._')}
                 <ChevronDownIcon size="20"/>
-            </label> 
+            </span> 
             <ul tabindex="0" class="p-2 shadow menu dropdown-content w-52 bg-warning">
                 {#each boardgameMenu as m}
                     <li><a href="{m.path}" class="text-warning-content">{m.title}</a></li>
@@ -116,48 +115,45 @@
         </div>
         <div class="dropdown dropdown-hover">
             <span tabindex="0" class="hover:text-success flex flex-row items-center">
-                {$_('navbar.person._')}
+                {$_('navbar.creator._')}
                 <ChevronDownIcon size="20"/>
             </span>
-            <div tabindex="0" class="p-2 dropdown-content w-104 bg-success">
-                <div class="menu flex flex-row ">
-                    <div>
-                        <ul class="p-2 shadow w-52">
-                            {#each peopleMenu as m}
-                                <li><a href="{m.path}" class="text-success-content">{m.title}</a></li>
-                            {/each}
-                        </ul>
-                    </div>
-                    <div class="divider dividier-horizontal"></div>
-                    <div>
-                        <ul class="p-2 shadow w-52">
-                            {#each supporterMenu as m}
-                                <li><a href="{m.path}" class="text-success-content">{m.title}</a></li>
-                            {/each}
-                        </ul>
-                    </div>
-                </div>
-            </div>
+            <ul tabindex="0" class="p-2 shadow menu dropdown-content w-52 bg-success">
+                {#each creatorMenu as m}
+                    <li><a href="{m.path}" class="text-success-content">{m.title}</a></li>
+                {/each}
+            </ul>
         </div>
         <div class="dropdown dropdown-hover">
             <span tabindex="0" class="hover:text-error flex flex-row items-center">
-                {$_('navbar.activity._')}
+                {$_('navbar.supporter._')}
                 <ChevronDownIcon size="20"/>
             </span>
             <ul tabindex="0" class="p-2 shadow menu dropdown-content w-52 bg-error">
-                {#each activityMenu as m}
+                {#each supporterMenu as m}
                     <li><a href="{m.path}" class="text-error-content">{m.title}</a></li>
                 {/each}
             </ul>
         </div>
+        <div class="dropdown dropdown-hover">
+            <span tabindex="0" class="hover:text-warning flex flex-row items-center">
+                {$_('navbar.activity._')}
+                <ChevronDownIcon size="20"/>
+            </span>
+            <ul tabindex="0" class="p-2 shadow menu dropdown-content w-52 bg-warning">
+                {#each activityMenu as m}
+                    <li><a href="{m.path}" class="text-warning-content">{m.title}</a></li>
+                {/each}
+            </ul>
+        </div>
     </div>
-
+    <!-- Right side: language, theme, search, profile-->
     <div class="navbar-end flex flex-row items-center gap-4 mx-4">
         <div>
             {#if !$isLoading}
                 <select class="select select-md max-w-xs" bind:value={$locale}>                    
-                    {#each $locales as locale}
-                        <option value={locale}>{languageName[locale]}</option>
+                    {#each $locales as l}
+                        <option value={l}>{languageName[l]}</option>
                     {/each}
                 </select>
             {/if}

@@ -15,22 +15,6 @@
 </script>
 
 <style lang="postcss">
-	.progress-container {
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 4px;
-		z-index: 999;
-	}
-	.progress {
-		position: absolute;
-		left: 0;
-		top: 0;
-		height: 100%;
-		background-color: #5cb85c;
-		transition: width 0.4s;
-	}
 	.fade {
 		position: fixed;
 		width: 100%;
@@ -40,9 +24,6 @@
 		z-index: 998;
 		animation: fade 0.4s;
 	}
-	/* :global(html).dark .fade {
-		background-color: rgba(0, 0, 0, 0.3);
-	} */
 	@keyframes fade {
 		from {
 			opacity: 0;
@@ -54,8 +35,8 @@
 </style>
 
 {#if visible}
-	<div class="progress-container fixed top-0">
-		<div class="progress" style="width: {p * 100}%" />
+	<div class="absolute top-0 left-0 w-screen h-1 z-20">
+		<div class="absolute top-0 left-0 w-screen h-full bg-green-400 z-20" style="width: {p * 100}%; transition: width 0.4s" />
 	</div>
 {/if}
 

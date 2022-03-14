@@ -1,80 +1,46 @@
 <script lang="ts" context="module">
-   import {from} from '$lib/supabase'
-
-   export async function load({ session, params, url }) {
+   import {getVarPrefix} from '$lib/supabase'
+   import {personRoles} from '$lib/constants'
+   export async function load({ session, params, url, fetch }) {
       const {user} = session
-      const {data, error} = await from('Person').select('*').eq('Person_ID', params.id)
-      if(error)
+      const res = await fetch(`/api/person/${params.id}`)
+      if(!res.ok)
          return {
             status:404
          }
+      let person = await res.json()
 
       return {
          props: {
             user,
-            person: data[0] || null,
+            person,
             role: url.searchParams.get('role'),
          }
       };
    }
    
    export async function getRoleContent(role: string, person){
-      let res, data, contents 
+      let data = [], contents = []
       let returnedData
-      // TODO: figure out how to insert literal string r into from()
-      switch(role){
-         case "Designer": 
-            res = await from('Designer')
-               .select('*')
-               .eq('Designer_ID', person.Designer_ID)
-            break;
-
-         case "Creator":
-            res = await from('Creator')
-                  .select('*')
-                  .eq('Creator_ID', person.Creator_ID)
-            break;
-
-         case "Graphicdesigner":
-            res = await from('Graphicdesigner')
-                  .select('*')
-                  .eq('Graphicdesigner_ID', person.Graphicdesigner_ID)
-            break;
-
-         case "Artist":
-            res = await from('Artist')
-               .select('*')
-               .eq('Artist_ID', person.Artist_ID)
-            break;
-
-         case "Playtester":
-            res = await from('Playtester')
-               .select('*')
-               .eq('Playtester_ID', person.Playtester_ID)
-            break;
-
-         default: 
-            data = []
-            role='Person'
-            break;
-      }
-
+      // grab role information
+      const id = person[getVarPrefix(role) + '_ID']
+      let res = await fetch(`/api/${role}/${id}`)
       if(!res)  return {status: 404}
-      data = res.data[0]
-      res = await from('Boardgame')
-         .select(`*,${role}_Relation!inner(*)`)
-         .eq(`${role}_Relation.${role}_ID`, person[`${role}` + '_ID'])
+      data = await res.json()
 
-      if(res.error)  return {status: 404}
-      contents = res.data
-      console.log(contents)
+      // if the role is content creator, get the list of contents
+      // otherwise, get the list of board games
+      const contentType = role === 'contentcreator' ? 'content' : 'boardgame'
+      res = await fetch(`/api/${role}/${id}/${contentType}`)
+      if(!res.ok)  return {status: 404}
+      contents = await res.json()
+
       returnedData = {
          description: data[role + '_description'],
          id: data[role + '_ID'],
          name: data[role + '_name'],
          team: data[role + '_team'],
          slug: data[role + '_slug'],
-         role,
          contents
       }
       return returnedData
@@ -92,11 +58,11 @@
 
    // from endpoint [slug].ts
    export let user, person, role 
-   const roleTitles = ['Artist', 'Creator', 'Designer', 'Graphicdesigner', 'Playtester']
-   let activeroleTitles = roleTitles.map((r)=>!!person[r + '_ID'])
-   let activeTab
+   const roleUrl = personRoles.map((r)=>r.url)
+   let activeroleTitles = personRoles.map((r)=>!!person[r.prefix + '_ID'])
+   let activeTab = 0
    if(role) 
-      activeTab = roleTitles.indexOf(role) // response to url ?role=Designer
+      activeTab = roleUrl.indexOf(role) // response to url ?role=Designer
    else if (activeroleTitles.indexOf(true)) 
       activeTab = activeroleTitles.indexOf(true) // first non-empty role
    else 
@@ -105,13 +71,13 @@
    let rolePromise
 
    onMount(async ()=>{
-      rolePromise = await getRoleContent(roleTitles[activeTab], person) // initial loader
+      rolePromise = await getRoleContent(roleUrl[activeTab], person) // initial loader
    })
    
    async function changeTab(idx: number) {
       activeTab = idx
       if(activeroleTitles[activeTab])
-         rolePromise = await getRoleContent(roleTitles[activeTab], person)
+         rolePromise = await getRoleContent(roleUrl[activeTab], person)
    }
 </script>
 
@@ -144,18 +110,18 @@
       </div>
    </div>
 
-   <div class="flex flex-col w-2/3 text-left m-4 justify-center">
+   <div class="flex flex-col w-3/4 text-left m-4 justify-center">
       <div class="tabs w-full m-10 mx-auto flex-grow">
-         {#each roleTitles as r, idx}
+         {#each personRoles as r, idx}
             {#if activeroleTitles[idx]}
                <!-- svelte-ignore a11y-missing-attribute -->
-               <a class="tab tab-lg tab-lifted text-xl" 
+               <a class="tab tab-lg tab-bordered text-xl" 
                   class:text-success={!!activeroleTitles[idx]} 
                   class:tab-active={idx == activeTab}
                   class:text-bold={idx == activeTab}
                   on:click={()=>changeTab(idx)}
                >
-                  {r}
+                  {r.name}
                </a> 
             {/if}
          {/each}
@@ -167,38 +133,34 @@
             </div>
          {:then res}
             {#if res}
-               {#if !activeroleTitles[activeTab]}
-                  <p>This person doesn't have {roleTitles[activeTab]} role. Add one?</p>
-               {:else}
-                  <div>
-                     <h2>{roleTitles[activeTab]} Name</h2>
-                     <p>{res.name}</p>
-                     <h2>{roleTitles[activeTab]} Description</h2>
-                     <p>{@html res.description || '-'}</p>
-                     <h2>{roleTitles[activeTab]} Team</h2>
-                     <p>{res.team || '-'}</p>
-                  </div>
+               <div>
+                  <h2>{personRoles[activeTab].name}'s Name</h2>
+                  <p>{res.name || '-'}</p>
+                  <h2>{personRoles[activeTab].name}'s Description</h2>
+                  <p>{@html res.description || '-'}</p>
+                  <h2>{personRoles[activeTab].name}'s Team</h2>
+                  <p>{res.team || '-'}</p>
+               </div>
 
-                  <div class="divider"></div>
-                  {#if roleTitles[activeTab] === 'Creator'}
-                     <h2>Contents creator of</h2>
-                     <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-3 gap-4">
-                        {#each res.contents as content}
-                           <ContentCard {content}/>
-                        {:else}
-                           -
-                        {/each}
-                     </div>
-                  {:else}
-                     <h2>{res.role} of</h2>
-                     <div class="w-full text-center mb-4 grid grid-cols-2 grid-cols-3 gap-4">
-                        {#each res.contents as bg}
-                           <BoardgameCard {bg}/>
-                        {:else}
-                           -
-                        {/each}
-                     </div>
-                  {/if}
+               <div class="divider"></div>
+               {#if roleUrl[activeTab] === 'creator'}
+                  <h2>Contents created by this content creator</h2>
+                  <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-3 gap-4">
+                     {#each res.contents as content}
+                        <ContentCard {content}/>
+                     {:else}
+                        -
+                     {/each}
+                  </div>
+               {:else}
+                  <h2>Board games created by this {personRoles[activeTab].name}</h2>
+                  <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-3 gap-4">
+                     {#each res.contents as bg}
+                        <BoardgameCard {bg}/>
+                     {:else}
+                        -
+                     {/each}
+                  </div>
                {/if}
             {/if}
          {:catch}

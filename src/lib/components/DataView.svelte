@@ -1,5 +1,5 @@
 <script lang="ts">
-   import {getImageURL, getDefaultImageURL} from '$lib/supabase' 
+   import {getImageURL, getDefaultImageURL, getVarPrefix} from '$lib/supabase' 
 
    import SearchNavigation from "./SearchNavigation.svelte";
    import {GridIcon, ListIcon} from 'svelte-feather-icons'
@@ -14,10 +14,11 @@
 
    type dataType = 'boardgame' | 'person' | 'manufacturer' | 'shop' | 'publisher' | 'content' | 'event' | 'honor'
    export let data, type: dataType, tableInfo
-   const typeVar = (type === 'boardgame')? 'TBG': type[0].toUpperCase() + type.slice(1,type.length) //capitalize first letter
+   const typePrefix = getVarPrefix(type)
 
    let listView = 'list'
 
+   // pagination
    const ENTRY_PER_PAGES = 20
    $: numData = data.length
    $: numPages = Math.ceil(numData/ENTRY_PER_PAGES)
@@ -31,6 +32,7 @@
 </script>
 
 <div class="flex flex-col justify-center items-center relative mx-auto">
+   <!-- search bar, customized for each page-->
    <SearchNavigation/>
    <slot></slot>
     <div class="flex flex-row items-center ">
@@ -51,7 +53,7 @@
             </div>
          </div>
       </div>
-      <!-- Pagination -->
+      <!-- top pagination -->
       <div class="m-2">
          <div class="btn-group">
             <button class="btn">Page </button>
@@ -66,8 +68,8 @@
    {#if dataCurrentPage && data.length > 0}
       {#if listView === 'grid'}
          <!-- Grid view -->
-         <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-4 gap-4">
-            {#each dataCurrentPage as d (d[typeVar + '_ID']) }
+         <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-4 lg:gap-4">
+            {#each dataCurrentPage as d (d[typePrefix + '_ID']) }
                <div animate:flip="{{duration: 300}}">
                   {#if type === 'person'}
                      <PersonCard person={d}/>
@@ -86,10 +88,10 @@
       {:else}
       <!-- Table view -->
          <div class="overflow-x-auto w-full">
-            <table class="table w-full">
+            <table class="table table-zebra w-full">
                <thead>
                   <tr>
-                     <th>Cover image</th>
+                     <th>Image</th>
                      <th>Name</th>
                      {#each tableInfo.headers as t}
                         <th>{t}</th>
@@ -98,12 +100,12 @@
                </thead>
                <!-- Table body -->
                <tbody>
-                  {#each dataCurrentPage as d (d[typeVar + '_ID'])}
+                  {#each dataCurrentPage as d (d[typePrefix + '_ID'])}
                      <tr animate:flip="{{duration: 300}}">
                         <td>
                            <div class="avatar">
                               <div class="h-16 w-16 hover:scale-150 object-contain">
-                                 <img src="{getImageURL(type,d[typeVar + '_picture'])}"
+                                 <img src="{getImageURL(type,d[typePrefix + '_picture'])}"
                                     class="aspect-auto" 
                                     alt="thumbnail"
                                     on:error|once={(ev)=>ev.target.src = getDefaultImageURL(type)}
@@ -112,27 +114,25 @@
                            </div>
                         </td>
                         <td>
-                           <a href="/{type}/{d[typeVar + '_ID']}">
-                              <p class="break-words">{d[typeVar + '_name'] || d[typeVar + '_name_th'] || 'N/A'}</p>
-                              {#if d[typeVar + '_name'] && d[typeVar + '_name_th']}
-                                 <p class="opacity-60 break-words">{d[typeVar + '_name_th']}</p>
+                           <a href="/{type}/{d[typePrefix + '_ID']}">
+                              <p class="break-words">{d[typePrefix + '_name'] || d[typePrefix + '_name_th'] || 'N/A'}</p>
+                              {#if d[typePrefix + '_name'] && d[typePrefix + '_name_th']}
+                                 <p class="opacity-60 break-words">{d[typePrefix + '_name_th']}</p>
                               {/if}
                            </a>
                         </td>
-                        
-                           {#each tableInfo.body as t}
-                              <td>
-                                 {d[t] || '-'}
-                              </td>
-                           {/each}
-                        
+                        {#each tableInfo.body as t}
+                           <td>
+                              {d[t] || '-'}
+                           </td>
+                        {/each}
                      </tr>
                   {/each}
                </tbody>
             </table>
          </div>
       {/if}
-      <!-- Pagination -->
+      <!-- bottom pagination -->
       <div class="m-2">
          <div class="btn-group">
             <button class="btn">Page </button>

@@ -16,7 +16,7 @@
 <Header/>
 <AlertList/>
 <main class="max-w-7xl h-full">
-    <slot></slot>
+	<slot></slot>
 </main>
 
 <Footer/>

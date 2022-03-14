@@ -1,17 +1,16 @@
 <script lang="ts" context="module">
-    import {from} from '$lib/supabase'
-
-    export async function load({ params }) {
+    export async function load({ params, fetch }) {
         // ignore page's [slug] and redirect to the proper location
-        const {data, error} = await from('Publisher').select('*').eq('Publisher_ID', params.id)
-        if(error || !data[0] || !data[0].Publisher_show)
+        const res = await fetch(`/api/publisher/${params.id}`)
+        const data = await res.json()
+        if(!res.ok || data.Publisher_show)
             return {
                 redirect: "/publisher",
                 status: 303
             }
         else
             return {
-                redirect: `/publisher/${params.id}/${data[0].slug}`,
+                redirect: `/publisher/${params.id}/${data.Publisher_slug}`,
                 status: 303
             }
     }

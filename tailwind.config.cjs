@@ -19,19 +19,29 @@ module.exports = {
 	daisyui: {
 		themes: [
 		  {
-			mytheme: {
+			emerald: {
+				...require("daisyui/colors/themes")["[data-theme=emerald]"],
 				"primary": "#12446A",
+				"primary-focus": "#02345A",
 				"secondary": "#E62E5C",
+				"secondary-focus": "#D61E4C",
 				"accent": "#49B185",
+				"accent-focus": "#39A175",
 				"neutral": "#E7EBEE",
+				"neutral-focus": "#B7BBBE",
+				"neutral-content": "#000000",
 				"base-100": "#ffffff",
 				"info": "#3ABFF8",
+				"info-focus": "#3ABFF8",
 				"success": "#36D399",
+				"success-focus": "#36D399",
 				"warning": "#FFC550",
+				"warning-focus": "#FFC550",
 				"error": "#F87272",
-				"--btn-text-color": "secondary"
+				"error-focus": "#F87272",
 			},
 		  },
+		  "dark",
 		],
 	  },
 }
