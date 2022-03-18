@@ -1,28 +1,12 @@
 <script lang="ts" context="module">
    import {from} from '$lib/supabase'
+   import {BoardgameRelation} from '$lib/datatypes'
+   import type {DataType} from '$lib/datatypes'
 
    export async function load({ session }) {
        const { user } = session
-       const {data:types, error:error_2} = await from('Type').select('Type_ID, Type_name')
-       const {data:categories, error:error_3} = await from('Category').select('Category_ID, Cat_name')
-       const {data:mechanics, error:error_4} = await from('Mechanics').select('Mech_ID, Mech_name')
-       const {data:publishers, error:error_5} = await from('Publisher').select('Publisher_ID, Publisher_name')
-       const {data:artists, error:error_7} = await from('Artist').select('Artist_ID, Artist_name, Artist_name_th')
-       const {data:designers, error:error_6} = await from('Designer').select('Designer_ID, Designer_name, Designer_name_th')
-       if(user.role !== 'authenticated' || error_2) {
-         return {
-            redirect: "/boardgame",
-            status: 303
-            }
-       }
        return {
            props: {
-               types,
-               mechanics,
-               publishers,
-               categories,
-               designers,
-               artists,
                user
            }
        };
@@ -33,15 +17,8 @@
    import Seo from '$lib/components/SEO.svelte'
    import {DeleteIcon, SearchIcon} from 'svelte-feather-icons'
 
-   export let user, types, publishers, categories, mechanics, designers, artists
-   let data = {
-      Type: types.map((t)=>t.Type_name),
-      Mechanic: mechanics.map((t)=>t.Mech_name),
-      Publisher: publishers.map((t)=>t.Publisher_name),
-      Categorie: categories.map((t)=>t.Cat_name),
-      Designer: designers.map((t)=>t.Designer_name + (t.Designer_name_th? ' (' + t.Designer_name_th + ')':'')),
-      Artist: artists.map((t)=>t.Artist_name + (t.Artist_name_th? ' (' + t.Artist_name_th + ')':'')),
-   }
+   export let user
+
    let loading = false
    const basicCategories = [
       {cat:'TBG_name_th', text:'ชื่อไทย', type:'text'},
@@ -66,8 +43,10 @@
       {cat:'Mech', text:'กลไก',type:'text'},
       {cat:'Cat', text:'หมวดหมู่',type:'text'},
    ]
+
+   let BoardgameRelationInput = BoardgameRelation.map((r)=>{r:[]})
    let basicInput = {}
-   let search = {}
+   let search = ''
    basicCategories.forEach((c)=>basicInput[c.cat] = '')
    pairedCategories.forEach((c)=>basicInput[c.cat] = '')
    advancedCategories.forEach((c)=>{
@@ -76,14 +55,16 @@
    })
    $: dataFiltered = [] // only filter current search
       
-   function filterData(k:string){
-      dataFiltered = data[k].filter((d)=>d.toLowerCase().includes(search[k].toLowerCase())).splice(-20)
-      dataFiltered = dataFiltered
+   async function filterData(cat: DataType, text: string){
+      const res = await fetch(`/api/${cat}?search=${text}`)
+      const d = await res.json()
+      dataFiltered = d.slice(-20) // take first 20
    }
 
-   function add(cat, text){
+   function add(cat: DataType, text: string){
       basicInput[cat] = [...basicInput[cat], text]
-      search[cat] = ''
+      search = ''
+      dataFiltered = []
    }
 
    async function submit(){
@@ -94,18 +75,7 @@
       basicInput['TBG_ID'] = dummyID
       basicInput['TBG_show'] = false
       basicInput['TBG_slug'] = basicInput['TBG_name'].toLowerCase().replace(/\s/g,'-').replace(/[^\w\s\-]/gi,'')
-      await from('Boardgame').insert([
-         basicInput,
-      ])
-
-      if(basicInput['Designer'].length > 0) {
-         await from('Designer_Relation').insert(
-            basicInput['Designer'].map((d)=>({
-               TBG_ID: dummyID,
-               Designer_ID: designers.filter((ds)=>ds.Designer_name === d)
-            }))
-         )
-      }
+      
    }
 </script>
 
@@ -165,8 +135,8 @@
                      type="text" 
                      placeholder="พิมพ์เพื่อค้นหา" 
                      class="input input-bordered w-70" 
-                     bind:value={search[c.cat]}
-                     on:keyup={(e)=>filterData(c.cat)}
+                     bind:value={search}
+                     on:keyup={(e)=>filterData(c.cat, e.target.value)}
                   >
                   <div class="btn">
                      <SearchIcon size=20/>

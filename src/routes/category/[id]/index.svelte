@@ -1,18 +1,17 @@
 <script lang="ts" context="module">
-    import {from} from '$lib/supabase'
-
-    export async function load({ params }) {
+    export async function load({ params, fetch }) {
         // ignore page's [slug] and redirect to the proper location
-        const {data, error} = await from('Category').select('*').eq('Category_ID', params.id)
-        if(error || !data[0])
+        const res = await fetch(`/api/category/${params.id}`)
+        if(!res.ok)
             return {
                 redirect: "/category",
                 status: 303
             }
-        else
-            return {
-                redirect: `/category/${params.id}/${data[0].Cat_slug}`,
-                status: 303
-            }
+        const data = await res.json()
+    
+        return {
+            redirect: `/category/${params.id}/${data.Cat_slug}`,
+            status: 303
+        }
     }
 </script>

@@ -1,11 +1,8 @@
 <script lang=ts context=module>
-   import {from} from '$lib/supabase'
-
-   export async function load() {
-      let {data, error} = await from('Event').select('*')//.eq('Event_Show', true)
-
-      if(error) 
-         return {status: 404}
+   export async function load({fetch}) {
+      const res = await fetch('/api/event')
+      if(!res.ok) return {status:404, message:'no events found'}
+      const data = await res.json()
       return {
          props: {
             events: data,

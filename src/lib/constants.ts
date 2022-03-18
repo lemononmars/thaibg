@@ -28,12 +28,15 @@ export const COOKIE_OPTIONS: CookieSerializeOptions = {
     httpOnly: true
 }
 
-export const DATA_TYPES = ['boardgame' , 'person', 'designer', 'graphicdesigner', 'contentcreator' ,'artist' ,'playtester', 'shop' ,'publisher' ,'content', 'honor', 'event' ,'investor' ,'type' ,'mechanics', 'category', 'manufacturer']
+export const personDeveloperRoles = [
+    {name: 'Designer', prefix: 'Designer', url: 'designer'},
+    {name: 'Artist', prefix: 'Artist', url: 'artist'},
+    {name: 'Graphic Designer', prefix: 'Graphicdesigner', url:'graphicdesigner'}, 
+    {name: 'Rulebook Editor', perfix: 'Rulebookeditor', url: 'rulebookeditor'},
+    {name: 'Playtester', perfix: 'Playtester', url: 'playtester'},
+]
 
 export const personRoles = [
-    {name: 'Artist', prefix: 'Artist', url: 'artist'},
+    ...personDeveloperRoles,
     {name: 'Content Creator', prefix: 'Contentcreator', url: 'contentcreator'},
-    {name: 'Designer', prefix: 'Designer', url: 'designer'},
-    {name: 'Graphic Designer', prefix: 'Graphicdesigner', url:'graphicdesigner'}, 
-    {name: 'Playtester', perfix: 'Playtester', url: 'playtester'}
 ]

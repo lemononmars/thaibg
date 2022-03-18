@@ -1,16 +1,14 @@
 <script context=module lang=ts>
-   import {from, addToSubmission} from '$lib/supabase'
+   import {from, addToSubmission, getTableName} from '$lib/supabase'
+   import type {Person} from '$lib/datatypes'
    
    export async function load({params, session}) {
-      const typeLower = params.type
       const {user} = session
-      const type = typeLower[0].toUpperCase() + typeLower.slice(1, typeLower.length)
+      const type = getTableName(params.type)
       // BETTER: save a hard copy as a JSON template
-      const {data, error} = await from(type).select('*').eq(`${type}_ID`, 1)
-      if(error)
-         throw(error)
-
-      let blankData = data[0]
+      const res = await fetch(`/api/${params.type}/1`)
+      if(!res.ok) return {status:404, message:'no data to fetch'}
+      let blankData = await res.json()
       let keys = Object.keys(blankData)
       keys.forEach((k)=>blankData[k]='')
       return {
@@ -48,7 +46,7 @@
    let submitState = 0
    let submitted = false
 
-   async function submitEntry(){
+   async function handleSubmit(){
       submitState = 1
       let id = 'guest', username = 'guest'
       if(user) {
@@ -74,6 +72,7 @@
    }
 
    // TODO: translate keys and add input type
+   // especially image!
 </script>
 
 <Seo title="Create {type}"/>
@@ -99,7 +98,7 @@
       bind:value={comment}
    /><br>
    {#if submitState == 0}
-      <div class="btn" on:click|preventDefault={submitEntry}>Submit</div>
+      <div class="btn" on:click|preventDefault={handleSubmit}>Submit</div>
    {:else if submitState == 1}
       <p>Submitting.... please wait</p>
    {:else if submitState == 2}
@@ -107,7 +106,7 @@
       <p>Refresh the page if you want to submit another one!</p>
    {:else}
       <p>There was an error. Please try again</p>
-      <div class="btn" on:click|preventDefault={submitEntry}>Submit</div>
+      <div class="btn" on:click|preventDefault={handleSubmit}>Submit</div>
    {/if}
 </form>
 

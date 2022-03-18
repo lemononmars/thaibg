@@ -16,7 +16,7 @@
       let people = []
       for(const c in creators) {
          await fetch(`/api/contentcreator/${creators[c].Creator_ID}/person`)
-            .then(res=>res.json())
+            .then(res =>res.json())
             .then(data => people = [...people, data])
       }
 
@@ -36,13 +36,12 @@
    import PersonCard from '$lib/components/PersonCard.svelte'
 
    export let user, boardgames, content, people
-   content.Content_picture =  getImageURL('event', content.Content_picture )
 </script>
 
 <Seo title="Event"/>
 <div class="flex flex-col lg:flex-row justify-center mt-10">
    <div class="flex flex-col lg:gap-4 px-4 text-left w-1/3">
-      <img src="{content.Content_picture}" alt="image of {content.Content_name}" class="w-72 h-72 object-contain mask mask-hexagon-2"
+      <img src="{getImageURL('event', content.Content_picture )}" alt="image of {content.Content_name}" class="w-72 h-72 object-contain mask mask-hexagon-2"
          on:error|once={(ev)=>ev.target.src = getDefaultImageURL('event')}
       />
       <h1>{content.Content_name}</h1>

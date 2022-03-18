@@ -1,8 +1,13 @@
 <script context=module>
    export async function getShops() {
-      let res = await fetch('/api/shop')
-      if(res.ok) return await res.json()
-      return {status: 404}
+      const res = await fetch('/api/shop')
+      if(!res.ok) return {status: 404, message: 'cannot find any shop'}
+      const data = await res.json()
+      return {
+         props:{
+            shops: data
+         }
+      }
    }
 </script>
 

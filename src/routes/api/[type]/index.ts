@@ -1,5 +1,5 @@
 import {from, getTableName} from '$lib/supabase'
-import { DATA_TYPES } from '$lib/constants'
+import { DataTypesArray } from '$lib/datatypes'
 
 /**
  * Returns ALL objects of desired [type]
@@ -9,7 +9,7 @@ import { DATA_TYPES } from '$lib/constants'
  * @return {array} array of objects
  */
 export async function get({params}){
-   if(!DATA_TYPES.includes(params.type?.toLowerCase()))
+   if(!DataTypesArray.includes(params.type?.toLowerCase()))
       return{
          status: 404,
          body: {message: `${params.type} is not a valid type`}

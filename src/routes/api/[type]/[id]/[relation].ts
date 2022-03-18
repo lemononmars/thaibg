@@ -1,5 +1,5 @@
 import {from, getTableName, getVarPrefix} from '$lib/supabase'
-import { DATA_TYPES } from '$lib/constants'
+import { DataTypesArray } from '$lib/datatypes'
 
 /**
  * Returns the object of 
@@ -13,10 +13,11 @@ import { DATA_TYPES } from '$lib/constants'
  * @return {array} an array of objects, or error if the ID doesn't exist
  */
 export async function get({url, params}){
-   if(!DATA_TYPES.includes(params.type?.toLowerCase()) || !DATA_TYPES.includes(params.relation?.toLowerCase()))
+   if(!DataTypesArray.includes(params.type?.toLowerCase()) || !DataTypesArray.includes(params.relation?.toLowerCase()))
       return{
-         status: 404,
-         message: `${params.type} is not a valid type`
+         //status: 404,
+         message: `${params.type} is not a valid type`,
+         body:{message: 'nope'}
       }
 
    let relation = params.relation?.toLowerCase() || ''
@@ -59,7 +60,7 @@ export async function get({url, params}){
    if(error)
       return{
          status: 404,
-         message: `No ${params.relation} associated with ${params.type} found`
+         body: {message: `No ${params.relation} associated with ${params.type} found`, error: error}
       }
    else
       return{

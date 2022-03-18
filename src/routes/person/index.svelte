@@ -5,7 +5,7 @@
    export async function load({url, fetch}) {
       const role = url.searchParams.get('role') || 'none'
       const res = await fetch('/api/person/')
-      if(!res.ok) return {status:404}
+      if(!res.ok) return {status:404, message:'cannot load person'}
       const data = await res.json()
       let filteredData = data.filter((d)=>d[getVarPrefix(role) + '_ID'] != null)
 

@@ -35,8 +35,8 @@
 </style>
 
 {#if visible}
-	<div class="absolute top-0 left-0 w-screen h-1 z-20">
-		<div class="absolute top-0 left-0 w-screen h-full bg-green-400 z-20" style="width: {p * 100}%; transition: width 0.4s" />
+	<div class="absolute top-0 left-0 w-screen h-2">
+		<div class="absolute top-0 left-0 w-screen h-full bg-green-400 z-30" style="width: {p * 100}%; transition: width 0.4s" />
 	</div>
 {/if}
 

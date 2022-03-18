@@ -1,5 +1,6 @@
 <script lang="ts" context="module">
    import {getImageURL, getDefaultImageURL, getVarPrefix} from '$lib/supabase'
+   import {personDeveloperRoles} from '$lib/constants'
 
    export async function load({ session, params, fetch }) {
       let bg
@@ -9,31 +10,25 @@
          .then(data => bg = data)
          .catch(error => {return {status:400, message: error}})
 
-      let types = [], mechanics = [], categories = [], contents = []
+      const basicDataType = ['type', 'mechanics', 'category', 'content', 'honor']
+      let basicData = basicDataType.map((t)=> ({t:[]}))
      
-      await fetch(`/api/boardgame/${params.id}/type`)
-         .then(res => res.json())
-         .then(data => types = data)
-      await fetch(`/api/boardgame/${params.id}/mechanics`)
-         .then(res => res.json())
-         .then(data => mechanics = data)
-      await fetch(`/api/boardgame/${params.id}/category`)
-         .then(res => res.json())
-         .then(data => categories = data)
-      await fetch(`/api/boardgame/${params.id}/content`)
-         .then(res => res.json())
-         .then(data => contents = data)
+      for(const type of basicDataType)
+         await fetch(`/api/boardgame/${params.id}/${type}`)
+            .then(res => res.json())
+            .then(data => basicData[type] = data)
 
       return {
          props: {
             user,
-            bg, types, mechanics, categories,contents
+            bg, ...basicData
          }
       };
    }
 
    export async function getCreatorInfo(BGID) {
-      let data = {designer:[], artist:[], graphicdesigner:[], playtester:[], rulebookeditor:[]}
+      let data = []
+      personDeveloperRoles.forEach((p)=> data[p.url] = [])
       for(const r of Object.keys(data)) {
          const res = await fetch(`/api/boardgame/${BGID}/${r}`)
          if(res.ok) {
@@ -41,11 +36,9 @@
             // get the person data from each corresponding role
             // ex. /api/playtester/2/person
             for(const p of people){
-               const resPerson = await fetch(`/api/${r}/${p[getVarPrefix(r)+'_ID']}/person`)
-               if(!resPerson.ok)
-                  break
-               const person = await resPerson.json()
-               data[r] = [...data[r], person[0]] // api returns an array, so pick only first one
+               await fetch(`/api/${r}/${p[getVarPrefix(r)+'_ID']}/person`)
+                  .then(res => res.json())
+                  .then(d => data[r] = [...data[r], d[0]])
             }
          }
       }
@@ -70,21 +63,15 @@
    import Spinner from '$lib/components/Spinner.svelte'
    import {fly} from 'svelte/transition'
    import {onMount} from 'svelte'
+import PlainCard from '$lib/components/PlainCard.svelte'
 
    export let user
-   export let bg, types, mechanics, categories
-   export let contents
+   export let bg, type, mechanics, category, honor
+   export let content
    const BGID = bg.TBG_ID
-   const roles = [
-      {name: 'Designer', prefix: 'Designer', url:'designer'},
-      {name: 'Artist', prefix: 'Artist', url:'artist'},
-      {name: 'Graphic Designer', prefix: 'Graphicdesigner', url:'graphicdesigner'},
-      {name: 'Playtester', prefix: 'Playtester', url:'playtester'},
-      {name: 'Rulebook Editor', prefix: 'Rulebookeditor', url:'rulebookeditor'},
-   ]
 
    let promiseBasicInfo, promiseEvents, promiseComments
-   let filteredContents = contents
+   let filteredContents = content
 
    onMount(async ()=>{
       promiseBasicInfo = await getCreatorInfo(BGID)
@@ -102,17 +89,17 @@
    function contentMediaFilterChange(option){
       contentMediaFilter = contentMediaFilter.map((_, idx)=>idx === option)
       if(option == 0)
-         filteredContents = contents
+         filteredContents = content
       else
-         filteredContents = contents.filter((c)=>c.Content_media === contentMediaTitle[option])
+         filteredContents = content.filter((c)=>c.Content_media === contentMediaTitle[option])
       filteredContents = filteredContents
    }
    function contentTypeFilterChange(option){
       contentTypeFilter = contentTypeFilter.map((_, idx)=>idx === option)
       if(option == 0)
-         filteredContents = contents
+         filteredContents = content
       else
-         filteredContents = contents.filter((c)=>c.Content_type === contentTypeTitle[option])
+         filteredContents = content.filter((c)=>c.Content_type === contentTypeTitle[option])
       filteredContents = filteredContents
    }
 </script>
@@ -126,9 +113,9 @@
    >
 </div>
 
-<div class="flex flex-row text-left gap-6">
+<div class="flex flex-col lg:flex-row text-left gap-6 mx-4 lg:mx-auto">
    <!-- First column-->
-   <div class="flex flex-col gap-4">
+   <div class="flex flex-col gap-4 lg:basis-1/4 order-2 lg:order-1">
       <div class="mx-auto">
          <img src="{getImageURL('boardgame', bg.TBG_picture)}" alt="cover of {bg.TBG_name}" class="hover:scale-110 w-60 aspect-auto duration-300"
             on:error|once={(ev)=>ev.target.src = getDefaultImageURL('boardgame')}
@@ -138,8 +125,8 @@
          <Spinner/>
       {:then res}
          {#if res}
-            <!--iterate through roles (designer, artist, graphicdesigner, playtester)-->
-            {#each roles as role}
+            <!--iterate through personRoles (designer, artist, graphicdesigner, playtester)-->
+            {#each personDeveloperRoles as role}
                <div>
                   <h3>{role.name}</h3>
                   {#each res[role.url] as d} 
@@ -154,7 +141,7 @@
                         <a href="/person/{d.Person_ID}/{d.Person_slug}?role={role.url}">{d.Person_name}</a>
                      </div>
                   {:else} 
-                     -
+                     Incomplete
                   {/each}
                </div>
             {/each}
@@ -181,7 +168,7 @@
       {/await}
    </div>
    <!-- Second column -->
-   <div class="flex flex-col justify-center gap-4 pt-10 w-1/2">
+   <div class="flex flex-col justify-center gap-4 pt-10 lg:basis-1/2 order-1 lg:order-2">
       <div class="flex flex-row items-center gap-2">
          <Social url="https://thaibg.herokuapp.com/boardgame/{bg.TBG_ID}" title="{bg.TBG_name}"/>
          
@@ -235,7 +222,7 @@
       <div class="flex flex-row gap-4">
          <div class="tooltip flex items-center flex-row gap-2" data-tip="Age">
             <UserIcon size="20" class="text-accent"/>
-            <p>{bg.TBG_age? bg.TBG_age + '+' : '-'} </p>
+            <p>{bg.TBG_age? bg.TBG_age + '+' : 'Incomplete'} </p>
          </div>
          <div class="tooltip flex items-center flex-row gap-2" data-tip="Number of players">
             <UsersIcon size="20" class="text-accent"/>
@@ -247,7 +234,7 @@
          </div>
          <div class="tooltip flex items-center flex-row gap-2" data-tip="Weight">
             <FeatherIcon size="20" class="text-accent"/>
-            <p>{bg.TBG_weight || '-'}</p>
+            <p>{bg.TBG_weight || 'Incomplete'}</p>
          </div>
       </div>
       <div>
@@ -257,10 +244,10 @@
       <div>
          <h3>Type</h3>
          <div class="flex flex-row gap-2 items-center">
-            {#each types as t} 
+            {#each type as t} 
                <div class="badge badge-lg"><a href="/type/{t.Type_ID}">{t.Type_name}</a></div>
             {:else} 
-               -
+               Incomplete
             {/each}
          </div>
          <h3>Mechanics</h3>
@@ -268,15 +255,15 @@
             {#each mechanics as m} 
                <div class="badge badge-lg"><a href="/mechanics/{m.Mech_ID}">{m.Mech_name}</a></div>
             {:else} 
-               -
+               Incomplete
             {/each}
          </div>
          <h3>Category</h3>
          <div class="flex flex-row gap-2 items-center">
-            {#each categories as c} 
-               <div class="badge badge-lg"><a href="/category/{c.Cat_ID}">{c.Cat_name}</a></div>
+            {#each category as c} 
+               <div class="badge badge-lg"><a href="/category/{c.Category_ID}">{c.Category_name}</a></div>
             {:else} 
-               -
+               Incomplete
             {/each}
          </div>
       </div>
@@ -310,34 +297,40 @@
             {/each}
          </div>
          <br> 
-         {#if contents}
+         {#if content}
             {#each filteredContents as content}
                <ContentCard {content}/>
             {:else}
                N/A
             {/each}
          {:else}
-            -
+            Incomplete
          {/if}
       </div>
       <div class="divider"></div>
       <CommentSection type='boardgame' ID={BGID}/>
    </div>
    <!-- third column-->
-   <div class="flex flex-col gap-4 pt-28">
+   <div class="flex flex-col gap-4 pt-28 order-3 lg:basis-1/4">
       <div>
-         <h3>Honor</h3>
+         <h2>Honor</h2>
+         {#each honor as h}
+            <h3><a href="/honor/{h.Honor_ID}/{h.Honor_slug}"> 
+               {h.Honor_name || h.Honor_name_th || 'No title'} -
+               {h.Honor_Relation[0].Honor_position} {h.Honor_Relation[0].Honor_category || ''}
+            </a></h3>
+         {/each}
       </div>
       <div class="divider"></div>
       <div>
-         <h3>Event</h3>
+         <h2>Event</h2>
       </div>
       <div class="divider"></div>
       <div>
-         <h3>Playable at</h3>
+         <h2>Playable at</h2>
       </div>
       <div>
-         <h3>Buy at</h3>
+         <h2>Available at</h2>
       </div>
    </div>
 </div>

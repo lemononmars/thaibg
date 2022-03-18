@@ -21,28 +21,31 @@
    import { quintOut } from 'svelte/easing';
    import { _ } from 'svelte-i18n'
    import DataView from '$lib/components/DataView.svelte'
+   import {BoardgameStatusArray} from '$lib/datatypes'
    import Spinner from '$lib/components/Spinner.svelte'
 
    export let boardgames
    export let search// from url params
+   const BoardgameStatus = ['all', ...BoardgameStatusArray]
 
-   const boardgamePublisherTitle = ['All',  'Published', 'Self published', 'Uncredited', 'Unpublished']
    let option = 0
 
    $: boardgamesFiltered = boardgames.filter((bg)=> 
          (option == 0
-            || bg.TBG_status === boardgamePublisherTitle[option]
+            || bg.TBG_status?.toLowerCase() === BoardgameStatus[option]
          )
             && 
          (searchString === ''
-            || bg.TBG_name?.toLowerCase().includes(searchString.toLowerCase() // name or name_th contains the string
-            || bg.TBG_name_th?.includes(searchString)) 
+            || bg.TBG_name?.toLowerCase().includes(searchString.toLowerCase()) // name or name_th contains the string
+            || bg.TBG_name_th?.includes(searchString)
          )
       )
 
    let sorted = 0
    let searchString = search || ''
    $: boardgamesSorted = boardgamesFiltered.sort((a,b)=> compare(sorted, a, b))
+
+   // TODO: allow advanced search settings
    function compare(s: number, a, b) {
       if(s == 0) 
          return b.TBG_released - a.TBG_released
@@ -82,13 +85,13 @@
    {#if showAdvancedFilter}
       <div transition:fly="{{duration:400, y:-20, easing: quintOut}}" class="m-2">
          <div class="btn-group">
-            {#each boardgamePublisherTitle as _,idx}
+            {#each BoardgameStatus as _,idx}
                <div 
                   class="btn" 
                   class:btn-outline={idx != option}
                   on:click={()=>option = idx}
                   >
-                  {boardgamePublisherTitle[idx]}
+                  {BoardgameStatus[idx]}
                   </div
                >
             {/each}

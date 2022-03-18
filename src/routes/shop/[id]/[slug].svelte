@@ -4,7 +4,7 @@
    export async function load({ session, params, fetch }) {
        const { user } = session
        const res = await fetch(`/api/shop/${params.id}`)
-       if(!res.ok) return{status:404}
+       if(!res.ok) return{status:404, message:'cannot find any shop with that ID'}
 
        const data = await res.json()
        return {

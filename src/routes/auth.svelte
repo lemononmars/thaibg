@@ -69,9 +69,9 @@
 <!-- Sign Up form -->
 <form class="w-full sm:w-1/2 xl:w-5/12" method="post" on:submit|preventDefault={signUpOrSignIn} >
     <div class="form-control order-teal p-8 border-t-12 mb-6 rounded-lg">
-    <button type="button" class="btn btn-secondary" on:click|preventDefault={() => handleProviderSignIn('facebook')}>
+    <!-- <button type="button" class="btn btn-secondary" on:click|preventDefault={() => handleProviderSignIn('facebook')}>
         <FacebookIcon size="1x" class="inline-block "/> {isSignIn ? 'Log In' : 'Sign Up' } with <strong>facebook</strong>
-    </button>
+    </button> -->
     <hr class="my-4"/>
     <div class="mb-4">
         <label for="email" class="label">

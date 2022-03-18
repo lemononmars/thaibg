@@ -24,6 +24,9 @@
     
     $: boardgameMenu = [
         {path: '/boardgame',title:$_('navbar.boardgame.list')},
+        {path: '/type',title:$_('navbar.boardgame.type')},
+        {path: '/mechanics',title:$_('navbar.boardgame.mechanics')},
+        {path: '/category',title:$_('navbar.boardgame.category')},
     ]
     $: creatorMenu = [
         {path: '/person?role=designer',title:$_('designer')},
@@ -164,8 +167,8 @@
         <div class="dropdown dropdown-hover dropdown-end">
             <!-- svelte-ignore a11y-label-has-associated-control -->
             <label tabindex="0" class="m-1 btn"><SearchIcon size="20"/></label>
-            <ul tabindex="0" class="p-2 shadow menu dropdown-content w-52 text-neutral">
-              <input type="text" placeholder="search"/>
+            <ul tabindex="0" class="p-2 shadow menu dropdown-content w-52">
+              <input type="text" placeholder="search" class="bg-neutral text-bg-content"/>
             </ul>
         </div>
  
