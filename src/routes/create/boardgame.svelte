@@ -1,6 +1,6 @@
 <script lang="ts" context="module">
    import {from} from '$lib/supabase'
-   import {BoardgameRelation} from '$lib/datatypes'
+   import {BoardgameRelationArray} from '$lib/datatypes'
    import type {TypeName} from '$lib/datatypes'
 
    export async function load({ session }) {
@@ -44,7 +44,7 @@
       {cat:'Cat', text:'หมวดหมู่',type:'text'},
    ]
 
-   let BoardgameRelationInput = BoardgameRelation.map((r)=>{r:[]})
+   let BoardgameRelationInput = BoardgameRelationArray.map((r)=>{r:[]})
    let basicInput = {}
    let search = ''
    basicCategories.forEach((c)=>basicInput[c.cat] = '')
