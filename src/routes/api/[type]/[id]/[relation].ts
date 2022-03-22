@@ -1,5 +1,5 @@
 import {from, getTableName, getVarPrefix} from '$lib/supabase'
-import { DataTypesArray } from '$lib/datatypes'
+import { TypeNamesArray } from '$lib/datatypes'
 
 /**
  * Returns the object of 
@@ -13,29 +13,33 @@ import { DataTypesArray } from '$lib/datatypes'
  * @return {array} an array of objects, or error if the ID doesn't exist
  */
 export async function get({url, params}){
-   if(!DataTypesArray.includes(params.type?.toLowerCase()) || !DataTypesArray.includes(params.relation?.toLowerCase()))
+   let type = params.type
+   let relation = params.relation?.toLowerCase() || ''
+
+   if(!TypeNamesArray.includes(type?.toLowerCase()) || !TypeNamesArray.includes(relation?.toLowerCase()))
       return{
          //status: 404,
-         message: `${params.type} is not a valid type`,
+         message: `${type} is not a valid type`,
          body:{message: 'nope'}
       }
 
-   let relation = params.relation?.toLowerCase() || ''
-
    // pick only selected columns
    const selected = url.searchParams.get('select')
-   const selectedColumns = selected? selected.split(',') : '*'
+   const selectedColumns = selected? selected.split(',')
+      .map((str)=> getVarPrefix(relation) + '_' + str)
+      .join(',') : '*'
 
    // in case of a person, we'll look up directly in ${role} table, not ${role}_Relation
    if(relation === 'person') {
+      
       const {data, error} = await from('Person')
-         .select(`${selectedColumns}, ${getTableName(params.type)}!inner(*)`)
-         .eq(`${getTableName(params.type)}.${getVarPrefix(params.type)}_ID`, params.id)
+         .select(`${selectedColumns}, ${getTableName(type)}!inner(*)`)
+         .eq(`${getTableName(type)}.${getVarPrefix(type)}_ID`, params.id)
          
       if(error)
          return{
             status: 404,
-            message: `No person associated with ${params.type} found`
+            message: `No person associated with ${type} found`
          }
       else
          return{
@@ -47,12 +51,15 @@ export async function get({url, params}){
 
    // in case of /api/designer/9/boardgame
    // we'll look up Designer_Relation, not Boardgame_Relation
+   // similary, for /api/content/9/contentcreator
+   // we look up Content_Relation
+   if(relation === 'boardgame' || (relation === 'contentcreator' && type === 'content'))
+      relation = type
+   
+   // in case of 
    // everything else stays the same
-   if(relation === 'boardgame')
-      relation = params.type
-
    const selectStr = `${selectedColumns}, ${getTableName(relation)}_Relation!inner(*)`
-   const eqStr = `${getTableName(relation)}_Relation.${getVarPrefix(params.type)}_ID`
+   const eqStr = `${getTableName(relation)}_Relation.${getVarPrefix(type)}_ID`
    const {data, error} = await from(getTableName(params.relation))
       .select(selectStr)
       .eq(eqStr, params.id)
@@ -60,7 +67,7 @@ export async function get({url, params}){
    if(error)
       return{
          status: 404,
-         body: {message: `No ${params.relation} associated with ${params.type} found`, error: error}
+         body: {message: `No ${params.relation} associated with ${type} found`, error: error}
       }
    else
       return{

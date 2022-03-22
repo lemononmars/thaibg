@@ -1,19 +1,21 @@
 <script lang="ts" context="module">
    import {getImageURL, getDefaultImageURL, getVarPrefix} from '$lib/supabase'
-   import {personDeveloperRoles} from '$lib/constants'
+   import {personDeveloperRoles, ContentTypeArray, ContentMediaArray} from '$lib/datatypes'
+   import type {Content, Honor, Boardgame, Shop, Event} from '$lib/datatypes'
+   import {WEBSITE_URL} from '$lib/constants'
 
    export async function load({ session, params, fetch }) {
-      let bg
+      let bg: Boardgame
       const { user } = session
       await fetch(`/api/boardgame/${params.id}`)
          .then(res => res.json())
          .then(data => bg = data)
          .catch(error => {return {status:400, message: error}})
 
-      const basicDataType = ['type', 'mechanics', 'category', 'content', 'honor']
-      let basicData = basicDataType.map((t)=> ({t:[]}))
+      const basicTypeName = ['type', 'mechanics', 'category', 'content', 'honor']
+      let basicData = basicTypeName.map((t)=> ({t:[]}))
      
-      for(const type of basicDataType)
+      for(const type of basicTypeName)
          await fetch(`/api/boardgame/${params.id}/${type}`)
             .then(res => res.json())
             .then(data => basicData[type] = data)
@@ -28,17 +30,17 @@
 
    export async function getCreatorInfo(BGID) {
       let data = []
-      personDeveloperRoles.forEach((p)=> data[p.url] = [])
-      for(const r of Object.keys(data)) {
-         const res = await fetch(`/api/boardgame/${BGID}/${r}`)
+      personDeveloperRoles.forEach((p)=> data[p] = [])
+      for(const role of Object.keys(data)) {
+         const res = await fetch(`/api/boardgame/${BGID}/${role}`)
          if(res.ok) {
             const people = await res.json()
             // get the person data from each corresponding role
             // ex. /api/playtester/2/person
             for(const p of people){
-               await fetch(`/api/${r}/${p[getVarPrefix(r)+'_ID']}/person`)
+               await fetch(`/api/${role}/${p[getVarPrefix(role)+'_ID']}/person`)
                   .then(res => res.json())
-                  .then(d => data[r] = [...data[r], d[0]])
+                  .then(d => data[role] = [...data[role], d[0]])
             }
          }
       }
@@ -49,59 +51,71 @@
       return data
    }
 
-   export async function getEvents(BGID){
-      return null
+   export async function getEvents(BGID: number){
+      const res = await fetch(`/api/boardgame/${BGID}/event`)
+      if(!res.ok) return {status: 404, message: 'not found'}
+      
+      const data = await res.json()
+      return data
+      
+   }
+
+   export async function getShops(BGID: number){
+      const res = await fetch(`/api/boardgame/${BGID}/shop`)
+      if(!res.ok) return {status: 404, message: 'not found'}
+      
+      const data = await res.json()
+      return data
    }
 </script>
 
 <script lang="ts">
    import Seo from '$lib/components/SEO.svelte'
    import ContentCard from '$lib/components/ContentCard.svelte'
+   import PlainLink from '$lib/components/PlainLink.svelte'
    import CommentSection from '$lib/components/CommentSection.svelte'
    import {StarIcon, UserIcon, UsersIcon, ClockIcon, FeatherIcon, EditIcon, LinkIcon, PackageIcon} from 'svelte-feather-icons'
    import Social from '$lib/components/Social.svelte'
    import Spinner from '$lib/components/Spinner.svelte'
    import {fly} from 'svelte/transition'
    import {onMount} from 'svelte'
-import PlainCard from '$lib/components/PlainCard.svelte'
+   import {_} from 'svelte-i18n'
 
    export let user
-   export let bg, type, mechanics, category, honor
-   export let content
+   export let bg: Boardgame, type, mechanics, category, honor: Honor[] // these are singulars (not plurals) so that we can access the table easily
+   export let content: Content[]
    const BGID = bg.TBG_ID
 
-   let promiseBasicInfo, promiseEvents, promiseComments
+   let promiseCreatorInfo: Promise<any>
+   let promiseEvents: Promise<Event[]>
+   let promiseShops: Promise<Shop[]>
    let filteredContents = content
 
    onMount(async ()=>{
-      promiseBasicInfo = await getCreatorInfo(BGID)
-      promiseEvents = await getEvents(BGID) // to be added
+      promiseCreatorInfo = getCreatorInfo(BGID)
+      promiseShops = getShops(BGID)
+      promiseEvents = getEvents(BGID)
    })
 
    let favorite: boolean = false // to be fetched from user
    let owned: boolean = false
    $: numFavorites = 9 + (favorite?1:0)
 
-   let contentMediaFilter = [true, false, false, false, false]
-   let contentMediaTitle = ['all', 'article', 'video', 'podcast','file']
-   let contentTypeFilter = [true, false, false, false, false]
-   let contentTypeTitle = ['all', 'preview', 'review', 'how2play','playthrough']
-   function contentMediaFilterChange(option){
-      contentMediaFilter = contentMediaFilter.map((_, idx)=>idx === option)
-      if(option == 0)
-         filteredContents = content
-      else
-         filteredContents = content.filter((c)=>c.Content_media === contentMediaTitle[option])
-      filteredContents = filteredContents
-   }
-   function contentTypeFilterChange(option){
-      contentTypeFilter = contentTypeFilter.map((_, idx)=>idx === option)
-      if(option == 0)
-         filteredContents = content
-      else
-         filteredContents = content.filter((c)=>c.Content_type === contentTypeTitle[option])
-      filteredContents = filteredContents
-   }
+   const optionContentMediaTitle = ['all', ...ContentMediaArray]
+   const optionContentTypeTitle = ['all', ...ContentTypeArray]
+   let optionContentMedia: number = 0
+   let optionContentType: number = 0
+
+   // TODO: set a limit on how many contents to be displayed
+   $: filteredContents = content.filter((c: Content)=>
+      (
+         (optionContentMedia == 0) || (optionContentMediaTitle[optionContentMedia] === c.Content_media)
+      )
+      &&
+      (
+         (optionContentType == 0) || (optionContentTypeTitle[optionContentType] === c.Content_type)
+      )
+   )
 </script>
 
 <Seo title="Boardgame"/>
@@ -121,42 +135,26 @@ import PlainCard from '$lib/components/PlainCard.svelte'
             on:error|once={(ev)=>ev.target.src = getDefaultImageURL('boardgame')}
          />
       </div>
-      {#await promiseBasicInfo}
+      {#await promiseCreatorInfo}
          <Spinner/>
       {:then res}
          {#if res}
             <!--iterate through personRoles (designer, artist, graphicdesigner, playtester)-->
             {#each personDeveloperRoles as role}
                <div>
-                  <h3>{role.name}</h3>
-                  {#each res[role.url] as d} 
-                     <div class="flex flex-row items-center gap-2">
-                        <div class="avatar">
-                           <div class="w-16 h-16 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 hover:scale-105 duration-300">
-                           <img src="{getImageURL('person', d.Person_picture)}" alt="avatar" class="object-contain"
-                              on:error|once={(ev)=>ev.target.src = getDefaultImageURL('person')}
-                           />
-                           </div>
-                        </div>
-                        <a href="/person/{d.Person_ID}/{d.Person_slug}?role={role.url}">{d.Person_name}</a>
-                     </div>
+                  <h3>{$_(role)}</h3>
+                  {#each res[role] as d} 
+                     <PlainLink type={role} object={d}/>
                   {:else} 
-                     Incomplete
+                     {$_('incomplete')}
                   {/each}
                </div>
             {/each}
             <div>
-               <h3>Publisher</h3>
+               <h3>{$_('publisher')}</h3>
                {#each res.publisher as p} 
                <div class="flex flex-row items-center gap-2">
-                  <div class="avatar">
-                     <div class="w-16 h-16 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 hover:scale-105 duration-300">
-                     <img src="{getImageURL('publisher', p.Publisher_picture)}" alt="avatar" class="object-contain"
-                        on:error|once={(ev)=>ev.target.src = getDefaultImageURL('publisher')}
-                     />
-                     </div>
-                  </div>
-                  <a href="/publisher/{p.Publisher_ID}">{p.Publisher_name}</a>
+                  <PlainLink type="publisher" object={p}/>
                </div>
                {:else} 
                   -
@@ -168,9 +166,9 @@ import PlainCard from '$lib/components/PlainCard.svelte'
       {/await}
    </div>
    <!-- Second column -->
-   <div class="flex flex-col justify-center gap-4 pt-10 lg:basis-1/2 order-1 lg:order-2">
+   <div class="flex flex-col justify-center gap-4 pt-10 lg:basis-1/2 order-1 lg:order-2 break-words">
       <div class="flex flex-row items-center gap-2">
-         <Social url="https://thaibg.herokuapp.com/boardgame/{bg.TBG_ID}" title="{bg.TBG_name}"/>
+         <Social url="{WEBSITE_URL}/{bg.TBG_ID}" title="{bg.TBG_name}"/>
          
          {#if bg.TBG_link} 
             <div class="tooltip" data-tip="external link">
@@ -219,92 +217,96 @@ import PlainCard from '$lib/components/PlainCard.svelte'
          </div>
       </div>
 
-      <div class="flex flex-row gap-4">
-         <div class="tooltip flex items-center flex-row gap-2" data-tip="Age">
+      <div class="flex flex-row gap-4 flex-wrap">
+         <div class="tooltip flex items-center flex-row gap-2" data-tip="{$_('age')}">
             <UserIcon size="20" class="text-accent"/>
-            <p>{bg.TBG_age? bg.TBG_age + '+' : 'Incomplete'} </p>
+            <p>{bg.TBG_age? bg.TBG_age + '+' : $_('incomplete')} </p>
          </div>
-         <div class="tooltip flex items-center flex-row gap-2" data-tip="Number of players">
+         <div class="tooltip flex items-center flex-row gap-2" data-tip="{$_('numPlayers')}">
             <UsersIcon size="20" class="text-accent"/>
             <p>{bg.TBG_player_min || ''}{bg.TBG_player_max? ' - ' + bg.TBG_player_max:''} player{bg.TBG_player_max > 1? 's':''}</p>
          </div>
-         <div class="tooltip flex items-center flex-row gap-2" data-tip="Playtime">
+         <div class="tooltip flex items-center flex-row gap-2" data-tip="{$_('playtime')}">
             <ClockIcon size="20" class="text-accent"/>  
-            <p>{bg.TBG_playtime_min || ''}{bg.TBG_playtime_max? ' - ' + bg.TBG_playtime_max : ''} minutes</p>
+            <p>{bg.TBG_playtime_min || ''}{bg.TBG_playtime_max? ' - ' + bg.TBG_playtime_max : ''} {$_('minutes')}</p>
          </div>
-         <div class="tooltip flex items-center flex-row gap-2" data-tip="Weight">
+         <div class="tooltip flex items-center flex-row gap-2" data-tip="{$_('weight')}">
             <FeatherIcon size="20" class="text-accent"/>
-            <p>{bg.TBG_weight || 'Incomplete'}</p>
+            <p>{bg.TBG_weight || $_('incomplete')}</p>
          </div>
       </div>
       <div>
-         {bg.TBG_description || 'N/A'}
+         <h3>{$_('description._')}</h3>
+         {bg.TBG_description || $_('description.not_found')}
       </div>
       <div class="divider"></div>
       <div>
-         <h3>Type</h3>
+         <h3>{$_('type')}</h3>
          <div class="flex flex-row gap-2 items-center">
             {#each type as t} 
                <div class="badge badge-lg"><a href="/type/{t.Type_ID}">{t.Type_name}</a></div>
             {:else} 
-               Incomplete
+               {$_('incomplete')}
             {/each}
          </div>
-         <h3>Mechanics</h3>
+         <h3>{$_('mechanics')}</h3>
          <div class="flex flex-row gap-2 items-center">
             {#each mechanics as m} 
                <div class="badge badge-lg"><a href="/mechanics/{m.Mech_ID}">{m.Mech_name}</a></div>
             {:else} 
-               Incomplete
+               {$_('incomplete')}
             {/each}
          </div>
-         <h3>Category</h3>
+         <h3>{$_('category')}</h3>
          <div class="flex flex-row gap-2 items-center">
             {#each category as c} 
                <div class="badge badge-lg"><a href="/category/{c.Category_ID}">{c.Category_name}</a></div>
             {:else} 
-               Incomplete
+               {$_('incomplete')}
             {/each}
          </div>
       </div>
       <div class="divider"/>
       <div>
-         <h2>Content</h2> 
-         <div class="btn-group">
-            <div class="btn btn-xs btn-outline">Media</div>
-            {#each contentMediaFilter as _,idx}
-               <div 
-                  class="btn btn-xs" 
-                  class:btn-active={contentMediaFilter[idx]}
-                  on:click={()=>contentMediaFilterChange(idx)}
+         <h2>{$_('content._')}</h2> 
+         <div class='flex flex-row items-center gap-2'>
+            <h3>{$_('content.type._')}</h3>
+            <div class="btn-group">
+               {#each optionContentTypeTitle as title,idx}
+                  <div 
+                     class="btn btn-xs" 
+                     class:btn-active={optionContentType == idx}
+                     on:click={()=>optionContentType = idx}
+                     >
+                     {$_('content.type.' + title)}
+                     </div
                   >
-                  {contentMediaTitle[idx]}
-                  </div
-               >
-            {/each}
+               {/each}
+            </div>
          </div>
-         <div class="btn-group">
-            <div class="btn btn-xs btn-outline">Type</div>
-            {#each contentTypeFilter as _,idx}
-            <div 
-               class="btn btn-xs btn-info" 
-               class:btn-active={contentTypeFilter[idx]}
-               on:click={()=>contentTypeFilterChange(idx)}
-               >
-               {contentTypeTitle[idx]}
-               </div
-            >
-            {/each}
+         <div class='flex flex-row items-center gap-2'>
+            <h3>{$_('content.media._')}</h3>
+            <div class="btn-group">
+               {#each optionContentMediaTitle as title,idx}
+                  <div 
+                     class="btn btn-xs" 
+                     class:btn-active={optionContentMedia == idx}
+                     on:click={()=>optionContentMedia = idx}
+                     >
+                     {$_('content.media.' + title)}
+                     </div
+                  >
+               {/each}
+            </div>
          </div>
-         <br> 
          {#if content}
-            {#each filteredContents as content}
-               <ContentCard {content}/>
+            {#each filteredContents as c}
+               <ContentCard content={c}/>
             {:else}
-               N/A
+               {$_('content.not_found')}
             {/each}
          {:else}
-            Incomplete
+            $_('incomplete')
          {/if}
       </div>
       <div class="divider"></div>
@@ -313,24 +315,54 @@ import PlainCard from '$lib/components/PlainCard.svelte'
    <!-- third column-->
    <div class="flex flex-col gap-4 pt-28 order-3 lg:basis-1/4">
       <div>
-         <h2>Honor</h2>
+         <h2>{$_('honor')}</h2>
          {#each honor as h}
-            <h3><a href="/honor/{h.Honor_ID}/{h.Honor_slug}"> 
-               {h.Honor_name || h.Honor_name_th || 'No title'} -
-               {h.Honor_Relation[0].Honor_position} {h.Honor_Relation[0].Honor_category || ''}
-            </a></h3>
+            <PlainLink type="honor" object={h} comment={h.Honor_Relation[0].Honor_position + ' ' + (h.Honor_Relation[0].Honor_category || '')}/>
+         {:else}
+            -
          {/each}
       </div>
       <div class="divider"></div>
       <div>
-         <h2>Event</h2>
+         {#await promiseEvents}
+            <Spinner/>
+         {:then events}
+            {#if events}
+               <h2>{$_('event')}</h2>
+               {#each events as e}
+                  <PlainLink type="event" object={e}/>
+               {:else}
+                  -
+               {/each}
+            {/if}
+         {/await}
       </div>
       <div class="divider"></div>
-      <div>
-         <h2>Playable at</h2>
-      </div>
-      <div>
-         <h2>Available at</h2>
-      </div>
+      {#await promiseShops}
+         <Spinner/>
+      {:then shops}
+         {#if shops}
+            <div>
+               <h2>{$_('page.boardgame.playable')}</h2>
+               {#each shops as shop}
+                  {#if shop.Shop_Relation[0]?.Shop_TBG_playable}
+                     <PlainLink type="shop" object={shop}/>
+                  {/if}
+               {:else}
+                  {$_('incomplete')}
+               {/each}
+            </div>
+            <div>
+               <h2>{$_('page.boardgame.obtainable')}</h2>
+               {#each shops as shop}
+                  {#if shop.Shop_Relation[0]?.Shop_TBG_obtainable}
+                     <PlainLink type="shop" object={shop}/>
+                  {/if}
+               {:else}
+                  {$_('incomplete')}
+               {/each}
+            </div>
+         {/if}
+      {/await}
    </div>
 </div>

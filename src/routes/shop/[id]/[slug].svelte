@@ -32,12 +32,9 @@
    import {onMount} from 'svelte'
 
    export let user, shopData
-   let playableBoardgames
-   let buyableBoardgames
+   let promiseBoardgames: Promise<any>
    onMount(async ()=>{
-      // boardgameList = await getBoardgames(shopData.Shop_ID)
-      // buyableBoardgames = boardgameList.filter((b)=>)
-      // buyableBoardgames = getBuyableBoardgames(shopData.Shop_ID)
+      promiseBoardgames = getBoardgames(shopData.Shop_ID)
    })
    
 </script>
@@ -79,7 +76,7 @@
       <h2>Since</h2>
       <p>{shopData.Shop_start_year || 'N/A'}</p>
       <h2>Size</h2>
-      <p>{shopData.Shop_size || 'N/A'}</p>
+      <p>{shopData.Shop_capacity || 'N/A'}</p>
       <h2>Description</h2>
       <p class="break-words">{@html shopData.Shop_description || 'N/A'}</p>
 
@@ -87,9 +84,8 @@
 
       <h2>Connect</h2>
       <div class="flex flex-row items-center gap-2">
-         <Social url="https://thaibg.herokuapp.com/boardgame/{shopData.Shop_ID}" title="{shopData.Shop_name}"/>
-         
          {#if shopData.Shop_link} 
+            <Social url="{shopData.Shop_link}" title="{shopData.Shop_name}"/>
             <div class="tooltip" data-tip="external link">
                <div class="btn btn-square">
                   <a href="{shopData.Shop_link}" target="_blank">
@@ -102,19 +98,31 @@
    </div>
    <!-- second column-->
    <div class="flex flex-col gap-4">
-      <h2>Available Board Games</h2>
-      <h3>To play</h3>
-      <h3>To buy</h3>
-      <!-- <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-4 gap-4">
-         {#each boardgameData as bg}
-            <BoardgameCard {...bg}/>
-         {:else}
-            N/A
-         {/each}
-      </div> -->
-   <!-- {:else}
-      <Spinner/>
-   {/if} -->
+      {#await promiseBoardgames}
+         <Spinner/>
+      {:then boardgames}
+         {#if boardgames}
+            <h2>Board games available to play</h2>
+            <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-3 gap-4">
+               {#each boardgames as bg}
+                  {#if bg.Shop_Relation[0].Shop_TBG_playable}
+                     <BoardgameCard {bg}/>
+                  {/if}
+               {:else}
+                  N/A
+               {/each}
+            </div>
+            <h2>Board games available to buy or get</h2>
+            <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-3 gap-4">
+               {#each boardgames as bg}
+                  {#if bg.Shop_Relation[0].Shop_TBG_obtainable}
+                     <BoardgameCard {bg}/>
+                  {/if}
+               {:else}
+                  N/A
+               {/each}
+            </div>
+         {/if}
+      {/await}
    </div>
-          
 </div>

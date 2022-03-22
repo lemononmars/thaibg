@@ -1,16 +1,22 @@
 <script lang="ts" context="module">
-   import {from} from '$lib/supabase'
-
-   export async function load({ session, params }) {
-       const { user } = session
-       const {data, error} = await from('Printing').select('*').eq('Printing_ID', params.id)
-       if(error) {}
+   export async function load({params, fetch }) {
+      const res = await fetch(`/api/manufacturer/${params.id}`)
+      if(!res.ok) return {status: 404, message: 'not found'}
+      const data = await res.json()
+      
        return {
            props: {
-               user,
-               printingData: data[0] || null
+               manufacturerData: data
            }
        };
+   }
+
+   export async function getBoardgames(ID: number){
+      const res = await fetch(`/api/manufacturer/${ID}/boardgame`)
+      if(!res.ok) return []
+      
+      const data = await res.json()
+      return data
    }
 </script>
 
@@ -19,18 +25,13 @@
    import Spinner from '$lib/components/Spinner.svelte'
    import {onMount} from 'svelte'
    import BoardgameCard from '$lib/components/BoardgameCard.svelte'
-   import {getImageURL, getDefaultImageURL} from '$lib/supabase'
+   import {getImageURL} from '$lib/supabase'
 
-   export let user, printingData
-   let boardgameData
+   export let manufacturerData
+   let promiseBoardgames: Promise<any>
+
    onMount(async ()=>{
-      const {data, error} = await from('Boardgame')
-         .select('*, Printing_Relation!inner(*)')
-         .eq('Printing_Relation.Printing_ID', printingData.Printing_ID)
-         
-      if(error) throw error
-      boardgameData = data
-      printingData.Printing_thumbnail_url =  '/printing/' + (printingData.Printing_thumbnail_url )
+      promiseBoardgames = getBoardgames(manufacturerData.Manufacturer_ID)
    })
    
 </script>
@@ -38,47 +39,41 @@
 <Seo title="Printing"/>
 <div class="flex flex-col justify-center items-center relative">
    <div class="w-full text-left m-4 flex flex-col">
-      {#if !printingData}
-         Invalid Printing ID!
-      {:else}
-         {#if boardgameData && boardgameData.length > 0}
-            <div class="flex flex-col lg:flex-row lg:gap-4 w-full p-8 border-2 shadow-lg rounded-xl">
-               <img src="{printingData.Printing_thumbnail_url}" alt="image of {printingData.Printing_name}" class="w-72 mask mask-hexagon-2"/>
-               <div>
-                  <h1>{printingData.Printing_name}</h1>
-                  <h2>{printingData.Printing_name_th? "(" + printingData.Printing_name_th + ")": ""}</h2>
-                  <ul>
-                     <li>Location: {printingData.Printing_location || 'N/A'}</li>
-                     <li>Official link: 
-                        {#if printingData.Printing_link}
-                           <a href="{printingData.Printing_link}" target="_blank">{printingData.Printing_link}</a>
-                        {:else}
-                           N/A
-                        {/if}
-                     </li>
-                  </ul>
-               </div>
-            </div>
-            <!-- <div>{likes.length}</div> -->
-            <div>
-               <h2>Description</h2>
-               <p>{@html printingData.Printing_description}</p>
-            </div>
-            <div class="divider"></div>
-            <h2>Past works</h2>
-            <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-4 gap-4">
-               {#each boardgameData as bg}
+      <div class="flex flex-col lg:flex-row lg:gap-4 w-full p-8 border-2 shadow-lg rounded-xl">
+         <img src="{getImageURL('manufacturer', manufacturerData.Manufacturer_picture)}" alt="image of {manufacturerData.Manufacturer_name}" class="w-72 mask mask-circle"/>
+         <div>
+            <h1>{manufacturerData.Manufacturer_name}</h1>
+            <ul>
+               <li>Location: {manufacturerData.Manufacturer_location || 'N/A'}</li>
+               <li>Official link: 
+                  {#if manufacturerData.Manufacturer_link}
+                     <a href="{manufacturerData.Manufacturer_link}" target="_blank">{manufacturerData.Manufacturer_link}</a>
+                  {:else}
+                     N/A
+                  {/if}
+               </li>
+            </ul>
+         </div>
+      </div>
+      <!-- <div>{likes.length}</div> -->
+      <div>
+         <h2>Description</h2>
+         <p>{@html manufacturerData.Manufacturer_description}</p>
+      </div>
+      <div class="divider"></div>
+      <h2>Manufactures for the following board games</h2>
+      <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-4 gap-4">
+         {#await promiseBoardgames}
+            <Spinner/>
+         {:then boardgames}
+            {#if boardgames}
+               {#each boardgames || [] as bg}
                   <BoardgameCard {bg}/>
                {:else}
-                  N/A
+                  No board games
                {/each}
-            </div>
-         {:else}
-            <Spinner/>
-         {/if}
-      {/if}
-      {#if user && !user.guest}
-         <button class="btn">Suggest edit</button>
-      {/if}
+            {/if}
+         {/await}
+      </div>
    </div>
 </div>

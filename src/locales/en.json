@@ -1,5 +1,13 @@
 {
-  "boardgame": "Board Game",
+  "boardgame": {
+    "_": "Board Game",
+    "status":{
+      "pending": "pending",
+      "planned": "planned", 
+      "prototype": "prototype",
+      "published": "published"
+    }
+  },
   "type": "Types",
   "mechanics": "Mechanics",
   "category": "Category",
@@ -8,19 +16,20 @@
   "graphicdesigner": "Graphic Designer",
   "manufacturer": "Manufacturer",
   "publisher": "Publisher",
-  "investor": "investor",
+  "investor": "Investor",
   "contentcreator": "Content Creator",
   "shop": "Shop",
   "event": "Event",
   "honor": "Honor",
-  "content": "Content",
   "playtester": "Playtester",
+  "rulebookeditor": "Rulebook Editor",
+  "crowdfunding": "Crowdfunding",
   "TBGA": "Thailand Board Game Association",
   "page": {
     "home": {
       "title": "Homepage",
       "welcome": {
-        "intro": "We have it all!",
+        "intro": "WE HAVE THEM ALL!",
         "boardgames": "Board Games",
         "people": "People",
         "contents": "Contents",
@@ -37,6 +46,10 @@
     "contact": {
       "title": "Contact",
       "nav": "Contact Us"
+    },
+    "boardgame": {
+      "playable": "Playable at these shops",
+      "obtainable": "Obtainable at these shops"
     }
   },
   "navbar": {
@@ -54,6 +67,9 @@
       "graphicdesigner": "Graphic Designers",
       "manufacturer": "Manufacturers"
     },
+    "creator": {
+      "_": "Creators"
+    },
     "supporter": {
       "_": "Supporters",
       "publisher": "Publishers",
@@ -62,7 +78,7 @@
       "shop": "Shops"
     },
     "activity": {
-      "_": "Activity",
+      "_": "Activities",
       "event": "Events",
       "honor": "Honors",
       "content": "Contents"
@@ -70,7 +86,7 @@
     "website": {
       "_": "Website",
       "about": "About us",
-      "legal": "Legal",
+      "termofuse": "Term of use",
       "contact": "Contact"
     },
     "title": {
@@ -78,9 +94,58 @@
       "db": "Database"
     }
   },
-  "page.home.welcome.intro": "WE HAVE THEM ALL!",
-  "rulebookeditor": "Rulebook Editor",
-  "crowdfunding": "Crowdfunding",
-  "navbar.creator._": "Creator",
-  "navbar.supporter._": "Supporter"
+  "minutes": "minutes",
+  "age": "Age",
+  "numPlayers": "Number of players",
+  "playtime": "Playtime",
+  "weight": "Weight",
+  "incomplete": "Incomplete",
+  "description": {
+    "_": "Description",
+    "not_found": "No description"
+  },
+  "auth": {
+    "sign_in": "Sign in",
+    "sign_out": "Sign out",
+    "profile": "Profile"
+  },
+  "comment": {
+    "_": "Comment",
+    "not_found": "No comments",
+    "add": "add a comment",
+    "to_add": "to add a comment",
+    "submit": "Submit"
+  },
+  "content": {
+    "_": "Contents",
+    "not_found": "No contents",
+    "media": {
+      "_": "Media",
+      "all": "All",
+      "video": "Video",
+      "podcast": "Podcast",
+      "article": "Article",
+      "file": "File"
+    },
+    "type": {
+      "_": "Type",
+      "all": "All",
+      "review": "Review",
+      "preview": "Preview",
+      "playthrough": "Playthrough",
+      "howtoplay": "How to Play",
+      "rulebook": "Rulebook",
+      "analysis": "Analysis"
+    }
+  },
+  "table":{
+    "search": "Search",
+    "advanced_filter": "Advanced filter",
+    "image": "Image",
+    "name": "Name",
+    "released": "Released",
+    "status": "Status",
+    "latest_work": "Latest work",
+    "last_updated": "Last updated"
+  }
 }

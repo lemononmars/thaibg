@@ -1,18 +1,16 @@
 <script lang="ts" context="module">
    import {getVarPrefix} from '$lib/supabase'
-   import {personRoles} from '$lib/constants'
-   export async function load({ session, params, url, fetch }) {
-      const {user} = session
+   import {Person, personRoles} from '$lib/datatypes'
+   import type {PersonRole, Content, Boardgame} from '$lib/datatypes'
+
+   export async function load({ params, url, fetch }) {
       const res = await fetch(`/api/person/${params.id}`)
-      if(!res.ok)
-         return {
-            status:404
-         }
-      let person = await res.json()
+      if(!res.ok) return {status:404}
+      let person: Person
+      person = await res.json()
 
       return {
          props: {
-            user,
             person,
             role: url.searchParams.get('role'),
          }
@@ -20,29 +18,26 @@
    }
    
    export async function getRoleContent(role: string, person){
-      let data = [], contents = []
-      let returnedData
+      let personData: PersonRole
+      let contents: Content[] | Boardgame[]
+      let returnedData = []
       // grab role information
       const id = person[getVarPrefix(role) + '_ID']
       let res = await fetch(`/api/${role}/${id}`)
       if(!res)  return {status: 404}
-      data = await res.json()
-
+      personData = await res.json()
+      
       // if the role is content creator, get the list of contents
       // otherwise, get the list of board games
-      const contentType = role === 'contentcreator' ? 'content' : 'boardgame'
-      res = await fetch(`/api/${role}/${id}/${contentType}`)
+      const dataType = (role === 'contentcreator') ? 'content' : 'boardgame'
+      res = await fetch(`/api/${role}/${id}/${dataType}`)
       if(!res.ok)  return {status: 404}
       contents = await res.json()
 
-      returnedData = {
-         description: data[role + '_description'],
-         id: data[role + '_ID'],
-         name: data[role + '_name'],
-         team: data[role + '_team'],
-         slug: data[role + '_slug'],
-         contents
-      }
+      const info = ['description', 'name', 'team', 'slug', 'link']
+      info.forEach((i)=> returnedData[i] = personData[getVarPrefix(role) + '_' + i])
+      returnedData['id'] = personData[getVarPrefix(role) + '_ID']
+      returnedData['contents'] = contents
       return returnedData
    }
 </script>
@@ -55,29 +50,28 @@
    import BoardgameCard from '$lib/components/BoardgameCard.svelte'
    import ContentCard from '$lib/components/ContentCard.svelte'
    import ContactLinks from '$lib/components/ContactLinks.svelte'
+   import {_} from 'svelte-i18n'
 
-   // from endpoint [slug].ts
-   export let user, person, role 
-   const roleUrl = personRoles.map((r)=>r.url)
-   let activeroleTitles = personRoles.map((r)=>!!person[r.prefix + '_ID'])
+   export let person, role 
+   let activeroleTitles = personRoles.map((r)=>!!person[getVarPrefix(r) + '_ID'])
    let activeTab = 0
    if(role) 
-      activeTab = roleUrl.indexOf(role) // response to url ?role=Designer
+      activeTab = personRoles.indexOf(role) // response to url ?role=Designer
    else if (activeroleTitles.indexOf(true)) 
       activeTab = activeroleTitles.indexOf(true) // first non-empty role
    else 
       activeTab = 0 // if all else fails, just use first index
       
-   let rolePromise
+   let rolePromise: Promise<any>
 
    onMount(async ()=>{
-      rolePromise = await getRoleContent(roleUrl[activeTab], person) // initial loader
+      rolePromise = getRoleContent(personRoles[activeTab], person)
    })
    
    async function changeTab(idx: number) {
       activeTab = idx
       if(activeroleTitles[activeTab])
-         rolePromise = await getRoleContent(roleUrl[activeTab], person)
+         rolePromise = getRoleContent(personRoles[activeTab], person)
    }
 </script>
 
@@ -87,10 +81,11 @@
    <img src="https://picsum.photos/800/600" class="object-cover w-full h-60" alt="cover" >
 </div>
 
-<div class="flex flex-row justify-center items-start relative">
-   <div class="text-left m-4 flex flex-col -mt-32 w-1/3">
+<div class="flex flex-col lg:flex-row justify-center items-start relative">
+   <!-- First column: person's name, bio, and contacts-->
+   <div class="text-left p-2 flex flex-col -mt-32 w-full lg:w-1/4">
       <div class="avatar">
-         <div class="h-72 mask mask-circle hover:scale-110 duration-200">
+         <div class="h-72 mask mask-circle hover:scale-110 duration-200 mx-auto">
             <img src="{getImageURL('person', person.Person_picture)}" alt="image of {person.Person_name}"
                on:error|once={(ev)=>ev.target.src = getDefaultImageURL('person')}
             />
@@ -100,7 +95,7 @@
          <h1>{person.Person_name}</h1>
          <h2>{person.Person_name_th? "(" + person.Person_name_th + ")": ""}</h2>
          <h3>Bio</h3>
-         <p>{@html person.Person_bio || '-'}</p>
+         <p>{@html person.Person_description || '-'}</p>
          <ContactLinks links={{
             website: person.Person_website,
             facebook: person.Person_facebook,
@@ -110,7 +105,7 @@
       </div>
    </div>
 
-   <div class="flex flex-col w-3/4 text-left m-4 justify-center">
+   <div class="flex flex-col w-full lg:w-3/4 text-left p-2 justify-center">
       <div class="tabs w-full m-10 mx-auto flex-grow">
          {#each personRoles as r, idx}
             {#if activeroleTitles[idx]}
@@ -121,29 +116,27 @@
                   class:text-bold={idx == activeTab}
                   on:click={()=>changeTab(idx)}
                >
-                  {r.name}
+                  {$_(r)}
                </a> 
             {/if}
          {/each}
       </div>
       <div class="flex flex-col justify-center">
          {#await rolePromise}
-            <div>
-               <Spinner/>
-            </div>
+            <Spinner/>
          {:then res}
             {#if res}
                <div>
-                  <h2>{personRoles[activeTab].name}'s Name</h2>
+                  <h2>{$_(personRoles[activeTab])}'s Name</h2>
                   <p>{res.name || '-'}</p>
-                  <h2>{personRoles[activeTab].name}'s Description</h2>
+                  <h2>{$_(personRoles[activeTab])}'s Description</h2>
                   <p>{@html res.description || '-'}</p>
-                  <h2>{personRoles[activeTab].name}'s Team</h2>
+                  <h2>{$_(personRoles[activeTab])}'s Team</h2>
                   <p>{res.team || '-'}</p>
                </div>
 
                <div class="divider"></div>
-               {#if roleUrl[activeTab] === 'creator'}
+               {#if personRoles[activeTab] === 'contentcreator'}
                   <h2>Contents created by this content creator</h2>
                   <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-3 gap-4">
                      {#each res.contents as content}
@@ -153,7 +146,7 @@
                      {/each}
                   </div>
                {:else}
-                  <h2>Board games created by this {personRoles[activeTab].name}</h2>
+                  <h2>Board games created by this {$_(personRoles[activeTab])}</h2>
                   <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-3 gap-4">
                      {#each res.contents as bg}
                         <BoardgameCard {bg}/>

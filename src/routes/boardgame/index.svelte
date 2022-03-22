@@ -72,7 +72,11 @@
    <!-- Search box -->
    <div class="flex flex-row items-center gap-4">
       <Searchbar placeholder="Search board game (en/th)" bind:searchString/>
-      <div class="btn gap-2" on:click={()=>showAdvancedFilter = !showAdvancedFilter}>
+      <div 
+         class="btn" 
+         class:btn-active={showAdvancedFilter}
+         on:click={()=>showAdvancedFilter = !showAdvancedFilter}
+      >
          Advanced Filter
          {#if showAdvancedFilter}
             <ChevronUpIcon size="1x"/>
@@ -84,17 +88,20 @@
    <!-- Advanced filter (hidden by default) -->
    {#if showAdvancedFilter}
       <div transition:fly="{{duration:400, y:-20, easing: quintOut}}" class="m-2">
-         <div class="btn-group">
-            {#each BoardgameStatus as _,idx}
-               <div 
-                  class="btn" 
-                  class:btn-outline={idx != option}
-                  on:click={()=>option = idx}
+         <div class="flex flex-col justify-content">
+            <h3>Status</h3>
+            <div class="btn-group">
+               {#each BoardgameStatus as _,idx}
+                  <div 
+                     class="btn btn-xs" 
+                     class:btn-active={idx == option}
+                     on:click={()=>option = idx}
+                     >
+                     {BoardgameStatus[idx]}
+                     </div
                   >
-                  {BoardgameStatus[idx]}
-                  </div
-               >
-            {/each}
+               {/each}
+            </div>
          </div>
       </div>
    {/if}

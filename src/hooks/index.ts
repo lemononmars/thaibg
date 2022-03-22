@@ -7,7 +7,6 @@ import { auth } from '$lib/supabase'
 
 /** @type {import('@sveltejs/kit').Handle} */
 export async function handle({ event, resolve }: { event: RequestEvent, resolve: (request: RequestEvent) => Promise<Response> }) {
-
     const sbToken = event.request.headers.get('Cookie') ? parse(event.request.headers.get('Cookie'))[COOKIE_NAME] : ''
 
     if(sbToken) {
@@ -40,7 +39,6 @@ export async function handle({ event, resolve }: { event: RequestEvent, resolve:
         }
         return response
     }
-
     return response
 }
 

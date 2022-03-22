@@ -1,7 +1,7 @@
 <script lang="ts" context="module">
    import {from} from '$lib/supabase'
    import {BoardgameRelation} from '$lib/datatypes'
-   import type {DataType} from '$lib/datatypes'
+   import type {TypeName} from '$lib/datatypes'
 
    export async function load({ session }) {
        const { user } = session
@@ -55,13 +55,13 @@
    })
    $: dataFiltered = [] // only filter current search
       
-   async function filterData(cat: DataType, text: string){
+   async function filterData(cat: TypeName, text: string){
       const res = await fetch(`/api/${cat}?search=${text}`)
       const d = await res.json()
       dataFiltered = d.slice(-20) // take first 20
    }
 
-   function add(cat: DataType, text: string){
+   function add(cat: TypeName, text: string){
       basicInput[cat] = [...basicInput[cat], text]
       search = ''
       dataFiltered = []

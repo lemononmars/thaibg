@@ -1,21 +1,24 @@
 <script lang="ts">
    import {getImageURL, getDefaultImageURL, getVarPrefix} from '$lib/supabase' 
+   import type {TypeName} from '$lib/datatypes'
+   import {BoardgameStatusArray, ShopStatusArray} from '$lib/datatypes'
 
    import SearchNavigation from "./SearchNavigation.svelte";
-   import {GridIcon, ListIcon} from 'svelte-feather-icons'
+   import {GridIcon, ListIcon, CheckCircleIcon, SendIcon, ShoppingCartIcon, SettingsIcon, PauseIcon, SlashIcon, PlayIcon, XCircleIcon} from 'svelte-feather-icons'
    import PersonCard from '$lib/components/PersonCard.svelte'
    import BoardgameCard from "$lib/components/BoardgameCard.svelte";
    import PlainCard from "$lib/components/PlainCard.svelte";
    import EventCard from "$lib/components/EventCard.svelte";
    import ContentCard from "$lib/components/ContentCard.svelte"
-   import ListCard from "$lib/components/ListCard.svelte";
    import {flip} from 'svelte/animate'
    import { _ } from 'svelte-i18n'
+import Popover from './popover/Popover.svelte';
+import Modal from './modal/Modal.svelte';
 
-   type dataType = 'boardgame' | 'person' | 'manufacturer' | 'shop' | 'publisher' | 'content' | 'event' | 'honor'
-   export let data, type: dataType, tableInfo
+   export let data, type: TypeName, tableInfo
    const typePrefix = getVarPrefix(type)
 
+   // default
    let listView = 'list'
 
    // pagination
@@ -28,6 +31,21 @@
    function changePage(page: number){
       activePage = page
       window.scroll({top: 0, behavior: 'smooth'})
+   }
+
+   // create components for some fancy table option
+   const BoardgameStatusIconMap = {
+      'unpublished': PauseIcon,
+      'pending': PauseIcon,
+      'planned': SendIcon,
+      'prototype': SettingsIcon,
+      'published': ShoppingCartIcon
+   }
+
+   const ShopStatusIconMap ={
+      'active': PlayIcon,
+      'inactive': PauseIcon,
+      'closed': XCircleIcon
    }
 </script>
 
@@ -123,7 +141,23 @@
                         </td>
                         {#each tableInfo.body as t}
                            <td>
-                              {d[t] || '-'}
+                              {#if d[t] == true && typeof d[t] === 'boolean'}
+                                 <CheckCircleIcon size='1x' class="text-success"/>
+                              {:else if d[t] == false}
+                                 <SlashIcon size='1x' class="text-error"/>
+                              {:else if BoardgameStatusArray.includes(d[t])}
+                                 <div class="flex flex-row items-center gap-2">
+                                    <svelte:component this={BoardgameStatusIconMap[d[t]]} size='2x' class='text-info'/>
+                                    <p>{$_('boardgame.status.' + d[t])}</p>
+                                 </div>
+                              {:else if ShopStatusArray.includes(d[t])}
+                                 <div class="flex flex-row items-center gap-2">
+                                    <svelte:component this={ShopStatusIconMap[d[t]]} size='1x' class='text-info'/>
+                                    <p>{$_('shop.status.' + d[t])}</p>
+                                 </div>
+                              {:else}
+                                 {d[t] || '-'}
+                              {/if}
                            </td>
                         {/each}
                      </tr>

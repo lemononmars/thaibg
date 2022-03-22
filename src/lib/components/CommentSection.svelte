@@ -51,7 +51,8 @@
 <script lang=ts>
    import {onMount} from 'svelte'
    import Spinner from '$lib/components/Spinner.svelte'
-import { user } from '$lib/user';
+   import { user } from '$lib/user';
+   import { _} from 'svelte-i18n';
    export let type: string, ID: number
 
    let promiseComments
@@ -59,7 +60,7 @@ import { user } from '$lib/user';
    let yourUsername
    let guest = true
    onMount(async ()=>{
-      promiseComments = await getComments(type, ID)
+      promiseComments = getComments(type, ID)
       const {data, error} = await getCurrUserProfile()
       if(data)
          guest = false
@@ -68,7 +69,7 @@ import { user } from '$lib/user';
    })
 </script>
 
-<h3>Comments</h3>
+<h3>{$_('comment._')}</h3>
 <div class="my-4">
 {#await promiseComments}
    <Spinner/>
@@ -84,17 +85,17 @@ import { user } from '$lib/user';
                </div>
             </div>
             <div class="text-left flex flex-col gap-1">
-               <div class="text-base-content">{c.Comment_username}:</div>
+               <div class="text-base-content">{c.Comment_username} ({c.Comment_date})</div>
                <div>{c.Comment_text}</div>
             </div>
          </div>
       {:else}
-         <p>No comment yet. Be our first?</p>
+         <p>{$_('comment.not_found')}</p>
       {/each}
    {/if}
    {#if guest}
       <div>
-         <a href="/auth">Sign in</a> to comment
+         <a href="/auth">{$_('auth.sign_in')}</a> {$_('comment.to_add')}
       </div>
    {:else}
       <div class="flex flex-row gap-4 my-2">
@@ -108,8 +109,8 @@ import { user } from '$lib/user';
          </div>
          <div class="w-full">
             <div class="form-control" method="post">
-               <textarea class="textarea h-24 textarea-bordered" placeholder="Add comment"></textarea>
-               <div class="btn" type="submit">Submit</div>
+               <textarea class="textarea h-24 textarea-bordered" placeholder="{$_('comment.add')}"></textarea>
+               <div class="btn" type="submit">{$_('comment.submit')}</div>
             </div>
          </div>
       </div>

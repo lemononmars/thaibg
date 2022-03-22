@@ -3,6 +3,15 @@ export interface Content extends ContentSubmission{
    Content_slug: string,
 }
 
+export const ContentSubmissionKeys = [
+   'Content_show',
+   'Content_name',
+   'Content_link',
+   'Content_description',
+   'Content_media',
+   'Content_type',
+]
+
 export interface ContentSubmission {
    Content_show: boolean,
    Content_name: string,
@@ -19,6 +28,5 @@ export type ContentMedia = ContentMediaTuple[number]
 export const ContentTypeArray = ['review', 'preview', 'playthrough', 'howtoplay', 'rulebook', 'analysis']
 export type ContentTypeTuple = typeof ContentTypeArray
 export type ContentType = ContentTypeTuple[number]
-
 
 export const ContentRelation = ['Boardgame', 'Contentcreator']

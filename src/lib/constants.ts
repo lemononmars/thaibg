@@ -18,6 +18,7 @@ export const RESP_USER_GUEST = {
 export const URL_DICEBEAR = 'https://avatars.dicebear.com/api/avataaars/'
 export const DIR_AVATAR = 'https://llhkvvndjjpbdtdvxnvn.supabase.in/storage/v1/object/public/avatars'
 export const URL_BLANK_IMAGE = 'no_cover.jpg'
+export const WEBSITE_URL = 'https://thaibg.herokuapp.com'
 
 export const COOKIE_NAME = 'sb:token'
 export const COOKIE_OPTIONS: CookieSerializeOptions = {
@@ -27,16 +28,3 @@ export const COOKIE_OPTIONS: CookieSerializeOptions = {
     sameSite: 'lax',
     httpOnly: true
 }
-
-export const personDeveloperRoles = [
-    {name: 'Designer', prefix: 'Designer', url: 'designer'},
-    {name: 'Artist', prefix: 'Artist', url: 'artist'},
-    {name: 'Graphic Designer', prefix: 'Graphicdesigner', url:'graphicdesigner'}, 
-    {name: 'Rulebook Editor', perfix: 'Rulebookeditor', url: 'rulebookeditor'},
-    {name: 'Playtester', perfix: 'Playtester', url: 'playtester'},
-]
-
-export const personRoles = [
-    ...personDeveloperRoles,
-    {name: 'Content Creator', prefix: 'Contentcreator', url: 'contentcreator'},
-]

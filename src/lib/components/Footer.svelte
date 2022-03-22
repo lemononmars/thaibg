@@ -4,35 +4,38 @@
 
     $: boardgameMenu = [
         {path: '/boardgame',title:$_('navbar.boardgame.list')},
-        {path: '/type',title:$_('type')},
-        {path: '/mechanics',title:$_('mechanics')},
-        {path: '/category',title:$_('category')},
+        {path: '/type',title:$_('navbar.boardgame.type')},
+        {path: '/mechanics',title:$_('navbar.boardgame.mechanics')},
+        {path: '/category',title:$_('navbar.boardgame.category')},
     ]
-    $: peopleMenu = [
-        {path: '/person?role=Designer',title:$_('designer')},
-        {path: '/person?role=Artist',title:$_('artist')},
-        {path: '/person?role=Graphicdesigner', title:$_('graphicdesigner')},
+    $: creatorMenu = [
+        {path: '/person?role=designer',title:$_('designer')},
+        {path: '/person?role=graphicdesigner', title:$_('graphicdesigner')},
+        {path: '/person?role=artist',title:$_('artist')},
+        {path: '/person?role=playtester', title:$_('playtester')},
         {path: '/manufacturer',title:$_('manufacturer')},
+        {path: '/person?role=rulebookeditor', title:$_('rulebookeditor')},
     ]
     $: supporterMenu = [
+        {path: '/shop', title:$_('shop')},
+        {path: '/person?role=contentcreator',title:$_('contentcreator')},
         {path: '/publisher',title:$_('publisher')},
         {path: '/investor',title:$_('investor')},
-        {path: '/person?role=Creator',title:$_('contentcreator')},
-        {path: '/shop', title:$_('shop')}
     ]
     $: activityMenu = [
-        {path: '/event',title:$_('event')},
+        {path: '/content',title:$_('content._')},
         {path: '/honor',title:$_('honor')},
-        {path: '/content',title:$_('content')},
+        {path: '/event',title:$_('event')},
+        {path: '/crowdfunding',title:$_('crowdfunding')},
     ]
     $: websiteMenu = [
         {path: '/about',title:$_('navbar.website.about')},
-        {path: '/legal',title:$_('navbar.website.legal')},
+        {path: '/termofuse',title:$_('navbar.website.termofuse')},
         {path: '/contact',title:$_('navbar.website.contact')},
     ]
 
-    $: menuTitles = [$_('navbar.boardgame._'), $_('navbar.person._'), $_('navbar.supporter._'), $_('navbar.activity._'), $_('navbar.website._')]
-    $: menus = [boardgameMenu, peopleMenu, supporterMenu, activityMenu, websiteMenu]
+    $: menuTitles = [$_('navbar.boardgame._'), $_('navbar.creator._'), $_('navbar.supporter._'), $_('navbar.activity._'), $_('navbar.website._')]
+    $: menus = [boardgameMenu, creatorMenu, supporterMenu, activityMenu, websiteMenu]
 </script>
 
 <footer class="mx-auto w-screen max-w-7xl sm:px-6 lg:px-8 p-10 footer bg-base-200 text-base-content">

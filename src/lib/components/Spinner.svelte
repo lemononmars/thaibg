@@ -4,7 +4,7 @@
 
     export const size: SpinnerSize = 'lg'
 </script>
-<div class="gg-spinner {size}">
+<div class="gg-spinner {size} mx-auto">
 
 </div>
 <style lang="postcss">

@@ -43,15 +43,10 @@
         {path: '/investor',title:$_('investor')},
     ]
     $: activityMenu = [
-        {path: '/content',title:$_('content')},
+        {path: '/content',title:$_('content._')},
         {path: '/honor',title:$_('honor')},
         {path: '/event',title:$_('event')},
         {path: '/crowdfunding',title:$_('crowdfunding')},
-    ]
-    $: websiteMenu = [
-        {path: '/about',title:$_('navbar.website.about')},
-        {path: '/legal',title:$_('navbar.website.legal')},
-        {path: '/contact',title:$_('navbar.website.contact')},
     ]
 
     const languageName = {
@@ -63,13 +58,13 @@
         if($user) {
             const { data, error } = await getCurrUserProfile()
             if(!error)
-                avatar = await getAvatar(data.avatar_url)
+                avatar = getAvatar(data.avatar_url)
             else
                 avatar = URL_DICEBEAR + 'randombear' + '.svg'
         }
     })
     
-    let scrollY, mouseY
+    let scrollY: number, mouseY: number
 
     function scrollTop(){
         window.scroll({top: 0, behavior: 'smooth'})
@@ -188,8 +183,8 @@
                         {/await}
                     </label>
                     <ul tabindex="0" class="p-2 shadow menu dropdown-content w-52 bg-info">
-                        <li><a href="/profile">Profile</a></li>
-                        <li><a on:click={signOut} href="/">Sign Out</a></li>
+                        <li><a href="/profile">{$_('auth.profile')}</a></li>
+                        <li><a on:click={signOut} href="/">{$_('auth.sign_out')}</a></li>
                     </ul>
                 </div>
             {:else}

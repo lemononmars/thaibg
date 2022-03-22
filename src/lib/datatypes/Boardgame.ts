@@ -3,6 +3,27 @@ export interface Boardgame extends BoardgameSubmission{
    TBG_slug: string,
 }
 
+export const BoardgameSubmissionKeys = [
+   'TBG_show',
+   'TBG_name',
+   'TBG_name_th',
+   'TBG_picture',
+   'TBG_picture_cover',
+   'TBG_link',
+   'TBG_description',
+   'TBG_age',
+   'TBG_weight',
+   'BGG_ID',
+   'BGG_link',
+   'TBG_keyword',
+   'TBG_released',
+   'TBG_player_min',
+   'TBG_player_max',
+   'TBG_playtime_min',
+   'TBG_playtime_max',
+   'TBG_status',
+]
+
 export interface BoardgameSubmission {
    TBG_show: boolean,
    TBG_name: string,
@@ -24,6 +45,9 @@ export interface BoardgameSubmission {
    TBG_status: BoardgameStatus,
 }
 
+/* 
+* pending, planned, prototype, published
+*/
 export const BoardgameStatusArray = ['pending' , 'planned' , 'prototype' , 'published']
 export type BoardgameStatusTuple = typeof BoardgameStatusArray
 export type BoardgameStatus = BoardgameStatusTuple[number]
@@ -34,7 +58,7 @@ const BoardgameInfoRelation = ['Publisher', 'Manufacturer', 'Investor']
 const BoardgameProperties = ['Type' ,'Mechanics','Category']
 const BoardgameETCRelation = ['Event', 'Honor', 'Shop']
 
-export const BoardgameRelation = [
+export const BoardgameRelationArray = [
    ...BoardgamePersonRelation, 
    ...BoardgameProperties, 
    ...BoardgameInfoRelation, 

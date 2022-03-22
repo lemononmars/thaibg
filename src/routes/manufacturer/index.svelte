@@ -1,26 +1,25 @@
+<script lang=ts context=module>
+   export async function load({fetch}) {
+      const res = await fetch(`/api/manufacturer`)
+      if(!res.ok) return {status: 404, message: 'not found'}
+      
+      const data = await res.json()
+      return {
+         props:{
+            manufacturers: data
+         }
+      }
+   }
+</script>
+
 <script lang="ts">
    import Seo from '$lib/components/SEO.svelte'
-   import {from} from '$lib/supabase'
-   import {onMount} from 'svelte'
+   import type {Manufacturer} from '$lib/datatypes'
    import Spinner from '$lib/components/Spinner.svelte'
    import {SearchIcon} from 'svelte-feather-icons'
    import PlainCard from '$lib/components/PlainCard.svelte'
-   import {getImageURL, getDefaultImageURL} from '$lib/supabase'
    
-   let manufacturers = []
-   onMount(async () => {
-      let {data, error} = await from('Manufacturer').select('*')
-      manufacturers = data.map((d)=>({
-         id: d.Manufacturer_ID,
-         name: d.Manufacturer_name,
-         slug: d.Manufacturer_slug,
-         picture:  '/Manufacturer/' + (d.Manufacturer_picture ),
-         type: 'manufacturer'
-      }))
-
-      if(error) throw(error)
-   })
-   
+   export let manufacturers: Manufacturer[]
 </script>
 
 <Seo title="Manufacturer"/>
@@ -33,13 +32,7 @@
    </div> 
    <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-4 gap-4">
       {#each manufacturers as object}
-         <PlainCard {object}/>
-      {:else}
-         {#if manufacturers}
-            No Manufacturer found.
-         {:else}
-            <Spinner/>
-         {/if}
+         <PlainCard type="manufacturer" {object}/>
       {/each}
    </div>
 </div>

@@ -2,7 +2,7 @@
    import {_} from 'svelte-i18n'
 
    $: pageGroup1 = [
-      {name: $_('boardgame'), url: '/boardgame'},
+      {name: $_('boardgame._'), url: '/boardgame'},
    ]
    $: pageGroup2 = [
       {name: $_('designer'), url: '/person?role=designer'},
