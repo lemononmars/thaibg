@@ -14,6 +14,7 @@ export const EventSubmissionKeys = [
    'Event_time_end',
    'Event_organizer',
    'Event_type',
+   'Event_picture'
 ]
 
 export interface EventSubmission {
@@ -26,6 +27,7 @@ export interface EventSubmission {
    Event_time_end: Date,
    Event_organizer: string,
    Event_type: EventType,
+   Event_picture: string
 }
 
 export const EventArray = ['convention', 'meetup', 'contest', 'competition', 'demo', 'award', 'sale']

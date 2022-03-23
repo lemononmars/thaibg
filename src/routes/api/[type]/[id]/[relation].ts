@@ -67,7 +67,7 @@ export async function get({url, params}){
    if(error)
       return{
          status: 404,
-         body: {message: `No ${params.relation} associated with ${type} found`, error: error}
+         body: {message: `No ${relation} associated with ${type} found`, error: error}
       }
    else
       return{

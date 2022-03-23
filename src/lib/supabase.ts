@@ -37,11 +37,18 @@ export function getTableName (type: string){
   return type[0].toUpperCase() + type.slice(1)
 }
 
+/**
+ * Return the conresponding prefix to be used with database
+ * @param {String} type type of object (e.g. boardgame, person, mechanics)
+ * @returns {String} (e.g. TBG, Person, Mech)
+ */
 export function getVarPrefix (type: string){
   if(type?.toLowerCase() === "boardgame")
       return 'TBG'
-   else
-      return type[0].toUpperCase() + type.slice(1)
+  else if(type?.toLowerCase() === "mechanics")
+    return 'Mech'
+  else
+    return type[0].toUpperCase() + type.slice(1)
 }
 
 /**

@@ -12,10 +12,13 @@
    import ContentCard from "$lib/components/ContentCard.svelte"
    import {flip} from 'svelte/animate'
    import { _ } from 'svelte-i18n'
-import Popover from './popover/Popover.svelte';
-import Modal from './modal/Modal.svelte';
 
-   export let data, type: TypeName, tableInfo
+   interface TableInfo {
+      headers: string[]
+      body: string[]
+   }
+
+   export let data, type: TypeName, tableInfo: TableInfo
    const typePrefix = getVarPrefix(type)
 
    // default
@@ -141,10 +144,12 @@ import Modal from './modal/Modal.svelte';
                         </td>
                         {#each tableInfo.body as t}
                            <td>
-                              {#if d[t] == true && typeof d[t] === 'boolean'}
-                                 <CheckCircleIcon size='1x' class="text-success"/>
-                              {:else if d[t] == false}
-                                 <SlashIcon size='1x' class="text-error"/>
+                              {#if typeof d[t] === 'boolean'}
+                                 {#if d[t] == true}
+                                    <CheckCircleIcon size='1x' class="text-success"/>
+                                 {:else}
+                                    <SlashIcon size='1x' class="text-error"/>
+                                 {/if}
                               {:else if BoardgameStatusArray.includes(d[t])}
                                  <div class="flex flex-row items-center gap-2">
                                     <svelte:component this={BoardgameStatusIconMap[d[t]]} size='2x' class='text-info'/>

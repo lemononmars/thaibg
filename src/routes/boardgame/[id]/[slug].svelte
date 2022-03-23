@@ -4,15 +4,14 @@
    import type {Content, Honor, Boardgame, Shop, Event} from '$lib/datatypes'
    import {WEBSITE_URL} from '$lib/constants'
 
-   export async function load({ session, params, fetch }) {
+   export async function load({ params, fetch }) {
       let bg: Boardgame
-      const { user } = session
       await fetch(`/api/boardgame/${params.id}`)
          .then(res => res.json())
          .then(data => bg = data)
          .catch(error => {return {status:400, message: error}})
 
-      const basicTypeName = ['type', 'mechanics', 'category', 'content', 'honor']
+      const basicTypeName = ['type', 'mechanics', 'category', 'honor']
       let basicData = basicTypeName.map((t)=> ({t:[]}))
      
       for(const type of basicTypeName)
@@ -22,7 +21,6 @@
 
       return {
          props: {
-            user,
             bg, ...basicData
          }
       };
@@ -51,18 +49,25 @@
       return data
    }
 
-   export async function getEvents(BGID: number){
-      const res = await fetch(`/api/boardgame/${BGID}/event`)
-      if(!res.ok) return {status: 404, message: 'not found'}
+   export async function getContents(BGID: number){
+      const res = await fetch(`/api/boardgame/${BGID}/content`)
+      if(!res.ok) return []
       
       const data = await res.json()
       return data
+   }
+
+   export async function getEvents(BGID: number){
+      const res = await fetch(`/api/boardgame/${BGID}/event`)
+      if(!res.ok) return []
       
+      const data = await res.json()
+      return data
    }
 
    export async function getShops(BGID: number){
       const res = await fetch(`/api/boardgame/${BGID}/shop`)
-      if(!res.ok) return {status: 404, message: 'not found'}
+      if(!res.ok) return []
       
       const data = await res.json()
       return data
@@ -79,22 +84,33 @@
    import Spinner from '$lib/components/Spinner.svelte'
    import {fly} from 'svelte/transition'
    import {onMount} from 'svelte'
+   import {user} from '$lib/user'
    import {_} from 'svelte-i18n'
 
-   export let user
    export let bg: Boardgame, type, mechanics, category, honor: Honor[] // these are singulars (not plurals) so that we can access the table easily
-   export let content: Content[]
+   export let content: Content[] = []
    const BGID = bg.TBG_ID
 
    let promiseCreatorInfo: Promise<any>
    let promiseEvents: Promise<Event[]>
    let promiseShops: Promise<Shop[]>
+   let promiseContents: Promise<Content[]>
    let filteredContents = content
+   let isLoadingContents = true
 
    onMount(async ()=>{
       promiseCreatorInfo = getCreatorInfo(BGID)
       promiseShops = getShops(BGID)
       promiseEvents = getEvents(BGID)
+      promiseContents = getContents(BGID)
+      // resolve promise both here and on the page
+      Promise.resolve(promiseContents)
+         .then((data)=> {
+            content = data
+            filteredContents = data
+            console.log(data, 'hye')
+            isLoadingContents = false
+         })
    })
 
    let favorite: boolean = false // to be fetched from user
@@ -179,7 +195,7 @@
                </div>
             </div>
          {/if}
-         {#if user && !user.guest}
+         {#if user}
             <div class="tooltip" data-tip="edit this page">
                <div class="btn btn-square btn-secondary">
                   <EditIcon size="2x"/>
@@ -242,7 +258,7 @@
       <div class="divider"></div>
       <div>
          <h3>{$_('type')}</h3>
-         <div class="flex flex-row gap-2 items-center">
+         <div class="flex flex-row gap-2 items-center flex-wrap">
             {#each type as t} 
                <div class="badge badge-lg"><a href="/type/{t.Type_ID}">{t.Type_name}</a></div>
             {:else} 
@@ -250,7 +266,7 @@
             {/each}
          </div>
          <h3>{$_('mechanics')}</h3>
-         <div class="flex flex-row gap-2 items-center">
+         <div class="flex flex-row gap-2 items-center flex-wrap">
             {#each mechanics as m} 
                <div class="badge badge-lg"><a href="/mechanics/{m.Mech_ID}">{m.Mech_name}</a></div>
             {:else} 
@@ -258,7 +274,7 @@
             {/each}
          </div>
          <h3>{$_('category')}</h3>
-         <div class="flex flex-row gap-2 items-center">
+         <div class="flex flex-row gap-2 items-center flex-wrap">
             {#each category as c} 
                <div class="badge badge-lg"><a href="/category/{c.Category_ID}">{c.Category_name}</a></div>
             {:else} 
@@ -277,10 +293,9 @@
                      class="btn btn-xs" 
                      class:btn-active={optionContentType == idx}
                      on:click={()=>optionContentType = idx}
-                     >
-                     {$_('content.type.' + title)}
-                     </div
                   >
+                     {$_('content.type.' + title)}
+                  </div>
                {/each}
             </div>
          </div>
@@ -299,14 +314,21 @@
                {/each}
             </div>
          </div>
-         {#if content}
-            {#each filteredContents as c}
-               <ContentCard content={c}/>
-            {:else}
-               {$_('content.not_found')}
-            {/each}
+         {#if isLoadingContents}
+            <Spinner/>
          {:else}
-            $_('incomplete')
+            
+            {#if content}
+               <div class="grid grid-cols-2 gap-2">
+                  {#each filteredContents as c (c.Content_ID)}
+                     <ContentCard content={c}/>
+                  {:else}
+                     {$_('content.not_found')}
+                  {/each}
+               </div>
+            {:else}
+               $_('incomplete')
+            {/if}
          {/if}
       </div>
       <div class="divider"></div>

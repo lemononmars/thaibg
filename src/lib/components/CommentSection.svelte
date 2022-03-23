@@ -85,8 +85,8 @@
                </div>
             </div>
             <div class="text-left flex flex-col gap-1">
-               <div class="text-base-content">{c.Comment_username} ({c.Comment_date})</div>
-               <div>{c.Comment_text}</div>
+               <p class="text-xs">{c.Comment_username} ({c.Comment_date})</p>
+               <p>{c.Comment_text}</p>
             </div>
          </div>
       {:else}

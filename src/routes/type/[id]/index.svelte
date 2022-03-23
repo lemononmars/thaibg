@@ -1,18 +1,17 @@
 <script lang="ts" context="module">
-    import {from} from '$lib/supabase'
-
-    export async function load({ params }) {
+    export async function load({ params, fetch }) {
         // ignore page's [slug] and redirect to the proper location
-        const {data, error} = await from('Type').select('*').eq('Type_ID', params.id)
-        if(error || !data[0] || !data[0].Type_show)
+        const res = await fetch(`/api/type/${params.id}`)
+        if(!res.ok)
             return {
                 redirect: "/type",
                 status: 303
             }
-        else
-            return {
-                redirect: `/type/${params.id}/${data[0].slug}`,
-                status: 303
+
+        const data = await res.json()
+        return {
+            redirect: `/type/${params.id}/${data.Type_slug}`,
+            status: 303
             }
     }
 </script>
