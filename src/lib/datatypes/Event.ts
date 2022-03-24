@@ -14,7 +14,7 @@ export const EventSubmissionKeys = [
    'Event_time_end',
    'Event_organizer',
    'Event_type',
-   'Event_picture'
+   'Event_picture',
 ]
 
 export interface EventSubmission {
@@ -27,18 +27,19 @@ export interface EventSubmission {
    Event_time_end: Date,
    Event_organizer: string,
    Event_type: EventType,
-   Event_picture: string
+   Event_picture: string,
+   Shop_ID: number
 }
 
-export const EventArray = ['convention', 'meetup', 'contest', 'competition', 'demo', 'award', 'sale']
-export type EventTuple = typeof EventArray
+export const EventTypeArray = ['convention', 'meetup', 'contest', 'competition', 'demo', 'award', 'sale'] as const
+export type EventTuple = typeof EventTypeArray
 export type EventType = EventTuple[number]
 
-export const EventRelationArray = ['Boardgame'] // Question: how to add 'Person' | 'Designer' ?
+export const EventRelationArray = ['Boardgame', 'Shop'] // Question: how to add 'Person' | 'Designer' ?
 
 interface EventRelation {
    id: number,
-   TBG_name: string,
+   TBG_name?: string,
    Event_ID: number,
    TBG_ID: number
 }

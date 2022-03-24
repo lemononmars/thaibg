@@ -37,7 +37,7 @@ export interface ShopSubmission {
 }
 
 // add in construction status?
-type ShopStatus = 'active' | 'inactive' | 'closed'
+export type ShopStatus = 'active' | 'inactive' | 'closed'
 export const ShopStatusArray = ['active', 'inactive', 'closed']
 
 export const ShopRelationArray = ['Boardgame']

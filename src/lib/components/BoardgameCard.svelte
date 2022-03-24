@@ -22,7 +22,7 @@
 
    let id: string = bg.TBG_ID
    let slug: string = bg.TBG_slug
-   let picture = getImageURL('boardgame', bg.TBG_picture)
+   let picture: string = getImageURL('boardgame', bg.TBG_picture)
    let name: string  = bg.TBG_name || bg.TBG_name_th || ''
    let description: string = bg.TBG_description?.slice(0,50) || ''
 
@@ -40,7 +40,7 @@
       </figure>
       <div class="card-body">
       <h2 class="card-title truncate">{name}</h2>
-      <p class="truncate">{description}</p>
+      <p class="line-clamp-2 break-words">{description}</p>
       </div>
 
       <div class="avatar-group -space-x-6 absolute top-0 right-0 m-1 ">

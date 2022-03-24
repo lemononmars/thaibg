@@ -18,7 +18,14 @@
   "publisher": "Publisher",
   "investor": "Investor",
   "contentcreator": "Content Creator",
-  "shop": "Shop",
+  "shop": {
+    "_": "Shop",
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "closed": "Closed"
+    }
+  },
   "event": "Event",
   "honor": "Honor",
   "playtester": "Playtester",

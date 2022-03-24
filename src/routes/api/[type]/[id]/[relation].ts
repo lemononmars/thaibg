@@ -13,21 +13,47 @@ import { TypeNamesArray } from '$lib/datatypes'
  * @return {array} an array of objects, or error if the ID doesn't exist
  */
 export async function get({url, params}){
-   let type = params.type
-   let relation = params.relation?.toLowerCase() || ''
+   let {type, id, relation} = params
+   relation = params.relation?.toLowerCase() || ''
 
-   if(!TypeNamesArray.includes(type?.toLowerCase()) || !TypeNamesArray.includes(relation?.toLowerCase()))
+   // sanitize
+   // make sure 'type' is correct
+   if((!TypeNamesArray.includes(type?.toLowerCase()) 
+      || !TypeNamesArray.includes(relation?.toLowerCase()))
+      && (relation !== 'relation')
+   )
       return{
          //status: 404,
          message: `${type} is not a valid type`,
-         body:{message: 'nope'}
+         body:{message: 'cannot parse either type or relation.'}
       }
 
    // pick only selected columns
    const selected = url.searchParams.get('select')
    const selectedColumns = selected? selected.split(',')
-      .map((str)=> getVarPrefix(relation) + '_' + str)
+      .map((str)=> getVarPrefix(type) + '_' + str)
       .join(',') : '*'
+
+   // first, return the pure relational table (without inner join) if the user requests just that 
+   // ex. artist/2/relation
+   // note that all queries are ignored
+   if(relation === 'relation') {
+      const {data, error} = await from(`${getTableName(type)}_Relation`)
+         .select(selectedColumns)
+         .eq(`${getTableName(type)}_Relation.${getVarPrefix(type)}_ID`, params.id)
+         
+      if(error)
+         return{
+            status: 404,
+            body: {message: `No relationship table for ${type} found`, error}
+         }
+      else
+         return{
+            status: 200,
+            headers: {'Content-Type': 'application/json'},
+            body: data
+         }
+   }
 
    // in case of a person, we'll look up directly in ${role} table, not ${role}_Relation
    if(relation === 'person') {

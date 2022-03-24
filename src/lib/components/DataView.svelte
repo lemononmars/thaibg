@@ -4,7 +4,7 @@
    import {BoardgameStatusArray, ShopStatusArray} from '$lib/datatypes'
 
    import SearchNavigation from "./SearchNavigation.svelte";
-   import {GridIcon, ListIcon, CheckCircleIcon, SendIcon, ShoppingCartIcon, SettingsIcon, PauseIcon, SlashIcon, PlayIcon, XCircleIcon} from 'svelte-feather-icons'
+   import {GridIcon, ListIcon, CheckCircleIcon, SlashIcon} from 'svelte-feather-icons'
    import PersonCard from '$lib/components/PersonCard.svelte'
    import BoardgameCard from "$lib/components/BoardgameCard.svelte";
    import PlainCard from "$lib/components/PlainCard.svelte";
@@ -12,6 +12,8 @@
    import ContentCard from "$lib/components/ContentCard.svelte"
    import {flip} from 'svelte/animate'
    import { _ } from 'svelte-i18n'
+   import BoardgameStatusBadge from './BoardgameStatusBadge.svelte';
+   import ShopStatusBadge from './ShopStatusBadge.svelte';
 
    interface TableInfo {
       headers: string[]
@@ -25,30 +27,18 @@
    let listView = 'list'
 
    // pagination
-   const ENTRY_PER_PAGES = 20
+   const ENTRY_PER_PAGES = 20 // make it dynamic?
    $: numData = data.length
    $: numPages = Math.ceil(numData/ENTRY_PER_PAGES)
    let activePage = 0
    $: dataCurrentPage = data.slice(activePage * ENTRY_PER_PAGES, (activePage + 1) * ENTRY_PER_PAGES)
 
+   $: firstPageEntry = activePage * ENTRY_PER_PAGES + 1
+   $: lastPageEntry = Math.min((activePage+1) * ENTRY_PER_PAGES, numData)
+
    function changePage(page: number){
       activePage = page
       window.scroll({top: 0, behavior: 'smooth'})
-   }
-
-   // create components for some fancy table option
-   const BoardgameStatusIconMap = {
-      'unpublished': PauseIcon,
-      'pending': PauseIcon,
-      'planned': SendIcon,
-      'prototype': SettingsIcon,
-      'published': ShoppingCartIcon
-   }
-
-   const ShopStatusIconMap ={
-      'active': PlayIcon,
-      'inactive': PauseIcon,
-      'closed': XCircleIcon
    }
 </script>
 
@@ -85,6 +75,7 @@
             {/each}
          </div>
       </div>
+      <p class='text-xs'>Show results: {firstPageEntry} - {lastPageEntry} from {numData}</p>
    </div>
    {#if dataCurrentPage && data.length > 0}
       {#if listView === 'grid'}
@@ -151,15 +142,9 @@
                                     <SlashIcon size='1x' class="text-error"/>
                                  {/if}
                               {:else if BoardgameStatusArray.includes(d[t])}
-                                 <div class="flex flex-row items-center gap-2">
-                                    <svelte:component this={BoardgameStatusIconMap[d[t]]} size='2x' class='text-info'/>
-                                    <p>{$_('boardgame.status.' + d[t])}</p>
-                                 </div>
+                                 <BoardgameStatusBadge status={d[t]} showText={true}/>
                               {:else if ShopStatusArray.includes(d[t])}
-                                 <div class="flex flex-row items-center gap-2">
-                                    <svelte:component this={ShopStatusIconMap[d[t]]} size='1x' class='text-info'/>
-                                    <p>{$_('shop.status.' + d[t])}</p>
-                                 </div>
+                                 <ShopStatusBadge status={d[t]} showText={true}/>
                               {:else}
                                  {d[t] || '-'}
                               {/if}
@@ -182,6 +167,7 @@
             {/each}
          </div>
       </div>
+      <p class='text-xs'>Show results: {firstPageEntry} - {lastPageEntry} from {numData}</p>
    {:else}
       <div>
          No result found.

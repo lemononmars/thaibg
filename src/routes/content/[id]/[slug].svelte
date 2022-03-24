@@ -3,19 +3,22 @@
       let content, boardgames, creators
       await fetch(`/api/content/${params.id}`)
          .then(res => res.json())
-         .then(data => content = data)
+         .then((data: Content) => content = data)
       await fetch(`/api/content/${params.id}/boardgame`)
          .then(res => res.json())
-         .then(data => boardgames = data)
+         .then((data: Boardgame[]) => boardgames = data)
       await fetch(`/api/content/${params.id}/contentcreator`)
          .then(res=> res.json())
-         .then(data => creators = data)
+         .then((data: Contentcreator[]) => creators = data)
 
       let people = []
       for(const c in creators) {
          await fetch(`/api/contentcreator/${creators[c].Contentcreator_ID}/person`)
             .then(res =>res.json())
-            .then(data => people = [...people, data[0]])
+            .then((data: Person[]) => {
+               if(data[0])
+                  people = [...people, data[0]]
+            })
       }
 
        return {
@@ -30,7 +33,7 @@
    import Seo from '$lib/components/SEO.svelte'
    import BoardgameCard from '$lib/components/BoardgameCard.svelte'
    import PersonCard from '$lib/components/PersonCard.svelte'
-   import type {Boardgame, Content, Person} from '$lib/datatypes'
+   import type {Boardgame, Content, Person, Contentcreator} from '$lib/datatypes'
    import {_} from 'svelte-i18n'
 
    export let boardgames: Boardgame[]

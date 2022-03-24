@@ -21,15 +21,15 @@
     } 
 
     h1 {
-        @apply text-2xl text-primary my-4
+        @apply text-2xl text-primary mt-4
     }
 
     h2 {
-        @apply text-xl font-semibold text-secondary my-2 
+        @apply text-xl font-semibold text-secondary mt-2 
     }
 
     h3{
-        @apply text-base font-semibold text-accent my-2
+        @apply text-base font-semibold text-accent mt-2
     }
 }
   

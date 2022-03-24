@@ -1,5 +1,3 @@
-import type {Boardgame} from './Boardgame'
-
 export interface Honor extends HonorSubmission{
    Honor_ID: number,
    Honor_slug: string,
@@ -7,7 +5,6 @@ export interface Honor extends HonorSubmission{
 }
 
 export const HonorSubmissionKeys = [
-   'Honor_show',
    'Honor_name',
    'Honor_name_th',
    'Honor_link',
@@ -15,10 +12,11 @@ export const HonorSubmissionKeys = [
    'Honor_year',
    'Honor_organizer',
    'Honor_type',
+   'Honor_picture',
+   'Honor_show',
 ]
 
 export interface HonorSubmission {
-   Honor_show: boolean,
    Honor_name: string,
    Honor_name_th: string,
    Honor_link: string,
@@ -28,6 +26,8 @@ export interface HonorSubmission {
    Honor_time_end: Date,
    Honor_organizer: string,
    Honor_type: HonorType,
+   Honor_picture: string,
+   Honor_show: boolean,
 }
 
 export const HonorTypeArray = ['contest', 'competition', 'award']
@@ -39,9 +39,9 @@ export const HonorRelation = ['Boardgame']
 export interface HonorRelation {
    Honor_ID: number,
    TBG_ID: number,
-   TBG_name: string,
+   TBG_name?: string,
    Honor_order: number,
    Honor_position: string,
    Honor_position_th: string,
-   Honor_category: string
+   Honor_category: string // e.g. best family game, most popular votes, staff's favorite
 }

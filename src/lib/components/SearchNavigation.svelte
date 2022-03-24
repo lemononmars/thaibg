@@ -13,7 +13,7 @@
       {name: $_('rulebookeditor'), url: '/person?role=rulebookeditor'}
    ]
    $: pageGroup3 = [
-      {name: $_('shop'), url: '/shop'},
+      {name: $_('shop._'), url: '/shop'},
       {name: $_('contentcreator'), url: '/person?role=contentcreator'},
       {name: $_('publisher'), url: '/publisher'},
       {name: $_('investor'), url: '/investor'},

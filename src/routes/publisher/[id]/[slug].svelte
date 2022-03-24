@@ -1,18 +1,22 @@
 <script lang="ts" context="module">
-   import {from} from '$lib/supabase'
-
-   export async function load({ session, params }) {
-       const { user } = session
+   export async function load({ params }) {
        const res = await fetch(`/api/publisher/${params.id}`)
        if(!res.ok) return {status:400}
 
        const data = await res.json()
        return {
            props: {
-               user,
-               publisherData: data || null
+               publisherData: data
            }
        };
+   }
+
+   export async function getBoardgames(PublisherID: number) {
+      const res = await fetch(`/api/publisher/${PublisherID}/boardgame`)
+      if(!res.ok) return {status: 404, message: 'not found'}
+      
+      const data = await res.json()
+      return data
    }
 </script>
 
@@ -22,66 +26,55 @@
    import {onMount} from 'svelte'
    import BoardgameCard from '$lib/components/BoardgameCard.svelte'
    import {getImageURL, getDefaultImageURL} from '$lib/supabase'
+   import type {Publisher, Boardgame} from '$lib/datatypes'
+   import { _ } from 'svelte-i18n'
 
-   export let user, publisherData
-   let boardgameData
+   export let publisherData: Publisher
+   let boardgameData: Promise<Boardgame[]>
    onMount(async ()=>{
-      const {data, error} = await from('Boardgame')
-         .select('*, Publisher_Relation!inner(*)')
-         .eq('Publisher_Relation.Publisher_ID', publisherData.Publisher_ID)
-         
-      if(error) throw error
-      boardgameData = data
-      publisherData.Publisher_picture =  '/publisher/' + (publisherData.Publisher_picture )
+      boardgameData = getBoardgames(publisherData.Publisher_ID)
    })
    
 </script>
 
 <Seo title="Publisher"/>
-<div class="flex flex-col justify-center items-center relative">
-   <div class="w-full text-left m-4 flex flex-col">
-      {#if !publisherData}
-         Invalid Publisher ID!
-      {:else}
-         {#if boardgameData}
-            <div class="flex flex-col lg:flex-row lg:gap-4 w-full p-8 border-2 shadow-lg rounded-xl">
-               <img src="{publisherData.Publisher_picture}" alt="image of {publisherData.Publisher_name}" class="w-72" 
-                  on:error|once={(ev)=>ev.target.src = getDefaultImageURL('publisher')}
-               />
-               <div>
-                  <h1>{publisherData.Publisher_name}</h1>
-                  <h2>{publisherData.Publisher_name_th? "(" + publisherData.Publisher_name_th + ")": ""}</h2>
-                  <ul>
-                     <li>Official link: 
-                        {#if publisherData.Publisher_link}
-                           <a href="{publisherData.Publisher_link}" target="_blank">{publisherData.Publisher_link}</a>
-                        {:else}
-                           N/A
-                        {/if}
-                     </li>
-                  </ul>
-               </div>
-            </div>
-            <!-- <div>{likes.length}</div> -->
-            <div>
-               <h2>Description</h2>
-               <p>{@html publisherData.Publisher_description || 'N/A'}</p>
-            </div>
-            <div class="divider"></div>
-            <h2>Publications</h2>
-            <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-4 gap-4">
-               {#each boardgameData as bg}
-                  <BoardgameCard {bg}/>
+<div class="flex flex-row justify-center mt-4">
+   <div class="flex flex-col w-full lg:w-1/4 text-left m-4">
+      <img src="{getImageURL('publisher', publisherData.Publisher_picture)}" alt="image of {publisherData.Publisher_name}" class="w-72" 
+         on:error|once={(ev)=>ev.target.src = getDefaultImageURL('publisher')}
+      />
+      <div>
+         <h1>{publisherData.Publisher_name || 'No title'}</h1>
+         <div>
+            <h2>Description</h2>
+            <p>{@html publisherData.Publisher_description || 'N/A'}</p>
+         </div>
+         <ul>
+            <li>Official link: 
+               {#if publisherData.Publisher_link}
+                  <a href="{publisherData.Publisher_link}" target="_blank">{publisherData.Publisher_link}</a>
                {:else}
                   N/A
+               {/if}
+            </li>
+         </ul>
+      </div>
+   </div>
+      
+   <div class="text-left w-full lg:w-3/4">
+      <h2>Publications</h2>
+      {#await boardgameData}
+         <Spinner/>
+      {:then boardgames}
+         {#if boardgames}
+            <div class="grid grid-cols-2 lg:grid-cols-3 gap-4">
+               {#each boardgames as bg}
+                  <BoardgameCard {bg}/>
+               {:else}
+                  {$_('incomplete')}
                {/each}
             </div>
-         {:else}
-            <Spinner/>
          {/if}
-      {/if}
-      {#if user && !user.guest}
-         <button class="btn">Suggest edit</button>
-      {/if}
+      {/await}
    </div>
 </div>

@@ -1,15 +1,13 @@
 <script lang="ts" context="module">
    import {getImageURL, getDefaultImageURL} from '$lib/supabase'
 
-   export async function load({ session, params, fetch }) {
-       const { user } = session
+   export async function load({ params, fetch }) {
        const res = await fetch(`/api/shop/${params.id}`)
        if(!res.ok) return{status:404, message:'cannot find any shop with that ID'}
 
        const data = await res.json()
        return {
            props: {
-               user,
                shopData: data
            }
        };
@@ -17,8 +15,8 @@
 
    export async function getBoardgames(id){
       const res = await fetch(`/api/shop/${id}/boardgame`)
-      if(!res.ok) return {status:404}
-      const data = await res.json()
+      if(!res.ok) return {status:404, message:'cannot find any boardgame associated with that shop'}
+      let data = await res.json()
       return data
    }
 </script>
@@ -30,9 +28,11 @@
    import Social from '$lib/components/Social.svelte'
    import {CheckCircleIcon, LinkIcon, SlashIcon} from 'svelte-feather-icons'
    import {onMount} from 'svelte'
+   import type {Shop} from '$lib/datatypes'
+   import ShopStatusBadge from '$lib/components/ShopStatusBadge.svelte'
 
-   export let user, shopData
-   let promiseBoardgames: Promise<any>
+   export let shopData: Shop
+   let promiseBoardgames: Promise<Shop[]>
    onMount(async ()=>{
       promiseBoardgames = getBoardgames(shopData.Shop_ID)
    })
@@ -40,7 +40,7 @@
 </script>
 
 <Seo title="Shop"/>
-<div class="flex flex-row text-left gap-6">
+<div class="flex flex-row text-left gap-6 mt-4">
    <!-- first column-->
    <div class="flex flex-col w-1/4 gap-2">
       <div class="mx-auto">
@@ -50,10 +50,8 @@
       </div>
       
       <h1>{shopData.Shop_name}</h1>
-      <h2>{shopData.Shop_name_th? "(" + shopData.Shop_name_th + ")": ""}</h2>
-      
       <h2>Status</h2>
-      <p>{shopData.Shop_status}</p>
+      <ShopStatusBadge status={shopData.Shop_status} showText={true}/>
       <h2>Type</h2>
       <div class="flex flex-row items-center gap-2">
          {#if shopData.Shop_cafe}

@@ -37,7 +37,7 @@
         {path: '/person?role=rulebookeditor', title:$_('rulebookeditor')},
     ]
     $: supporterMenu = [
-        {path: '/shop', title:$_('shop')},
+        {path: '/shop', title:$_('shop._')},
         {path: '/person?role=contentcreator',title:$_('contentcreator')},
         {path: '/publisher',title:$_('publisher')},
         {path: '/investor',title:$_('investor')},

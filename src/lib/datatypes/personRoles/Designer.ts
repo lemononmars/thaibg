@@ -5,12 +5,12 @@ export interface Designer extends DesignerSubmission{
 }
 
 export const DesignerSubmissionKeys = [
-   'Designer_show',
    'Designer_name',
    'Designer_name_th',
    'Designer_team',
-   'Designer_description',
    'Designer_link',
+   'Designer_description',
+   'Designer_show',
 ]
 
 export interface DesignerSubmission {
@@ -26,8 +26,8 @@ export const DesignerRelationArray = ['Person', 'Boardgame']
 
 interface DesignerRelation {
    id: number,
-   TBG_name: string,
+   TBG_name?: string,
    TBG_ID: number,
-   Designer_name: string,
+   Designer_name?: string,
    Designer_ID: number
 }

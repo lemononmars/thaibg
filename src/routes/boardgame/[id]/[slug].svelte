@@ -5,14 +5,12 @@
    import {WEBSITE_URL} from '$lib/constants'
 
    export async function load({ params, fetch }) {
-      let bg: Boardgame
-      await fetch(`/api/boardgame/${params.id}`)
-         .then(res => res.json())
-         .then(data => bg = data)
-         .catch(error => {return {status:400, message: error}})
+      const res = await fetch(`/api/boardgame/${params.id}`)
+      if(!res.ok) return {status:404, message: res.error}
+      const data = await res.json()
 
       const basicTypeName = ['type', 'mechanics', 'category', 'honor']
-      let basicData = basicTypeName.map((t)=> ({t:[]}))
+      let basicData = basicTypeName.map((t)=> ({[t]:[]}))
      
       for(const type of basicTypeName)
          await fetch(`/api/boardgame/${params.id}/${type}`)
@@ -21,12 +19,13 @@
 
       return {
          props: {
-            bg, ...basicData
+            bg:data, 
+            ...basicData
          }
       };
    }
 
-   export async function getCreatorInfo(BGID) {
+   export async function getCreatorInfo(BGID: number) {
       let data = []
       personDeveloperRoles.forEach((p)=> data[p] = [])
       for(const role of Object.keys(data)) {
@@ -46,6 +45,10 @@
          .then(res => res.json())
          .then(d => data['publisher'] = d)
          .catch(error => data['publisher'] = [])
+      await fetch(`/api/boardgame/${BGID}/investor`)
+         .then(res => res.json())
+         .then(d => data['investor'] = d)
+         .catch(error => data['investor'] = [])
       return data
    }
 
@@ -72,6 +75,14 @@
       const data = await res.json()
       return data
    }
+
+   export async function getVotes(BGID: number){
+      const res = await fetch(`/api/boardgame/${BGID}/vote`)
+      if(!res.ok) return []
+      
+      const data = await res.json()
+      return data
+   }
 </script>
 
 <script lang="ts">
@@ -86,8 +97,10 @@
    import {onMount} from 'svelte'
    import {user} from '$lib/user'
    import {_} from 'svelte-i18n'
+import BoardgameStatusBadge from '$lib/components/BoardgameStatusBadge.svelte'
 
-   export let bg: Boardgame, type, mechanics, category, honor: Honor[] // these are singulars (not plurals) so that we can access the table easily
+   // these are singulars (not plurals) so that we can access the database easily
+   export let bg: Boardgame, type, mechanics, category, honor: Honor[] 
    export let content: Content[] = []
    const BGID = bg.TBG_ID
 
@@ -108,7 +121,6 @@
          .then((data)=> {
             content = data
             filteredContents = data
-            console.log(data, 'hye')
             isLoadingContents = false
          })
    })
@@ -117,6 +129,7 @@
    let owned: boolean = false
    $: numFavorites = 9 + (favorite?1:0)
 
+   // filter contents by media types and type types (?)
    const optionContentMediaTitle = ['all', ...ContentMediaArray]
    const optionContentTypeTitle = ['all', ...ContentTypeArray]
    let optionContentMedia: number = 0
@@ -169,11 +182,17 @@
             <div>
                <h3>{$_('publisher')}</h3>
                {#each res.publisher as p} 
-               <div class="flex flex-row items-center gap-2">
                   <PlainLink type="publisher" object={p}/>
-               </div>
                {:else} 
-                  -
+                  {$_('incomplete')}
+               {/each}
+            </div>
+            <div>
+               <h3>{$_('investor')}</h3>
+               {#each res.investor as p} 
+                  <PlainLink type="investor" object={p}/>
+               {:else} 
+                  {$_('incomplete')}
                {/each}
             </div>
          {/if}
@@ -209,7 +228,7 @@
             {#if (bg.TBG_name && bg.TBG_name_th)} 
                <h2>({bg.TBG_name_th})</h2> 
             {/if}
-            <h2>{bg.TBG_released? '(' + bg.TBG_released + ')' : ''}</h2>
+            <h2>{bg.TBG_released? '(' + bg.TBG_released + ')' : ''}</h2> <BoardgameStatusBadge status={bg.TBG_status}/>
          </div>
          <div>
             <div class="tooltip" data-tip="{owned? 'Remove owned':'Mark as owned'}">

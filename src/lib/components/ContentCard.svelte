@@ -42,7 +42,7 @@
             on:error|once={(ev)=>ev.target.src = getDefaultImageURL('content')}
       ></figure>
       <div class="card-body">
-      <h2 class="card-title truncate">{name}</h2>
+      <h2 class="card-title truncate line-clamp-2">{name}</h2>
       <div class="flex flex-row">
          <div class="badge">{$_('content.media.' + media)}</div>
          <div class="badge badge-outline">{$_('content.type.' + type)}</div>

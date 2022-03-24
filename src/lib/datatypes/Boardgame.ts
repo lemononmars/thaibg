@@ -48,7 +48,7 @@ export interface BoardgameSubmission {
 /* 
 * pending, planned, prototype, published
 */
-export const BoardgameStatusArray = ['pending' , 'planned' , 'prototype' , 'published']
+export const BoardgameStatusArray = ['pending' , 'planned' , 'prototype' , 'published'] as const
 export type BoardgameStatusTuple = typeof BoardgameStatusArray
 export type BoardgameStatus = BoardgameStatusTuple[number]
 

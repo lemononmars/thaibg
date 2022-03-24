@@ -1,21 +1,17 @@
 <script lang="ts" context="module">
-   import {from} from '$lib/supabase'
-
-   export async function load({ session, params }) {
-       const { user } = session
-       const {data, error} = await from('Honor').select('*').eq('Honor_ID', params.id)
-       const {data: honorees, error: error2} = await from ('Honor_Relation')
-         .select('*')
-         .eq('Honor_ID', params.id)
-
-       if(error || error2) 
-         return { status: 404 }
+   export async function load({params, fetch}) {
+      const res = await fetch(`/api/honor/${params.id}`)
+      if(!res.ok) return {status: 404, message: 'not found'}
       
+      const data = await res.json()
+      const resRelation = await fetch(`/api/honor/${params.id}/boardgame`)
+
+      if(!resRelation.ok) return {status: 404, message: 'not found'}
+      const dataRelation = await resRelation.json()
        return {
            props: {
-               user,
-               honorData: data[0],
-               honorees
+               honorData: data,
+               honorRelation: dataRelation
            }
        };
    }
@@ -23,19 +19,25 @@
 
 <script lang="ts">
    import Seo from '$lib/components/SEO.svelte'
-   import Spinner from '$lib/components/Spinner.svelte'
    import {getImageURL, getDefaultImageURL} from '$lib/supabase'
+   import type {Honor} from '$lib/datatypes'
+   import {user} from '$lib/user'
+   import { _ } from 'svelte-i18n';
 
-   export let user, honorData, honorees
+   export let honorData: Honor
+   export let honorRelation
+
+   const honorCategories = [... new Set(honorRelation.map((h)=>h.Honor_Relation[0].Honor_category))]
+   honorRelation = honorRelation.sort((a,b) => a.Honor_Relation[0].Honor_order - b.Honor_Relation[0].Honor_order)
 </script>
 
 <Seo title="Honor"/>
-<div class="flex flex-row justify-center items-center relative">
-   <div class="flex flex-col flex-start gap-2 text-left m-4 w-1/3">
+<div class="flex flex-row">
+   <div class="flex flex-col w-full lg:w-1/4 text-left m-4">
       <img 
          src="{getImageURL('honor', honorData.Honor_picture)}" 
          alt="image of {honorData.Honor_name}" 
-         class="w-72 h-72 mask mask-hexagon-2 object-contain"
+         class="w-72 h-72 mask mask-circle object-contain hover:scale-105"
          on:error|once={(ev)=>ev.target.src = getDefaultImageURL('honor')}
       />
       <h1>{honorData.Honor_name}</h1>
@@ -46,29 +48,31 @@
          N/A
       {/if}
       <h2>Description</h2>
-      <p>{@html honorData.Honor_description || 'N/A'}</p>
+      <p>{@html honorData.Honor_description || $_('incomplete')}</p>
       <div class="divider"></div>
       <!-- social share-->
-      {#if user && !user.guest}
+      {#if user}
          <button class="btn">Suggest edit</button>
       {/if}
    </div>
-   <div>
-      {#if honorees}
-         <h2>Winners</h2>
-         <div class="overflow-x-auto">
-            <table class="table table-zebra">
-            <!-- head -->
-            <thead>
-               <tr>
-                  <th>Position</th>
-                  <th>Winner</th>
-               </tr>
-            </thead>
-               <tbody>
-                  {#each honorees as h}
-                     <tr>
-                        <td>{h.Honor_position}</td>
+   <div class="text-left w-full lg:w-3/4">
+      <h2>Winners</h2>
+      {#each honorCategories as hc}
+      {hc? 'Category: ' + hc : ''}
+      <div class="overflow-x-auto">
+         <table class="table table-zebra">
+         <!-- head -->
+         <thead>
+            <tr>
+               <th>Award</th>
+               <th>Game</th>
+            </tr>
+         </thead>
+            <tbody>
+               {#each honorRelation as h}
+                  <tr>
+                     {#if h.Honor_Relation[0].Honor_category === hc}
+                        <td>{h.Honor_Relation[0].Honor_position}</td>
                         <td>
                            {#if h.TBG_ID}
                               <a href="/boardgame/{h.TBG_ID}">{h.TBG_name}</a>
@@ -76,14 +80,13 @@
                               {h.TBG_name}
                            {/if}
                         </td>
-                     </tr>
-                  {/each}
-               </tbody>
-            </table>
-         </div>
-      {:else}
-         <Spinner/>
-      {/if}
+                     {/if}
+                  </tr>
+               {/each}
+            </tbody>
+         </table>
+      </div>
+      {/each}
    </div>
    
 </div>
