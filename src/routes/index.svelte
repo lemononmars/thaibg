@@ -155,7 +155,7 @@
       <FilmIcon size="4x"/>
     </h1>
   </div>
-  <div class="flex-grow grid grid-cols-2 gap-4 p-20">
+  <div class="flex-grow grid grid-cols-3 gap-4 p-10">
     {#await promiseContents}
       <Spinner/>
     {:then res}

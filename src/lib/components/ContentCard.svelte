@@ -36,9 +36,9 @@
 </script>
 
 <a href="/content/{content.Content_ID}">
-   <div class="relative card w-auto ratio-aspect lg:w-72 pt-8 bg-base-100 card-compact shadow-xl transition ease-in-out hover:opacity-80 hover:scale-105 duration-30 group">
+   <div class="relative card w-auto ratio-aspect lg:w-64 pt-8 bg-base-100 card-compact shadow-xl transition ease-in-out hover:opacity-80 hover:scale-105 duration-30 group">
       <figure>
-         <img src="{picture}" class="object-cover h-12 aspect-auto group-hover:scale-120 " alt="content thumbnail"
+         <img src="{picture}" class="object-cover h-64 aspect-auto group-hover:scale-120 " alt="content thumbnail"
             on:error|once={(ev)=>ev.target.src = getDefaultImageURL('content')}
       ></figure>
       <div class="card-body">

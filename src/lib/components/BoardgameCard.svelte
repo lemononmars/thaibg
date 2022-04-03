@@ -30,10 +30,10 @@
 </script>
 
 <a href="/boardgame/{id}/{slug}">
-   <div class="relative card w-auto ratio-aspect lg:w-72 pt-8 bg-base-100 card-compact shadow-xl transition ease-in-out hover:opacity-80 hover:scale-105 duration-30 group">
+   <div class="relative card w-auto ratio-aspect lg:w-64 pt-8 bg-base-100 card-compact shadow-xl transition ease-in-out hover:opacity-80 hover:scale-105 duration-30 group">
       <figure>
          <img src="{picture}" 
-            class="object-cover h-48 aspect-auto" 
+            class="object-cover h-64 aspect-auto group-hover:scale-120" 
             alt="picture of {name}"
             on:error|once={(ev)=>ev.target.src = getDefaultImageURL('boardgame')}
          >
@@ -46,7 +46,7 @@
       <div class="avatar-group -space-x-6 absolute top-0 right-0 m-1 ">
          {#await promiseDesignerImageURLs then urls}
             {#each urls as url}
-               <div class="relative avatar group-hover:animate-pulse">
+               <div class="relative avatar">
                   <div class="w-12 h-12">
                      <img src="{url}" alt="designer images" class="object-contain"
                         on:error|once={(ev)=>ev.target.src = getDefaultImageURL('person')}
