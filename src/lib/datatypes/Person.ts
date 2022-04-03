@@ -9,33 +9,34 @@ export interface Person extends PersonSubmission{
 }
 
 export const PersonSubmissionKeys = [
-   'Person_show',
    'Person_name',
    'Person_name_th',
-   'Person_picture',
+   'Person_nickname',
+   'Person_description',
    'Person_facebook',
    'Person_twitter',
    'Person_website',
    'Person_email',
-   'Person_description',
-   'Person_nickname',
+   'Person_picture',
+   'Person_show',
 ]
 
 export interface PersonSubmission {
-   Person_show: boolean,
    Person_name: string,
-   Person_name_th?: string,
-   Person_picture?: string,
-   Person_facebook?: string,
-   Person_twitter?: string,
-   Person_website?: string,
-   Person_email?: string,
-   Person_description: string,
+   Person_name_th: string,
    Person_nickname: string
+   Person_facebook: string,
+   Person_twitter: string,
+   Person_website: string,
+   Person_email: string,
+   Person_description: string,
+   Person_picture: string,
+   Person_show: boolean,
 }
 
-export const PersonRelationArray = ['artist', 'contentcreator', 'designer', 'graphicdesigner', 'playtester', 'rulebookeditor']
-export const PersonRoleArray = PersonRelationArray
+export const PersonRelationArray = ['artist', 'contentcreator', 'designer', 'graphicdesigner', 'playtester', 'rulebookeditor'] as const
+type PersonRelationTuple = typeof PersonRelationArray
+export type PersonRoleArray = PersonRelationTuple[number]
 
 import type {Artist, Contentcreator, Designer, Graphicdesigner, Playtester, Rulebookeditor} from './personRoles'
 export type PersonRole = Artist | Contentcreator | Designer | Graphicdesigner | Playtester | Rulebookeditor

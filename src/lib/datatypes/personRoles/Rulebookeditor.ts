@@ -5,13 +5,13 @@ export interface Rulebookeditor extends RulebookeditorSubmission{
 }
 
 export const RulebookeditorSubmissionKeys = [
-   'Rulebookeditor_show',
    'Rulebookeditor_name',
    'Rulebookeditor_name_th',
    'Rulebookeditor_team',
-   'Rulebookeditor_description',
    'Rulebookeditor_link',
-   'Rulebookeditor_en'
+   'Rulebookeditor_description',
+   'Rulebookeditor_en',
+   'Rulebookeditor_show',
 ]
 
 export interface RulebookeditorSubmission {
@@ -28,7 +28,7 @@ export const RulebookeditorRelationArray = ['Person', 'Boardgame']
 
 interface RulebookeditorRelation {
    id: number,
-   TBG_name: string,
+   TBG_name?: string,
    TBG_ID: number,
    Rulebookeditor_ID: number
 }

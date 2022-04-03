@@ -78,6 +78,7 @@
 <Seo title="Create {type}"/>
 
 <h1>Create new {type}</h1>
+{JSON.stringify(blankData)}
 <form>
    <div class="grid grid-cols-2 items-center" class:hidden={submitted}>
       {#each keys as k}

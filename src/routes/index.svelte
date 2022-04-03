@@ -222,7 +222,7 @@
     {#if res}
     <div class="flex flex-row gap-4">
       {#each res.developers as d, idx}
-        {@const developerRoles = ['UI Designer', 'Web Designer', 'Database Engineer']}
+        {@const developerRoles = ['UI Designer', 'Web Developer', 'Database Engineer']}
         <div>
           <PersonCard person={d}/>
           <div class='my-4'>{developerRoles[idx]}</div>

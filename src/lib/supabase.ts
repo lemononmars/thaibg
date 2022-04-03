@@ -2,7 +2,7 @@ import { createClient } from '@supabase/supabase-js'
 
 type SupaTable = 'profiles' | 'Artist' | 'Artist_Relation' | 'Honor' | 'Honor_Relation' | 'Boardgame' | 'Category' | 'Category_Relation' | 'Comment' | 'Content' | 'Creator' | 'Creator_Relation' | 'Designer' | 'Designer_Relation' | 'Event' | 'Event_Relation' | 'Graphicdesigner' | 'Graphicdesigner_Relation' | 'Mechanics' | 'Mechanics_Relation' | 'Manufacturer' | 'Manufacturer_Relation' | 
 'Person' | 'Place' | 'Place_Relation' | 'Playtester' | 'Playtester_Relation' | 'Publisher' | 'Publisher_Relation' | 'Shop' | 'Shop_Relation' | 'investor' | 'Investor_Relation' | 'Type' | 'Type_Relation' 
-type SupaStorageBucket = 'avatars' | 'images'
+type SupaStorageBucket = 'avatars' | 'images' |'public'
 
 // TODO: not hard-coded this?
 const DIR_IMAGE = 'https://llhkvvndjjpbdtdvxnvn.supabase.in/storage/v1/object/public/images/'
@@ -70,8 +70,10 @@ export function getDefaultImageURL (type: string) {
   return DIR_IMAGE + `${type}/` + DEFAULT_IMAGE_FILE
 }
 
+
+type SubmissionType = 'create' | 'edit' | 'report'
 interface submissionData {
-  type: string,
+  type: SubmissionType,
   content,
   pageType: string,
   id: string,
@@ -79,12 +81,13 @@ interface submissionData {
   comment: string
 }
 export async function addToSubmission (data: submissionData){
-  // very bad practice? better with post?
+  // very bad practice? 
+  // better with post?
   const {data: res, error} = await from('Submission')
     .insert([{
-      Submission_type: encodeURI(data.type), 
+      Submission_type: data.type, 
       Submission_content: JSON.stringify(data.content), 
-      Submission_page_type: encodeURI(data.pageType),
+      Submission_page_type: data.pageType,
       Submission_user_ID: encodeURI(data.id),
       Submission_username: encodeURI(data.username),
       Submission_date: new Date(),
@@ -104,17 +107,29 @@ export async function changeSubmissionStatus(id, approved:string){
     }])
   if(error)
     return {status: error.message}
-  return {status: 'success'}
+  
+  if(approved === 'approved') {
+    const {data, error} = await from('Submission')
+      .select('Submission_content, Submission_page_type')
+      .eq('id', id)
+      .single()
+    if(error)
+      return {status: error.message}
 
+    addToDatabase(data.Submission_content, data.Submission_page_type)
+  }
+  return {status: 'status changed successfully'}
   // then, add to table if approved
 }
 
-export async function addToTable (JSONvalue, type) {
+export async function addToDatabase (JSONvalue, type) {
   // should strip on submitted user id and stuff
+  console.log('about to add to ', type)
   const {data, error} = await from(type)
-    .upsert(JSON.parse(JSONvalue))
+    .upsert([JSON.parse(JSONvalue)])
   if(error) {
       throw(error)
  }
+ console.log('successfully added!')
   return data
 }

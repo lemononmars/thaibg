@@ -5,15 +5,15 @@ export interface Manufacturer extends ManufacturerSubmission{
 }
 
 export const ManufacturerSubmissionKeys = [
-   'Manufacturer_show',
    'Manufacturer_name',
-   'Manufacturer_link',
-   'Manufacturer_description',
    'Manufacturer_location',
    'Manufacturer_service_organizer',
    'Manufacturer_service_3d',
    'Manufacturer_service_card',
    'Manufacturer_service_bg',
+   'Manufacturer_link',
+   'Manufacturer_description',
+   'Manufacturer_show',
 ]
 
 export interface ManufacturerSubmission {

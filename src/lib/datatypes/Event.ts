@@ -5,16 +5,16 @@ export interface Event extends EventSubmission{
 }
 
 export const EventSubmissionKeys = [
-   'Event_show',
    'Event_name',
-   'Event_link',
-   'Event_description',
+   'Event_type',
    'Event_location',
    'Event_time_start',
    'Event_time_end',
    'Event_organizer',
-   'Event_type',
+   'Event_link',
+   'Event_description',
    'Event_picture',
+   'Event_show',
 ]
 
 export interface EventSubmission {

@@ -7,11 +7,11 @@ export interface Honor extends HonorSubmission{
 export const HonorSubmissionKeys = [
    'Honor_name',
    'Honor_name_th',
+   'Honor_year',
+   'Honor_type',
+   'Honor_organizer',
    'Honor_link',
    'Honor_description',
-   'Honor_year',
-   'Honor_organizer',
-   'Honor_type',
    'Honor_picture',
    'Honor_show',
 ]
@@ -30,7 +30,7 @@ export interface HonorSubmission {
    Honor_show: boolean,
 }
 
-export const HonorTypeArray = ['contest', 'competition', 'award']
+export const HonorTypeArray = ['contest', 'competition', 'award'] as const
 export type HonorTuple = typeof HonorTypeArray
 export type HonorType = HonorTuple[number]
 

@@ -7,10 +7,10 @@ export interface Contentcreator extends ContentcreatorSubmission{
 export const ContentcreatorSubmissionKeys = [
    'Contentcreator_name',
    'Contentcreator_name_th',
-   'Contentcreator_description',
-   'Contentcreator_link',
-   'Contentcreator_picture',
    'Contentcreator_team',
+   'Contentcreator_link',
+   'Contentcreator_description',
+   'Contentcreator_picture',
    'Contentcreator_show',
 ]
 

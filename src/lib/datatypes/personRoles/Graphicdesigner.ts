@@ -5,12 +5,12 @@ export interface Graphicdesigner extends GraphicdesignerSubmission{
 }
 
 export const GraphicdesignerSubmissionKeys = [
-   'Graphicdesigner_show',
    'Graphicdesigner_name',
    'Graphicdesigner_name_th',
    'Graphicdesigner_team',
-   'Graphicdesigner_description',
    'Graphicdesigner_link',
+   'Graphicdesigner_description',
+   'Graphicdesigner_show',
 ]
 
 export interface GraphicdesignerSubmission {

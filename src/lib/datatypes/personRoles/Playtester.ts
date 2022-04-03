@@ -5,12 +5,12 @@ export interface Playtester extends PlaytesterSubmission{
 }
 
 export const PlaytesterSubmissionKeys = [
-   'Playtester_show',
    'Playtester_name',
    'Playtester_name_th',
    'Playtester_team',
-   'Playtester_description',
    'Playtester_link',
+   'Playtester_description',
+   'Playtester_show',
 ]
 
 export interface PlaytesterSubmission {
@@ -26,7 +26,7 @@ export const PlaytesterRelationArray = ['Person', 'Boardgame']
 
 interface PlaytesterRelation {
    id: number,
-   TBG_name: string,
+   TBG_name?: string,
    TBG_ID: number,
    Playtester_ID: number
 }

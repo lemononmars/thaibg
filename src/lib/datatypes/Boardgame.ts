@@ -4,11 +4,8 @@ export interface Boardgame extends BoardgameSubmission{
 }
 
 export const BoardgameSubmissionKeys = [
-   'TBG_show',
    'TBG_name',
    'TBG_name_th',
-   'TBG_picture',
-   'TBG_picture_cover',
    'TBG_link',
    'TBG_description',
    'TBG_age',
@@ -22,6 +19,9 @@ export const BoardgameSubmissionKeys = [
    'TBG_playtime_min',
    'TBG_playtime_max',
    'TBG_status',
+   'TBG_picture',
+   'TBG_picture_cover',
+   'TBG_show',
 ]
 
 export interface BoardgameSubmission {
@@ -56,7 +56,7 @@ export type BoardgameStatus = BoardgameStatusTuple[number]
 const BoardgamePersonRelation = ['Designer', 'Artist', 'Graphicdesigner', 'Rulebookeditor', 'Playtester']
 const BoardgameInfoRelation = ['Publisher', 'Manufacturer', 'Investor']
 const BoardgameProperties = ['Type' ,'Mechanics','Category']
-const BoardgameETCRelation = ['Event', 'Honor', 'Shop']
+const BoardgameETCRelation = ['Event', 'Honor', 'Shop', 'Crowdfunding']
 
 export const BoardgameRelationArray = [
    ...BoardgamePersonRelation, 

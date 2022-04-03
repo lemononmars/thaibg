@@ -9,28 +9,44 @@ import { TypeNamesArray } from '$lib/datatypes'
  * @return {array} array of objects
  */
 export async function get({params, url}){
-   if(!TypeNamesArray.includes(params.type?.toLowerCase()))
+   const type = params.type
+   if(!TypeNamesArray.includes(type?.toLowerCase()))
       return{
          status: 404,
-         body: {message: `${params.type} is not a valid type`}
+         body: {message: `${type} is not a valid type`}
       }
 
    // pick only selected columns
    const selected = url.searchParams.get('select')
+   const searched = url.searchParams.get('search') || ``
+   const nameColumn = getVarPrefix(type) + '_name'
+
    const selectedColumns = selected? selected.split(',')
-      .map((str)=> getVarPrefix(params.type) + '_' + str)
+      .map((str)=> getVarPrefix(type) + '_' + str)
       .join(',') : '*'
 
-   const {data, error} = await from(getTableName(params.type)).select(selectedColumns)
+   const {data, error} = await from(getTableName(type))
+      .select(selectedColumns)
+    
    if(error)
       return{
          status: 404,
          body: error
       }
-   else
+   
+   if(!searched)
       return{
          status: 200,
          headers: {'Content-Type': 'application/json'},
          body: data
       }
+
+   const searchedData = data.filter(
+      (d)=>d[nameColumn]?.includes(searched)
+   )
+   return{
+      status: 200,
+      headers: {'Content-Type': 'application/json'},
+      body: searchedData
+   }
 }

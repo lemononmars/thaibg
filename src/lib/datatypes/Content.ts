@@ -4,12 +4,12 @@ export interface Content extends ContentSubmission{
 }
 
 export const ContentSubmissionKeys = [
-   'Content_show',
    'Content_name',
-   'Content_link',
-   'Content_description',
    'Content_media',
    'Content_type',
+   'Content_link',
+   'Content_description',
+   'Content_show',
 ]
 
 export interface ContentSubmission {
@@ -21,11 +21,11 @@ export interface ContentSubmission {
    Content_type: ContentType
 }
 
-export const ContentMediaArray = ['video', 'podcast', 'article', 'file']
+export const ContentMediaArray = ['video', 'podcast', 'article', 'file'] as const
 export type ContentMediaTuple = typeof ContentMediaArray
 export type ContentMedia = ContentMediaTuple[number]
 
-export const ContentTypeArray = ['review', 'preview', 'playthrough', 'howtoplay', 'rulebook', 'analysis']
+export const ContentTypeArray = ['review', 'preview', 'playthrough', 'howtoplay', 'rulebook', 'analysis'] as const
 export type ContentTypeTuple = typeof ContentTypeArray
 export type ContentType = ContentTypeTuple[number]
 

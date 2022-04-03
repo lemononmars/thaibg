@@ -35,6 +35,8 @@
       let res = await approval(a, id)
       if(res.status === 'success')
          alert('successfully' +  a + '!')
+      else
+         alert(res.status)
    }
 </script>
 
@@ -72,7 +74,7 @@
                {/each}
                <td>
                   <div class="dropdown dropdown-end">
-                     <label tabindex="0" class="btn m-1">Decision</label>
+                     <div tabindex="0" class="btn m-1">Decision</div>
                      <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 z-20">
                        <li><div class="btn btn-success" on:click={()=>decision('approved', d.id)}>Approve</div></li>
                         <li><div class="btn btn-error" on:click={()=>decision('rejected', d.id)}>Reject</div></li>

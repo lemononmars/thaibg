@@ -1,7 +1,7 @@
 <script lang="ts">
    import {_} from 'svelte-i18n'
    const types1 = ['boardgame', 'publisher', 'investor', 'manufacturer']
-   const types2 = ['person' ,'designer', 'artist', 'graphicdesigner', 'playtester', 'contentcreator']
+   const types2 = ['person' ,'designer', 'artist', 'graphicdesigner', 'playtester', 'contentcreator', 'rulebookeditor']
    const types3 = ['shop', 'event', 'content', 'honor']
 </script>
 

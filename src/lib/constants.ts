@@ -18,7 +18,7 @@ export const RESP_USER_GUEST = {
 export const URL_DICEBEAR = 'https://avatars.dicebear.com/api/avataaars/'
 export const DIR_AVATAR = 'https://llhkvvndjjpbdtdvxnvn.supabase.in/storage/v1/object/public/avatars'
 export const URL_BLANK_IMAGE = 'no_cover.jpg'
-export const WEBSITE_URL = 'https://thaibg.herokuapp.com'
+export const WEBSITE_URL = import.meta.env.VITE_BASE_URL || 'https://thaibg.herokuapp.com'
 
 export const COOKIE_NAME = 'sb:token'
 export const COOKIE_OPTIONS: CookieSerializeOptions = {

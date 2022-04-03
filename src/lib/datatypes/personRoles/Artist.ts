@@ -5,12 +5,12 @@ export interface Artist extends ArtistSubmission{
 }
 
 export const ArtistSubmissionKeys = [
-   'Artist_show',
    'Artist_name',
    'Artist_name_th',
    'Artist_team',
    'Artist_description',
    'Artist_link',
+   'Artist_show',
 ]
 
 export interface ArtistSubmission {

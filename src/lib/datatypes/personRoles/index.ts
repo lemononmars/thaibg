@@ -15,4 +15,4 @@ export const personRoles = [
    ...personDeveloperRoles,
    'contentcreator'
 ]
-export const PersonRelation = ['Boardgame', 'Artist', 'Designer', 'Graphicdesigner', 'Playtester', 'Rulebookeditor', 'Content']
+export const PersonRelation = ['Boardgame', 'Artist', 'Designer', 'Graphicdesigner', 'Playtester', 'Rulebookeditor']

@@ -6,8 +6,8 @@ export interface Publisher extends PublisherSubmission{
 
 export const PublisherSubmissionKeys = [
    'Publisher_name',
-   'Publisher_link',
    'Publisher_description',
+   'Publisher_link',
    'Publisher_picture',
    'Publisher_show',
 ]

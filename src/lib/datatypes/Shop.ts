@@ -5,19 +5,19 @@ export interface Shop extends ShopSubmission{
 }
 
 export const ShopSubmissionKeys = [
-   'Shop_show',
    'Shop_name',
-   'Shop_link',
-   'Shop_description',
-   'Shop_picture',
-   'Shop_province',
    'Shop_location',
+   'Shop_province',
+   'Shop_status',
    'Shop_year_start',
    'Shop_capacity',
+   'Shop_description',
+   'Shop_link',
    'Shop_online',
    'Shop_physical',
    'Shop_cafe',
-   'Shop_status',
+   'Shop_picture',
+   'Shop_show',
 ]
 
 export interface ShopSubmission {
@@ -37,8 +37,9 @@ export interface ShopSubmission {
 }
 
 // add in construction status?
-export type ShopStatus = 'active' | 'inactive' | 'closed'
-export const ShopStatusArray = ['active', 'inactive', 'closed']
+export const ShopStatusArray = ['active', 'inactive', 'closed'] as const
+type ShopStatusTuple = typeof ShopStatusArray
+export type ShopStatus = ShopStatusTuple[number]
 
 export const ShopRelationArray = ['Boardgame']
 
