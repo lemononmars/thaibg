@@ -10,9 +10,7 @@ import {from, getTableName, getVarPrefix} from '$lib/supabase'
  */
 export async function get(){
    const statsCategory = ['boardgame', 'person', 'content'] // to be added? 'event', 'manufacturer', 'publisher', 'shop']
-   let stats = statsCategory.map((c)=>
-      ({[c]:0})
-   )
+   let stats = {}
 
    for(const cat of statsCategory) {
       const {data} = await from(getTableName(cat))

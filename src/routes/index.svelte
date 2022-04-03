@@ -1,19 +1,10 @@
 <script context=module lang="ts">
     export async function load({fetch}) {
-      let numBoardgames, numPeople, numContents
-      await fetch('/api/boardgame')
-        .then(res => res.json())
-        .then(data => numBoardgames = data.length)
-      await fetch('/api/person')
-        .then(res => res.json())
-        .then(data => numPeople = data.length)
-      await fetch('/api/content')
-        .then(res => res.json())
-        .then(data => numContents = data.length)
-      // TODO: add more stats
+      const res = await fetch('/api/stats')
+      const stats = await res.json()
       return {
         props:{
-          numBoardgames, numPeople, numContents
+          stats
         }
       }
     }
@@ -69,13 +60,13 @@
   import EventCard from '$lib/components/EventCard.svelte'
   import { _ } from 'svelte-i18n';
 
-  export let numBoardgames, numContents, numPeople
+  export let stats
   let promiseEvents, promiseContents, promiseBoardgames, promiseDevs
   onMount(async()=>{
-    promiseEvents = await getEvents()
-    promiseContents = await getContents()
-    promiseBoardgames = await getHotnessBoardgames()
-    promiseDevs = await getDevelopers()
+    promiseEvents = getEvents()
+    promiseContents = getContents()
+    promiseBoardgames = getHotnessBoardgames()
+    promiseDevs = getDevelopers()
   })
   const boardgameCarouselWidth = 200
 
@@ -92,21 +83,21 @@
       <div class="grid grid-cols-1 lg:grid-cols-3 place-items-center py-8 m-2">
         <div class="flex flex-col place-items-center">
           <div class="flex flex-row items-center gap-2">
-              <div class="text-2xl">{numBoardgames} </div>
+              <div class="text-2xl">{stats.boardgame} </div>
             <div> <PlayCircleIcon size="40"/></div>
           </div>
           <div>{$_('page.home.welcome.boardgames')}</div>
         </div>
         <div class="flex flex-col place-items-center">
           <div class="flex flex-row items-center gap-2">
-            <div class="text-2xl">{numPeople} </div>
+            <div class="text-2xl">{stats.person} </div>
             <div><UserCheckIcon size="40"/></div>
           </div>
           <div>{$_('page.home.welcome.people')} </div>
         </div>
         <div class="flex flex-col place-items-center">
           <div class="flex flex-row items-center gap-2">
-            <div class="text-2xl">{numContents} </div>
+            <div class="text-2xl">{stats.content} </div>
             <div><CoffeeIcon size="40"/></div>
           </div>
           <div>{$_('page.home.welcome.contents')}</div>

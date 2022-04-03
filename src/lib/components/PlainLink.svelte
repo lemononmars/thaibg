@@ -1,20 +1,20 @@
 <script lang="ts">
    import { TypeNamesArray} from '$lib/datatypes';
-   import {PersonRoleArray } from '$lib/datatypes'
+   import {PersonRelationArray } from '$lib/datatypes'
 
    import {getImageURL, getDefaultImageURL, getVarPrefix} from '$lib/supabase'
    export let object
    export let type: string
    export let comment: string = ''
 
-   let id = 0, slug = '', picture = '', name = '', typeVar = '', roleQuery = ''
+   let id = 0, slug = '', picture = '', name = 'invalid', typeVar = '', roleQuery = ''
 
    // if type is invalid, make a blank card
    if(object && TypeNamesArray.includes(type)) {
       // make sure the role query points to the correct role
-      roleQuery = PersonRoleArray.includes(type)? `?role=${type}`: ''
+      roleQuery = PersonRelationArray.includes(type)? `?role=${type}`: ''
       // afterward, everything else can point to the person
-      if(PersonRoleArray.includes(type))
+      if(PersonRelationArray.includes(type))
          type = 'person'
       typeVar = getVarPrefix(type)
 

@@ -15,7 +15,7 @@
       const res = await fetch(`/api/${type}?search=${searchString}`)
       if(res.ok) {
          const data = await res.json()
-         searchedData = data.map((d)=>({
+         searchedData = data.slice(0, 15).map((d)=>({
             id: d[getVarPrefix(type) + '_ID'], 
             name: d[getVarPrefix(type) + '_name']
          }))
@@ -62,7 +62,7 @@
                      {d.name}
                   </div></li>
                {:else}
-                  <li><div class="btn btn-outline btn-error">หาไม่เจอ</div></li>
+                  <li><div class="btn btn-outline btn-error">No match found</div></li>
                {/each}
             {/if}
          {/if}

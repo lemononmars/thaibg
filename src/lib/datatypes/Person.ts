@@ -34,9 +34,8 @@ export interface PersonSubmission {
    Person_show: boolean,
 }
 
-export const PersonRelationArray = ['artist', 'contentcreator', 'designer', 'graphicdesigner', 'playtester', 'rulebookeditor'] as const
-type PersonRelationTuple = typeof PersonRelationArray
-export type PersonRoleArray = PersonRelationTuple[number]
+export const PersonRelationArray = ['artist', 'contentcreator', 'designer', 'graphicdesigner', 'playtester', 'rulebookeditor'] 
+export type PersonRelation = 'artist' | 'contentcreator' | 'designer' | 'graphicdesigner' | 'playtester' | 'rulebookeditor'
 
 import type {Artist, Contentcreator, Designer, Graphicdesigner, Playtester, Rulebookeditor} from './personRoles'
 export type PersonRole = Artist | Contentcreator | Designer | Graphicdesigner | Playtester | Rulebookeditor

@@ -15,7 +15,10 @@
    }
 </script>
 
-<label class="btn" for="single">Upload an image</label>
+<label class="btn" for="single">{imageFile? 'Replace the image' : 'Upload an image'}</label>
+{#if imageFile}
+<div class="btn" on:click={()=> imageFile = null}>Remove</div>
+{/if}
    <input
       class="sr-only"
       type="file"

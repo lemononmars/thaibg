@@ -87,7 +87,7 @@
                   bind:value={submission[k]}
                >
             {:else if k === 'Event_type'}
-               <select class="select selected-bordered" bind:value={submission[k]}>
+               <select class="select select-bordered" bind:value={submission[k]}>
                   <option disabled selected>Select an event type</option>
                   {#each EventTypeArray as e}
                      <option>{e}</option>
@@ -96,7 +96,9 @@
             {:else if k === 'Event_picture'}
                <UploadImage bind:imageFile/>
             {:else if (k === 'Event_time_end' || k === 'Event_time_start')}
-               <SveltyPicker inputClasses="form-control" format="yyyy-mm-dd hh:ii" bind:value={myDate}/>
+               <SveltyPicker inputClasses="form-control" format="yyyy-mm-dd" bind:value={submission[k]}/>
+            {:else if k === 'Event_show'}
+               <input type="checkbox" bind:checked={submission['Event_show']} class="checkbox">
             {:else}
                <input type="text" 
                   class="input input-bordered" 
@@ -106,10 +108,12 @@
          </div>
       {/each}
    </div>
-   {#each EventRelationArray as r}
-      <SearchMultipleSelect bind:selects={eventRelationSelects[r]} 
-      type={r}/>
-   {/each}
+   <div class="flex flex-col justify-center">
+      {#each EventRelationArray as r}
+         <SearchMultipleSelect bind:selects={eventRelationSelects[r]} 
+         type={r}/>
+      {/each}
+   </div>
    <div class="divider"></div>
    <div class="justify-self-end mx-2">Comment</div>
    <textarea 
@@ -119,18 +123,30 @@
    /><br>
    {#if submitState == 0}
       <div class="btn" on:click|preventDefault={handleSubmit}>Submit</div>
-   {:else if submitState == 1}
-      <p>Submitting.... please wait</p>
-      <Spinner/>
-   {:else if submitState == 2}
-      <p>Your submission has been received. Please wait until we approve it</p>
-      <p>Refresh the page if you want to submit another one!</p>
-   {:else}
-      <p>There was an error. Please try again</p>
-      <div class="btn" on:click|preventDefault={handleSubmit}>Submit</div>
    {/if}
 </form>
 
+{#if submitState == 1}
+   <p>Submitting.... please wait</p>
+   <Spinner/>
+{:else if submitState == 2}
+   <p>Your submission has been received. Please wait until we approve it</p>
+   <p>Refresh the page if you want to submit another one!</p>
+{:else if submitState == 3}
+   <p>There was an error. Please try again</p>
+   <div class="btn" on:click|preventDefault={handleSubmit}>Submit</div>
+{/if}
 
+<style>
+   input{
+      @apply w-72
+   }
 
+   select{
+      @apply w-72
+   }
 
+   input.checkbox{
+      @apply w-10
+   }
+</style>

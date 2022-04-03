@@ -70,7 +70,7 @@
         window.scroll({top: 0, behavior: 'smooth'})
     }
 
-    function mouseMove(event) {
+    function mouseMove(event: MouseEvent) {
         mouseY = event.clientY
     }
 </script>
@@ -151,7 +151,7 @@
             {#if !$isLoading}
                 <select class="select select-md max-w-xs" bind:value={$locale}>                    
                     {#each $locales as l}
-                        <option value={l}>{languageName[l]}</option>
+                        <option value={l} selected>{languageName[l]}</option>
                     {/each}
                 </select>
             {/if}
