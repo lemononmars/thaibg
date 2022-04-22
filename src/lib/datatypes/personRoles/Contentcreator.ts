@@ -4,7 +4,7 @@ export interface Contentcreator extends ContentcreatorSubmission{
    Contentcreator_Relation?: ContentcreatorRelation[]
 }
 
-export const ContentcreatorSubmissionKeys = [
+export const ContentcreatorDatabaseKeys = [
    'Contentcreator_name',
    'Contentcreator_name_th',
    'Contentcreator_team',
@@ -30,4 +30,14 @@ interface ContentcreatorRelation {
    id: number,
    Content_ID: number,
    Contentcreator_ID: number
+}
+
+export const ContentcreatorSubmissionPackage = () => {
+   return {
+      submission: <ContentcreatorSubmission>{},
+      keys: ContentcreatorDatabaseKeys,
+      relations: ContentcreatorRelationArray,
+      selects: {},
+      multiselects: {}
+   }
 }

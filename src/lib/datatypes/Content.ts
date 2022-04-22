@@ -3,7 +3,7 @@ export interface Content extends ContentSubmission{
    Content_slug: string,
 }
 
-export const ContentSubmissionKeys = [
+export const ContentDatabaseKeys = [
    'Content_name',
    'Content_media',
    'Content_type',
@@ -21,12 +21,23 @@ export interface ContentSubmission {
    Content_type: ContentType
 }
 
-export const ContentMediaArray = ['video', 'podcast', 'article', 'file'] as const
-export type ContentMediaTuple = typeof ContentMediaArray
-export type ContentMedia = ContentMediaTuple[number]
+export const ContentMediaArray = ['video', 'podcast', 'article', 'file']
+export type ContentMedia = 'video' | 'podcast' | 'article' | 'file'
 
-export const ContentTypeArray = ['review', 'preview', 'playthrough', 'howtoplay', 'rulebook', 'analysis'] as const
-export type ContentTypeTuple = typeof ContentTypeArray
-export type ContentType = ContentTypeTuple[number]
+export const ContentTypeArray = ['review', 'preview', 'playthrough', 'howtoplay', 'rulebook', 'analysis']
+export type ContentType = 'review' | 'preview' | 'playthrough' | 'howtoplay' | 'rulebook' | 'analysis'
 
-export const ContentRelation = ['Boardgame', 'Contentcreator']
+export const ContentRelationArray = ['Boardgame', 'Contentcreator']
+
+export const ContentSubmissionPackage = () => {
+   return {
+      submission: <ContentSubmission>{},
+      keys: ContentDatabaseKeys,
+      relations: ContentRelationArray,
+      selects: {
+         Content_media: ContentMediaArray,
+         Content_type: ContentTypeArray
+      },
+      multiselects: {}
+   }
+}

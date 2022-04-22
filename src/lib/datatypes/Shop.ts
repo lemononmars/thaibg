@@ -4,7 +4,7 @@ export interface Shop extends ShopSubmission{
    Shop_Relation?: ShopRelation[]
 }
 
-export const ShopSubmissionKeys = [
+export const ShopDatabaseKeys = [
    'Shop_name',
    'Shop_location',
    'Shop_province',
@@ -37,9 +37,8 @@ export interface ShopSubmission {
 }
 
 // add in construction status?
-export const ShopStatusArray = ['active', 'inactive', 'closed'] as const
-type ShopStatusTuple = typeof ShopStatusArray
-export type ShopStatus = ShopStatusTuple[number]
+export const ShopStatusArray = ['active', 'inactive', 'closed'] 
+export type ShopStatus = 'active' | 'inactive' | 'closed'
 
 export const ShopRelationArray = ['Boardgame']
 
@@ -49,6 +48,18 @@ interface ShopRelation {
    TBG_ID: number,
    Shop_TBG_obtainable: boolean,
    Shop_TBG_playable: boolean
+}
+
+export const ShopSubmissionPackage = () => {
+   return {
+      submission: <ShopSubmission>{},
+      keys: ShopDatabaseKeys,
+      relations: ShopRelationArray,
+      selects: {
+         Shop_status: ShopStatusArray
+      },
+      multiselects: {}
+   }
 }
 
 export const ThaiProvinceMap = {

@@ -4,7 +4,7 @@ export interface Honor extends HonorSubmission{
    Honor_Relation: HonorRelation[]
 }
 
-export const HonorSubmissionKeys = [
+export const HonorDatabaseKeys = [
    'Honor_name',
    'Honor_name_th',
    'Honor_year',
@@ -30,11 +30,10 @@ export interface HonorSubmission {
    Honor_show: boolean,
 }
 
-export const HonorTypeArray = ['contest', 'competition', 'award'] as const
-export type HonorTuple = typeof HonorTypeArray
-export type HonorType = HonorTuple[number]
+export const HonorTypeArray = ['contest', 'competition', 'award'] 
+export type HonorType = 'contest' | 'competition' | 'award'
 
-export const HonorRelation = ['Boardgame']
+export const HonorRelationArray = ['Boardgame']
 
 export interface HonorRelation {
    Honor_ID: number,
@@ -44,4 +43,16 @@ export interface HonorRelation {
    Honor_position: string,
    Honor_position_th: string,
    Honor_category: string // e.g. best family game, most popular votes, staff's favorite
+}
+
+export const HonorSubmissionPackage = () => {
+   return {
+      submission: <HonorSubmission>{},
+      keys: HonorDatabaseKeys,
+      relations: HonorRelationArray,
+      selects: {
+         Honor_type: HonorTypeArray
+      },
+      multiselects: {}
+   }
 }

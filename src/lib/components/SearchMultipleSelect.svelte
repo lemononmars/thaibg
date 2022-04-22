@@ -50,11 +50,11 @@
             </div>
          </div>
       </label>
-      <ul tabindex="0" class="p-2 shadow menu dropdown-content bg-base-100 rounded-box w-52" 
+      <ul tabindex="0" class="p-2 shadow menu dropdown-content bg-base-100 rounded-box w-72" 
          class:hidden={searchString.length == 0}
       >
          {#if isSearching}
-            <li><p>Searching...</p><Spinner/></li>
+            <li><Spinner size="xl"/></li>
          {:else}
             {#if searchedData}
                {#each searchedData as d}

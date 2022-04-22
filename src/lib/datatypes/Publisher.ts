@@ -4,7 +4,7 @@ export interface Publisher extends PublisherSubmission{
    Publisher_Relation?: PublisherRelation[]
 }
 
-export const PublisherSubmissionKeys = [
+export const PublisherDatabaseKeys = [
    'Publisher_name',
    'Publisher_description',
    'Publisher_link',
@@ -28,4 +28,14 @@ interface PublisherRelation {
    Publisher_ID: number,
    TBG_name?: string,
    Publisher_name?: string
+}
+
+export const PublisherSubmissionPackage = () => {
+   return {
+      submission: <PublisherSubmission>{},
+      keys: PublisherDatabaseKeys,
+      relations: PublisherRelationArray,
+      selects: {},
+      multiselects: {},
+   }
 }

@@ -4,7 +4,7 @@ export interface Event extends EventSubmission{
    Event_Relation?: EventRelation[]
 }
 
-export const EventSubmissionKeys = [
+export const EventDatabaseKeys = [
    'Event_name',
    'Event_type',
    'Event_location',
@@ -31,9 +31,8 @@ export interface EventSubmission {
    Shop_ID: number
 }
 
-export const EventTypeArray = ['convention', 'meetup', 'contest', 'competition', 'demo', 'award', 'sale'] as const
-export type EventTuple = typeof EventTypeArray
-export type EventType = EventTuple[number]
+export const EventTypeArray = ['convention', 'meetup', 'contest', 'competition', 'demo', 'award', 'sale'] 
+export type EventType = 'convention' | 'meetup' | 'contest' | 'competition' | 'demo' | 'award' | 'sale'
 
 export const EventRelationArray = ['Boardgame', 'Shop'] // Question: how to add 'Person' | 'Designer' ?
 
@@ -42,4 +41,17 @@ interface EventRelation {
    TBG_name?: string,
    Event_ID: number,
    TBG_ID: number
+}
+
+
+export const EventSubmissionPackage = () => {
+   return {
+      submission: <EventSubmission>{},
+      keys: EventDatabaseKeys,
+      relations: EventRelationArray,
+      selects: {
+         Event_type: EventTypeArray
+      },
+      multiselects: {}
+   }
 }

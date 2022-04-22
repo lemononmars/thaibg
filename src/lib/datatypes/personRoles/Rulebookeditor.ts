@@ -4,13 +4,13 @@ export interface Rulebookeditor extends RulebookeditorSubmission{
    Rulebookeditor_Relation?: RulebookeditorRelation[]
 }
 
-export const RulebookeditorSubmissionKeys = [
+export const RulebookeditorDatabaseKeys = [
    'Rulebookeditor_name',
    'Rulebookeditor_name_th',
    'Rulebookeditor_team',
    'Rulebookeditor_link',
    'Rulebookeditor_description',
-   'Rulebookeditor_en',
+   'Rulebookeditor_language',
    'Rulebookeditor_show',
 ]
 
@@ -21,14 +21,27 @@ export interface RulebookeditorSubmission {
    Rulebookeditor_team: string,
    Rulebookeditor_description: string,
    Rulebookeditor_link: string,
-   Rulebookeditor_en: boolean
+   Rulebookeditor_language: Array<string>
 }
 
 export const RulebookeditorRelationArray = ['Person', 'Boardgame']
+export const RulebookeditorLanguage = ['Thai', 'English', 'German', 'Chinese']
 
 interface RulebookeditorRelation {
    id: number,
    TBG_name?: string,
    TBG_ID: number,
    Rulebookeditor_ID: number
+}
+
+export const RulebookeditorSubmissionPackage = () => {
+   return {
+      submission: <RulebookeditorSubmission>{},
+      keys: RulebookeditorDatabaseKeys,
+      relations: RulebookeditorRelationArray,
+      selects: {},
+      multiselects: {
+         Rulebookeditor_language: RulebookeditorLanguage
+      }
+   }
 }

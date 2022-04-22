@@ -1,9 +1,11 @@
+import { getSubmissionPackage } from "."
+
 export interface Boardgame extends BoardgameSubmission{
    TBG_ID: number,
    TBG_slug: string,
 }
 
-export const BoardgameSubmissionKeys = [
+export const BoardgameDatabaseKeys = [
    'TBG_name',
    'TBG_name_th',
    'TBG_link',
@@ -48,9 +50,8 @@ export interface BoardgameSubmission {
 /* 
 * pending, planned, prototype, published
 */
-export const BoardgameStatusArray = ['pending' , 'planned' , 'prototype' , 'published'] as const
-export type BoardgameStatusTuple = typeof BoardgameStatusArray
-export type BoardgameStatus = BoardgameStatusTuple[number]
+export const BoardgameStatusArray = ['pending' , 'planned' , 'prototype' , 'published'] 
+export type BoardgameStatus = 'pending' | 'planned' | 'prototype'| 'published'
 
 // split for readablility
 const BoardgamePersonRelation = ['Designer', 'Artist', 'Graphicdesigner', 'Rulebookeditor', 'Playtester']
@@ -64,3 +65,15 @@ export const BoardgameRelationArray = [
    ...BoardgameInfoRelation, 
    ...BoardgameETCRelation
 ]
+
+export const BoardgameSubmissionPackage = () => {
+   return {
+      submission: <BoardgameSubmission>{},
+      keys: BoardgameDatabaseKeys,
+      relations: BoardgameRelationArray,
+      selects: {
+         TBG_status: BoardgameStatusArray
+      },
+      multiselects: {}
+   }
+}

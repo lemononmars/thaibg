@@ -4,7 +4,7 @@ export interface Graphicdesigner extends GraphicdesignerSubmission{
    Graphicdesigner_Relation?: GraphicdesignerRelation[]
 }
 
-export const GraphicdesignerSubmissionKeys = [
+export const GraphicdesignerDatabaseKeys = [
    'Graphicdesigner_name',
    'Graphicdesigner_name_th',
    'Graphicdesigner_team',
@@ -29,4 +29,14 @@ interface GraphicdesignerRelation {
    TBG_name: string,
    TBG_ID: number,
    Graphicdesigner_ID: number
+}
+
+export const GraphicdesignerSubmissionPackage = () => {
+   return {
+      submission: <GraphicdesignerSubmission>{},
+      keys: GraphicdesignerDatabaseKeys,
+      relations: GraphicdesignerRelationArray,
+      selects: {},
+      multiselects: {}
+   }
 }

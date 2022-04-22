@@ -4,7 +4,7 @@ export interface Artist extends ArtistSubmission{
    Artist_Relation: ArtistRelation[]
 }
 
-export const ArtistSubmissionKeys = [
+export const ArtistDatabaseKeys = [
    'Artist_name',
    'Artist_name_th',
    'Artist_team',
@@ -29,4 +29,14 @@ interface ArtistRelation {
    TBG_name: string,
    TBG_ID: number,
    Artist_ID: number
+}
+
+export const ArtistSubmissionPackage = () => {
+   return {
+      submission: <ArtistSubmission>{},
+      keys: ArtistDatabaseKeys,
+      relations: ArtistRelationArray,
+      selects: {},
+      multiselects: {}
+   }
 }

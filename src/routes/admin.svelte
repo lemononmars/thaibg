@@ -11,8 +11,9 @@
       const {data, error} = await from('Submission').select('*').eq('Submission_status', 'pending')
       if(error) throw error
       return {
-         props:
-         {data}
+         props:{
+            data
+         }
       }
     }
 
@@ -27,8 +28,8 @@
    // to be paginated?
 
    const tableInfo = {
-      headers: ['ID', 'Type', 'Page type', 'Username','Date', 'Content'],
-      body:['id', 'Submission_type', 'Submission_page_type', 'Submission_username', 'Submission_date', 'Submission_content']
+      headers: ['ID', 'Type', 'Page type', 'Username','Date', 'Content', 'Relation'],
+      body:['id', 'Submission_type', 'Submission_page_type', 'Submission_username', 'Submission_date', 'Submission_content', 'Submission_relations']
    }
 
    async function decision(a: string, id: number) {
@@ -56,19 +57,21 @@
             <tr>
                {#each tableInfo.body as t}
                   <td>
-                     {#if t !== 'Submission_content'}
-                        {d[t]? (d[t]) : '-'}  
+                     {#if t !== 'Submission_content' && t !== 'Submission_relations'}
+                        {d[t]? ('' + d[t]).substring(0,10) : '-'}  
                      {:else}
-                        <div tabindex="0" class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box">
-                           <div class="collapse-title text-xl font-medium truncate">
-                              {d[t]}
+                        {#if d[t]}
+                           <div tabindex="0" class="collapse collapse-arrow border border-base-300 bg-base-100 rounded-box">
+                              <div class="collapse-title text-xl font-medium truncate">
+                                 {d[t]}
+                              </div>
+                              <div class="collapse-content"> 
+                                 {#each d[t].split(',') as w}
+                                    <p>{w}</p>
+                                 {/each}
+                              </div>
                            </div>
-                           <div class="collapse-content"> 
-                              {#each d[t].split(',') as w}
-                                 <p>{w}</p>
-                              {/each}
-                           </div>
-                        </div>
+                        {/if}
                      {/if}
                   </td>
                {/each}
@@ -76,8 +79,9 @@
                   <div class="dropdown dropdown-end">
                      <div tabindex="0" class="btn m-1">Decision</div>
                      <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52 z-20">
-                       <li><div class="btn btn-success" on:click={()=>decision('approved', d.id)}>Approve</div></li>
+                        <li><div class="btn btn-success" on:click={()=>decision('approved', d.id)}>Approve</div></li>
                         <li><div class="btn btn-error" on:click={()=>decision('rejected', d.id)}>Reject</div></li>
+                        <li><div class="btn btn-info" on:click={()=>decision('pending', d.id)}>Pending</div></li>
                      </ul>
                    </div>
                </td>

@@ -4,7 +4,7 @@ export interface Designer extends DesignerSubmission{
    Designer_Relation?: DesignerRelation[]
 }
 
-export const DesignerSubmissionKeys = [
+export const DesignerDatabaseKeys = [
    'Designer_name',
    'Designer_name_th',
    'Designer_team',
@@ -30,4 +30,14 @@ interface DesignerRelation {
    TBG_ID: number,
    Designer_name?: string,
    Designer_ID: number
+}
+
+export const DesignerSubmissionPackage = () => {
+   return {
+      submission: <DesignerSubmission>{},
+      keys: DesignerDatabaseKeys,
+      relations: DesignerRelationArray,
+      selects: {},
+      multiselects: {}
+   }
 }

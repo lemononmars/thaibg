@@ -8,7 +8,7 @@ export interface Person extends PersonSubmission{
    Person_slug: string,
 }
 
-export const PersonSubmissionKeys = [
+export const PersonDatabaseKeys = [
    'Person_name',
    'Person_name_th',
    'Person_nickname',
@@ -39,3 +39,13 @@ export type PersonRelation = 'artist' | 'contentcreator' | 'designer' | 'graphic
 
 import type {Artist, Contentcreator, Designer, Graphicdesigner, Playtester, Rulebookeditor} from './personRoles'
 export type PersonRole = Artist | Contentcreator | Designer | Graphicdesigner | Playtester | Rulebookeditor
+
+export const PersonSubmissionPackage = () => {
+   return {
+      submission: <PersonSubmission>{},
+      keys: PersonDatabaseKeys,
+      relations: PersonRelationArray,
+      selects: {},
+      multiselects: {},
+   }
+}

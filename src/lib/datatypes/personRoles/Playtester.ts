@@ -4,7 +4,7 @@ export interface Playtester extends PlaytesterSubmission{
    Playtester_Relation?: PlaytesterRelation[]
 }
 
-export const PlaytesterSubmissionKeys = [
+export const PlaytesterDatabaseKeys = [
    'Playtester_name',
    'Playtester_name_th',
    'Playtester_team',
@@ -29,4 +29,14 @@ interface PlaytesterRelation {
    TBG_name?: string,
    TBG_ID: number,
    Playtester_ID: number
+}
+
+export const PlaytesterSubmissionPackage = () => {
+   return {
+      submission: <PlaytesterSubmission>{},
+      keys: PlaytesterDatabaseKeys,
+      relations: PlaytesterRelationArray,
+      selects: {},
+      multiselects: {}
+   }
 }
