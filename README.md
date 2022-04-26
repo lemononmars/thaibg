@@ -4,7 +4,7 @@ A nodejs database front-end made with Svelte and Svelte Kit. Data and auth suppl
 
 # How to install
 
-      git clone 
+      git clone
       cd thaibg
       npm install
 
@@ -22,7 +22,7 @@ For deployment, use platform specific configuration. For example, if you deploy 
 
       heroku config:set VITE_SUPABASE_URL=YOUR-SUPABASE-URL  VITE_SUPABASE_ANON_KEY=YOUR-SECRET-ANON-KEY
 
-`ANON-KEY` can be accessed at 
+`ANON-KEY` can be accessed at
 `https://app.supabase.io/project/YOUR-PROJECT-SLUG/settings/api`, or found on website at Settings > API.
 
 Now, you are ready to test via
@@ -41,8 +41,8 @@ See this project's [wiki](https://github.com/lemononmars/thaibg/wiki).
 
 # Resources
 
-* [Svelte-start-kit](https://github.com/one-aalam/svelte-starter-kit) for head start
-* Tailwind, daisyUI
-* Typescript
-* [Supabase](https://supabase.io/) 
-* Svelte Kit with adapter-node for deployment on heroku
+- [Svelte-start-kit](https://github.com/one-aalam/svelte-starter-kit) for head start
+- Tailwind, daisyUI
+- Typescript
+- [Supabase](https://supabase.io/)
+- Svelte Kit with adapter-node for deployment on heroku

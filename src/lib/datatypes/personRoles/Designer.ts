@@ -1,43 +1,43 @@
-export interface Designer extends DesignerSubmission{
-   Designer_ID: number,
-   Designer_slug: string,
-   Designer_Relation?: DesignerRelation[]
+export interface Designer extends DesignerSubmission {
+	Designer_ID: number;
+	Designer_slug: string;
+	Designer_Relation?: DesignerRelation[];
 }
 
 export const DesignerDatabaseKeys = [
-   'Designer_name',
-   'Designer_name_th',
-   'Designer_team',
-   'Designer_link',
-   'Designer_description',
-   'Designer_show',
-]
+	'Designer_name',
+	'Designer_name_th',
+	'Designer_team',
+	'Designer_link',
+	'Designer_description',
+	'Designer_show'
+];
 
 export interface DesignerSubmission {
-   Designer_show: boolean,
-   Designer_name: string,
-   Designer_name_th: string,
-   Designer_team: string,
-   Designer_description: string,
-   Designer_link: string
+	Designer_show: boolean;
+	Designer_name: string;
+	Designer_name_th: string;
+	Designer_team: string;
+	Designer_description: string;
+	Designer_link: string;
 }
 
-export const DesignerRelationArray = ['Person', 'Boardgame']
+export const DesignerRelationArray = ['Person', 'Boardgame'];
 
 interface DesignerRelation {
-   id: number,
-   TBG_name?: string,
-   TBG_ID: number,
-   Designer_name?: string,
-   Designer_ID: number
+	id: number;
+	TBG_name?: string;
+	TBG_ID: number;
+	Designer_name?: string;
+	Designer_ID: number;
 }
 
 export const DesignerSubmissionPackage = () => {
-   return {
-      submission: <DesignerSubmission>{},
-      keys: DesignerDatabaseKeys,
-      relations: DesignerRelationArray,
-      selects: {},
-      multiselects: {}
-   }
-}
+	return {
+		submission: <DesignerSubmission>{},
+		keys: DesignerDatabaseKeys,
+		relations: DesignerRelationArray,
+		selects: {},
+		multiselects: {}
+	};
+};

@@ -3,7 +3,6 @@ import sveltePreprocess from 'svelte-preprocess';
 import node from '@sveltejs/adapter-node';
 // import pkg from './package.json';
 
-
 /** @type {import('@sveltejs/kit').Config} */
 export default {
 	// Consult https://github.com/sveltejs/svelte-preprocess
@@ -21,7 +20,7 @@ export default {
 		//adapter: vercel(),
 
 		// hydrate the <div id="svelte"> element in src/app.html
-		target: '#svelte',
+		target: '#svelte'
 
 		// vite: {
 		// 	ssr: {

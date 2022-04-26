@@ -1,32 +1,47 @@
 <script lang="ts">
-   import {_} from 'svelte-i18n'
-   const types1 = ['boardgame', 'publisher', 'investor', 'manufacturer']
-   const types2 = ['person' ,'designer', 'artist', 'graphicdesigner', 'playtester', 'contentcreator', 'rulebookeditor']
-   const types3 = ['shop', 'event', 'content', 'honor']
+	import { _ } from 'svelte-i18n';
+	
+	$: boardgameMenu = [
+		{ path: 'boardgame', title: $_('navbar.boardgame._') },
+		// { path: 'category', title: $_('navbar.boardgame.category') } // to be added as tags
+	];
+	// add person somewhere ?
+	$: creatorMenu = [
+		{ path: 'designer', title: $_('designer') },
+		{ path: 'graphicdesigner', title: $_('graphicdesigner') },
+		{ path: 'artist', title: $_('artist') },
+		{ path: 'playtester', title: $_('playtester') },
+		{ path: 'rulebookeditor', title: $_('rulebookeditor') },
+		{ path: 'manufacturer', title: $_('manufacturer') },
+	];
+	$: supporterMenu = [
+		{ path: 'shop', title: $_('shop._') },
+		{ path: 'contentcreator', title: $_('contentcreator') },
+		{ path: 'publisher', title: $_('publisher') },
+		{ path: 'investor', title: $_('investor') }
+	];
+	$: activityMenu = [
+		{ path: 'content', title: $_('content._') },
+		{ path: 'honor', title: $_('honor') },
+		{ path: 'event', title: $_('event') },
+		// { path: 'crowdfunding', title: $_('crowdfunding') }
+	];
+
+	$: menus = [boardgameMenu, creatorMenu, supporterMenu, activityMenu]
+	$: menuTitles = [$_('boardgame._'), $_('navbar.creator._'), $_('navbar.supporter._'), $_('navbar.activity._')]
 </script>
 
 <h1>Create new entry</h1>
 <div class="flex flex-row justify-center gap-4 mx-auto w-full">
-   <div>
-      <h2>{$_('navbar.boardgame._')}</h2>
-      {#each types1 as t}
-         <a href="/create/{t}">{$_(`${t}`)}</a><br>
-      {/each}
-   </div>
-   
-   <div class="divider divider-vertical"></div>
-   <div>
-      <h2>{$_('navbar.person._')}</h2>
-      {#each types2 as t}
-         <a href="/create/{t}">{$_(`${t}`)}</a><br>
-      {/each}
-   </div>
-   <div class="divider divider-vertical"></div>
-
-   <div>
-      <h2>{$_('navbar.activity._')}</h2>
-      {#each types3 as t}
-         <a href="/create/{t}">{$_(`${t}`)}</a><br>
-      {/each}
-   </div>
+	{#each menus as menu, idx}
+		{#if idx != 0}
+			<div class="divider divider-vertical" />
+		{/if}
+		<div>
+			<h2>{menuTitles[idx]}</h2>
+			{#each menu as link}
+				<a href="/create/{link.path}">{link.title}</a><br />
+			{/each}
+		</div>
+	{/each}
 </div>

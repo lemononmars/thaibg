@@ -1,156 +1,156 @@
 {
-  "boardgame": {
-    "_": "บอร์ดเกม",
-    "status":{
-      "pending": "รอดำเนินการ",
-      "planned": "วางแผน", 
-      "prototype": "ต้นแบบ",
-      "published": "ผลิดแล้ว"
-    }
-  },
-  "type": "ประเภท",
-  "mechanics": "กลไก",
-  "category": "หมวดหมู่",
-  "designer": "นักออกแบบ",
-  "artist": "ศิลปิน",
-  "graphicdesigner": "นักออกแบบกราฟิก",
-  "playtester": "นักทดสอบ",
-  "manufacturer": "ผู้ผลิต",
-  "publisher": "ค่ายเกม",
-  "investor": "ผู้ลงทุน",
-  "contentcreator": "ผู้ผลิตเนื้อหา",
-  "shop": {
-    "_": "ร้านค้า",
-    "status": {
-      "active": "เปิด",
-      "inactive": "พัก",
-      "closed": "ปิด"
-    }
-  },
-  "event": "งาน",
-  "honor": "เกียรติยศ",
-  "TBGA": "สมาคมบอร์ดเกมแห่งประเทศไทย",
-  "rulebookeditor": "นักเรียบเรียงคู่มือ",
-  "crowdfunding": "ระดมทุน",
-  "page": {
-    "home": {
-      "title": "หน้าแรก",
-      "welcome": {
-        "intro": "ยกมาทั้งกระดาน!",
-        "boardgames": "บอร์ดเกม",
-        "people": "คน",
-        "contents": "สื่อ",
-        "text1": "รวมทุกข้อมูลเกี่ยวกับบอร์ดเกมไทย",
-        "text2": "ในเครือข่ายของสมาคมบอร์ดเกม",
-        "contribute": "ช่วยเหลือ",
-        "contact": "ติดต่อ"
-      }
-    },
-    "about": {
-      "title": "เกี่ยวกับเรา",
-      "nav": "about"
-    },
-    "contact": {
-      "title": "ติดต่อ",
-      "nav": "contact"
-    },
-    "boardgame": {
-      "playable": "เล่นได้ตามร้านต่อไปนี้",
-      "obtainable": "เป็นเจ้าของได้ตามร้านต่อไปนี้"
-    }
-  },
-  "navbar": {
-    "boardgame": {
-      "_": "บอร์ดเกม",
-      "list": "รายชื่อบอร์ดเกมไทย",
-      "type": "ประเภท",
-      "mechanics": "กลไก",
-      "category": "หมวดหมู่"
-    },
-    "person": {
-      "_": "ชุมชน",
-      "designer": "นักออกแบบ",
-      "artist": "ศิลปิน",
-      "graphicdesigner": "นักออกแบบกราฟิก",
-      "manufacturer": "ผู้ผลิต"
-    },
-    "creator": {
-      "_": "ฝ่ายสร้าง"
-    },
-    "supporter": {
-      "_": "ฝ่ายสนับสนุน",
-      "publisher": "ค่ายเกม",
-      "investor": "สปอนเซอร์",
-      "creator": "ผู้ผลิตเนื้อหา",
-      "shop": "ร้านค้า"
-    },
-    "activity": {
-      "_": "กิจกรรม",
-      "event": "งาน",
-      "honor": "เกียรติยศ",
-      "content": "เนื้อหา"
-    },
-    "website": {
-      "_": "เว็บไซต์",
-      "about": "เกี่ยวกับพวกเรา",
-      "termofuse": "ข้อตกลงการใช้งาน",
-      "contact": "ติดต่อ"
-    },
-    "title": {
-      "tbg": "บอร์ดเกมไทย",
-      "db": "ฐานข้อมูล"
-    }
-  },
-  "minutes": "นาที",
-  "age": "อายุ",
-  "numPlayers": "จำนวนผู้เล่น",
-  "playtime": "เวลาที่ใช้เล่น",
-  "weight": "ความหนัก",
-  "incomplete": "ยังไม่สมบูรณ์",
-  "description": {
-    "_": "คำอธิบาย",
-    "not_found": "ไม่มีคำอธิบาย"
-  },
-  "comment":{
-    "_": "คอมเม้นต์",
-    "not_found": "ไม่มีคอมเม้นต์",
-    "to_add": "เพื่อเพิ่มคอมเม้นต์",
-    "add": "เพิ่มคอมเม้นต์",
-    "submit": "ส่งความเห็น"
-  },
-  "auth":{
-    "sign_in": "เข้าสู่ระบบ",
-    "sign_out": "ออกจากระบบ",
-    "profile": "บัญชีผู้ใช้"
-  },
-  "content": {
-    "_": "เนื้อหา",
-    "not_found": "ไม่พบเนื้อหา",
-    "media" :{
-      "_": "สื่อ",
-      "all": "ทั้งหมด",
-      "video": "วีดีโอ", 
-      "podcast": "พ็อดคาสท์", 
-      "article": "บทความ",
-      "file": "ไฟล์"
-    },
-    "type":{
-      "_": "ประเภท",
-      "all": "ทั้งหมด",
-      "review": "รีวิว", 
-      "preview": "พรีวิว", 
-      "playthrough": "เล่นให้ดู", 
-      "howtoplay": "วิธีเล่น", 
-      "rulebook": "คู่มือ", 
-      "analysis": "วิเคราะห์"
-    }
-  },
-  "table":{
-    "search": "ค้นหา",
-    "advanced_filter": "กรองขั้นสูง",
-    "image": "ภาพ",
-    "name": "ชื่อ",
-    "released": "ปีที่ผลิต",
-    "status": "สถานะ"
-  }
+	"boardgame": {
+		"_": "บอร์ดเกม",
+		"status": {
+			"pending": "รอดำเนินการ",
+			"planned": "วางแผน",
+			"prototype": "ต้นแบบ",
+			"published": "ผลิดแล้ว"
+		}
+	},
+	"type": "ประเภท",
+	"mechanics": "กลไก",
+	"category": "หมวดหมู่",
+	"designer": "นักออกแบบ",
+	"artist": "ศิลปิน",
+	"graphicdesigner": "นักออกแบบกราฟิก",
+	"playtester": "นักทดสอบ",
+	"manufacturer": "ผู้ผลิต",
+	"publisher": "ค่ายเกม",
+	"investor": "ผู้ลงทุน",
+	"contentcreator": "ผู้ผลิตเนื้อหา",
+	"shop": {
+		"_": "ร้านค้า",
+		"status": {
+			"active": "เปิด",
+			"inactive": "พัก",
+			"closed": "ปิด"
+		}
+	},
+	"event": "งาน",
+	"honor": "เกียรติยศ",
+	"TBGA": "สมาคมบอร์ดเกมแห่งประเทศไทย",
+	"rulebookeditor": "นักเรียบเรียงคู่มือ",
+	"crowdfunding": "ระดมทุน",
+	"page": {
+		"home": {
+			"title": "หน้าแรก",
+			"welcome": {
+				"intro": "ยกมาทั้งกระดาน!",
+				"boardgames": "บอร์ดเกม",
+				"people": "คน",
+				"contents": "สื่อ",
+				"text1": "รวมทุกข้อมูลเกี่ยวกับบอร์ดเกมไทย",
+				"text2": "ในเครือข่ายของสมาคมบอร์ดเกม",
+				"contribute": "ช่วยเหลือ",
+				"contact": "ติดต่อ"
+			}
+		},
+		"about": {
+			"title": "เกี่ยวกับเรา",
+			"nav": "about"
+		},
+		"contact": {
+			"title": "ติดต่อ",
+			"nav": "contact"
+		},
+		"boardgame": {
+			"playable": "เล่นได้ตามร้านต่อไปนี้",
+			"obtainable": "เป็นเจ้าของได้ตามร้านต่อไปนี้"
+		}
+	},
+	"navbar": {
+		"boardgame": {
+			"_": "บอร์ดเกม",
+			"list": "รายชื่อบอร์ดเกมไทย",
+			"type": "ประเภท",
+			"mechanics": "กลไก",
+			"category": "หมวดหมู่"
+		},
+		"person": {
+			"_": "ชุมชน",
+			"designer": "นักออกแบบ",
+			"artist": "ศิลปิน",
+			"graphicdesigner": "นักออกแบบกราฟิก",
+			"manufacturer": "ผู้ผลิต"
+		},
+		"creator": {
+			"_": "ฝ่ายสร้าง"
+		},
+		"supporter": {
+			"_": "ฝ่ายสนับสนุน",
+			"publisher": "ค่ายเกม",
+			"investor": "สปอนเซอร์",
+			"creator": "ผู้ผลิตเนื้อหา",
+			"shop": "ร้านค้า"
+		},
+		"activity": {
+			"_": "กิจกรรม",
+			"event": "งาน",
+			"honor": "เกียรติยศ",
+			"content": "เนื้อหา"
+		},
+		"website": {
+			"_": "เว็บไซต์",
+			"about": "เกี่ยวกับพวกเรา",
+			"termofuse": "ข้อตกลงการใช้งาน",
+			"contact": "ติดต่อ"
+		},
+		"title": {
+			"tbg": "บอร์ดเกมไทย",
+			"db": "ฐานข้อมูล"
+		}
+	},
+	"minutes": "นาที",
+	"age": "อายุ",
+	"numPlayers": "จำนวนผู้เล่น",
+	"playtime": "เวลาที่ใช้เล่น",
+	"weight": "ความหนัก",
+	"incomplete": "ยังไม่สมบูรณ์",
+	"description": {
+		"_": "คำอธิบาย",
+		"not_found": "ไม่มีคำอธิบาย"
+	},
+	"comment": {
+		"_": "คอมเม้นต์",
+		"not_found": "ไม่มีคอมเม้นต์",
+		"to_add": "เพื่อเพิ่มคอมเม้นต์",
+		"add": "เพิ่มคอมเม้นต์",
+		"submit": "ส่งความเห็น"
+	},
+	"auth": {
+		"sign_in": "เข้าสู่ระบบ",
+		"sign_out": "ออกจากระบบ",
+		"profile": "บัญชีผู้ใช้"
+	},
+	"content": {
+		"_": "เนื้อหา",
+		"not_found": "ไม่พบเนื้อหา",
+		"media": {
+			"_": "สื่อ",
+			"all": "ทั้งหมด",
+			"video": "วีดีโอ",
+			"podcast": "พ็อดคาสท์",
+			"article": "บทความ",
+			"file": "ไฟล์"
+		},
+		"type": {
+			"_": "ประเภท",
+			"all": "ทั้งหมด",
+			"review": "รีวิว",
+			"preview": "พรีวิว",
+			"playthrough": "เล่นให้ดู",
+			"howtoplay": "วิธีเล่น",
+			"rulebook": "คู่มือ",
+			"analysis": "วิเคราะห์"
+		}
+	},
+	"table": {
+		"search": "ค้นหา",
+		"advanced_filter": "กรองขั้นสูง",
+		"image": "ภาพ",
+		"name": "ชื่อ",
+		"released": "ปีที่ผลิต",
+		"status": "สถานะ"
+	}
 }

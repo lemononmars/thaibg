@@ -5,32 +5,32 @@
 
 /* purge start ignore */
 @layer base {
-    body {
-        @apply leading-normal tracking-normal text-base font-normal break-words;
-        @apply font-sans text-base lg:text-xl;
-    }
+	body {
+		@apply leading-normal tracking-normal text-base font-normal break-words;
+		@apply font-sans text-base lg:text-xl;
+	}
 
-    main {
-        @apply pt-24 max-w-7xl mx-auto;
-        @apply text-center;
-    }
+	main {
+		@apply pt-24 max-w-7xl mx-auto;
+		@apply text-center;
+	}
 
-    a {
-        @apply link link-primary;
-        @apply no-underline hover:no-underline focus:outline-none focus:underline;
-    } 
+	a {
+		@apply link link-primary;
+		@apply no-underline hover:no-underline focus:outline-none focus:underline;
+	}
 
-    h1 {
-        @apply text-2xl text-primary mt-4
-    }
+	h1 {
+		@apply text-2xl text-primary mt-4;
+	}
 
-    h2 {
-        @apply text-xl font-semibold text-secondary mt-2 
-    }
+	h2 {
+		@apply text-xl font-semibold text-secondary mt-2;
+	}
 
-    h3{
-        @apply text-base font-semibold text-accent mt-2
-    }
+	h3 {
+		@apply text-base font-semibold text-accent mt-2;
+	}
 }
-  
-  /* purge end ignore */
+
+/* purge end ignore */

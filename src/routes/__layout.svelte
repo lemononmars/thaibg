@@ -1,22 +1,22 @@
 <script lang="ts">
 	import '../global.css';
-	import { navigating } from '$app/stores'
-	import PageNavIndicator from '$lib/components/PageNavIndicator.svelte'
-	import Header from '$lib/components/Header.svelte'
-	import AlertList from '$lib/alert/AlertList.svelte'
-	import Footer from '$lib/components/Footer.svelte'
-	import {initialize} from '../i18n'
+	import { navigating } from '$app/stores';
+	import PageNavIndicator from '$lib/components/PageNavIndicator.svelte';
+	import Header from '$lib/components/Header.svelte';
+	import AlertList from '$lib/alert/AlertList.svelte';
+	import Footer from '$lib/components/Footer.svelte';
+	import { initialize } from '../i18n';
 
-	initialize()
+	initialize();
 </script>
 
 {#if $navigating}
 	<PageNavIndicator />
 {/if}
-<Header/>
-<AlertList/>
-<main class="max-w-7xl h-full">
-	<slot></slot>
+<Header />
+<AlertList />
+<main class="max-w-7xl h-full px-4 lg:px-2">
+	<slot />
 </main>
 
-<Footer/>
+<Footer />

@@ -1,164 +1,167 @@
 <script lang="ts" context="module">
-   import {getVarPrefix} from '$lib/supabase'
-   import {Person, personRoles} from '$lib/datatypes'
-   import type {PersonRole, Content, Boardgame} from '$lib/datatypes'
+	import { getVarPrefix } from '$lib/supabase';
+	import { Person, personRoles } from '$lib/datatypes';
+	import type { PersonRole, Content, Boardgame } from '$lib/datatypes';
 
-   export async function load({ params, url, fetch }) {
-      const res = await fetch(`/api/person/${params.id}`)
-      if(!res.ok) return {status:404}
-      let person: Person
-      person = await res.json()
+	export async function load({ params, url, fetch }) {
+		const res = await fetch(`/api/person/${params.id}`);
+		if (!res.ok) return { status: 404 };
+		let person: Person;
+		person = await res.json();
 
-      return {
-         props: {
-            person,
-            role: url.searchParams.get('role'),
-         }
-      };
-   }
-   
-   export async function getRoleContent(role: string, person){
-      let personData: PersonRole
-      let contents: Content[] | Boardgame[]
-      let returnedData = []
-      // grab role information
-      const id = person[getVarPrefix(role) + '_ID']
-      let res = await fetch(`/api/${role}/${id}`)
-      if(!res)  return {status: 404}
-      personData = await res.json()
-      
-      // if the role is content creator, get the list of contents
-      // otherwise, get the list of board games
-      const dataType = (role === 'contentcreator') ? 'content' : 'boardgame'
-      res = await fetch(`/api/${role}/${id}/${dataType}`)
-      if(!res.ok)  return {status: 404}
-      contents = await res.json()
+		return {
+			props: {
+				person,
+				role: url.searchParams.get('role')
+			}
+		};
+	}
 
-      const info = ['description', 'name', 'team', 'slug', 'link']
-      info.forEach((i)=> returnedData[i] = personData[getVarPrefix(role) + '_' + i])
-      returnedData['id'] = personData[getVarPrefix(role) + '_ID']
-      returnedData['contents'] = contents
-      return returnedData
-   }
+	export async function getRoleContent(role: string, person) {
+		let personData: PersonRole;
+		let contents: Content[] | Boardgame[];
+		let returnedData = [];
+		// grab role information
+		const id = person[getVarPrefix(role) + '_ID'];
+		let res = await fetch(`/api/${role}/${id}`);
+		if (!res) return { status: 404 };
+		personData = await res.json();
+
+		// if the role is content creator, get the list of contents
+		// otherwise, get the list of board games
+		const dataType = role === 'contentcreator' ? 'content' : 'boardgame';
+		res = await fetch(`/api/${role}/${id}/${dataType}`);
+		if (!res.ok) return { status: 404 };
+		contents = await res.json();
+
+		const info = ['description', 'name', 'team', 'slug', 'link'];
+		info.forEach((i) => (returnedData[i] = personData[getVarPrefix(role) + '_' + i]));
+		returnedData['id'] = personData[getVarPrefix(role) + '_ID'];
+		returnedData['contents'] = contents;
+		return returnedData;
+	}
 </script>
 
 <script lang="ts">
-   import {getImageURL, getDefaultImageURL} from '$lib/supabase'
-   import Seo from '$lib/components/SEO.svelte'
-   import Spinner from '$lib/components/Spinner.svelte'
-   import {onMount} from 'svelte'
-   import BoardgameCard from '$lib/components/BoardgameCard.svelte'
-   import ContentCard from '$lib/components/ContentCard.svelte'
-   import ContactLinks from '$lib/components/ContactLinks.svelte'
-   import {_} from 'svelte-i18n'
+	import { getImageURL, getDefaultImageURL } from '$lib/supabase';
+	import Seo from '$lib/components/SEO.svelte';
+	import Spinner from '$lib/components/Spinner.svelte';
+	import { onMount } from 'svelte';
+	import BoardgameCard from '$lib/components/BoardgameCard.svelte';
+	import ContentCard from '$lib/components/ContentCard.svelte';
+	import ContactLinks from '$lib/components/ContactLinks.svelte';
+	import { _ } from 'svelte-i18n';
 
-   export let person, role 
-   let activeroleTitles = personRoles.map((r)=>!!person[getVarPrefix(r) + '_ID'])
-   let activeTab = 0
-   if(role) 
-      activeTab = personRoles.indexOf(role) // response to url ?role=Designer
-   else if (activeroleTitles.indexOf(true)) 
-      activeTab = activeroleTitles.indexOf(true) // first non-empty role
-   else 
-      activeTab = 0 // if all else fails, just use first index
-      
-   let rolePromise: Promise<any>
+	export let person, role;
+	let activeroleTitles = personRoles.map((r) => !!person[getVarPrefix(r) + '_ID']);
+	let activeTab = 0;
+	if (role) activeTab = personRoles.indexOf(role);
+	// response to url ?role=Designer
+	else if (activeroleTitles.indexOf(true)) activeTab = activeroleTitles.indexOf(true);
+	// first non-empty role
+	else activeTab = 0; // if all else fails, just use first index
 
-   onMount(async ()=>{
-      rolePromise = getRoleContent(personRoles[activeTab], person)
-   })
-   
-   async function changeTab(idx: number) {
-      activeTab = idx
-      if(activeroleTitles[activeTab])
-         rolePromise = getRoleContent(personRoles[activeTab], person)
-   }
+	let rolePromise: Promise<any>;
+
+	onMount(async () => {
+		rolePromise = getRoleContent(personRoles[activeTab], person);
+	});
+
+	async function changeTab(idx: number) {
+		activeTab = idx;
+		if (activeroleTitles[activeTab]) rolePromise = getRoleContent(personRoles[activeTab], person);
+	}
 </script>
 
-<Seo title="Person"/>
+<Seo title="Person" />
 
 <div class="w-full h-60">
-   <img src="https://picsum.photos/800/600" class="object-cover w-full h-60" alt="cover" >
+	<img src="https://picsum.photos/800/600" class="object-cover w-full h-60" alt="cover" />
 </div>
 
 <div class="flex flex-col lg:flex-row justify-center items-start relative">
-   <!-- First column: person's name, bio, and contacts-->
-   <div class="text-left p-2 flex flex-col -mt-32 w-full lg:w-1/4">
-      <div class="avatar">
-         <div class="h-72 mask mask-circle hover:scale-110 duration-200 mx-auto">
-            <img src="{getImageURL('person', person.Person_picture)}" alt="image of {person.Person_name}"
-               on:error|once={(ev)=>ev.target.src = getDefaultImageURL('person')}
-            />
-         </div>
-      </div>
-      <div>
-         <h1>{person.Person_name}</h1>
-         <h2>{person.Person_name_th? "(" + person.Person_name_th + ")": ""}</h2>
-         <h3>Bio</h3>
-         <p>{@html person.Person_description || '-'}</p>
-         <ContactLinks links={{
-            website: person.Person_website,
-            facebook: person.Person_facebook,
-            twitter: person.Person_twitter,
-            email:person.Person_email
-         }}/>
-      </div>
-   </div>
+	<!-- First column: person's name, bio, and contacts-->
+	<div class="text-left p-2 flex flex-col -mt-32 w-full lg:w-1/4 px-2">
+		<div class="avatar">
+			<div class="h-72 mask mask-circle hover:scale-110 duration-200 mx-auto">
+				<img
+					src={getImageURL('person', person.Person_picture)}
+					alt="image of {person.Person_name}"
+					on:error|once={(ev) => (ev.target.src = getDefaultImageURL('person'))}
+				/>
+			</div>
+		</div>
+		<div>
+			<h1>{person.Person_name}</h1>
+			<h2>{person.Person_name_th ? '(' + person.Person_name_th + ')' : ''}</h2>
+			<h3>Bio</h3>
+			<p>{@html person.Person_description || '-'}</p>
+			<ContactLinks
+				links={{
+					website: person.Person_website,
+					facebook: person.Person_facebook,
+					twitter: person.Person_twitter,
+					email: person.Person_email
+				}}
+			/>
+		</div>
+	</div>
 
-   <div class="flex flex-col w-full lg:w-3/4 text-left p-2 justify-center">
-      <div class="tabs w-full m-10 mx-auto flex-grow">
-         {#each personRoles as r, idx}
-            {#if activeroleTitles[idx]}
-               <!-- svelte-ignore a11y-missing-attribute -->
-               <a class="tab tab-lg tab-bordered text-xl" 
-                  class:text-success={!!activeroleTitles[idx]} 
-                  class:tab-active={idx == activeTab}
-                  class:text-bold={idx == activeTab}
-                  on:click={()=>changeTab(idx)}
-               >
-                  {$_(r)}
-               </a> 
-            {/if}
-         {/each}
-      </div>
-      <div class="flex flex-col justify-center">
-         {#await rolePromise}
-            <Spinner/>
-         {:then res}
-            {#if res}
-               <div>
-                  <h2>{$_(personRoles[activeTab])}'s Name</h2>
-                  <p>{res.name || '-'}</p>
-                  <h2>{$_(personRoles[activeTab])}'s Description</h2>
-                  <p>{@html res.description || '-'}</p>
-                  <h2>{$_(personRoles[activeTab])}'s Team</h2>
-                  <p>{res.team || '-'}</p>
-               </div>
+	<div class="flex flex-col w-full lg:w-3/4 text-left p-2 justify-center">
+		<div class="tabs w-full m-10 mx-auto flex-grow">
+			{#each personRoles as r, idx}
+				{#if activeroleTitles[idx]}
+					<!-- svelte-ignore a11y-missing-attribute -->
+					<a
+						class="tab tab-lg tab-bordered text-xl"
+						class:text-success={!!activeroleTitles[idx]}
+						class:tab-active={idx == activeTab}
+						class:text-bold={idx == activeTab}
+						on:click={() => changeTab(idx)}
+					>
+						{$_(r)}
+					</a>
+				{/if}
+			{/each}
+		</div>
+		<div class="flex flex-col justify-center">
+			{#await rolePromise}
+				<Spinner />
+			{:then res}
+				{#if res}
+					<div>
+						<h2>{$_(personRoles[activeTab])}'s Name</h2>
+						<p>{res.name || '-'}</p>
+						<h2>{$_(personRoles[activeTab])}'s Description</h2>
+						<p>{@html res.description || '-'}</p>
+						<h2>{$_(personRoles[activeTab])}'s Team</h2>
+						<p>{res.team || '-'}</p>
+					</div>
 
-               <div class="divider"></div>
-               {#if personRoles[activeTab] === 'contentcreator'}
-                  <h2>Contents created by this content creator</h2>
-                  <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-3 gap-4">
-                     {#each res.contents as content}
-                        <ContentCard {content}/>
-                     {:else}
-                        -
-                     {/each}
-                  </div>
-               {:else}
-                  <h2>Board games created by this {$_(personRoles[activeTab])}</h2>
-                  <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-3 gap-4">
-                     {#each res.contents as bg}
-                        <BoardgameCard {bg}/>
-                     {:else}
-                        -
-                     {/each}
-                  </div>
-               {/if}
-            {/if}
-         {:catch}
-            <p>Server is unavailable. Try again later.</p>
-         {/await}
-      </div>
-   </div>
+					<div class="divider" />
+					{#if personRoles[activeTab] === 'contentcreator'}
+						<h2>Contents created by this content creator</h2>
+						<div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-3 gap-4">
+							{#each res.contents as content}
+								<ContentCard {content} />
+							{:else}
+								-
+							{/each}
+						</div>
+					{:else}
+						<h2>Board games created by this {$_(personRoles[activeTab])}</h2>
+						<div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-3 gap-4">
+							{#each res.contents as bg}
+								<BoardgameCard {bg} />
+							{:else}
+								-
+							{/each}
+						</div>
+					{/if}
+				{/if}
+			{:catch}
+				<p>Server is unavailable. Try again later.</p>
+			{/await}
+		</div>
+	</div>
 </div>

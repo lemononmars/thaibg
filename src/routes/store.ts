@@ -1,4 +1,4 @@
-import { localStore } from './localStore'
+import { localStore } from './localStore';
 
-export const theme = localStore('theme', 'dark')
-export const locale = localStore('locale', 'th')
+export const theme = localStore('theme', 'dark');
+export const locale = localStore('locale', 'th');

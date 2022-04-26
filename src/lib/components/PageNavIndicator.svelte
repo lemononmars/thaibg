@@ -1,5 +1,5 @@
 <script>
-    // @todo : change filename and functiom
+	// @todo : change filename and functiom
 	import { onMount } from 'svelte';
 	let p = 0;
 	let visible = false;
@@ -13,6 +13,19 @@
 		setTimeout(next, 250);
 	});
 </script>
+
+{#if visible}
+	<div class="absolute top-0 left-0 w-screen h-2">
+		<div
+			class="absolute top-0 left-0 w-screen h-full bg-green-400 z-30"
+			style="width: {p * 100}%; transition: width 0.4s"
+		/>
+	</div>
+{/if}
+
+{#if p >= 0.4}
+	<div class="fade" />
+{/if}
 
 <style lang="postcss">
 	.fade {
@@ -33,13 +46,3 @@
 		}
 	}
 </style>
-
-{#if visible}
-	<div class="absolute top-0 left-0 w-screen h-2">
-		<div class="absolute top-0 left-0 w-screen h-full bg-green-400 z-30" style="width: {p * 100}%; transition: width 0.4s" />
-	</div>
-{/if}
-
-{#if p >= 0.4}
-	<div class="fade" />
-{/if}
