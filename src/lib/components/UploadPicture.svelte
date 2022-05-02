@@ -20,7 +20,7 @@
 	>{pictureFile ? 'Replace the picture' : 'Upload a picture'}</label
 >
 {#if pictureFile}
-	<div class="btn" on:click={() => (pictureFile = null)}>Remove</div>
+	<div class="btn btn-sm" on:click={() => (pictureFile = null)}>Remove</div>
 {/if}
 <input
 	class="sr-only"

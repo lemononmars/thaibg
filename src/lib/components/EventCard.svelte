@@ -6,9 +6,9 @@
 
 	let id = event.Event_ID;
 	let name = event.Event_name;
-	let description = event.Event_description;
-	let start = event.Event_time_start?.toLocaleString($locale);
-	let end = event.Event_time_end?.toLocaleString($locale);
+	//let description = event.Event_description;
+	$: start = event.Event_time_start?.toLocaleString($locale);
+	$: end = event.Event_time_end?.toLocaleString($locale);
 	let picture = getImageURL('event', event.Event_picture);
 	// let creatorPictureUrls = []
 </script>
@@ -27,14 +27,15 @@
 		</figure>
 		<div class="card-body">
 			<div class="flex flex-row gap-1">
-				<div class="-translate-y-1 w-20 h-12 border border-t-red-400 border-t-8">
+				<!-- <div class="-translate-y-1 w-20 h-12 border border-t-red-400 border-t-8">
 					<p class="text-xs">{start || ''} <br /> {end || ''}</p>
-				</div>
+				</div> -->
 				<h2 class="card-title">{name}</h2>
 			</div>
 		</div>
 		<div class="line-clamp-2">
-			{description || ''}
+			From: {start || ''} <br /> 
+			To: {end || ''}
 		</div>
 	</div>
 </a>

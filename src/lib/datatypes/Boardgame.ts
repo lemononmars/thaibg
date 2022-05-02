@@ -1,5 +1,3 @@
-import { getSubmissionPackage } from '.';
-
 export interface Boardgame extends BoardgameSubmission {
 	TBG_ID: number;
 	TBG_slug: string;
@@ -59,11 +57,12 @@ const BoardgamePersonRelation = [
 	'Artist',
 	'Graphicdesigner',
 	'Rulebookeditor',
-	'Playtester'
+	'Playtester',
+	"Producer",
 ];
-const BoardgameInfoRelation = ['Publisher', 'Manufacturer', 'Investor'];
+const BoardgameInfoRelation = ['Publisher', 'Manufacturer', 'Sponsor'];
 const BoardgameProperties = ['Type', 'Mechanics', 'Category'];
-const BoardgameETCRelation = ['Event', 'Honor', 'Shop', 'Crowdfunding'];
+const BoardgameETCRelation = ['Event', 'Honor', 'Shop'];
 
 export const BoardgameRelationArray = [
 	...BoardgamePersonRelation,
@@ -80,6 +79,10 @@ export const BoardgameSubmissionPackage = () => {
 		selects: {
 			TBG_status: BoardgameStatusArray
 		},
-		multiselects: {}
+		multiselects: {},
+		required: [
+			"TBG_released",
+			"TBG_status",
+		]
 	};
 };

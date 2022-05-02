@@ -40,6 +40,10 @@ export const ManufacturerSubmissionPackage = () => {
 		selects: {},
 		multiselects: {
 			Manufacturer_service: ManufacturerServiceArray
-		}
+		},
+		required: [
+			'Manufacturer_name',
+			'Manufacturer_service'
+		]
 	};
 };

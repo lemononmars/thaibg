@@ -7,7 +7,6 @@ export interface Rulebookeditor extends RulebookeditorSubmission {
 export const RulebookeditorDatabaseKeys = [
 	'Rulebookeditor_name',
 	'Rulebookeditor_name_th',
-	'Rulebookeditor_team',
 	'Rulebookeditor_link',
 	'Rulebookeditor_description',
 	'Rulebookeditor_language',
@@ -18,7 +17,6 @@ export interface RulebookeditorSubmission {
 	Rulebookeditor_show: boolean;
 	Rulebookeditor_name: string;
 	Rulebookeditor_name_th: string;
-	Rulebookeditor_team: string;
 	Rulebookeditor_description: string;
 	Rulebookeditor_link: string;
 	Rulebookeditor_language: Array<string>;

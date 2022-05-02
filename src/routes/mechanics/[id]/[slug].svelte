@@ -1,17 +1,22 @@
 <script lang="ts" context="module">
-	import { from } from '$lib/supabase';
-
-	export async function load({ session, params }) {
-		const { user } = session;
-		const { data, error } = await from('Mechanics').select('*').eq('Mech_ID', params.id);
-		if (error) {
-		}
+	export async function load({ params }) {
+		const res = await fetch(`/api/mechanics/${params.id}`)
+		const data = await res.json()
 		return {
 			props: {
-				user,
-				mechanicsData: data[0] || null
+				mechanicsData: res.ok? data : null
 			}
 		};
+	}
+
+	export async function getBoardgames(id: number){
+		const res = await fetch(`/api/mechanics/${id}/boardgame`)
+		const data = await res.json()
+		
+		if(res.ok)
+			return data[0]
+		else
+			return []
 	}
 </script>
 
@@ -21,65 +26,61 @@
 	import { onMount } from 'svelte';
 	import BoardgameCard from '$lib/components/BoardgameCard.svelte';
 	import { getImageURL, getDefaultImageURL } from '$lib/supabase';
+	import type {Mechanics, Boardgame} from '$lib/datatypes'
+	import {_} from 'svelte-i18n'
 
-	export let user, mechanicsData;
-	let boardgameData;
+	export let mechanicsData: Mechanics;
+	let promiseBoardgame: Promise<Boardgame[]>
 	onMount(async () => {
-		const { data, error } = await from('Boardgame')
-			.select('*, Mechanics_Relation!inner(*)')
-			.eq('Mechanics_Relation.Mech_ID', mechanicsData.Mech_ID);
-
-		if (error) throw error;
-		boardgameData = data;
-		mechanicsData.Mech_picture = '/mechanics/' + mechanicsData.Mech_picture;
+		promiseBoardgame = getBoardgames(mechanicsData?.Mech_ID)
 	});
 </script>
 
 <Seo title="Mechanics" />
 <div class="flex flex-col justify-center items-center relative">
 	<div class="w-full text-left m-4 flex flex-col">
-		{#if !mechanicsData}
-			Invalid mechanics ID!
-		{:else if boardgameData}
-			<div class="flex flex-col lg:flex-row lg:gap-4 w-full p-8 border-2 shadow-lg rounded-xl">
-				<img
-					src={mechanicsData.Mech_picture}
-					alt="image of {mechanicsData.Mech_name}"
-					class="w-72 mask mask-hexagon-2"
-				/>
+		<div class="flex flex-col lg:flex-row lg:gap-4 w-full p-8 border-2 shadow-lg rounded-xl">
+			<img
+				src={getImageURL('mechanics', mechanicsData.Mech_picture)}
+				alt="image of {mechanicsData.Mech_name}"
+				class="w-72 aspect-auto"
+				on:error|once={(ev) => (ev.target.src = getDefaultImageURL('mechanics'))}
+			/>
+			<div>
+				<h1>{mechanicsData.Mech_name}</h1>
 				<div>
-					<h1>{mechanicsData.Mech_name}</h1>
-					<h2>{mechanicsData.Mech_name_th ? '(' + mechanicsData.Mech_name_th + ')' : ''}</h2>
-					<ul>
-						<li>
-							{#if mechanicsData.Mech_link}
-								<a href={mechanicsData.Mech_link} target="_blank">{mechanicsData.Mech_link}</a>
-							{:else}
-								N/A
-							{/if}
-						</li>
-					</ul>
+					<h2>Category</h2>
+					<p>{$_(`mechanics.${mechanicsData.Mech_category}`)}</p>
+				</div>
+				<div>
+					<h2>Description</h2>
+					<p>{@html mechanicsData.Mech_description || $_('incomplete')}</p>
+				</div>
+				<div>
+					<h2>Link</h2>
+					{#if mechanicsData.Mech_link}
+						<a href={mechanicsData.Mech_link} target="_blank">{mechanicsData.Mech_link}</a>
+					{:else}
+						{$_('incomplete')}
+					{/if}
 				</div>
 			</div>
-			<!-- <div>{likes.length}</div> -->
-			<div>
-				<h2>Description</h2>
-				<p>{@html mechanicsData.Mech_description || 'n/A'}</p>
-			</div>
-			<div class="divider" />
-			<h2>Board games with this mechanics</h2>
-			<div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-4 gap-4">
-				{#each boardgameData as bg}
-					<BoardgameCard {bg} />
-				{:else}
-					N/A
-				{/each}
-			</div>
-		{:else}
-			<Spinner />
-		{/if}
-		{#if user && !user.guest}
-			<button class="btn">Suggest edit</button>
-		{/if}
+		</div>
+		<h2>Board games with this mechanics</h2>
+		{#await promiseBoardgame}
+			<Spinner/>
+		{:then res}
+			{#if res}
+				<div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-4 gap-4">
+					{#each res as bg}
+						<BoardgameCard {bg} />
+					{/each}
+				</div>
+			{:else}
+				{$_('incomplete')}
+			{/if}
+		{:catch error}
+			{error}
+		{/await}
 	</div>
 </div>

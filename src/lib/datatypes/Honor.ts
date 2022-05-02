@@ -34,14 +34,13 @@ export const HonorTypeArray = ['contest', 'competition', 'award'];
 export type HonorType = 'contest' | 'competition' | 'award';
 
 export const HonorRelationArray = ['Boardgame'];
+export const HonorPosition = ['winner', 'runner-up', '1st runner-up', '2nd runner-up', 'nominee', 'popular vote']
 
 export interface HonorRelation {
 	Honor_ID: number;
 	TBG_ID: number;
 	TBG_name?: string;
-	Honor_order: number;
 	Honor_position: string;
-	Honor_position_th: string;
 	Honor_category: string; // e.g. best family game, most popular votes, staff's favorite
 }
 
@@ -53,6 +52,10 @@ export const HonorSubmissionPackage = () => {
 		selects: {
 			Honor_type: HonorTypeArray
 		},
-		multiselects: {}
+		multiselects: {},
+		required: [
+			"Honor_year",
+			"Honor_type"
+		]
 	};
 };

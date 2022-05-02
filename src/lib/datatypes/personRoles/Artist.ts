@@ -7,7 +7,6 @@ export interface Artist extends ArtistSubmission {
 export const ArtistDatabaseKeys = [
 	'Artist_name',
 	'Artist_name_th',
-	'Artist_team',
 	'Artist_description',
 	'Artist_link',
 	'Artist_show'
@@ -17,7 +16,6 @@ export interface ArtistSubmission {
 	Artist_show: boolean;
 	Artist_name: string;
 	Artist_name_th: string;
-	Artist_team: string;
 	Artist_description: string;
 	Artist_link: string;
 }

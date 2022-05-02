@@ -72,6 +72,9 @@ export const PersonSubmissionPackage = () => {
 		keys: PersonDatabaseKeys,
 		relations: PersonRelationArray,
 		selects: {},
-		multiselects: {}
+		multiselects: {},
+		required: [
+			
+		]
 	};
 };

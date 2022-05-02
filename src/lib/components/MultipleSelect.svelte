@@ -7,7 +7,7 @@
 	let dropdownOpen = false;
 
 	$: filteredOptions = selectOptions.filter(
-		(s) => !selects.includes(s) && s.includes(searchString)
+		(s) => !selects.includes(s) && s?.toLowerCase().includes(searchString?.toLowerCase())
 	);
 
 	function select(data) {
@@ -25,7 +25,7 @@
 	}
 </script>
 
-<div class="flex flex-col mx-auto">
+<div class="flex flex-col mx-auto gap-1">
 	<div class="dropdown mb-4">
 		<!-- svelte-ignore a11y-label-has-associated-control -->
 		<label tabindex="0">
@@ -47,7 +47,7 @@
 		</label>
 		<ul
 			tabindex="0"
-			class="p-2 shadow menu dropdown-content bg-base-100 rounded-box w-72"
+			class="mt-6 shadow menu dropdown-content bg-base-100 rounded-box w-72"
 			class:hidden={!dropdownOpen}
 		>
 			{#each filteredOptions as d}

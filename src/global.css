@@ -5,8 +5,12 @@
 
 /* purge start ignore */
 @layer base {
+	html {
+		@apply scroll-pt-24;
+	}
+
 	body {
-		@apply leading-normal tracking-normal text-base font-normal break-words;
+		@apply leading-normal tracking-normal text-base font-normal break-words ;
 		@apply font-sans text-base lg:text-xl;
 	}
 

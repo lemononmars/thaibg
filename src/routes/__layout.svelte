@@ -15,7 +15,7 @@
 {/if}
 <Header />
 <AlertList />
-<main class="max-w-7xl h-full px-4 lg:px-2">
+<main class="max-w-7xl h-full lg:px-2">
 	<slot />
 </main>
 

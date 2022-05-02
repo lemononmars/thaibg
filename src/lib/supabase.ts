@@ -32,8 +32,8 @@ type SupaTable =
 	| 'Publisher_Relation'
 	| 'Shop'
 	| 'Shop_Relation'
-	| 'Investor'
-	| 'Investor_Relation'
+	| 'Sponsor'
+	| 'Sponsor_Relation'
 	| 'Type'
 	| 'Type_Relation';
 type SupaStorageBucket = 'avatars' | 'images' | 'public';

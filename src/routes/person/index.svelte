@@ -93,7 +93,7 @@
 <Seo title="People" />
 <div class="flex flex-col justify-center mx-auto">
 	<DataView data={peopleSorted} type="person" {tableInfo}>
-		<div><h1>{$_(role)}</h1></div>
+		<div><h1>{$_(`keyword.${role}`)}</h1></div>
 		<div class="flex flex-row items-center justify-between gap-2">
 			<!-- Search box -->
 			<SearchBar placeholder={`Search ${role} (en/th)`} bind:searchString />

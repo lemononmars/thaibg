@@ -7,7 +7,6 @@ export interface Contentcreator extends ContentcreatorSubmission {
 export const ContentcreatorDatabaseKeys = [
 	'Contentcreator_name',
 	'Contentcreator_name_th',
-	'Contentcreator_team',
 	'Contentcreator_link',
 	'Contentcreator_description',
 	'Contentcreator_picture',
@@ -19,12 +18,11 @@ export interface ContentcreatorSubmission {
 	Contentcreator_name: string;
 	Contentcreator_name_th: string;
 	Contentcreator_picture: string;
-	Contentcreator_team: string;
 	Contentcreator_description: string;
 	Contentcreator_link: string;
 }
 
-export const ContentcreatorRelationArray = ['Person', 'Content', 'Boardgame'];
+export const ContentcreatorRelationArray = ['Person', 'Content'];
 
 interface ContentcreatorRelation {
 	id: number;

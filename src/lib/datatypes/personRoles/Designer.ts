@@ -7,7 +7,6 @@ export interface Designer extends DesignerSubmission {
 export const DesignerDatabaseKeys = [
 	'Designer_name',
 	'Designer_name_th',
-	'Designer_team',
 	'Designer_link',
 	'Designer_description',
 	'Designer_show'
@@ -17,7 +16,6 @@ export interface DesignerSubmission {
 	Designer_show: boolean;
 	Designer_name: string;
 	Designer_name_th: string;
-	Designer_team: string;
 	Designer_description: string;
 	Designer_link: string;
 }

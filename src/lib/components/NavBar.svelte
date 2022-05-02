@@ -34,24 +34,25 @@
 		{ path: '/category', title: $_('navbar.boardgame.category') }
 	];
 	$: creatorMenu = [
-		{ path: '/person?role=designer', title: $_('designer') },
-		{ path: '/person?role=graphicdesigner', title: $_('graphicdesigner') },
-		{ path: '/person?role=artist', title: $_('artist') },
-		{ path: '/person?role=playtester', title: $_('playtester') },
-		{ path: '/manufacturer', title: $_('manufacturer') },
-		{ path: '/person?role=rulebookeditor', title: $_('rulebookeditor') }
+		{ path: '/person?role=designer', title: $_('keyword.designer') },
+		{ path: '/person?role=graphicdesigner', title: $_('keyword.graphicdesigner') },
+		{ path: '/person?role=artist', title: $_('keyword.artist') },
+		{ path: '/person?role=playtester', title: $_('keyword.playtester') },
+		{ path: '/manufacturer', title: $_('keyword.manufacturer') },
+		{ path: '/person?role=rulebookeditor', title: $_('keyword.rulebookeditor') },
+		{ path: '/person?role=producer', title: $_('keyword.producer') }
 	];
 	$: supporterMenu = [
-		{ path: '/shop', title: $_('shop._') },
-		{ path: '/person?role=contentcreator', title: $_('contentcreator') },
-		{ path: '/publisher', title: $_('publisher') },
-		{ path: '/investor', title: $_('investor') }
+		{ path: '/shop', title: $_('keyword.shop') },
+		{ path: '/person?role=contentcreator', title: $_('keyword.contentcreator') },
+		{ path: '/publisher', title: $_('keyword.publisher') },
+		{ path: '/sponsor', title: $_('keyword.sponsor') }
 	];
 	$: activityMenu = [
 		{ path: '/content', title: $_('content._') },
-		{ path: '/honor', title: $_('honor') },
-		{ path: '/event', title: $_('event') },
-		{ path: '/crowdfunding', title: $_('crowdfunding') }
+		{ path: '/honor', title: $_('keyword.honor') },
+		{ path: '/event', title: $_('keyword.event') },
+		//{ path: '/crowdfunding', title: $_('keyword.crowdfunding') }
 	];
 
 	const languageName = {
@@ -149,7 +150,7 @@
 			</div>
 		</div>
 		<!-- Right side: language, theme, search, profile-->
-		<div class="navbar-end flex flex-row items-center gap-4 mx-4">
+		<div class="navbar-end flex flex-row items-center gap-4 px-4">
 			<div>
 				{#if !$isLoading}
 					<select class="select select-md max-w-xs" bind:value={$locale}>
@@ -159,7 +160,7 @@
 					</select>
 				{/if}
 			</div>
-			<div>
+			<div class="hidden lg:visible">
 				<ToggleTheme />
 			</div>
 			<div class="dropdown dropdown-hover dropdown-end">

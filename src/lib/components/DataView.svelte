@@ -144,6 +144,10 @@
 											<BoardgameStatusBadge status={d[t]} showText={true} />
 										{:else if ShopStatusArray.includes(d[t])}
 											<ShopStatusBadge status={d[t]} showText={true} />
+										{:else if Array.isArray(d[t])}
+											{#each d[t] as a}
+												<div class="badge">{a}</div>
+											{/each}
 										{:else}
 											{d[t] || '-'}
 										{/if}

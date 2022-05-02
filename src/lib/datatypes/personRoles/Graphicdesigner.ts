@@ -7,7 +7,6 @@ export interface Graphicdesigner extends GraphicdesignerSubmission {
 export const GraphicdesignerDatabaseKeys = [
 	'Graphicdesigner_name',
 	'Graphicdesigner_name_th',
-	'Graphicdesigner_team',
 	'Graphicdesigner_link',
 	'Graphicdesigner_description',
 	'Graphicdesigner_show'
@@ -17,7 +16,6 @@ export interface GraphicdesignerSubmission {
 	Graphicdesigner_show: boolean;
 	Graphicdesigner_name: string;
 	Graphicdesigner_name_th: string;
-	Graphicdesigner_team: string;
 	Graphicdesigner_description: string;
 	Graphicdesigner_link: string;
 }

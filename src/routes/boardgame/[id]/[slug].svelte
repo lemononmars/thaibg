@@ -46,10 +46,10 @@
 			.then((res) => res.json())
 			.then((d) => (data['publisher'] = d))
 			.catch((error) => (data['publisher'] = []));
-		await fetch(`/api/boardgame/${BGID}/investor`)
+		await fetch(`/api/boardgame/${BGID}/sponsor`)
 			.then((res) => res.json())
-			.then((d) => (data['investor'] = d))
-			.catch((error) => (data['investor'] = []));
+			.then((d) => (data['sponsor'] = d))
+			.catch((error) => (data['sponsor'] = []));
 		return data;
 	}
 
@@ -185,7 +185,7 @@
 				<!--iterate through personRoles (designer, artist, graphicdesigner, playtester)-->
 				{#each personDeveloperRoles as role}
 					<div>
-						<h3>{$_(role)}</h3>
+						<h3>{$_(`keyword.${role}`)}</h3>
 						{#each res[role] as d}
 							<PlainLink type={role} object={d} />
 						{:else}
@@ -194,7 +194,7 @@
 					</div>
 				{/each}
 				<div>
-					<h3>{$_('publisher')}</h3>
+					<h3>{$_('keyword.publisher')}</h3>
 					{#each res.publisher as p}
 						<PlainLink type="publisher" object={p} />
 					{:else}
@@ -202,9 +202,9 @@
 					{/each}
 				</div>
 				<div>
-					<h3>{$_('investor')}</h3>
-					{#each res.investor as p}
-						<PlainLink type="investor" object={p} />
+					<h3>{$_('keyword.sponsor')}</h3>
+					{#each res.sponsor as p}
+						<PlainLink type="sponsor" object={p} />
 					{:else}
 						{$_('incomplete')}
 					{/each}
@@ -299,7 +299,7 @@
 		</div>
 		<div class="divider" />
 		<div>
-			<h3>{$_('type')}</h3>
+			<h3>{$_('keyword.type')}</h3>
 			<div class="flex flex-row gap-2 items-center flex-wrap">
 				{#each type as t}
 					<div class="badge badge-lg"><a href="/type/{t.Type_ID}">{t.Type_name}</a></div>
@@ -307,7 +307,7 @@
 					{$_('incomplete')}
 				{/each}
 			</div>
-			<h3>{$_('mechanics')}</h3>
+			<h3>{$_('keyword.mechanics')}</h3>
 			<div class="flex flex-row gap-2 items-center flex-wrap">
 				{#each mechanics as m}
 					<div class="badge badge-lg"><a href="/mechanics/{m.Mech_ID}">{m.Mech_name}</a></div>
@@ -315,7 +315,7 @@
 					{$_('incomplete')}
 				{/each}
 			</div>
-			<h3>{$_('category')}</h3>
+			<h3>{$_('keyword.category')}</h3>
 			<div class="flex flex-row gap-2 items-center flex-wrap">
 				{#each category as c}
 					<div class="badge badge-lg">
@@ -377,7 +377,7 @@
 	<!-- third column-->
 	<div class="flex flex-col gap-4 pt-28 order-3 lg:basis-1/4">
 		<div>
-			<h2>{$_('honor')}</h2>
+			<h2>{$_('keyword.honor')}</h2>
 			{#each honor as h}
 				<PlainLink
 					type="honor"
@@ -396,7 +396,7 @@
 				<Spinner />
 			{:then events}
 				{#if events}
-					<h2>{$_('event')}</h2>
+					<h2>{$_('keyword.event')}</h2>
 					{#each events as e}
 						<PlainLink type="event" object={e} />
 					{:else}

@@ -24,17 +24,17 @@
 		// grab role information
 		const id = person[getVarPrefix(role) + '_ID'];
 		let res = await fetch(`/api/${role}/${id}`);
-		if (!res) return { status: 404 };
+		if (!res) return { status: res.status };
 		personData = await res.json();
 
 		// if the role is content creator, get the list of contents
 		// otherwise, get the list of board games
 		const dataType = role === 'contentcreator' ? 'content' : 'boardgame';
 		res = await fetch(`/api/${role}/${id}/${dataType}`);
-		if (!res.ok) return { status: 404 };
+		if (!res.ok) return { status: res.status };
 		contents = await res.json();
 
-		const info = ['description', 'name', 'team', 'slug', 'link'];
+		const info = ['description', 'name', , 'slug', 'link'];
 		info.forEach((i) => (returnedData[i] = personData[getVarPrefix(role) + '_' + i]));
 		returnedData['id'] = personData[getVarPrefix(role) + '_ID'];
 		returnedData['contents'] = contents;
@@ -135,7 +135,6 @@
 						<h2>{$_(personRoles[activeTab])}'s Description</h2>
 						<p>{@html res.description || '-'}</p>
 						<h2>{$_(personRoles[activeTab])}'s Team</h2>
-						<p>{res.team || '-'}</p>
 					</div>
 
 					<div class="divider" />

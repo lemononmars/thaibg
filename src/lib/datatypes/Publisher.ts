@@ -36,6 +36,9 @@ export const PublisherSubmissionPackage = () => {
 		keys: PublisherDatabaseKeys,
 		relations: PublisherRelationArray,
 		selects: {},
-		multiselects: {}
+		multiselects: {},
+		required: [
+			'Publisher_name'
+		]
 	};
 };

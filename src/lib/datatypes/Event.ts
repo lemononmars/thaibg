@@ -66,6 +66,13 @@ export const EventSubmissionPackage = () => {
 		selects: {
 			Event_type: EventTypeArray
 		},
-		multiselects: {}
+		multiselects: {},
+		required: [
+			"Event_name",
+			"Event_time_start",
+			"Event_time_end",
+			"Event_location",
+			"Event_type",
+		]
 	};
 };

@@ -8,31 +8,43 @@
 
 	let searchString: string = '';
 	let searchedData;
-	let isTyping: boolean = false;
+	let typingTimer;
+	let isTyping = false
+
+	function startTyping() {
+		isTyping = true
+		searchedData = []
+		clearTimeout(typingTimer)
+	}
+
+	function stopTyping() {
+		clearTimeout(typingTimer)
+		typingTimer = setTimeout(search, 1000)
+	}
 
 	async function search() {
-		if(isTyping) return;
-
-		isTyping = true;
 		const res = await fetch(`/api/${type}?search=${searchString}`);
 		if (res.ok) {
 			const data = await res.json();
 			searchedData = data.slice(0, 15).map((d) => ({
 				id: d[getVarPrefix(type) + '_ID'],
-				name: d[getVarPrefix(type) + '_name']
+				name: d[getVarPrefix(type) + '_name'],
+				name_th: d[getVarPrefix(type) + '_name_th']
 			}));
-			isTyping = false;
 		}
+		isTyping = false
 	}
 
 	function select(data) {
-		selects = [...selects, data];
+		// check whether the data is already in the array
+		if(selects.every(selected => selected.id != data.id))
+			selects = [...selects, data];
 		searchString = '';
 		searchedData = null;
 	}
 </script>
 
-<div class="flex flex-col mx-auto">
+<div class="flex flex-col mx-auto gap-1">
 	<div class="dropdown mb-4">
 		<!-- svelte-ignore a11y-label-has-associated-control -->
 		<label tabindex="0">
@@ -44,7 +56,8 @@
 						placeholder="พิมพ์เพื่อค้นหา"
 						class="input input-bordered w-70"
 						bind:value={searchString}
-						on:keyup={(e) => search()}
+						on:keyup={() => stopTyping()}
+						on:keydown={()=> startTyping()}
 					/>
 					<div class="btn">
 						<SearchIcon size="20" />
@@ -54,21 +67,24 @@
 		</label>
 		<ul
 			tabindex="0"
-			class="p-2 shadow menu dropdown-content bg-base-100 rounded-box w-72"
+			class="p-2 shadow menu dropdown-content bg-base-100 rounded-box w-72 mt-4"
 			class:hidden={searchString.length == 0}
 		>
 			{#if isTyping}
-				<li><Spinner size="xl" /></li>
+				<li><Spinner /></li>
 			{:else if searchedData}
 				{#each searchedData as d}
 					<li>
 						<div class="btn btn-ghost" on:click={() => select(d)}>
-							{d.name}
+							{d.name || ''}{d.name && d.name_th? ' - ' : ''}{d.name_th || ''}
 						</div>
 					</li>
 				{:else}
 					<li><div class="btn btn-outline btn-error">No match found</div></li>
 				{/each}
+				{#if searchedData.length > 15}
+					<li><div class="btn btn-outline btn-info">{searchedData.length - 15} more...</div></li>
+				{/if}
 			{/if}
 		</ul>
 	</div>

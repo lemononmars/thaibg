@@ -44,7 +44,7 @@ export async function get({ url, params }) {
 	if (relation === 'relation') {
 		const { data, error } = await from(`${getTableName(type)}_Relation`)
 			.select(selectedColumns)
-			.eq(`${getTableName(type)}_Relation.${getVarPrefix(type)}_ID`, params.id);
+			.eq(`${getTableName(type)}_Relation.${getVarPrefix(type)}_ID`, id);
 
 		if (error)
 			return {
@@ -63,7 +63,7 @@ export async function get({ url, params }) {
 	if (relation === 'person') {
 		const { data, error } = await from('Person')
 			.select(`${selectedColumns}, ${getTableName(type)}!inner(*)`)
-			.eq(`${getTableName(type)}.${getVarPrefix(type)}_ID`, params.id);
+			.eq(`${getTableName(type)}.${getVarPrefix(type)}_ID`, id);
 
 		if (error)
 			return {
@@ -91,7 +91,7 @@ export async function get({ url, params }) {
 	const eqStr = `${getTableName(relation)}_Relation.${getVarPrefix(type)}_ID`;
 	const { data, error } = await from(getTableName(params.relation))
 		.select(selectStr)
-		.eq(eqStr, params.id);
+		.eq(eqStr, id);
 
 	if (error)
 		return {

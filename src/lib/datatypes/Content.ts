@@ -51,6 +51,12 @@ export const ContentSubmissionPackage = () => {
 			Content_media: ContentMediaArray,
 			Content_type: ContentTypeArray
 		},
-		multiselects: {}
+		multiselects: {},
+		required: [
+			"Content_name",
+			"Content_media",
+			"Content_type",
+			"Content_link"
+		]
 	};
 };

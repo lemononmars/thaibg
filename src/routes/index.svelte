@@ -127,7 +127,7 @@
 
 <div class="flex flex-col w-full p-10">
 	<h1 class="w-full text-center">Upcoming Events</h1>
-	<div class="grid grid-cols-2 lg:grid-cols-4">
+	<div class="grid grid-cols-1 lg:grid-cols-4">
 		{#await promiseEvents}
 			<Spinner />
 		{:then res}
@@ -142,7 +142,7 @@
 	</div>
 </div>
 
-<div class="flex flex-row bg-base-300 w-full py-4 px-4 lg:px-20">
+<div class="flex flex-col lg:flex-row bg-base-300 w-full py-4 px-4 lg:px-20">
 	<div class="flex flex-col text-left">
 		<h2>Media</h2>
 		<h1>Hotness Contents</h1>
@@ -153,7 +153,7 @@
 			<FilmIcon size="4x" />
 		</h1>
 	</div>
-	<div class="flex-grow grid grid-cols-3 gap-4 p-10">
+	<div class="flex-grow grid grid-cols-2 lg:grid-cols-3 gap-4 lg:p-10">
 		{#await promiseContents}
 			<Spinner />
 		{:then res}
@@ -220,7 +220,7 @@
 		<Spinner />
 	{:then res}
 		{#if res}
-			<div class="flex flex-row gap-4">
+			<div class="flex flex-col lg:flex-row gap-4">
 				{#each res.developers as d, idx}
 					{@const developerRoles = ['UI Designer', 'Web Developer', 'Database Engineer']}
 					<div>

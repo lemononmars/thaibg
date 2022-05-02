@@ -6,6 +6,7 @@ export * from './Honor';
 export * from './Shop';
 export * from './Manufacturer';
 export * from './Publisher';
+export * from './Mechanics';
 
 export * from './personRoles';
 
@@ -17,12 +18,13 @@ export const TypeSubmissionAllowed = [
 	'contentcreator',
 	'artist',
 	'playtester',
+	'producer',
 	'shop',
 	'publisher',
 	'content',
 	'honor',
 	'event',
-	'investor',
+	'sponsor',
 	'category',
 	'manufacturer',
 	'rulebookeditor',
@@ -37,12 +39,13 @@ export const TypeNamesArray = [
 	'contentcreator',
 	'artist',
 	'playtester',
+	'producer',
 	'shop',
 	'publisher',
 	'content',
 	'honor',
 	'event',
-	'investor',
+	'sponsor',
 	'type',
 	'mechanics',
 	'category',
@@ -60,7 +63,7 @@ export type TypeName =
 	| 'content'
 	| 'honor'
 	| 'event'
-	| 'investor'
+	| 'sponsor'
 	| 'type'
 	| 'mechanics'
 	| 'category'
@@ -72,7 +75,8 @@ export type TypeNameRole =
 	| 'contentcreator'
 	| 'artist'
 	| 'playtester'
-	| 'rulebookeditor';
+	| 'rulebookeditor'
+	| 'producer';
 
 export interface SubmissionPackage {
 	submission: any;
@@ -80,13 +84,14 @@ export interface SubmissionPackage {
 	relations: string[];
 	selects?: Record<string, string[]>;
 	multiselects?: Record<string, string[]>;
+	required?: string[]
 }
 
 import { BoardgameSubmissionPackage } from './Boardgame';
 import { ContentSubmissionPackage } from './Content';
 import { EventSubmissionPackage } from './Event';
 import { HonorSubmissionPackage } from './Honor';
-import { InvestorSubmissionPackage } from './Investor';
+import { SponsorSubmissionPackage } from './Sponsor';
 import { ManufacturerSubmissionPackage } from './Manufacturer';
 import { PersonSubmissionPackage } from './Person';
 import { PublisherSubmissionPackage } from './Publisher';
@@ -96,6 +101,7 @@ import { ContentcreatorSubmissionPackage } from './personRoles/Contentcreator';
 import { DesignerSubmissionPackage } from './personRoles/Designer';
 import { GraphicdesignerSubmissionPackage } from './personRoles/Graphicdesigner';
 import { PlaytesterSubmissionPackage } from './personRoles/Playtester';
+import { ProducerSubmissionPackage } from './personRoles/Producer';
 import { RulebookeditorSubmissionPackage } from './personRoles/Rulebookeditor';
 /*
  * return necessary data for submission page
@@ -112,8 +118,8 @@ export function getSubmissionPackage(type: TypeName): SubmissionPackage {
 			return HonorSubmissionPackage();
 		case 'manufacturer':
 			return ManufacturerSubmissionPackage();
-		case 'investor':
-			return InvestorSubmissionPackage();
+		case 'sponsor':
+			return SponsorSubmissionPackage();
 		case 'person':
 			return PersonSubmissionPackage();
 		case 'publisher':
@@ -132,5 +138,7 @@ export function getSubmissionPackage(type: TypeName): SubmissionPackage {
 			return PlaytesterSubmissionPackage();
 		case 'rulebookeditor':
 			return RulebookeditorSubmissionPackage();
+		case 'producer':
+			return ProducerSubmissionPackage();
 	}
 }

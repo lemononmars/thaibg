@@ -37,8 +37,8 @@
 </script>
 
 <Seo title="Event" />
-<div class="flex flex-row justify-center mt-4">
-	<div class="flex flex-col w-full lg:w-1/4 text-left m-4">
+<div class="flex flex-col lg:flex-row justify-center mt-4">
+	<div class="flex flex-col w-full lg:w-1/4 text-left p-4">
 		<img
 			src={getImageURL('event', eventData.Event_picture)}
 			alt="image of {eventData.Event_name}"
@@ -50,7 +50,7 @@
 			<h2>Period</h2>
 			<p>{eventData.Event_time_start || ''} - {eventData.Event_time_end || ''}</p>
 			<h2>Location</h2>
-			<p>{eventData.Event_location || 'N/A'}</p>
+			<p>{eventData.Event_location || $_('incomplete')}</p>
 			<h2>Link</h2>
 			{#if eventData.Event_link}
 				<a href={eventData.Event_link} target="_blank">{eventData.Event_link}</a>
@@ -58,9 +58,9 @@
 				{$_('incomplete')}
 			{/if}
 			<h2>Organizer</h2>
-			<p>{eventData.Event_organizer}</p>
+			<p>{eventData.Event_organizer || $_('incomplete')}</p>
 			<h2>Description</h2>
-			<p>{@html eventData.Event_description || 'N/A'}</p>
+			<p>{@html eventData.Event_description || $_('incomplete')}</p>
 		</div>
 		{#if user}
 			<button class="btn">Suggest edit</button>
@@ -72,7 +72,7 @@
 		{:then boardgames}
 			{#if boardgames}
 				<h2>Board games available at this event</h2>
-				<div class="grid grid-cols-2 lg:grid-cols-3 gap-4">
+				<div class="grid grid-cols-2 lg:grid-cols-3 gap-1 lg:gap-4">
 					{#each boardgames as bg}
 						<BoardgameCard {bg} />
 					{:else}

@@ -27,10 +27,11 @@
 	import Spinner from '$lib/components/Spinner.svelte';
 	import BoardgameCard from '$lib/components/BoardgameCard.svelte';
 	import Social from '$lib/components/Social.svelte';
-	import { CheckCircleIcon, LinkIcon, SlashIcon } from 'svelte-feather-icons';
+	import { LinkIcon} from 'svelte-feather-icons';
 	import { onMount } from 'svelte';
 	import type { Shop } from '$lib/datatypes';
 	import ShopStatusBadge from '$lib/components/ShopStatusBadge.svelte';
+	import {_} from 'svelte-i18n'
 
 	export let shopData: Shop;
 	let promiseBoardgames: Promise<Shop[]>;
@@ -56,30 +57,22 @@
 		<h2>Status</h2>
 		<ShopStatusBadge status={shopData.Shop_status} showText={true} />
 		<h2>Type</h2>
-		<div class="flex flex-row items-center gap-2">
-			{#if shopData.Shop_cafe}
-				<CheckCircleIcon size="1x" class="text-success" />
+		<div class="flex flex-row gap-1">
+			{#each shopData.Shop_type || [] as type}
+				<div class="badge">{type}</div>
 			{:else}
-				<SlashIcon size="1x" class="text-error" />
-			{/if}
-			<p>Cafe</p>
-			<div class="w-2" />
-			{#if shopData.Shop_online}
-				<CheckCircleIcon size="1x" class="text-success" />
-			{:else}
-				<SlashIcon size="1x" class="text-error" />
-			{/if}
-			<p>Online</p>
+				<div>{$_('incomplete')}</div>
+			{/each}
 		</div>
 		<h2>Location</h2>
 		<p>{shopData.Shop_location || ''}</p>
-		<p>{shopData.Shop_province || 'N/A'}</p>
+		<p>{shopData.Shop_province || $_('incomplete')}</p>
 		<h2>Since</h2>
-		<p>{shopData.Shop_start_year || 'N/A'}</p>
+		<p>{shopData.Shop_start_year || $_('incomplete')}</p>
 		<h2>Size</h2>
-		<p>{shopData.Shop_capacity || 'N/A'}</p>
+		<p>{shopData.Shop_capacity || $_('incomplete')}</p>
 		<h2>Description</h2>
-		<p class="break-words">{@html shopData.Shop_description || 'N/A'}</p>
+		<p class="break-words">{@html shopData.Shop_description || $_('incomplete')}</p>
 
 		<div class="divider" />
 
@@ -110,7 +103,7 @@
 							<BoardgameCard {bg} />
 						{/if}
 					{:else}
-						N/A
+						{$_('incomplete')}
 					{/each}
 				</div>
 				<h2>Board games available to buy or get</h2>
@@ -120,7 +113,7 @@
 							<BoardgameCard {bg} />
 						{/if}
 					{:else}
-						N/A
+						{$_('incomplete')}
 					{/each}
 				</div>
 			{/if}

@@ -20,50 +20,44 @@
 	import { _ } from 'svelte-i18n';
 	import DataView from '$lib/components/DataView.svelte';
 	import type { Shop } from '$lib/datatypes';
+	import {ShopTypeArray, ShopStatusArray} from '$lib/datatypes/Shop'
 
-	export let shops;
-	export let search; // from url params
+	export let shops: Shop[];
+	export let search: string; // from url params
 
-	const optionList = ['all', 'yes', 'no'];
-	const optionShopSuffix = ['online', 'physical', 'cafe'];
-	const optionShopStatus = ['all', 'active', 'inactive', 'closed'];
-	let optionSelects: number[] = optionShopSuffix.map(() => 0);
+	const optionShopStatus = ['all', ...ShopStatusArray];
+	const optionShopType = ['all', ...ShopTypeArray]
 	let optionStatusSelect: number = 0;
+	let optionTypeSelect: number = 0;
+	let sorted = 0;
+	let searchString = search || '';
 
 	$: shopsFiltered = shops.filter(
 		(s) =>
-			optionShopSuffix.every(
-				(sf, idx) =>
-					optionSelects[idx] == 0 ||
-					(optionSelects[idx] == 1 && s['Shop_' + sf]) ||
-					(optionSelects[idx] == 2 && !s['Shop_' + sf])
-			) &&
+			(optionTypeSelect == 0 || s.Shop_type?.includes(optionShopType[optionTypeSelect])) &&
 			(optionStatusSelect == 0 || s.Shop_status === optionShopStatus[optionStatusSelect]) &&
 			(searchString === '' ||
-				s.Shop_name?.toLowerCase().includes(searchString.toLowerCase()) ||
-				s.Shop_name_th?.includes(searchString))
+				s.Shop_name?.toLowerCase().includes(searchString.toLowerCase())
+			)
 	);
-
-	let sorted = 0;
-	let searchString = search || '';
 	$: shopsSorted = shopsFiltered.sort((a, b) => compare(sorted, a, b));
 
-	// TODO: allow advanced search settings
-	function compare(s: number, a, b) {
-		if (s == 0) return b.Shop_name?.localeCompare(a.Shop_name);
-		else return a.Shop_name?.localeCompare(b.Shop_name);
+	function compare(s: number, a: Shop, b: Shop) {
+		if (s == 0) return a.Shop_name?.localeCompare(b.Shop_name);
+		else return b.Shop_name?.localeCompare(a.Shop_name);
 	}
 
 	let showAdvancedFilter = false;
 
 	function resetSearch() {
-		optionSelects = optionShopSuffix.map(() => 0);
+		optionStatusSelect = 0
+		optionTypeSelect = 0
 		searchString = '';
 	}
 
 	const tableInfo = {
-		headers: ['Status', 'Province', 'Online', 'Physical', 'Cafe'],
-		body: ['Shop_status', 'Shop_province', 'Shop_online', 'Shop_physical', 'Shop_cafe']
+		headers: ['Status', 'Province', 'Type'],
+		body: ['Shop_status', 'Shop_province', 'Shop_type']
 	};
 </script>
 
@@ -100,22 +94,20 @@
 							{/each}
 						</div>
 					</div>
-					{#each optionShopSuffix as sf, sf_idx}
-						<div class="flex flex-col justify-center">
-							<h3>{sf}</h3>
-							<div class="btn-group">
-								{#each optionList as list, idx}
-									<div
-										class="btn btn-xs"
-										class:btn-active={idx == optionSelects[sf_idx]}
-										on:click={() => (optionSelects[sf_idx] = idx)}
-									>
-										{list}
-									</div>
-								{/each}
-							</div>
+					<div class="flex flex-col justify-center">
+						<h3>type</h3>
+						<div class="btn-group">
+							{#each optionShopType as type, idx}
+								<div
+									class="btn btn-xs"
+									class:btn-active={idx == optionTypeSelect}
+									on:click={() => (optionTypeSelect = idx)}
+								>
+									{type}
+								</div>
+							{/each}
 						</div>
-					{/each}
+					</div>
 				</div>
 			</div>
 		{/if}

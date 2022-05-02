@@ -7,7 +7,6 @@ export interface Playtester extends PlaytesterSubmission {
 export const PlaytesterDatabaseKeys = [
 	'Playtester_name',
 	'Playtester_name_th',
-	'Playtester_team',
 	'Playtester_link',
 	'Playtester_description',
 	'Playtester_show'
@@ -17,7 +16,6 @@ export interface PlaytesterSubmission {
 	Playtester_show: boolean;
 	Playtester_name: string;
 	Playtester_name_th: string;
-	Playtester_team: string;
 	Playtester_description: string;
 	Playtester_link: string;
 }
