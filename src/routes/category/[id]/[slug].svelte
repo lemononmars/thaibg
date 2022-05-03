@@ -29,6 +29,7 @@
 	import BoardgameCard from '$lib/components/BoardgameCard.svelte';
 	import { getImageURL, getDefaultImageURL } from '$lib/supabase';
 	import { onMount } from 'svelte';
+	import EditButton from '$lib/components/EditButton.svelte';
 
 	export let user, catData;
 	let promiseBoardgames;
@@ -87,7 +88,7 @@
 			</div>
 		{/if}
 		{#if user && !user.guest}
-			<button class="btn">Suggest edit</button>
+			<EditButton type={'category'} id={catData.Category_ID}/>
 		{/if}
 	</div>
 </div>

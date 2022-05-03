@@ -7,6 +7,7 @@
 	];
 	// add person somewhere ?
 	$: creatorMenu = [
+		'person',
 		'designer',
 		'graphicdesigner',
 		'artist',

@@ -5,6 +5,7 @@ export interface Person extends PersonSubmission {
 	Playtester_ID: number;
 	Graphicdesigner_ID: number;
 	Artist_ID: number;
+	Producer_ID: number;
 	Person_slug: string;
 }
 
@@ -40,7 +41,8 @@ export const PersonRelationArray = [
 	'designer',
 	'graphicdesigner',
 	'playtester',
-	'rulebookeditor'
+	'rulebookeditor',
+	'producer'
 ];
 export type PersonRelation =
 	| 'artist'
@@ -48,7 +50,8 @@ export type PersonRelation =
 	| 'designer'
 	| 'graphicdesigner'
 	| 'playtester'
-	| 'rulebookeditor';
+	| 'rulebookeditor'
+	| 'producer';
 
 import type {
 	Artist,
@@ -56,7 +59,8 @@ import type {
 	Designer,
 	Graphicdesigner,
 	Playtester,
-	Rulebookeditor
+	Rulebookeditor,
+	Producer
 } from './personRoles';
 export type PersonRole =
 	| Artist
@@ -64,7 +68,8 @@ export type PersonRole =
 	| Designer
 	| Graphicdesigner
 	| Playtester
-	| Rulebookeditor;
+	| Rulebookeditor
+	| Producer;
 
 export const PersonSubmissionPackage = () => {
 	return {

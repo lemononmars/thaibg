@@ -38,7 +38,7 @@ export interface ShopSubmission {
 export const ShopStatusArray = ['active', 'inactive', 'closed'];
 export type ShopStatus = 'active' | 'inactive' | 'closed';
 
-export const ShopRelationArray = ['Boardgame'];
+export const ShopRelationArray = ['boardgame'];
 export const ShopTypeArray = ['online', 'physical', 'cafe', 'club', 'meetup']
 
 interface ShopRelation {

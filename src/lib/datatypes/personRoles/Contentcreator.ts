@@ -22,7 +22,7 @@ export interface ContentcreatorSubmission {
 	Contentcreator_link: string;
 }
 
-export const ContentcreatorRelationArray = ['Person', 'Content'];
+export const ContentcreatorRelationArray = ['person', 'content'];
 
 interface ContentcreatorRelation {
 	id: number;

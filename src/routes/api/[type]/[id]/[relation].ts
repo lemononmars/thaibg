@@ -12,9 +12,9 @@ import { TypeNamesArray } from '$lib/datatypes';
  * @param {string} select selected columns
  * @return {array} an array of objects, or error if the ID doesn't exist
  */
+/** @type {import('/api/[type]/[id]/[relation]').RequestHandler} */
 export async function get({ url, params }) {
 	let { type, id, relation } = params;
-	relation = params.relation?.toLowerCase() || '';
 
 	// sanitize
 	// make sure 'type' is correct
@@ -24,17 +24,17 @@ export async function get({ url, params }) {
 		relation !== 'relation'
 	)
 		return {
-			//status: 404,
-			message: `${type} is not a valid type`,
+			status: 404,
 			body: { message: 'cannot parse either type or relation.' }
 		};
 
 	// pick only selected columns
+	// also add appropriate prefix (e.g. picture => TBG_picture)
 	const selected = url.searchParams.get('select');
 	const selectedColumns = selected
 		? selected
 				.split(',')
-				.map((str) => getVarPrefix(type) + '_' + str)
+				.map((str: string) => getVarPrefix(type) + '_' + str)
 				.join(',')
 		: '*';
 
@@ -68,7 +68,25 @@ export async function get({ url, params }) {
 		if (error)
 			return {
 				status: 404,
-				message: `No person associated with ${type} found`
+				body: {message: `No person associated with this ${type} found`}
+			};
+		else
+			return {
+				status: 200,
+				headers: { 'Content-Type': 'application/json' },
+				body: data
+			};
+	}
+
+	if (type === 'person') {
+		const { data, error } = await from(getTableName(relation))
+			.select(`${selectedColumns}, Person!inner(*)`)
+			.eq(`Person.${getVarPrefix(relation)}_ID`, id);
+
+		if (error)
+			return {
+				status: 404,
+				body: {message: `No ${relation} associated with this person found`}
 			};
 		else
 			return {

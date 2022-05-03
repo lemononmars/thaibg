@@ -20,7 +20,7 @@ export interface PublisherSubmission {
 	Publisher_show: boolean;
 }
 
-export const PublisherRelationArray = ['Boardgame'];
+export const PublisherRelationArray = ['boardgame'];
 
 interface PublisherRelation {
 	id: number;

@@ -3,22 +3,24 @@
 	import type { SubmissionPackage } from '$lib/datatypes';
 	import { fromBucket, getVarPrefix } from '$lib/supabase';
 	import type {Alert} from '$lib/alert/alert.type'
-	import {handleAlert} from '$lib/alert/alert.store'
+	import { handleAlert} from '$lib/alert/alert.store'
 
-	export async function load({ session, params }) {
-		const type = params.type;
+	export async function load({ session, params, fetch }) {
+		const {type, id} = params;
 		const { user } = session
 
 		const adminSettings = await fetch('/api/adminsettings')
 		const data = await adminSettings.json()
+		const res = await fetch(`/api/${type}/${id}`)
+		const currentData = await res.json()
 
 		// redirect if
 		// * type is invalid 
-		// * creating a new entry is not allowed
-		// * creating a new entry is allowed for registered user, not guest
+		// * editing a new entry is not allowed
+		// * editing a new entry is allowed for registered user, not guest
 		if (!TypeSubmissionAllowed.includes(type) 
-			|| (!data[0].allowCreate)
-			|| (!data[0].allowGuestCreate && !user)) {
+			|| (!data[0].allowEdit)
+			|| (!data[0].allowGuestEdit && !user)) {
 
 			let newAlert: Alert = {
 				type: 'error',
@@ -26,10 +28,10 @@
 			}
 			if(!TypeSubmissionAllowed.includes(type))	
 				newAlert.text = `${type} is not a valid page.`
-			else if(!data[0].allowCreate) 
-				newAlert.text = 'Creating a new entry is not allowed. Please contact admin.'
+			else if(!data[0].allowEdit) 
+				newAlert.text = 'Editing a new entry is not allowed. Please contact admin.'
 			else 
-				newAlert.text = 'Please login to create a new entry.'
+				newAlert.text = 'Please login to edit an entry.'
 			handleAlert(newAlert)
 
 			return {
@@ -41,7 +43,8 @@
 		return {
 			props: {
 				data: getSubmissionPackage(type),
-				type: type
+				currentData,
+				type
 			}
 		};
 	}
@@ -83,14 +86,45 @@
 	import SearchMultipleSelect from '$lib/components/SearchMultipleSelect.svelte';
 	import UploadPicture from '$lib/components/UploadPicture.svelte';
 	import SveltyPicker from 'svelty-picker';
+	import {getImageURL, getDefaultImageURL} from '$lib/supabase'
 	import { _ } from 'svelte-i18n';
+	import {onMount} from 'svelte'
 
-	export let data: SubmissionPackage, type: string; // from load fucntion
-	const { submission, keys, relations, selects, multiselects, required } = data; // destruct
+	export let data: SubmissionPackage, type: string, currentData; // from load fucntion
+	const { submission, keys, relations, selects, multiselects } = data; // destruct
+	const varPrefix = getVarPrefix(type)
+	const currentDataID = currentData[varPrefix + '_ID']
 
 	// create an array for each relation
 	let relationMultiSelects: Record<string, string[]> = {};
 	relations.forEach((r) => (relationMultiSelects[r] = []));
+	let loadingRelationalData = true
+
+	// populate it with relational data
+	keys.forEach(k=>{
+		if(selects[k] || multiselects[k])
+			submission[k] = currentData[k]
+	})
+	onMount(async ()=>{
+		for(const r of relations) {
+			const res = await fetch(`/api/${type}/${currentDataID}/${r}`)
+			const data =  await res.json()
+			const relationPrefix = getVarPrefix(r)
+			if(!res.ok)
+				handleAlert({
+					type: 'error',
+					text: r + ' ' + res.statusText
+				})
+			else {
+				relationMultiSelects[r] = data.map((d)=>({
+					id: d[relationPrefix + '_ID'],
+					name: d[relationPrefix + '_name'],
+					name_th: d[relationPrefix + '_name_th']
+				}))
+			}
+		}
+		loadingRelationalData = false
+	})
 
 	// extra info
 	let comment: string;
@@ -109,16 +143,6 @@
 
 	async function handleSubmit() {
 		if (submitState != State.START && submitState != State.ERROR) return;
-		if (required && !required.every(r => !!submission[r])) {
-			const missingFields = required?.filter(r => !submission[r]).join(',')
-			const newAlert: Alert = {
-				type: 'error',
-				text: 'please fill all required fields: ' +  missingFields
-			}
-			handleAlert(newAlert)
-			return
-		}
-
 		submitState = State.SUBMITTING;
 
 		// attach submitter's info
@@ -130,18 +154,7 @@
 			username = error || !data ? 'guest' : data.username;
 		}
 
-		// generate a slug based on name (english)
-		// if only Thai name (_name_th) exists, treat it as no name
-		// might have to manually fix it in admin panel
-		let name = submission[getVarPrefix(type) + '_name'];
-		if (!name || name.length == 0) name = 'no-slug';
-
-		const slug = name
-			.toLowerCase()
-			.replace(/\s/g, '-') // replace white spaces by dashes
-			.replace(/[^\w\-]/g, ''); // remove non alphanumeric characters (except dashes of course)
-		submission[getVarPrefix(type) + '_slug'] = slug;
-
+		const slug = currentData[varPrefix + '_slug']
 		// rename picture with random ID for hashing purpose
 		for (const pf in pictureFiles) {
 			if(pictureFiles[pf]) {
@@ -152,13 +165,16 @@
 			}
 		}
 
+		// also add current data's ID so that we don't need to find it again
 		let res = await postSubmission({
-			content: submission,
+			content: {
+				...submission, [varPrefix + '_ID']: currentDataID
+			},
 			relations: relationMultiSelects,
 			pageType: type,
 			id,
 			username,
-			type: 'new',
+			type: 'edit',
 			comment
 		});
 		if (res.ok) {
@@ -182,58 +198,76 @@
 
 <Seo title="Create {type}" />
 
-<h1>{$_('page.create._')} {$_(`keyword.${type}`)}</h1>
+<svelte:window on:beforeunload={(e)=> {e.returnValue = '...'; return '...'}}/>
+
+<h1>{$_('page.edit._')} {$_(`keyword.${type}`)}</h1>
 <div class="text-gray-500">
 <!-- {JSON.stringify(submission)}
 {JSON.stringify(relationMultiSelects)} -->
 </div>
 {#if submitState == State.START || submitState == State.ERROR}
 	<form>
-		<div class="flex flex-col lg:flex-row lg:gap-10 place-items-start">
-			<div class="grid grid-cols-1 lg:grid-cols-2 items-center gap-2">
-				<!-- display the appropriate input type, based on key's name and selects/multiselects array-->
-				{#each keys as k}
-					<div class="justyfi-self-start lg:justify-self-end mx-2 flex flex-row gap-2">
-						<div>{$_(`key.${k}`)}</div>
-						<div class="text-error">{required?.includes(k)? '*' : ''}</div>
-					</div>
-					<div class="justify-self-start">
-						{#if selects[k]}
-							<select class="select select-bordered" bind:value={submission[k]}>
-								<option disabled selected value={null}>{$_('page.create.select')}</option>
-								{#each selects[k] as opt}
-									<option value={opt}>{$_(`option.${opt}`)}</option>
-								{/each}
-							</select>
-						{:else if multiselects[k]}
-							<MultipleSelect selectOptions={multiselects[k]} bind:selects={submission[k]} />
-						{:else if k.includes('_picture')}
-							<UploadPicture key={k} bind:pictureFile={pictureFiles[k]} />
-						{:else if k.includes('_time')}
-							<SveltyPicker
-								inputClasses="form-control"
-								format="yyyy-mm-dd"
-								bind:value={submission[k]}
-							/>
-						{:else if k.includes('show')}
-							<input type="checkbox" bind:checked={submission[k]} class="checkbox" />
-						{:else if k.includes('description')}
-							<textarea class="textarea textarea-bordered" bind:value={submission[k]} />
-						{:else}
-							<input type="text" class="input input-bordered" bind:value={submission[k]} />
-						{/if}
-					</div>
+		<div class="flex flex-col lg:grid lg:grid-cols-3 items-center gap-2">
+			<div class="text-info hidden lg:inline">Keys</div>
+			<div class="text-info hidden lg:inline">New data (leave blank if unchanged)</div>
+			<div class="text-info hidden lg:inline">Current data</div>
+			<div class="divider col-span-1 lg:col-span-3"></div>
+			<!-- display the appropriate input type, based on key's name and selects/multiselects array-->
+			{#each keys as k}
+				<div class="justify-self-start lg:justify-self-end mx-2 flex flex-row gap-2">
+					<div>{$_(`key.${k}`)}</div>
+				</div>
+				<div class="justify-self-center">
+					{#if selects[k]}
+						<select class="select select-bordered" bind:value={submission[k]}>
+							<option disabled selected value={null}>{$_('page.create.select')}</option>
+							{#each selects[k] as opt}
+								<option value={opt}>{$_(`option.${opt}`)}</option>
+							{/each}
+						</select>
+					{:else if multiselects[k]}
+						<MultipleSelect selectOptions={multiselects[k]} bind:selects={submission[k]} />
+					{:else if k.includes('_picture')}
+						<UploadPicture key={k} bind:pictureFile={pictureFiles[k]} />
+					{:else if k.includes('_time')}
+						<SveltyPicker
+							inputClasses="form-control"
+							format="yyyy-mm-dd"
+							bind:value={submission[k]}
+						/>
+					{:else if k.includes('show')}
+						<input type="checkbox" bind:checked={submission[k]} class="checkbox" />
+					{:else if k.includes('description')}
+						<textarea class="textarea textarea-bordered" bind:value={submission[k]} />
+					{:else}
+						<input type="text" class="input input-bordered" bind:value={submission[k]} />
+					{/if}
+				</div>
+				<!-- show current Data-->
+				<div class="text-success justify-self-start break-all">
+					{#if k.includes('_picture')}
+						<img
+							src={getImageURL(type, currentData[k])}
+							class="object-cover h-40 aspect-auto group-hover:scale-120"
+							alt="${type}"
+							on:error|once={(ev) => (ev.target.src = getDefaultImageURL(type))}
+						/>
+					{:else}
+						{currentData[k] || '-'}
+					{/if}
+				</div>
+			{/each}
+		</div>
+		<div class="divider" />
+		{#if loadingRelationalData}
+			<Spinner/>
+		{:else}
+			<div class="flex flex-col justify-center">
+				{#each relations as r}
+					<SearchMultipleSelect bind:selects={relationMultiSelects[r]} type={r} />
 				{/each}
 			</div>
-			<div>
-				<div class="divider block lg:hidden" />
-				<div class="flex flex-col justify-center">
-					{#each relations as r}
-						<SearchMultipleSelect bind:selects={relationMultiSelects[r]} type={r} />
-					{/each}
-				</div>
-			</div>
-		</div>
+		{/if}
 		<div class="divider" />
 		<div class="justify-self-end mx-2">{$_('page.create.comment')}</div>
 		<textarea
@@ -252,8 +286,7 @@
 	<Spinner />
 {:else if submitState == State.SUCCESS}
 	<p>{$_('page.create.status.success')}</p>
-	<br>
-	<p>{$_('page.create.status.submitmore')}</p><div class="btn" href="./create/{type}">Here</div>
+	<p>Go back to <a href="/{type}/{currentData[getVarPrefix(type) + '_ID']}"> {currentData[getVarPrefix(type) + '_name']}</a></p>
 {:else if submitState == State.ERROR}
 	<p class="text-red">{$_('page.create.status.error')}</p>
 	<div class="btn" on:click|preventDefault={handleSubmit}>{$_('page.create.submit')}</div>

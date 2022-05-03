@@ -40,7 +40,7 @@ export type ContentType =
 	| 'rulebook'
 	| 'analysis';
 
-export const ContentRelationArray = ['Boardgame', 'Contentcreator'];
+export const ContentRelationArray = ['boardgame', 'contentcreator'];
 
 export const ContentSubmissionPackage = () => {
 	return {

@@ -33,7 +33,7 @@ export interface HonorSubmission {
 export const HonorTypeArray = ['contest', 'competition', 'award'];
 export type HonorType = 'contest' | 'competition' | 'award';
 
-export const HonorRelationArray = ['Boardgame'];
+export const HonorRelationArray = ['boardgame'];
 export const HonorPosition = ['winner', 'runner-up', '1st runner-up', '2nd runner-up', 'nominee', 'popular vote']
 
 export interface HonorRelation {

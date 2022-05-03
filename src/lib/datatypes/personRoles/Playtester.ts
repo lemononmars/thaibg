@@ -20,7 +20,7 @@ export interface PlaytesterSubmission {
 	Playtester_link: string;
 }
 
-export const PlaytesterRelationArray = ['Person', 'Boardgame'];
+export const PlaytesterRelationArray = ['person', 'boardgame'];
 
 interface PlaytesterRelation {
 	id: number;

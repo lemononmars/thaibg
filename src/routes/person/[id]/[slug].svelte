@@ -21,8 +21,9 @@
 		let personData: PersonRole;
 		let contents: Content[] | Boardgame[];
 		let returnedData = [];
+		const roleVarPrefix = getVarPrefix(role)
 		// grab role information
-		const id = person[getVarPrefix(role) + '_ID'];
+		const id = person[roleVarPrefix + '_ID'];
 		let res = await fetch(`/api/${role}/${id}`);
 		if (!res) return { status: res.status };
 		personData = await res.json();
@@ -34,9 +35,10 @@
 		if (!res.ok) return { status: res.status };
 		contents = await res.json();
 
-		const info = ['description', 'name', , 'slug', 'link'];
-		info.forEach((i) => (returnedData[i] = personData[getVarPrefix(role) + '_' + i]));
-		returnedData['id'] = personData[getVarPrefix(role) + '_ID'];
+		// rename keys regardless of roles
+		const infoKeys = ['description', 'name', 'name_th', 'language', 'slug', 'link'];
+		infoKeys.forEach((i) => (returnedData[i] = personData[roleVarPrefix + '_' + i]));
+		returnedData['id'] = personData[roleVarPrefix + '_ID'];
 		returnedData['contents'] = contents;
 		return returnedData;
 	}
@@ -50,9 +52,10 @@
 	import BoardgameCard from '$lib/components/BoardgameCard.svelte';
 	import ContentCard from '$lib/components/ContentCard.svelte';
 	import ContactLinks from '$lib/components/ContactLinks.svelte';
+	import EditButton from '$lib/components/EditButton.svelte';
 	import { _ } from 'svelte-i18n';
 
-	export let person, role;
+	export let person: Person, role;
 	let activeroleTitles = personRoles.map((r) => !!person[getVarPrefix(r) + '_ID']);
 	let activeTab = 0;
 	if (role) activeTab = personRoles.indexOf(role);
@@ -104,6 +107,7 @@
 					email: person.Person_email
 				}}
 			/>
+			<EditButton type={'person'} id={person.Person_ID}/>
 		</div>
 	</div>
 
@@ -119,7 +123,7 @@
 						class:text-bold={idx == activeTab}
 						on:click={() => changeTab(idx)}
 					>
-						{$_(r)}
+						{$_(`keyword.${r}`)}
 					</a>
 				{/if}
 			{/each}
@@ -130,11 +134,15 @@
 			{:then res}
 				{#if res}
 					<div>
-						<h2>{$_(personRoles[activeTab])}'s Name</h2>
+						<h2>{$_(`keyword.${personRoles[activeTab]}`)}'s Name</h2>
 						<p>{res.name || '-'}</p>
-						<h2>{$_(personRoles[activeTab])}'s Description</h2>
+						<h2>{$_(`keyword.${personRoles[activeTab]}`)}'s Description</h2>
 						<p>{@html res.description || '-'}</p>
-						<h2>{$_(personRoles[activeTab])}'s Team</h2>
+						{#if personRoles[activeTab] === 'rulebookeditor'}
+							<h2>Languages</h2>
+							<p>{res.language}</p>
+						{/if}
+						<EditButton type={personRoles[activeTab]} id={res.id}/>
 					</div>
 
 					<div class="divider" />

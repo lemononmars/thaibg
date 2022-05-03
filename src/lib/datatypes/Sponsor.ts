@@ -21,7 +21,7 @@ export interface SponsorSubmission {
 	Sponsor_picture: string;
 }
 
-export const SponsorRelationArray = ['Boardgame'];
+export const SponsorRelationArray = ['boardgame'];
 
 interface SponsorRelation {
 	id: number;

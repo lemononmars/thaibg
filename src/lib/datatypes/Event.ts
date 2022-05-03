@@ -28,7 +28,6 @@ export interface EventSubmission {
 	Event_organizer: string;
 	Event_type: EventType;
 	Event_picture: string;
-	Shop_ID: number;
 }
 
 export const EventTypeArray = [
@@ -49,7 +48,7 @@ export type EventType =
 	| 'award'
 	| 'sale';
 
-export const EventRelationArray = ['Boardgame', 'Shop']; // Question: how to add 'Person' | 'Designer' ?
+export const EventRelationArray = ['boardgame'];
 
 interface EventRelation {
 	id: number;

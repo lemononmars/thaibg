@@ -53,16 +53,16 @@ export type BoardgameStatus = 'pending' | 'planned' | 'prototype' | 'published';
 
 // split for readablility
 const BoardgamePersonRelation = [
-	'Designer',
-	'Artist',
-	'Graphicdesigner',
-	'Rulebookeditor',
-	'Playtester',
-	"Producer",
+	'designer',
+	'artist',
+	'graphicdesigner',
+	'rulebookeditor',
+	'playtester',
+	"producer",
 ];
-const BoardgameInfoRelation = ['Publisher', 'Manufacturer', 'Sponsor'];
-const BoardgameProperties = ['Type', 'Mechanics', 'Category'];
-const BoardgameETCRelation = ['Event', 'Honor', 'Shop'];
+const BoardgameInfoRelation = ['publisher', 'manufacturer', 'sponsor'];
+const BoardgameProperties = ['type', 'mechanics', 'category'];
+const BoardgameETCRelation = ['event', 'honor', 'shop'];
 
 export const BoardgameRelationArray = [
 	...BoardgamePersonRelation,
@@ -81,7 +81,6 @@ export const BoardgameSubmissionPackage = () => {
 		},
 		multiselects: {},
 		required: [
-			"TBG_released",
 			"TBG_status",
 		]
 	};

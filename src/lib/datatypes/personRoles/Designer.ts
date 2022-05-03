@@ -20,7 +20,7 @@ export interface DesignerSubmission {
 	Designer_link: string;
 }
 
-export const DesignerRelationArray = ['Person', 'Boardgame'];
+export const DesignerRelationArray = ['person', 'boardgame'];
 
 interface DesignerRelation {
 	id: number;

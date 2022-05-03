@@ -20,7 +20,7 @@ export interface ProducerSubmission {
 	Producer_link: string;
 }
 
-export const ProducerRelationArray = ['Person', 'Boardgame'];
+export const ProducerRelationArray = ['person', 'boardgame'];
 
 interface ProducerRelation {
 	id: number;

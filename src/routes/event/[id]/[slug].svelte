@@ -26,6 +26,7 @@
 	import type { Event, Boardgame } from '$lib/datatypes';
 	import { user } from '$lib/user';
 	import { onMount } from 'svelte';
+	import EditButton from '$lib/components/EditButton.svelte';
 	import { _ } from 'svelte-i18n';
 
 	export let eventData: Event;
@@ -63,7 +64,7 @@
 			<p>{@html eventData.Event_description || $_('incomplete')}</p>
 		</div>
 		{#if user}
-			<button class="btn">Suggest edit</button>
+			<EditButton type={'event'} id={eventData.Event_ID}/>
 		{/if}
 	</div>
 	<div class="text-center w-full lg:w-3/4">

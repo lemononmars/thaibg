@@ -25,7 +25,7 @@
 	);
 	const tableInfo = {
 		headers: ['Start', 'End', 'Organizer'],
-		body: ['Event_start', 'Event_end', 'Event_organizer']
+		body: ['Event_time_start', 'Event_time_end', 'Event_organizer']
 	};
 </script>
 

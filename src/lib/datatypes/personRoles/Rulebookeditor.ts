@@ -22,7 +22,7 @@ export interface RulebookeditorSubmission {
 	Rulebookeditor_language: Array<string>;
 }
 
-export const RulebookeditorRelationArray = ['Person', 'Boardgame'];
+export const RulebookeditorRelationArray = ['person', 'boardgame'];
 export const RulebookeditorLanguage = ['Thai', 'English', 'German', 'Chinese'];
 
 interface RulebookeditorRelation {

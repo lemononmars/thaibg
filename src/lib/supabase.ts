@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { insert } from 'svelte/internal';
 
 type SupaTable =
 	| 'profiles'
@@ -35,7 +36,8 @@ type SupaTable =
 	| 'Sponsor'
 	| 'Sponsor_Relation'
 	| 'Type'
-	| 'Type_Relation';
+	| 'Type_Relation'
+	| 'Admin_Settings';
 type SupaStorageBucket = 'avatars' | 'images' | 'public';
 
 // TODO: not hard-code this?
@@ -123,37 +125,48 @@ interface submissionData {
  * @returns {Promise} promise object with {status: ..., message: ...}
  */
 export async function addToSubmission(
-	submissionData: submissionData
+	submissionData: submissionData,
+	requireApproval: boolean
 ): Promise<Record<string, any>> {
+	// find a new unique ID for this submission
 	const IDColumn = 'id';
 	const index = await findNewUniqueID('Submission', IDColumn);
+	const newSubmission = {
+		id: index,
+		Submission_type: submissionData.type,
+		Submission_content: JSON.stringify(submissionData.content),
+		Submission_relations: JSON.stringify(submissionData.relations),
+		Submission_page_type: submissionData.pageType,
+		Submission_user_ID: submissionData.id,
+		Submission_username: submissionData.username,
+		Submission_comment: submissionData.comment,
+		Submission_date: new Date(),
+		Submission_status: requireApproval? 'pending' : 'accepted'
+	}
 
 	const { error } = await from('Submission').insert([
-		{
-			id: index,
-			Submission_type: submissionData.type,
-			Submission_content: JSON.stringify(submissionData.content),
-			Submission_relations: JSON.stringify(submissionData.relations),
-			Submission_page_type: submissionData.pageType,
-			Submission_user_ID: submissionData.id,
-			Submission_username: submissionData.username,
-			Submission_comment: submissionData.comment,
-			Submission_date: new Date(),
-			Submission_status: 'pending'
-		}
+		newSubmission
 	], {
-    returning: 'minimal'
-  });
+   	returning: 'minimal'
+  	});
 	if (error) return { status: 500, body: error };
 
-	/* TODO: allow adding directly when needed
-  addToDatabase(
-    submissionData.Submission_content, 
-    submissionData.Submission_pageType,
-    submissionData.type
-  )
-  */
-	return { status: 201, body: '' };
+	// if admin approval is not require, also add it to the database
+	if(!requireApproval) {
+		const res = await addToDatabase(
+			newSubmission.Submission_content,
+			newSubmission.Submission_page_type,
+			newSubmission.Submission_type
+		);
+		await addToDatabaseRelation(
+			newSubmission.Submission_relations,
+			newSubmission.Submission_page_type,
+			newSubmission.Submission_type,
+      	res.body.index
+		);
+  	}
+
+	return { status: 202, body: 'successful' };
 }
 
 // happen on admin page
@@ -163,16 +176,13 @@ export async function changeSubmissionStatus(
 	newStatus: string
 ): Promise<Record<string, any>> {
 	// retrieve only submission status and type for now
-	console.log('retreiving submission info');
-	const { data: data1 } = await from('Submission')
-		.select('Submission_status, Submission_relations, Submission_type')
+	const { data: metadata } = await from('Submission')
+		.select('Submission_status, Submission_type')
 		.eq('id', id)
 		.single();
 
-	console.log(newStatus);
 	// make sure it hasn't been approved already
-	if (newStatus === 'approved' && data1.Submission_status !== 'approved') {
-		console.log('approved! about to add');
+	if (newStatus === 'approved' && metadata.Submission_status !== 'approved') {
 		const { data, error } = await from('Submission')
 			.select('Submission_content, Submission_page_type, Submission_relations')
 			.eq('id', id)
@@ -182,18 +192,18 @@ export async function changeSubmissionStatus(
 		const res = await addToDatabase(
 			data.Submission_content,
 			data.Submission_page_type,
-			data1.Submission_type
+			metadata.Submission_type
 		);
 		await addToDatabaseRelation(
 			data.Submission_relations,
 			data.Submission_page_type,
-			data1.Submission_type,
-      res.body.index
+			metadata.Submission_type,
+      	res.body.index
 		);
 	}
 
 	// update submission status
-	const { data, error } = await from('Submission')
+	const { error } = await from('Submission')
 		.update([
 			{
 				Submission_status: newStatus
@@ -207,7 +217,7 @@ export async function changeSubmissionStatus(
 
 	return { status: 202, body: 'successful'};
 
-	// TODO: deal with reject
+	// TODO: deal with reject, for any reason (like bad data, incomplete entries, etc)
 }
 
 async function addToDatabase(
@@ -217,12 +227,9 @@ async function addToDatabase(
 ): Promise<Record<string, any>> {
 	const parse = JSON.parse(JSONstring);
 	if (submissionType === 'new') {
-		console.log('adding a new entry to database');
 		const IDColumn = getVarPrefix(type) + '_ID';
 		const index = await findNewUniqueID(type, IDColumn);
 
-		console.log(parse, JSONstring, typeof JSONstring);
-		console.log(IDColumn, index);
 		const { error: newError } = await from(getTableName(type)).insert(
 			[
 				{
@@ -236,41 +243,56 @@ async function addToDatabase(
 		);
 		if (newError) throw newError;
 		return { 
-      status: 201, 
-      body: {
-        message: 'new entry created',
-        index
-      }
+			status: 201, 
+			body: {
+			message: 'new entry created',
+			index
+		}
     };
 	}
 
-  // not yet used
-  // will need to debug later
+  // in case of edit,
+  // we can simply upsert the new entry
+  // the ID of the data should have been passed from edit page already
 	if (submissionType === 'edit') {
-		const { data: editData, error: editError } = await from(getTableName(type)).upsert([parse], {
+		const { error: editError } = await from(getTableName(type)).upsert([parse], {
 			returning: 'minimal'
 		});
+		if(editError)
+			return { 
+				status: 500, 
+				body: {
+					message: editError.message,
+				}
+			};
 		return { 
-      status: 202, 
-      body: {
-        message: `entry updated`,
-        index: parse[getVarPrefix(type) + '_ID']
-      }
-    };
+			status: 202, 
+			body: {
+				message: 'entry updated',
+				index: parse[getVarPrefix(type) + '_ID']
+			}
+		};
 	}
+}
+
+interface Relation {
+	id: number,
+	name: string,
+	name_th: string
 }
 
 async function addToDatabaseRelation(
 	JSONstring: string,
 	type: string,
 	submissionType: string,
-  index: number
+	index: number
 ) {
 	/*
+	index = type index (eg. boardgame/99)
   relationArrays has the shape
   {
-    Boardgame: [{id: 1, TBG_name: 'fun game'}, ...],
-    Contentcreator: [{id: 3, Contentcreator_name: 'Zemaki'}, ...]
+    Boardgame: [{id: 1, TBG_name: 'fun game', TBG_name_th: null}, ...],
+    Contentcreator: [{id: 3, Contentcreator_name: 'Zemaki', Contentcreator_name_th: null}, ...]
   }
 
     relationType - Boardgame
@@ -278,44 +300,144 @@ async function addToDatabaseRelation(
     relation - {id: 1, TBG_name: 'fun game'}
   */
 	const relationArrays = JSON.parse(JSONstring);
-  console.log('adding to relational database with: ', relationArrays)
+	const varPrefix = getVarPrefix(type)
 
-	for (const relationType of Object.keys(relationArrays)) {
-		const relationObjects = relationArrays[relationType];
-		for (const relation of relationObjects) {
+	// for new entries, simply create new rows
+	if(submissionType === 'new') {
+		for (const relationType of Object.keys(relationArrays)) {
+			const relationObjects: Relation[] = relationArrays[relationType];
+
 			// TODO: make sure to check all cases
-			const mainRelation = relationType === 'Boardgame' ? type : relationType; // swap
-      /*
-        presumably many lines
-      */
+			const mainRelation = relationType === 'boardgame' ? type : relationType; // swap
+			const relationTableName = (type === 'person' || relationType === 'person') 
+				? 'Person' 
+				: getTableName(mainRelation) + '_Relation';
+			const relationVarPrefix = getVarPrefix(relationType)
+			
+			/*
+			presumably many more lines
+			*/
 
-			const relationTableName = getTableName(mainRelation) + '_Relation';
-			const relationIndex = await findNewUniqueID(relationTableName, 'id');
+			// Finally, we can create and insert a new row
+			for (const relation of relationObjects) {
+				const relationIndex = await findNewUniqueID(relationTableName, 'id');
 
-      // Finally, we can create and insert a new row
-			const insertObject = {
-				id: relationIndex,
-				[getVarPrefix(relationType) + '_ID']: relation.id,
-				[getVarPrefix(type) + '_ID']: index
-			};
-			console.log('inserting - ', insertObject);
-			const { error } = await from(relationTableName).insert([insertObject], {
-				returning: 'minimal'
-			});
-			if (error) throw error;
+				let insertObject: Object = {}
+				if(relationTableName === 'Person')
+					insertObject = {
+						[relationVarPrefix + '_ID']: relation.id,
+						[varPrefix + '_ID']: index
+					};
+				else
+					insertObject = {
+						id: relationIndex,
+						[relationVarPrefix + '_ID']: relation.id,
+						[varPrefix + '_ID']: index
+					}
+				const { error } = await from(relationTableName).upsert([insertObject], {
+					returning: 'minimal'
+				});
+				if (error) throw error;
+			}
+		}
+
+		return {
+			status: 200,
+			body: {
+				message: 'relational data are added successfullly!'
+			}
 		}
 	}
 
+	// this is where things get complicated ....
+	if(submissionType === 'edit') {
+		for (const relationType of Object.keys(relationArrays)) {
+			const relationObjects: Relation[] = relationArrays[relationType];
 
-	// // this is where things get complicated ....
-	// if(submissionType === 'edit') {
-	//   let {data: editData, error: editError} = await from(getTableName(type))
-	//     .upsert([JSON.parse(JSONstring)], {
-	//       returning: "minimal"
-	//     })
+			// TODO: make sure to check all cases
+			const mainRelation = relationType === 'boardgame' ? type : relationType; // swap
+			const relationTableName = (type.toLocaleLowerCase() === 'person' || relationType.toLocaleLowerCase() === 'person') 
+				? 'Person' 
+				: getTableName(mainRelation) + '_Relation';
+			const relationVarPrefix = getVarPrefix(relationType)
 
-	//     return {status: 'entry updated'}
-	// }
+			// retrieve current data so that we can decide
+			// whether to add or remove each entry
+			const {data: currentRelationObjects} = await from(relationTableName).select('*').eq(`${varPrefix}_ID`, index)
+
+			// First, delete entries
+			// i.e. in the table, but not in the submission
+			if(currentRelationObjects)
+				for (const currentRelation of currentRelationObjects) {
+					if(!relationObjects || relationObjects.some(r => 
+						r.id == currentRelation[relationVarPrefix + '_ID']
+					))
+						continue;
+
+					// for person, do not remove the row
+					// make the corresponding entry null instead
+					if(relationTableName === 'Person') {
+						let insertObject: Record<string, number> = {}
+						if(type === 'person') {
+							insertObject['Person_ID'] = index
+							insertObject[relationVarPrefix + '_ID'] = null
+						}
+						else {
+							insertObject['Person_ID'] = currentRelation['Person_ID']
+							insertObject[varPrefix + '_ID'] = null
+						}
+						const {error} = await from(relationTableName)
+							.upsert([
+								insertObject
+							])
+					}
+					else {
+						const { error } = await from(relationTableName)
+							.delete()
+							.eq('id', currentRelation.id);
+						if (error) throw error;
+					}
+				}
+
+			// Then, add new entries
+			// i.e. in the submission, but not already in the table
+			if(relationObjects)
+				for (const relation of relationObjects) {
+					if(!currentRelationObjects || currentRelationObjects.some(cr => 
+						cr[relationVarPrefix + '_ID'] == relation.id
+					))
+						continue;
+
+					let insertObject: Object = {}
+					// when adding person relation, do not add a new row
+					if(relationTableName === 'Person')
+						insertObject = {
+							[relationVarPrefix + '_ID']: relation.id,
+							[varPrefix + '_ID']: index
+						};
+					else {
+						const relationIndex = await findNewUniqueID(relationTableName, 'id');
+						insertObject = {
+							id: relationIndex,
+							[relationVarPrefix + '_ID']: relation.id,
+							[varPrefix + '_ID']: index
+						}
+					}
+
+					const { error } = await from(relationTableName).upsert([insertObject], {
+						returning: 'minimal'
+					});
+					if (error) throw error;
+				}
+		}
+
+		return {
+			status: 200,
+			body: {
+				message: 'relational data are added successfullly!'
+			}
+		}
+	}
 }
 
 

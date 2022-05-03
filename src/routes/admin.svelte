@@ -1,19 +1,34 @@
 <script lang=ts context=module>
 	import { from } from '$lib/supabase';
 
-	export async function load({ session }) {
-		console.log(session)
+	interface Settings {
+		requireApproval: boolean,
+		allowCreate: boolean,
+		allowGuestCreate: boolean,
+		allowEdit: boolean,
+		allowGuestEdit: boolean,
+		lastCache: Date,
+	}
+
+	export async function load({ session, fetch }) {
 		const { user } = session;
+		// TODO: use admin role
 		if (user?.role !== 'authenticated')
 			return {
 				status: 401,
 				redirect: '/'
 			};
-		const { data, error } = await from('Submission').select('*').eq('Submission_status', 'pending');
-		if (error) throw error;
+		
+		const {data: submissionData, error: error1 } = await from('Submission').select('*').eq('Submission_status', 'pending');
+		if (error1) throw error1;
+		const res = await fetch('/api/adminsettings')
+		const settings = await res.json()
+		if (!res.ok) throw res.statusText
+
 		return {
 			props: {
-				data
+				data: submissionData,
+				settings: settings[0]
 			}
 		};
 	}
@@ -33,11 +48,31 @@
       })
 		return res;
 	}
+
+	export async function saveSettings(settings: Settings) {
+		const res = await fetch('/api/post/adminsettings', {
+         method: 'POST',
+         cache: 'default',
+         credentials: 'same-origin',
+         headers: {
+            'Content-Type': 'application/json'
+         },
+         body: JSON.stringify(
+				settings
+			)
+      })
+		return res;
+	}
 </script>
 
 <script lang=ts>
-	export let data;
+	import {alerts, handleAlert} from '$lib/alert'
+	import type {Alert} from '$lib/alert/alert.type'
+	export let data, settings: Settings;
 	// to be paginated?
+
+	let isCaching: boolean = false
+	let isSaving: boolean = false
 
 	const tableInfo = {
 		headers: ['ID', 'Type', 'Page type', 'Username', 'Date', 'Content', 'Relation'],
@@ -54,12 +89,72 @@
 
 	async function decision(a: string, id: number) {
 		let res = await approval(a, id);
-		if (res.ok) alert('successfully ' + a + ' !');
-		else alert(res.status);
+		let newAlert: Alert
+		if (res.ok)
+			newAlert = {
+				type: 'success',
+				text: 'successfully ' + a + ' !'
+			}
+		else newAlert  = {
+				type: 'error',
+				text: res.statusText
+			}
+		handleAlert(newAlert)
+	}
+
+	function createCache(){
+		isCaching = true
+		// do stuff
+		setTimeout(()=> {
+			const newAlert: Alert = {
+					type: 'success',
+					text: 'Cache completed!'
+				}
+			handleAlert(newAlert)
+			isCaching = false
+			}, 1000
+		)
+	}
+
+	async function handleSave() {
+		isSaving = true
+		// make sure the policy agrees
+		if(!settings.allowCreate)
+			settings.allowGuestCreate = false
+		if(!settings.allowEdit)
+			settings.allowGuestEdit = false
+
+		const res = await saveSettings(settings)
+		let newAlert: Alert
+		if(res.ok) 
+			newAlert = {
+				type: 'success',
+				text: 'Settings saved!'
+			}
+		else
+			newAlert = {
+				type: 'success',
+				text: res.statusText
+			}
+		handleAlert(newAlert)
+		isSaving = false
 	}
 </script>
 
 <div class="overflow-x-auto w-full py-20">
+	<div class="flex flew-col gap-2">
+		<div>Admin approval require <input type="checkbox" class="checkbox" bind:checked={settings.requireApproval}></div>
+		<div>Allow create <input type="checkbox" class="checkbox" bind:checked={settings.allowCreate}></div>
+		{#if settings.allowCreate}
+			<div>Allow guest create <input type="checkbox" class="checkbox" bind:checked={settings.allowGuestCreate}></div>
+		{/if}
+		<div>Allow edit <input type="checkbox"  class="checkbox" bind:checked={settings.allowEdit}></div>
+		{#if settings.allowEdit}
+			<div>Allow guest edit <input type="checkbox"  class="checkbox" bind:checked={settings.allowGuestEdit}></div>
+		{/if}
+		<div>Last cache: {settings.lastCache} <div class="btn" on:click={createCache} class:loading={isCaching}>Cache now</div></div>
+		<div class="btn" on:click={handleSave} class:loading={isSaving}>Save settings</div>
+	</div>
 	<table class="table w-full">
 		<thead>
 			<tr>

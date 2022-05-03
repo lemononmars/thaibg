@@ -20,7 +20,7 @@ export interface ArtistSubmission {
 	Artist_link: string;
 }
 
-export const ArtistRelationArray = ['Person', 'Boardgame'];
+export const ArtistRelationArray = ['person', 'boardgame'];
 
 interface ArtistRelation {
 	id: number;

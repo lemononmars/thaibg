@@ -97,7 +97,6 @@
 		UsersIcon,
 		ClockIcon,
 		FeatherIcon,
-		EditIcon,
 		LinkIcon,
 		PackageIcon
 	} from 'svelte-feather-icons';
@@ -108,6 +107,7 @@
 	import { user } from '$lib/user';
 	import { _ } from 'svelte-i18n';
 	import BoardgameStatusBadge from '$lib/components/BoardgameStatusBadge.svelte';
+	import EditButton from '$lib/components/EditButton.svelte'
 
 	// these are singulars (not plurals) so that we can access the database easily
 	export let bg: Boardgame, type, mechanics, category, honor: Honor[];
@@ -228,13 +228,7 @@
 					</div>
 				</div>
 			{/if}
-			{#if user}
-				<div class="tooltip" data-tip="edit this page">
-					<div class="btn btn-square btn-secondary">
-						<EditIcon size="2x" />
-					</div>
-				</div>
-			{/if}
+			<EditButton type={'boardgame'} id={bg.TBG_ID}/>
 		</div>
 		<div class="flex flex-row justify-between items-center">
 			<div>

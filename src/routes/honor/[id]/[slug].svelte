@@ -22,6 +22,7 @@
 	import { getImageURL, getDefaultImageURL } from '$lib/supabase';
 	import type { Honor } from '$lib/datatypes';
 	import { user } from '$lib/user';
+	import EditButton from '$lib/components/EditButton.svelte';
 	import { _ } from 'svelte-i18n';
 
 	export let honorData: Honor;
@@ -30,6 +31,9 @@
 	const honorCategories = [
 		...new Set(honorRelation.map((h) => h.Honor_Relation[0].Honor_category))
 	];
+
+	// sort by some predetermined order
+	// like winner > 1st runner up > etc.
 	honorRelation = honorRelation.sort(
 		(a, b) => a.Honor_Relation[0].Honor_order - b.Honor_Relation[0].Honor_order
 	);
@@ -56,7 +60,7 @@
 		<div class="divider" />
 		<!-- social share-->
 		{#if user}
-			<button class="btn">Suggest edit</button>
+			<EditButton type={'honor'} id={honorData.Honor_ID}/>
 		{/if}
 	</div>
 	<div class="text-left w-full lg:w-3/4">

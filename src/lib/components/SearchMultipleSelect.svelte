@@ -1,13 +1,20 @@
 <script lang=ts>
-	import { getVarPrefix, getTableName } from '$lib/supabase';
+	import { getVarPrefix } from '$lib/supabase';
 	import { SearchIcon, DeleteIcon } from 'svelte-feather-icons';
+	import {_} from 'svelte-i18n'
 	import Spinner from './Spinner.svelte';
 
 	export let selects = [];
 	export let type: string;
 
+	interface simpleData {
+		id: number,
+		name?: string,
+		name_th?: string
+	}
+
 	let searchString: string = '';
-	let searchedData;
+	let searchedData: simpleData[];
 	let typingTimer;
 	let isTyping = false
 
@@ -35,7 +42,7 @@
 		isTyping = false
 	}
 
-	function select(data) {
+	function select(data: simpleData) {
 		// check whether the data is already in the array
 		if(selects.every(selected => selected.id != data.id))
 			selects = [...selects, data];
@@ -49,7 +56,7 @@
 		<!-- svelte-ignore a11y-label-has-associated-control -->
 		<label tabindex="0">
 			<div class="form-control">
-				<label class="label text-sm">{getTableName(type)}</label>
+				<label class="label text-sm">{$_(`keyword.${type}`)}</label>
 				<div class="input-group input-sm">
 					<input
 						type="text"

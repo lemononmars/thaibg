@@ -10,6 +10,24 @@ import { TypeNamesArray } from '$lib/datatypes';
  */
 export async function get({ params, url }) {
 	const type = params.type;
+	// special case: admin settings
+	if(type === 'adminsettings') {
+		const {data, error} = await from('Admin_Settings').select('*')
+		if(error)
+			return {
+				status: 500,
+				headers: { 'Content-Type': 'application/json' },
+				body: error
+			}
+		return {
+			status: 200,
+			headers: { 'Content-Type': 'application/json' },
+			body: data
+		}
+	}
+
+	// then, check if it is a valid type
+	// i.e. boardgame, designer, publisher, content, etc.
 	if (!TypeNamesArray.includes(type?.toLowerCase()))
 		return {
 			status: 404,
@@ -32,7 +50,7 @@ export async function get({ params, url }) {
 
 	if (error)
 		return {
-			status: 404,
+			status: 500,
 			body: error
 		};
 

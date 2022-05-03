@@ -13,6 +13,7 @@
 		"type": "Types",
 		"mechanics": "Mechanics",
 		"category": "Category",
+		"person": "Person",
 		"designer": "Designer",
 		"artist": "Artist",
 		"graphicdesigner": "Graphic Designer",
@@ -66,7 +67,7 @@
 			"obtainable": "Obtainable at these shops"
 		},
 		"create": {
-			"_": "Create new",
+			"_": "Create new ",
 			"submit": "Submit",
 			"comment": "Comment to admin",
 			"select": "Select one option",
@@ -76,6 +77,9 @@
 				"submitmore": "Click here if you want to submit another one!",
 				"error": "There was an error. Please try again"
 			}
+		},
+		"edit": {
+			"_": "Edit "
 		}
 	},
 	"navbar": {
@@ -402,6 +406,7 @@
 		"article": "Article",
 		"file": "File",
 		"playthrough": "Playthrough",
+		"howtoplay": "How to Play",
 		"review": "Review",
 		"preview": "Preview",
 		"rulebook": "Rulebook",

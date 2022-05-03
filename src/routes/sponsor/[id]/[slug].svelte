@@ -30,6 +30,7 @@
 	import { onMount } from 'svelte';
 	import BoardgameCard from '$lib/components/BoardgameCard.svelte';
 	import { getImageURL, getDefaultImageURL } from '$lib/supabase';
+	import EditButton from '$lib/components/EditButton.svelte';
 
 	export let user, sponsorData;
 	let promiseBoardgame;
@@ -46,7 +47,7 @@
 		{:else}
 			<div class="flex flex-col lg:flex-row lg:gap-4 w-full p-8 border-2 shadow-lg rounded-xl">
 				<img
-					src={sponsorData.Sponsor_thumbnail_url}
+					src={getImageURL('sponsor', sponsorData.Sponsor_picture)}
 					alt="image of {sponsorData.Sponsor_name}"
 					class="w-72 mask mask-hexagon-2"
 				/>
@@ -88,7 +89,7 @@
 			{/await}
 		{/if}
 		{#if user && !user.guest}
-			<button class="btn">Suggest edit</button>
+			<EditButton type={'sponsor'} id={sponsorData.Sponsor_ID}/>
 		{/if}
 	</div>
 </div>

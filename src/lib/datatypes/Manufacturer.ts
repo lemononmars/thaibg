@@ -23,7 +23,7 @@ export interface ManufacturerSubmission {
 	Manufacturer_picture: string;
 }
 
-export const ManufacturerRelationArray = ['Boardgame'];
+export const ManufacturerRelationArray = ['boardgame'];
 export const ManufacturerServiceArray = ['3d', 'organizer', 'card', 'board', 'component'];
 
 interface ManufacturerRelation {

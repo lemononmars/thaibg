@@ -13,6 +13,7 @@
 		"type": "ประเภท",
 		"mechanics": "กลไก",
 		"category": "หมวดหมู่",
+		"person": "บุคคล",
 		"designer": "นักออกแบบ",
 		"artist": "ศิลปิน",
 		"graphicdesigner": "นักออกแบบกราฟิก",
@@ -75,6 +76,9 @@
 				"submitmore": "กดปุ่มถัดไปถ้าต้องการส่งข้อมูลเพิ่ม",
 				"error": "ระบบมีปัญหา กรุณาส่งใหม่อีกที"
 			}
+		},
+		"edit": {
+			"_": "แก้ไข"
 		}
 	},
 	"navbar": {
@@ -157,7 +161,7 @@
 			"all": "ทั้งหมด",
 			"review": "รีวิว",
 			"preview": "พรีวิว",
-			"playthrough": "เล่นให้ดู",
+			"playthrough": "เล่นสาธิต",
 			"howtoplay": "วิธีเล่น",
 			"rulebook": "คู่มือ",
 			"analysis": "วิเคราะห์"
@@ -298,6 +302,7 @@
 		"article": "บทความ",
 		"file": "ไฟล์",
 		"playthrough": "เล่นสาธิต",
+		"howtoplay": "วิธีเล่น",
 		"review": "รีวิว",
 		"preview": "พรีวิว",
 		"rulebook": "หนังสือกฎ",

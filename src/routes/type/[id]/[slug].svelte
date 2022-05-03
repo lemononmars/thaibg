@@ -21,6 +21,7 @@
 	import { onMount } from 'svelte';
 	import BoardgameCard from '$lib/components/BoardgameCard.svelte';
 	import { getImageURL, getDefaultImageURL } from '$lib/supabase';
+	import EditButton from '$lib/components/EditButton.svelte';
 
 	export let user, typeData;
 	let boardgameData;
@@ -31,7 +32,6 @@
 
 		if (error) throw error;
 		boardgameData = data;
-		typeData.Type_picture = '/type/' + typeData.Type_picture;
 	});
 </script>
 
@@ -43,9 +43,9 @@
 		{:else if boardgameData}
 			<div class="flex flex-col lg:flex-row lg:gap-4 w-full p-8 border-2 shadow-lg rounded-xl">
 				<img
-					src={typeData.Type_picture}
+					src={getImageURL('type', typeData.Type_picture)}
 					alt="image of {typeData.Type_name}"
-					class="w-72 mask mask-hexagon-2"
+					class="w-72 mask mask-circle"
 				/>
 				<div>
 					<h1>{typeData.Type_name}</h1>
@@ -80,7 +80,7 @@
 			<Spinner />
 		{/if}
 		{#if user && !user.guest}
-			<button class="btn">Suggest edit</button>
+			<EditButton type={'type'} id={typeData.Type_ID}/>
 		{/if}
 	</div>
 </div>
