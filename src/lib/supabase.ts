@@ -1,43 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { insert } from 'svelte/internal';
 
-type SupaTable =
-	| 'profiles'
-	| 'Artist'
-	| 'Artist_Relation'
-	| 'Honor'
-	| 'Honor_Relation'
-	| 'Boardgame'
-	| 'Category'
-	| 'Category_Relation'
-	| 'Comment'
-	| 'Content'
-	| 'Creator'
-	| 'Creator_Relation'
-	| 'Designer'
-	| 'Designer_Relation'
-	| 'Event'
-	| 'Event_Relation'
-	| 'Graphicdesigner'
-	| 'Graphicdesigner_Relation'
-	| 'Mechanics'
-	| 'Mechanics_Relation'
-	| 'Manufacturer'
-	| 'Manufacturer_Relation'
-	| 'Person'
-	| 'Place'
-	| 'Place_Relation'
-	| 'Playtester'
-	| 'Playtester_Relation'
-	| 'Publisher'
-	| 'Publisher_Relation'
-	| 'Shop'
-	| 'Shop_Relation'
-	| 'Sponsor'
-	| 'Sponsor_Relation'
-	| 'Type'
-	| 'Type_Relation'
-	| 'Admin_Settings';
 type SupaStorageBucket = 'avatars' | 'images' | 'public';
 
 // TODO: not hard-code this?
@@ -111,7 +73,7 @@ type SubmissionType = 'create' | 'edit' | 'report';
 interface submissionData {
 	type: SubmissionType;
 	content: any;
-	relations: Record<string, string[]>;
+	relations: Record<string, any[]>;
 	pageType: string;
 	id: string;
 	username: string;
@@ -129,10 +91,11 @@ export async function addToSubmission(
 	requireApproval: boolean
 ): Promise<Record<string, any>> {
 	// find a new unique ID for this submission
-	const IDColumn = 'id';
-	const index = await findNewUniqueID('Submission', IDColumn);
-	const newSubmission = {
-		id: index,
+	const IDColumn: string = 'id';
+	const submissionIndex = await findNewUniqueID('Submission', IDColumn);
+	let index: number
+	let newSubmission = {
+		id: submissionIndex,
 		Submission_type: submissionData.type,
 		Submission_content: JSON.stringify(submissionData.content),
 		Submission_relations: JSON.stringify(submissionData.relations),
@@ -153,20 +116,53 @@ export async function addToSubmission(
 
 	// if admin approval is not require, also add it to the database
 	if(!requireApproval) {
+		// when creating a new person, we also create new roles
+		if(submissionData.pageType === 'person') {
+			let rolesContent = {}
+			for(const role of Object.keys(submissionData.relations)) {
+				const rolePrefix = getVarPrefix(role)
+				const res = await addToDatabase(
+					JSON.stringify(submissionData.relations[role][0]),
+					role,
+					newSubmission.Submission_type
+				);
+				rolesContent = {...rolesContent, [rolePrefix + '_ID']: res.body.index}
+				// once we finish creating the new role
+				// we need to change the argument for addToDatabaseRelation()
+				submissionData.relations[role] = [{
+					id: res.body.index,
+				}]
+			}
+			newSubmission.Submission_content = JSON.stringify({
+				...JSON.parse(newSubmission.Submission_content),
+				...rolesContent
+			})
+		}
+		// we add the person after roles because we need new role IDs 
 		const res = await addToDatabase(
 			newSubmission.Submission_content,
 			newSubmission.Submission_page_type,
 			newSubmission.Submission_type
 		);
-		await addToDatabaseRelation(
-			newSubmission.Submission_relations,
-			newSubmission.Submission_page_type,
-			newSubmission.Submission_type,
-      	res.body.index
-		);
+		index = res.body.index
+		
+		// finally, we add relational data that are not person's roles
+		if(submissionData.pageType !== 'person') 
+			await addToDatabaseRelation(
+				newSubmission.Submission_relations,
+				newSubmission.Submission_page_type,
+				newSubmission.Submission_type,
+				index
+			);
   	}
 
-	return { status: 202, body: 'successful' };
+	return { 
+		status: 202, 
+		body: {
+			message: 'successful',
+			index
+		}
+	};
 }
 
 // happen on admin page
@@ -229,7 +225,7 @@ async function addToDatabase(
 	if (submissionType === 'new') {
 		const IDColumn = getVarPrefix(type) + '_ID';
 		const index = await findNewUniqueID(type, IDColumn);
-
+		console.log('about to add ', type, ' with id ', index, ' to ', IDColumn, ' with info', parse)
 		const { error: newError } = await from(getTableName(type)).insert(
 			[
 				{
@@ -242,6 +238,7 @@ async function addToDatabase(
 			}
 		);
 		if (newError) throw newError;
+		console.log('successful!')
 		return { 
 			status: 201, 
 			body: {
@@ -278,7 +275,7 @@ async function addToDatabase(
 interface Relation {
 	id: number,
 	name: string,
-	name_th: string
+	name_th?: string
 }
 
 async function addToDatabaseRelation(
@@ -291,8 +288,8 @@ async function addToDatabaseRelation(
 	index = type index (eg. boardgame/99)
   relationArrays has the shape
   {
-    Boardgame: [{id: 1, TBG_name: 'fun game', TBG_name_th: null}, ...],
-    Contentcreator: [{id: 3, Contentcreator_name: 'Zemaki', Contentcreator_name_th: null}, ...]
+    boardgame: [{id: 1, TBG_name: 'fun game', TBG_name_th: null}, ...],
+    contentcreator: [{id: 3, Contentcreator_name: 'Zemaki', Contentcreator_name_th: null}, ...]
   }
 
     relationType - Boardgame
@@ -313,10 +310,6 @@ async function addToDatabaseRelation(
 				? 'Person' 
 				: getTableName(mainRelation) + '_Relation';
 			const relationVarPrefix = getVarPrefix(relationType)
-			
-			/*
-			presumably many more lines
-			*/
 
 			// Finally, we can create and insert a new row
 			for (const relation of relationObjects) {

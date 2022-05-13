@@ -286,7 +286,7 @@
 	<Spinner />
 {:else if submitState == State.SUCCESS}
 	<p>{$_('page.create.status.success')}</p>
-	<p>Go back to <a href="/{type}/{currentData[getVarPrefix(type) + '_ID']}"> {currentData[getVarPrefix(type) + '_name']}</a></p>
+	<p>Go back to <a href="/{type}/{currentData[getVarPrefix(type) + '_ID']}" class="text-info"> {currentData[getVarPrefix(type) + '_name']}</a></p>
 {:else if submitState == State.ERROR}
 	<p class="text-red">{$_('page.create.status.error')}</p>
 	<div class="btn" on:click|preventDefault={handleSubmit}>{$_('page.create.submit')}</div>

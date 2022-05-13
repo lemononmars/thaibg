@@ -1,34 +1,35 @@
 <script lang="ts">
 	import { _ } from 'svelte-i18n';
 	
-	$: boardgameMenu = [
+	const boardgameMenu = [
 		'boardgame',
-		// 'category', title: $_('navbar.boardgame.category') } // to be added as tags
+		'category'
 	];
 	// add person somewhere ?
-	$: creatorMenu = [
+	const creatorMenu = [
 		'person',
-		'designer',
+		/*'designer',
 		'graphicdesigner',
 		'artist',
 		'playtester',
 		'rulebookeditor',
+		'producer'*/
 		'manufacturer',
 	];
-	$: supporterMenu = [
+	const supporterMenu = [
 		'shop',
-		'contentcreator',
+		//'contentcreator',
 		'publisher',
 		'sponsor',
 	];
-	$: activityMenu = [
+	const activityMenu = [
 		'content',
 		'honor',
 		'event',
-		// 'crowdfunding', title: $_('crowdfunding') }
+		// 'crowdfunding'
 	];
 
-	$: menus = [boardgameMenu, creatorMenu, supporterMenu, activityMenu]
+	const menus = [boardgameMenu, creatorMenu, supporterMenu, activityMenu]
 	$: menuTitles = [$_('boardgame._'), $_('navbar.creator._'), $_('navbar.supporter._'), $_('navbar.activity._')]
 </script>
 

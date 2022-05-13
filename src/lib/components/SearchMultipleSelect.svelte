@@ -26,7 +26,7 @@
 
 	function stopTyping() {
 		clearTimeout(typingTimer)
-		typingTimer = setTimeout(search, 1000)
+		typingTimer = setTimeout(search, 500)
 	}
 
 	async function search() {

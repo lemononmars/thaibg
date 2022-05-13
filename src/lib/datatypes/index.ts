@@ -11,24 +11,24 @@ export * from './Mechanics';
 export * from './personRoles';
 
 export const TypeSubmissionAllowed = [
-	'boardgame',
-	'person',
-	'designer',
-	'graphicdesigner',
-	'contentcreator',
 	'artist',
+	'boardgame',
+	'category',
+	'content',
+	'contentcreator',
+	'designer',
+	'event',
+	'graphicdesigner',
+	'honor',
+	'manufacturer',
+	'person',
 	'playtester',
 	'producer',
-	'shop',
 	'publisher',
-	'content',
-	'honor',
-	'event',
-	'sponsor',
-	'category',
-	'manufacturer',
 	'rulebookeditor',
-	'crowdfunding'
+	'sponsor',
+	'shop',
+	//'crowdfunding'
 ];
 
 export const TypeNamesArray = [
@@ -87,22 +87,23 @@ export interface SubmissionPackage {
 	required?: string[]
 }
 
-import { BoardgameSubmissionPackage } from './Boardgame';
-import { ContentSubmissionPackage } from './Content';
-import { EventSubmissionPackage } from './Event';
-import { HonorSubmissionPackage } from './Honor';
-import { SponsorSubmissionPackage } from './Sponsor';
-import { ManufacturerSubmissionPackage } from './Manufacturer';
-import { PersonSubmissionPackage } from './Person';
-import { PublisherSubmissionPackage } from './Publisher';
-import { ShopSubmissionPackage } from './Shop';
 import { ArtistSubmissionPackage } from './personRoles/Artist';
+import { BoardgameSubmissionPackage } from './Boardgame';
+import { CategorySubmissionPackage } from './Category';
+import { ContentSubmissionPackage } from './Content';
 import { ContentcreatorSubmissionPackage } from './personRoles/Contentcreator';
 import { DesignerSubmissionPackage } from './personRoles/Designer';
+import { EventSubmissionPackage } from './Event';
 import { GraphicdesignerSubmissionPackage } from './personRoles/Graphicdesigner';
+import { HonorSubmissionPackage } from './Honor';
+import { ManufacturerSubmissionPackage } from './Manufacturer';
+import { PersonSubmissionPackage } from './Person';
 import { PlaytesterSubmissionPackage } from './personRoles/Playtester';
 import { ProducerSubmissionPackage } from './personRoles/Producer';
+import { PublisherSubmissionPackage } from './Publisher';
 import { RulebookeditorSubmissionPackage } from './personRoles/Rulebookeditor';
+import { ShopSubmissionPackage } from './Shop';
+import { SponsorSubmissionPackage } from './Sponsor';
 /*
  * return necessary data for submission page
  */
@@ -140,5 +141,7 @@ export function getSubmissionPackage(type: TypeName): SubmissionPackage {
 			return RulebookeditorSubmissionPackage();
 		case 'producer':
 			return ProducerSubmissionPackage();
+			case 'category':
+				return CategorySubmissionPackage();
 	}
 }

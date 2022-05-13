@@ -6,7 +6,6 @@ export * from './Rulebookeditor';
 export * from './Contentcreator';
 export * from './Producer';
 
-// no longer needed? because of getTableName and getPrefix?
 export const personDeveloperRoles = [
 	'artist',
 	'designer',

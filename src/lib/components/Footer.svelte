@@ -27,7 +27,7 @@
 		{ path: '/content', title: $_('content._') },
 		{ path: '/honor', title: $_('keyword.honor') },
 		{ path: '/event', title: $_('keyword.event') },
-		{ path: '/crowdfunding', title: $_('keyword.crowdfunding') }
+		//{ path: '/crowdfunding', title: $_('keyword.crowdfunding') }
 	];
 	$: websiteMenu = [
 		{ path: '/about', title: $_('navbar.website.about') },

@@ -76,7 +76,8 @@
 				"success": "Your submission has been received. Please wait until we approve it",
 				"submitmore": "Click here if you want to submit another one!",
 				"error": "There was an error. Please try again"
-			}
+			},
+			"add_roles": "Add roles"
 		},
 		"edit": {
 			"_": "Edit "

@@ -43,7 +43,6 @@ export const ManufacturerSubmissionPackage = () => {
 		},
 		required: [
 			'Manufacturer_name',
-			'Manufacturer_service'
 		]
 	};
 };

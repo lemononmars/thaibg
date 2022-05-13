@@ -160,7 +160,7 @@
 					</select>
 				{/if}
 			</div>
-			<div class="hidden lg:visible">
+			<div class="hidden lg:block">
 				<ToggleTheme />
 			</div>
 			<div class="dropdown dropdown-hover dropdown-end">
