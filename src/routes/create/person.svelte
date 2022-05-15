@@ -5,7 +5,7 @@
 	import type {Alert} from '$lib/alert/alert.type'
 	import {handleAlert} from '$lib/alert/alert.store'
 
-	export async function load({ session }) {
+	export async function load({ session, fetch }) {
 		const { user } = session
 
 		const adminSettings = await fetch('/api/adminsettings')
@@ -104,6 +104,7 @@
 	let editingRole: string[] = []
 	$: currentRole = relations[expandedRole] || ''
 	$: currentRolePrefix = relations[expandedRole] ? getVarPrefix(relations[expandedRole]) : ''
+	// TODO: use getSubmissionPackage to get all keys
 	$: editingRole = [`${currentRolePrefix}_name`, `${currentRolePrefix}_name_th`, `${currentRolePrefix}_link`, `${currentRolePrefix}_description`, `${currentRolePrefix}_show`]
 	// show user a page based on the submission state
 	const enum State {
@@ -266,15 +267,20 @@
 	</form>
 </div>
 <div class="lg:divider lg:divider-vertical"/>
-<div class="bg-base-200 m-4 rounded-3xl mx-auto w-screen lg:max-w-md">
+<div class="bg-base-200 m-4 rounded-3xl mx-auto w-screen lg:w-1/2 max-w-lg">
 	<div class="bg-error text-error py-4 mx-auto rounded-t-3xl">
 		<h1>{$_('page.create.add_roles')}</h1>
 	</div>
-	<div class="flex flex-col justify-center items-center">
-		{#each relations as r, ridx}
-			<div>
+	{#if (expandedRole == -1)}
+		<div class="flex flex-col justify-center items-center" in:fly={{ duration: 400, y: -20, easing: quintOut }} >
+			{#each relations as r, ridx}
+				<div>
 					<div class="btn-group my-2 group">
-						<div class="btn bg-base-200 hover:bg-success" on:click={()=>handleExpand(ridx)}>
+						<div 
+							class="btn bg-base-200 hover:bg-success" 
+							class:bg-success={!!rolesAdded[r]}
+							on:click={()=>handleExpand(ridx)}
+						>	
 							{#if rolesAdded[r]}
 								<div><EditIcon size=20/></div>
 							{:else}
@@ -282,11 +288,14 @@
 							{/if}
 						</div>
 						<div
-							class="btn w-48" class:bg-info={rolesAdded[r]}
+							class="btn w-48" class:bg-success={rolesAdded[r]}
 						>
 							{$_(`keyword.${r}`)}
 						</div>
-						<div class="btn bg-base-200 hover:bg-error">
+						<div 
+							class="btn bg-base-200 hover:bg-error"
+							class:bg-error={rolesAdded[r]}
+						>
 							{#if rolesAdded[r]}
 								<div on:click={()=>{delete rolesAdded[r]; rolesAdded = rolesAdded}}>
 									<MinusCircleIcon size=20/>
@@ -299,33 +308,34 @@
 						</div>
 					</div>
 				</div>
-		{/each}
-		<div>
-			{#if (expandedRole > -1)}
-				<div transition:fly={{ duration: 400, y: -20, easing: quintOut }} class="m-2">
-					<div class="grid grid-cols-1 lg:grid-cols-3 items-center gap-2">
-						<!-- display the appropriate input type, based on key's name and selects/multiselects array-->
-						{#each editingRole as k}
-							<div class="justify-self-start lg:justify-self-end mx-2 flex flex-row gap-2">
-								<div>{$_(`key.${k}`)}</div>
-								<div class="text-error">{required?.includes(k)? '*' : ''}</div>
-							</div>
-							<div class="justify-self-start lg:col-span-2 ">
-								{#if k.includes('show')}
-									<input type="checkbox" bind:checked={rolesAdded[currentRole][0][k]} class="checkbox" />
-								{:else if k.includes('description')}
-									<textarea class="textarea textarea-bordered" bind:value={rolesAdded[currentRole][0][k]} />
-								{:else}
-									<input type="text" class="input input-bordered" bind:value={rolesAdded[currentRole][0][k]} />
-								{/if}
-							</div>
-						{/each}
-						<div class="btn btn-success col-span-3" on:click={()=>handleExpand(expandedRole)}> Save	</div>
-					</div>
-				</div>
-			{/if}
+			{/each}
 		</div>
-	</div>
+	{/if}
+	
+	{#if (expandedRole > -1)}
+		<div in:fly={{ duration: 400, y: -20, easing: quintOut }} class="m-2">
+			<div class="grid grid-cols-1 lg:grid-cols-3 items-center gap-2">
+				<div class="col-span-3">{$_(`keyword.${relations[expandedRole]}`)}</div>
+				<!-- display the appropriate input type, based on key's name and selects/multiselects array-->
+				{#each editingRole as k}
+					<div class="justify-self-start lg:justify-self-end mx-2 flex flex-row gap-2">
+						<div>{$_(`key.${k}`)}</div>
+						<div class="text-error">{required?.includes(k)? '*' : ''}</div>
+					</div>
+					<div class="justify-self-start lg:col-span-2 ">
+						{#if k.includes('show')}
+							<input type="checkbox" bind:checked={rolesAdded[currentRole][0][k]} class="checkbox" />
+						{:else if k.includes('description')}
+							<textarea class="textarea textarea-bordered" bind:value={rolesAdded[currentRole][0][k]} />
+						{:else}
+							<input type="text" class="input input-bordered" bind:value={rolesAdded[currentRole][0][k]} />
+						{/if}
+					</div>
+				{/each}
+				<div class="btn btn-success col-span-3" on:click={()=>handleExpand(expandedRole)}> Save	</div>
+			</div>
+		</div>
+	{/if}
 </div>
 </div>
 	<div class="divider" />	

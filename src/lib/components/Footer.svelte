@@ -1,5 +1,6 @@
 <script lang="ts">
-	import TBGAlogo from '$lib/assets/TBGA-logo-color.png';
+	//import TBGAlogo from '$lib/assets/TBGA-logo-color.png';
+	import TBGAlogo from '$lib/assets/mascot.png';
 	import { _ } from 'svelte-i18n';
 
 	$: boardgameMenu = [
@@ -50,7 +51,7 @@
 >
 	<div>
 		<img class="h-20" src={TBGAlogo} alt="logo" />
-		<div class="w-30 break-words">{$_('TBGA')}</div>
+		<div class="w-30 break-words">{$_('navbar.title.db')}</div>
 	</div>
 	{#each menuTitles as mt, idx}
 		<div>

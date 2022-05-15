@@ -21,6 +21,7 @@ export const TypeSubmissionAllowed = [
 	'graphicdesigner',
 	'honor',
 	'manufacturer',
+	'organization',
 	'person',
 	'playtester',
 	'producer',
@@ -68,7 +69,7 @@ export type TypeName =
 	| 'mechanics'
 	| 'category'
 	| 'manufacturer'
-	| 'crowdfunding';
+	| 'organization'
 export type TypeNameRole =
 	| 'designer'
 	| 'graphicdesigner'
@@ -97,6 +98,7 @@ import { EventSubmissionPackage } from './Event';
 import { GraphicdesignerSubmissionPackage } from './personRoles/Graphicdesigner';
 import { HonorSubmissionPackage } from './Honor';
 import { ManufacturerSubmissionPackage } from './Manufacturer';
+import { OrganizationSubmissionPackage } from './Organization';
 import { PersonSubmissionPackage } from './Person';
 import { PlaytesterSubmissionPackage } from './personRoles/Playtester';
 import { ProducerSubmissionPackage } from './personRoles/Producer';
@@ -141,7 +143,9 @@ export function getSubmissionPackage(type: TypeName): SubmissionPackage {
 			return RulebookeditorSubmissionPackage();
 		case 'producer':
 			return ProducerSubmissionPackage();
-			case 'category':
-				return CategorySubmissionPackage();
+		case 'category':
+			return CategorySubmissionPackage();
+		case 'organization':
+			return OrganizationSubmissionPackage();
 	}
 }

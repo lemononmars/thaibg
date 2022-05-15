@@ -33,8 +33,8 @@ export const CategorySubmissionPackage = () => {
 		submission: <CategorySubmission>{},
 		keys: CategoryDatabaseKeys,
 		relations: CategoryRelationArray,
+		selects: {},
 		multiselects: {},
-		required: [
-		]
+		required: []
 	};
 };

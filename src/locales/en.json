@@ -28,7 +28,8 @@
 		"event": "Event",
 		"honor": "Honor",
 		"content": "Content",
-		"crowdfunding": "Crowdfunding"
+		"crowdfunding": "Crowdfunding",
+		"organization": "Organization"
 	},
 	"shop": {
 		"_": "Shop",
@@ -122,7 +123,7 @@
 		},
 		"title": {
 			"tbg": "Thailand Board Game",
-			"db": "Database"
+			"db": "Database (CLOSED BETA)"
 		}
 	},
 	"minutes": "minutes",
@@ -298,7 +299,18 @@
 		"Producer_name_th": "Name (Thai)",
 		"Producer_description": "Description",
 		"Producer_link": "Link",
-		"Producer_show": "Public?"
+		"Producer_show": "Public?",
+		"Category_name": "Name (English)",
+		"Category_name_th": "Name (Thai)",
+		"Category_link": "Link",
+		"Category_description": "Description",
+		"Category_picture": "Picture",
+		"Organization_name": "Name (English)",
+		"Organization_name_th": "Name (Thai)",
+		"Organization_link": "Link",
+		"Organization_description": "Description",
+		"Organization_picture": "Picture",
+		"Organization_show": "Public?"
 	},
 	"key_example": {
 		"Event_name": "Thailand Board Game Show",

@@ -1,12 +1,11 @@
 <script context=module lang=ts>
-	import { getSubmissionPackage, TypeSubmissionAllowed } from '$lib/datatypes';
+	import { getSubmissionPackage } from '$lib/datatypes';
 	import type { SubmissionPackage } from '$lib/datatypes';
 	import { fromBucket, getVarPrefix } from '$lib/supabase';
 	import type {Alert} from '$lib/alert/alert.type'
 	import {handleAlert} from '$lib/alert/alert.store'
 
-	export async function load({ session, params, fetch }) {
-		const type = params.type;
+	export async function load({ session, fetch }) {
 		const { user } = session
 
 		const adminSettings = await fetch('/api/adminsettings')
@@ -16,17 +15,14 @@
 		// * type is invalid 
 		// * creating a new entry is not allowed
 		// * creating a new entry is allowed for registered user, not guest
-		if (!TypeSubmissionAllowed.includes(type) 
-			|| (!data[0].allowCreate)
+		if ((!data[0].allowCreate)
 			|| (!data[0].allowGuestCreate && !user)) {
 
 			let newAlert: Alert = {
 				type: 'error',
 				text: ''
 			}
-			if(!TypeSubmissionAllowed.includes(type))	
-				newAlert.text = `${type} is not a valid page.`
-			else if(!data[0].allowCreate) 
+			if(!data[0].allowCreate) 
 				newAlert.text = 'Creating a new entry is not allowed. Please contact admin.'
 			else 
 				newAlert.text = 'Please login to create a new entry.'
@@ -40,13 +36,11 @@
 
 		return {
 			props: {
-				data: getSubmissionPackage(type),
-				type: type
+				data: getSubmissionPackage('organization'),
 			}
 		};
 	}
 
-   // HURRAY ! It runs on server now
 	// TODO: make sure nothing breaks in production
 	export async function postSubmission(data): Promise<Response> {
       const res = await fetch('/api/post/submission', {
@@ -73,6 +67,12 @@
 
 		if (updateError) throw updateError;
 	}
+
+	export async function getNewOrganization(id: number){
+		const newPerson = await fetch(`/api/organization/${id}`)
+		const data = await newPerson.json()
+		return data
+	}
 </script>
 
 <script lang="ts">
@@ -80,23 +80,37 @@
 	import { user, getCurrUserProfile } from '$lib/user';
 	import Spinner from '$lib/components/Spinner.svelte';
 	import MultipleSelect from '$lib/components/MultipleSelect.svelte';
-	import SearchMultipleSelect from '$lib/components/SearchMultipleSelect.svelte';
+	import { fly } from 'svelte/transition'
+	import { quintOut } from 'svelte/easing'
 	import UploadPicture from '$lib/components/UploadPicture.svelte';
-	import SveltyPicker from 'svelty-picker';
 	import { _ } from 'svelte-i18n';
+	import { EditIcon, PlusCircleIcon, MinusCircleIcon, InfoIcon } from 'svelte-feather-icons';
+	import PersonCard from '$lib/components/PersonCard.svelte';
 
-	export let data: SubmissionPackage, type: string; // from load fucntion
+	export let data: SubmissionPackage; // from load fucntion
+	const type: string = 'organization';
 	const { submission, keys, relations, selects, multiselects, required } = data; // destruct
 
 	// create an array for each relation
-	let relationMultiSelects: Record<string, string[]> = {};
-	relations.forEach((r) => (relationMultiSelects[r] = []));
+	let rolesAdded: Record<string, any> = {};
 
 	// extra info
 	let comment: string;
 	const pictureKeys = keys.filter((k) => k.includes('picture')); // in case there are more than one picture
 	let pictureFiles: Record<string, File> = {};
 	pictureKeys.forEach((k) => (pictureFiles[k] = null));
+
+	const roleSubmissionPackage = {
+		'manufacturer': getSubmissionPackage('manufacturer'),
+		'shop': getSubmissionPackage('shop'),
+		'sponsor': getSubmissionPackage('sponsor'),
+		'publisher': getSubmissionPackage('publisher'),
+		'contentcreator': getSubmissionPackage('contentcreator'),
+	}
+	let expandedRole: number = -1;
+	$: currentRole = relations[expandedRole] || ''
+	let editingRole: SubmissionPackage
+	$: editingRole = roleSubmissionPackage[relations[expandedRole]]
 
 	// show user a page based on the submission state
 	const enum State {
@@ -105,13 +119,30 @@
 		SUCCESS,
 		ERROR
 	}
-	let submitState: State = State.START;
-	let canSubmit: boolean 
-	$: canSubmit = !required || required.every(r => !!submission[r])
+	let submitState = State.START;
+	let canSubmit: boolean = false
+	$: canSubmit = submission.Person_name || submission.Person_name_th
+	let newIndex: number
+	let promiseNewOrganization: Promise<any>
+
+	function handleExpand(idx: number) {
+		if(!rolesAdded[relations[idx]]) {
+			const prefix = getVarPrefix(relations[idx])
+			const newRoleInfo = {
+				[`${prefix}_name`]: submission.Organization_name,
+				[`${prefix}_picture`]: submission.Organization_picture,
+			}
+			rolesAdded[relations[idx]] = [newRoleInfo] // make it an array to match other relational objects
+		}
+		else if (expandedRole == idx)
+			expandedRole = -1
+		else
+			expandedRole = idx
+	}
 
 	async function handleSubmit() {
 		if (submitState != State.START && submitState != State.ERROR) return;
-		if (!canSubmit) {
+		if (required && !required.every(r => !!submission[r])) {
 			const missingFields = required?.filter(r => !submission[r]).join(',')
 			const newAlert: Alert = {
 				type: 'error',
@@ -129,7 +160,6 @@
 			handleAlert(newAlert)
 			return
 		}
-
 
 		submitState = State.SUBMITTING;
 
@@ -166,7 +196,7 @@
 
 		let res = await postSubmission({
 			content: submission,
-			relations: relationMultiSelects,
+			relations: rolesAdded,
 			pageType: type,
 			id,
 			username,
@@ -175,9 +205,12 @@
 		});
 		if (res.ok) {
 			submitState = State.SUCCESS;
+			const resBody = await res.json()
+			newIndex = resBody.index
+			promiseNewOrganization = getNewOrganization(newIndex)
 			const newAlert: Alert = {
 				type: 'success',
-				text: 'Successfully submitted!'
+				text: 'Successfully submitted! with:' + newIndex
 			}
 			handleAlert(newAlert)
 		}
@@ -192,27 +225,30 @@
 	}
 </script>
 
-<Seo title="Create {type}" />
+<Seo title="Create person" />
 
-<div class="bg-base-200 m-4 rounded-3xl">
-<div class="bg-error text-error py-4 my-4 mx-auto rounded-t-3xl">
-<h1>{$_('page.create._')} {$_(`keyword.${type}`)}</h1>
-</div>
-<!-- <div class="text-gray-500">
-{JSON.stringify(submission)}
-{JSON.stringify(relationMultiSelects)}
-</div> -->
+<div class="text-gray-500">
+	{JSON.stringify(submission)}
+	{JSON.stringify(rolesAdded)}
+	{JSON.stringify(pictureFiles)}
+	</div>
 {#if submitState == State.START || submitState == State.ERROR}
+<div class="flex flex-col lg:flex-row lg:gap-4">
+<div class="bg-base-200 m-4 rounded-3xl mx-auto w-screen lg:w-1/2 max-w-fit">
+	<div class="bg-error text-error py-4 mx-auto rounded-t-3xl">
+		<h1>{$_('page.create._')} {$_(`keyword.${type}`)}</h1>
+	</div>
+	
 	<form>
 		<div class="flex flex-col lg:flex-row lg:gap-10 place-items-start p-4">
 			<div class="grid grid-cols-1 lg:grid-cols-3 items-center gap-2">
 				<!-- display the appropriate input type, based on key's name and selects/multiselects array-->
 				{#each keys as k}
-					<div class="justyfi-self-start lg:justify-self-end mx-2 flex flex-row gap-2">
+					<div class="justify-self-start lg:justify-self-end mx-2 flex flex-row gap-2">
 						<div>{$_(`key.${k}`)}</div>
 						<div class="text-error">{required?.includes(k)? '*' : ''}</div>
 					</div>
-					<div class="justify-self-start lg:col-span-2">
+					<div class="justify-self-start lg:col-span-2 ">
 						{#if selects[k]}
 							<select class="select select-bordered" bind:value={submission[k]}>
 								<option disabled selected value={null}>{$_('page.create.select')}</option>
@@ -224,14 +260,8 @@
 							<MultipleSelect selectOptions={multiselects[k]} bind:selects={submission[k]} />
 						{:else if k.includes('_picture')}
 							<UploadPicture key={k} bind:pictureFile={pictureFiles[k]} />
-						{:else if k.includes('_time')}
-							<SveltyPicker
-								inputClasses="form-control"
-								format="yyyy-mm-dd"
-								bind:value={submission[k]}
-							/>
 						{:else if k.includes('show')}
-							<input type="checkbox" bind:checked={submission[k]} class="checkbox"/>
+							<input type="checkbox" bind:checked={submission[k]} class="checkbox" />
 						{:else if k.includes('description')}
 							<textarea class="textarea textarea-bordered" bind:value={submission[k]} />
 						{:else}
@@ -240,18 +270,93 @@
 					</div>
 				{/each}
 			</div>
-			<div class="lg:divider lg:divider-vertical" />
-			<div>
-				<div class="divider block lg:hidden" />
-				<div class="flex flex-col justify-center">
-					{#each relations as r}
-						<SearchMultipleSelect bind:selects={relationMultiSelects[r]} type={r} />
-					{/each}
-				</div>
-			</div>
 		</div>
 	</form>
-	<div class="divider" />
+</div>
+<div class="lg:divider lg:divider-vertical"/>
+<div class="bg-base-200 m-4 rounded-3xl mx-auto w-screen lg:max-w-md">
+	<div class="bg-error text-error py-4 mx-auto rounded-t-3xl">
+		<h1>{$_('page.create.add_roles')}</h1>
+	</div>
+	{#if (expandedRole == -1)}
+		<div class="flex flex-col justify-center items-center" in:fly={{ duration: 400, y: -20, easing: quintOut }} >
+			{#each relations as r, ridx}
+				<div>
+					<div class="btn-group my-2 group">
+						<div 
+							class="btn bg-base-200 hover:bg-success" 
+							class:bg-success={!!rolesAdded[r]}
+							on:click={()=>handleExpand(ridx)}
+						>	
+							{#if rolesAdded[r]}
+								<div><EditIcon size=20/></div>
+							{:else}
+								<div><PlusCircleIcon size=20/></div>
+							{/if}
+						</div>
+						<div
+							class="btn w-48" class:bg-success={rolesAdded[r]}
+						>
+							{$_(`keyword.${r}`)}
+						</div>
+						<div 
+							class="btn bg-base-200 hover:bg-error"
+							class:bg-error={rolesAdded[r]}
+						>
+							{#if rolesAdded[r]}
+								<div on:click={()=>{delete rolesAdded[r]; rolesAdded = rolesAdded}}>
+									<MinusCircleIcon size=20/>
+								</div>
+							{:else}
+								<div>
+									<InfoIcon size=20/>
+								</div>
+							{/if}
+						</div>
+					</div>
+				</div>
+			{/each}
+		</div>
+	{/if}
+	
+	{#if (expandedRole > -1)}
+		<div in:fly={{ duration: 400, y: -20, easing: quintOut }} class="m-2">
+			<div class="grid grid-cols-1 lg:grid-cols-3 items-center gap-2">
+				<div class="col-span-3">Adding {relations[expandedRole]}</div>
+				<!-- display the appropriate input type, based on key's name and selects/multiselects array-->
+				{#each editingRole.keys as k}
+					<div class="justify-self-start lg:justify-self-end mx-2 flex flex-row gap-2">
+						<div>{$_(`key.${k}`)}</div>
+						<div class="text-error">{required?.includes(k)? '*' : ''}</div>
+					</div>
+					<div class="justify-self-start lg:col-span-2 ">
+						{#if editingRole.selects[k]}
+							<select class="select select-bordered" bind:value={submission[k]}>
+								<option disabled selected value={null}>{$_('page.create.select')}</option>
+								{#each editingRole.selects[k] as opt}
+									<option value={opt}>{$_(`option.${opt}`)}</option>
+								{/each}
+							</select>
+						{:else if editingRole.multiselects[k]}
+							<MultipleSelect selectOptions={editingRole.multiselects[k]} bind:selects={rolesAdded[currentRole][0][k]} />
+						{:else if k.includes('_picture')}
+							<UploadPicture key={k} bind:pictureFile={pictureFiles[k]} />
+						{:else if k.includes('show')}
+							<input type="checkbox" bind:checked={rolesAdded[currentRole][0][k]} class="checkbox" />
+						{:else if k.includes('description')}
+							<textarea class="textarea textarea-bordered" bind:value={rolesAdded[currentRole][0][k]} />
+						{:else}
+							<input type="text" class="input input-bordered" bind:value={rolesAdded[currentRole][0][k]} />
+						{/if}
+					</div>
+				{/each}
+				<div class="btn btn-success col-span-3" on:click={()=>handleExpand(expandedRole)}> Save	</div>
+			</div>
+		</div>
+	{/if}
+</div>
+</div>
+	<div class="divider" />	
 	<div class="justify-self-end mx-2">{$_('page.create.comment')}</div>
 	<textarea
 		class="textarea textarea-bordered"
@@ -259,26 +364,31 @@
 		bind:value={comment}
 	/><br />
 	{#if submitState == State.START}
-		<div class="tooltip" data-tip={canSubmit? "":"please fill in all required fields"}>
-			<div 
-				class="btn" 
-				on:click|preventDefault={handleSubmit}
-				class:btn-disabled={!canSubmit}
-			>
-				{$_('page.create.submit')}
-			</div>
+	<div class="tooltip" data-tip={canSubmit? "":"please fill in either English or Thai name"}>
+		<div 
+			class="btn" 
+			on:click|preventDefault={handleSubmit}
+			class:btn-disabled={!canSubmit}
+		>
+			{$_('page.create.submit')}
 		</div>
-	{/if}
+	</div>
 {/if}
-</div>
-
-
+{/if}
 
 {#if submitState == State.SUBMITTING}
 	<p>{$_('page.create.status.submitting')}</p>
 	<Spinner />
 {:else if submitState == State.SUCCESS}
 	<p>{$_('page.create.status.success')}</p>
+	{#await promiseNewOrganization then res}
+		{#if res}
+			<div class="mx-auto">
+				<PersonCard person={res}/>
+			</div>
+		{/if}
+	{/await}
+	
 	<br>
 	<p>{$_('page.create.status.submitmore')}</p><div class="btn" href="./create/{type}">Here</div>
 {:else if submitState == State.ERROR}
@@ -296,7 +406,7 @@
 	}
 
 	input.checkbox {
-		@apply w-8;
+		@apply w-5;
 	}
 
 	textarea {

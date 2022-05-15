@@ -14,13 +14,14 @@
 		'playtester',
 		'rulebookeditor',
 		'producer'*/
-		'manufacturer',
+		//'manufacturer',
 	];
 	const supporterMenu = [
-		'shop',
+		'organization'
+		//'shop',
 		//'contentcreator',
-		'publisher',
-		'sponsor',
+		//'publisher',
+		//'sponsor',
 	];
 	const activityMenu = [
 		'content',
