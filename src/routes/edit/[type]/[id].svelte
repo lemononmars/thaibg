@@ -2,6 +2,7 @@
 	import { getSubmissionPackage, TypeSubmissionAllowed } from '$lib/datatypes';
 	import type { SubmissionPackage } from '$lib/datatypes';
 	import { fromBucket, getVarPrefix } from '$lib/supabase';
+	import type { SubmissionData } from '$lib/supabase';
 	import type {Alert} from '$lib/alert/alert.type'
 	import { handleAlert} from '$lib/alert/alert.store'
 
@@ -51,7 +52,7 @@
 
    // HURRAY ! It runs on server now
 	// TODO: make sure nothing breaks in production
-	export async function postSubmission(data): Promise<Response> {
+	export async function postSubmission(data: SubmissionData): Promise<Response> {
       const res = await fetch('/api/post/submission', {
          method: 'POST',
          cache: 'default',
@@ -170,6 +171,7 @@
 			content: {
 				...submission, [varPrefix + '_ID']: currentDataID
 			},
+			rolesSubmission: {},
 			relations: relationMultiSelects,
 			pageType: type,
 			id,
@@ -249,7 +251,7 @@
 						<img
 							src={getImageURL(type, currentData[k])}
 							class="object-cover h-40 aspect-auto group-hover:scale-120"
-							alt="${type}"
+							alt="{type}"
 							on:error|once={(ev) => (ev.target.src = getDefaultImageURL(type))}
 						/>
 					{:else}

@@ -1,16 +1,18 @@
 <script lang="ts" context="module">
 	export async function load({ params, fetch }) {
 		// ignore page's [slug] and redirect to the proper location
-		const res = await fetch(`/api/sponsor/${params.id}`);
+		const res = await fetch(`/api/organization/${params.id}`);
 		const data = await res.json();
-		if (!res.ok || !data.Sponsor_show)
+		console.log(data)
+		
+		if (!res.ok || !data.Organization_show)
 			return {
-				redirect: '/sponsor',
+				redirect: '/organization',
 				status: 303
 			};
 
 		return {
-			redirect: `/sponsor/${params.id}/${data.slug}`,
+			redirect: `/organization/${params.id}/${data.Organization_slug}`,
 			status: 303
 		};
 	}

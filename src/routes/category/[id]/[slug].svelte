@@ -54,22 +54,20 @@
 				<div>
 					<h1>{catData.Category_name}</h1>
 					<h2>{catData.Category_name_th ? '(' + catData.Category_name_th + ')' : ''}</h2>
-					<ul>
-						<li>
-							BGG link:
-							{#if catData.Category_link}
-								<a href={catData.Category_link} target="_blank">{catData.Category_link}</a>
-							{:else}
-								N/A
-							{/if}
-						</li>
-					</ul>
+					{#if catData.Category_link}
+						<div>
+							<h2>BGG Link</h2>
+							<a href={catData.Category_link} target="_blank">{catData.Category_link}</a>
+						</div>
+					{:else}
+						N/A
+					{/if}
+					<div>
+						<h2>Description</h2>
+						<p>{@html catData.Category_description}</p>
+					</div>
+					<EditButton type={'category'} id={catData.Category_ID}/>
 				</div>
-			</div>
-			<!-- <div>{likes.length}</div> -->
-			<div>
-				<h2>Description</h2>
-				<p>{@html catData.Category_description}</p>
 			</div>
 			<div class="divider" />
 			<h2>Boardgames in this category</h2>
@@ -86,9 +84,6 @@
 					{/if}
 				{/await}
 			</div>
-		{/if}
-		{#if user && !user.guest}
-			<EditButton type={'category'} id={catData.Category_ID}/>
 		{/if}
 	</div>
 </div>

@@ -37,7 +37,6 @@ export interface PersonSubmission {
 
 export const PersonRelationArray = [
 	'artist',
-	'contentcreator',
 	'designer',
 	'graphicdesigner',
 	'playtester',
@@ -46,7 +45,6 @@ export const PersonRelationArray = [
 ];
 export type PersonRelation =
 	| 'artist'
-	| 'contentcreator'
 	| 'designer'
 	| 'graphicdesigner'
 	| 'playtester'
@@ -55,7 +53,6 @@ export type PersonRelation =
 
 import type {
 	Artist,
-	Contentcreator,
 	Designer,
 	Graphicdesigner,
 	Playtester,
@@ -64,7 +61,6 @@ import type {
 } from './personRoles';
 export type PersonRole =
 	| Artist
-	| Contentcreator
 	| Designer
 	| Graphicdesigner
 	| Playtester

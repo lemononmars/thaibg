@@ -1,7 +1,8 @@
 <script context=module lang=ts>
-	import { getSubmissionPackage } from '$lib/datatypes';
+	import { getSubmissionPackage, personRoles } from '$lib/datatypes';
 	import type { SubmissionPackage } from '$lib/datatypes';
 	import { fromBucket, getVarPrefix } from '$lib/supabase';
+	import type { SubmissionData } from '$lib/supabase'
 	import type {Alert} from '$lib/alert/alert.type'
 	import {handleAlert} from '$lib/alert/alert.store'
 
@@ -42,7 +43,7 @@
 	}
 
 	// TODO: make sure nothing breaks in production
-	export async function postSubmission(data): Promise<Response> {
+	export async function postSubmission(data: SubmissionData): Promise<Response> {
       const res = await fetch('/api/post/submission', {
          method: 'POST',
          cache: 'default',
@@ -86,26 +87,35 @@
 	import { _ } from 'svelte-i18n';
 	import { EditIcon, PlusCircleIcon, MinusCircleIcon, InfoIcon } from 'svelte-feather-icons';
 	import PersonCard from '$lib/components/PersonCard.svelte';
+import AddRoleButton from '$lib/components/AddRoleButton.svelte';
 
 	export let data: SubmissionPackage; // from load fucntion
 	const type: string = 'person';
 	const { submission, keys, relations, selects, multiselects, required } = data; // destruct
 
 	// create an array for each relation
-	let rolesAdded: Record<string, any> = {};
+	interface RoleObject {
+		type: string,
+		data: Record<string, any>
+	}
+	let rolesAdded: RoleObject[] = [];
+
+	let roleSubmissionPackage = {
+		'artist': getSubmissionPackage('artist'),
+		'designer': getSubmissionPackage('designer'),
+		'graphicdesigner': getSubmissionPackage('graphicdesigner'),
+		'playtester': getSubmissionPackage('playtester'),
+		'rulebookeditor': getSubmissionPackage('rulebookeditor'),
+		'producer': getSubmissionPackage('producer')
+	}
+	let editingRoleIndex: number = -1;
+	$: editingRoleType = rolesAdded[editingRoleIndex]?.type
+	let editingRolePackage: SubmissionPackage
 
 	// extra info
 	let comment: string;
-	const pictureKeys = keys.filter((k) => k.includes('picture')); // in case there are more than one picture
 	let pictureFiles: Record<string, File> = {};
-	pictureKeys.forEach((k) => (pictureFiles[k] = null));
 
-	let expandedRole: number = -1;
-	let editingRole: string[] = []
-	$: currentRole = relations[expandedRole] || ''
-	$: currentRolePrefix = relations[expandedRole] ? getVarPrefix(relations[expandedRole]) : ''
-	// TODO: use getSubmissionPackage to get all keys
-	$: editingRole = [`${currentRolePrefix}_name`, `${currentRolePrefix}_name_th`, `${currentRolePrefix}_link`, `${currentRolePrefix}_description`, `${currentRolePrefix}_show`]
 	// show user a page based on the submission state
 	const enum State {
 		START,
@@ -116,22 +126,60 @@
 	let submitState = State.START;
 	let canSubmit: boolean = false
 	$: canSubmit = submission.Person_name || submission.Person_name_th
+
+	// use these to display the newly created person right away!
 	let newIndex: number
 	let promiseNewPerson: Promise<any>
 
-	function handleExpand(idx: number) {
-		if(!rolesAdded[relations[idx]]) {
-			const prefix = getVarPrefix(relations[idx])
-			const newRoleInfo = {
-				[`${prefix}_name`]: submission.Person_name,
-				[`${prefix}_name_th`]: submission.Person_name_th,
+	function addRole(role:string) {
+		if(rolesAdded.some(r=>r.type === role)) {
+			const newAlert: Alert = {
+				type: 'error',
+				text: 'You have already added ' +  role + '!'
 			}
-			rolesAdded[relations[idx]] = [newRoleInfo] // make it an array to match other relational objects
+			handleAlert(newAlert)
+			return
 		}
-		else if (expandedRole == idx)
-			expandedRole = -1
-		else
-			expandedRole = idx
+
+		const prefix = getVarPrefix(role)
+		const newRoleData = {
+			[`${prefix}_name`]: submission.Person_name,
+		}
+		const newRole: RoleObject = {
+			type: role,
+			data: newRoleData
+		}
+		rolesAdded = [...rolesAdded, newRole]
+		rolesAdded = rolesAdded
+	}
+
+	function removeRole(idx: number) {
+		rolesAdded.splice(idx, 1)
+		rolesAdded = rolesAdded
+		editingRoleIndex = -1
+		scrollTop()
+	}
+
+	function handleExpand(idx: number) {
+		editingRolePackage = roleSubmissionPackage[rolesAdded[idx]['type']]
+		editingRoleIndex = idx
+	}
+	
+	function handleSave () {
+		const roleType = rolesAdded[editingRoleIndex]['type']
+		const required = roleSubmissionPackage[roleType].required
+		if (required && !required.every((k: string) => !!rolesAdded[editingRoleIndex]['data'][k])) {
+			const missingFields = required?.filter((k: string) => !rolesAdded[editingRoleIndex]['data'][k]).join(',')
+			const newAlert: Alert = {
+				type: 'error',
+				text: 'please fill all required fields: ' +  missingFields
+			}
+			handleAlert(newAlert)
+			return
+		}
+
+		editingRoleIndex = -1
+		scrollTop()
 	}
 
 	async function handleSubmit() {
@@ -188,9 +236,18 @@
 			}
 		}
 
+		const rs = {}
+		for(const r of rolesAdded) {
+			if(!rs[r.type])
+				rs[r.type] = [r.data]
+			else
+				rs[r.type] = [... rs[r.type], r.data]
+		}
+
 		let res = await postSubmission({
 			content: submission,
-			relations: rolesAdded,
+			rolesSubmission: rs,
+			relations: {},
 			pageType: type,
 			id,
 			username,
@@ -216,6 +273,10 @@
 			}
 			handleAlert(newAlert)
 		}
+	}
+
+	function scrollTop() {
+		window.scroll({ top: 0, behavior: 'smooth' });
 	}
 </script>
 
@@ -267,44 +328,41 @@
 	</form>
 </div>
 <div class="lg:divider lg:divider-vertical"/>
-<div class="bg-base-200 m-4 rounded-3xl mx-auto w-screen lg:w-1/2 max-w-lg">
+<div class="bg-base-200 m-4 rounded-3xl mx-auto w-screen lg:w-1/2 max-w-2xl">
 	<div class="bg-error text-error py-4 mx-auto rounded-t-3xl">
 		<h1>{$_('page.create.add_roles')}</h1>
 	</div>
-	{#if (expandedRole == -1)}
-		<div class="flex flex-col justify-center items-center" in:fly={{ duration: 400, y: -20, easing: quintOut }} >
-			{#each relations as r, ridx}
-				<div>
-					<div class="btn-group my-2 group">
+	<!-- display organization roles-->
+	{#if (editingRoleIndex == -1)}
+		<div class="flex flex-col justify-center items-center" in:fly={{ duration: 1000, y: 20, easing: quintOut }} >
+			<div class="flex flex-row flex-wrap justify-center gap-1 m-1">
+				{#each relations as role}
+					<div 
+						on:click={()=>addRole(role)} 
+						class="shadow-md"
+						class:bg-success={rolesAdded.some(r=>r.type === role)}
+					>
+						<AddRoleButton {role}/>
+					</div>
+				{/each}
+			</div>
+			{#each rolesAdded as r, ridx}
+				<div class="flex flex-row justify-between items-center border-2 my-1 p-1" in:fly>
+					<div class="tooltip" data-tip="edit">
 						<div 
-							class="btn bg-base-200 hover:bg-success" 
-							class:bg-success={!!rolesAdded[r]}
+							class="btn bg-success" 
 							on:click={()=>handleExpand(ridx)}
 						>	
-							{#if rolesAdded[r]}
-								<div><EditIcon size=20/></div>
-							{:else}
-								<div><PlusCircleIcon size=20/></div>
-							{/if}
+							<EditIcon size=20/>
 						</div>
-						<div
-							class="btn w-48" class:bg-success={rolesAdded[r]}
-						>
-							{$_(`keyword.${r}`)}
-						</div>
-						<div 
-							class="btn bg-base-200 hover:bg-error"
-							class:bg-error={rolesAdded[r]}
-						>
-							{#if rolesAdded[r]}
-								<div on:click={()=>{delete rolesAdded[r]; rolesAdded = rolesAdded}}>
-									<MinusCircleIcon size=20/>
-								</div>
-							{:else}
-								<div>
-									<InfoIcon size=20/>
-								</div>
-							{/if}
+					</div>
+					<div class="w-60 text-sm truncate">
+						<p class="font-bold">{$_(`keyword.${r.type}`)}</p>
+						<p>{r.data[getVarPrefix(r.type) + '_name'] || ''}</p>
+					</div>
+					<div class="tooltip" data-tip="remove">
+						<div class="btn bg-error" on:click={()=>removeRole(ridx)}>
+							<MinusCircleIcon size=20/>
 						</div>
 					</div>
 				</div>
@@ -312,27 +370,40 @@
 		</div>
 	{/if}
 	
-	{#if (expandedRole > -1)}
-		<div in:fly={{ duration: 400, y: -20, easing: quintOut }} class="m-2">
+	<!-- edit a parcitular organization role -->
+	{#if (editingRoleIndex > -1)}
+		<div in:fly={{ duration: 1000, y: -20, easing: quintOut }} class="m-2">
 			<div class="grid grid-cols-1 lg:grid-cols-3 items-center gap-2">
-				<div class="col-span-3">{$_(`keyword.${relations[expandedRole]}`)}</div>
+				<div class="col-span-3">Editing {editingRoleType}</div>
 				<!-- display the appropriate input type, based on key's name and selects/multiselects array-->
-				{#each editingRole as k}
+				{#each editingRolePackage.keys as k}
 					<div class="justify-self-start lg:justify-self-end mx-2 flex flex-row gap-2">
 						<div>{$_(`key.${k}`)}</div>
-						<div class="text-error">{required?.includes(k)? '*' : ''}</div>
+						<div class="text-error">{editingRolePackage.required?.includes(k)? '*' : ''}</div>
 					</div>
 					<div class="justify-self-start lg:col-span-2 ">
-						{#if k.includes('show')}
-							<input type="checkbox" bind:checked={rolesAdded[currentRole][0][k]} class="checkbox" />
+						{#if editingRolePackage.selects[k]}
+							<select class="select select-bordered" bind:value={rolesAdded[editingRoleIndex]['data'][k]}>
+								<option disabled selected value={null}>{$_('page.create.select')}</option>
+								{#each editingRolePackage.selects[k] as opt}
+									<option value={opt}>{$_(`option.${opt}`)}</option>
+								{/each}
+							</select>
+						{:else if editingRolePackage.multiselects[k]}
+							<MultipleSelect selectOptions={editingRolePackage.multiselects[k]} bind:selects={rolesAdded[editingRoleIndex]['data'][k]} />
+						{:else if k.includes('_picture')}
+							<UploadPicture key={k} bind:pictureFile={rolesAdded[editingRoleIndex]['pictureFile']} />
+						{:else if k.includes('show')}
+							<input type="checkbox" bind:checked={rolesAdded[editingRoleIndex]['data'][k]} class="checkbox" />
 						{:else if k.includes('description')}
-							<textarea class="textarea textarea-bordered" bind:value={rolesAdded[currentRole][0][k]} />
+							<textarea class="textarea textarea-bordered" bind:value={rolesAdded[editingRoleIndex]['data'][k]} />
 						{:else}
-							<input type="text" class="input input-bordered" bind:value={rolesAdded[currentRole][0][k]} />
+							<input type="text" class="input input-bordered" bind:value={rolesAdded[editingRoleIndex]['data'][k]} />
 						{/if}
 					</div>
 				{/each}
-				<div class="btn btn-success col-span-3" on:click={()=>handleExpand(expandedRole)}> Save	</div>
+				<div class="btn btn-error col-span-1" on:click={()=>removeRole(editingRoleIndex)}> Remove	</div>
+				<div class="btn btn-success col-span-2" on:click={handleSave}> Save	</div>
 			</div>
 		</div>
 	{/if}
@@ -358,6 +429,7 @@
 {/if}
 {/if}
 
+<div>
 {#if submitState == State.SUBMITTING}
 	<p>{$_('page.create.status.submitting')}</p>
 	<Spinner />
@@ -377,6 +449,7 @@
 	<p class="text-red">{$_('page.create.status.error')}</p>
 	<div class="btn" on:click|preventDefault={handleSubmit}>{$_('page.create.submit')}</div>
 {/if}
+</div>
 
 <style>
 	input {

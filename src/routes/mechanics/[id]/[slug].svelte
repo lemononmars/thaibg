@@ -27,6 +27,7 @@
 	import BoardgameCard from '$lib/components/BoardgameCard.svelte';
 	import { getImageURL, getDefaultImageURL } from '$lib/supabase';
 	import type {Mechanics, Boardgame} from '$lib/datatypes'
+	import EditButton from '$lib/components/EditButton.svelte';
 	import {_} from 'svelte-i18n'
 
 	export let mechanicsData: Mechanics;
@@ -64,6 +65,7 @@
 						{$_('incomplete')}
 					{/if}
 				</div>
+				<EditButton type={'mechanics'} id={mechanicsData.Mech_ID}/>
 			</div>
 		</div>
 		<h2>Board games with this mechanics</h2>

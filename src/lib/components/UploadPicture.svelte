@@ -1,7 +1,17 @@
 <script lang=ts>
+	import {onMount} from 'svelte'
 	export let pictureFile: File;
 	export let key: string;
 	let displaypicture: HTMLImageElement;
+
+	onMount(async ()=>{
+		if(pictureFile) {
+			displaypicture.onload = () => {
+			URL.revokeObjectURL(displaypicture.src);
+		};
+		displaypicture.src = URL.createObjectURL(pictureFile);
+		}
+	})
 
 	function change(event: any) {
 		const target = event.target;

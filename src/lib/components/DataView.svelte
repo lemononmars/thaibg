@@ -46,7 +46,7 @@
 	<!-- search bar, customized for each page-->
 	<SearchNavigation />
 	<slot />
-	<div class="flex flex-row items-center ">
+	<div class="flex flex-col lg:flex-row items-center flex-wrap">
 		<!-- Select table view or grid view -->
 		<div class="btn-group">
 			<div class="btn" on:click={() => (listView = 'list')} class:btn-active={listView === 'list'}>
@@ -95,14 +95,14 @@
 			</div>
 		{:else}
 			<!-- Table view -->
-			<div class="overflow-x-auto w-full">
-				<table class="table table-zebra w-full">
+			<div class="w-full max-w-full">
+				<table class="table table-zebra table-compact lg:table-normal w-full">
 					<thead>
 						<tr>
 							<th>Image</th>
 							<th>Name</th>
 							{#each tableInfo.headers as t}
-								<th>{t}</th>
+								<th class="hidden lg:table-cell">{t}</th>
 							{/each}
 						</tr>
 					</thead>
@@ -112,7 +112,7 @@
 							<tr animate:flip={{ duration: 300 }}>
 								<td>
 									<div class="avatar">
-										<div class="h-16 w-16 hover:scale-150 object-contain">
+										<div class="h-10 lg:h-16 aspect-square hover:scale-150 object-contain">
 											<img
 												src={getImageURL(type, d[typePrefix + '_picture'])}
 												class="aspect-auto"
@@ -122,9 +122,9 @@
 										</div>
 									</div>
 								</td>
-								<td>
+								<td class="overflow-x-hidden">
 									<a href="/{type}/{d[typePrefix + '_ID']}">
-										<p class="break-words">
+										<p class="break-words line-clamp-2">
 											{d[typePrefix + '_name'] || d[typePrefix + '_name_th'] || 'N/A'}
 										</p>
 										{#if d[typePrefix + '_name'] && d[typePrefix + '_name_th']}
@@ -133,7 +133,7 @@
 									</a>
 								</td>
 								{#each tableInfo.body as t}
-									<td>
+									<td class="hidden lg:table-cell">
 										{#if typeof d[t] === 'boolean'}
 											{#if d[t] == true}
 												<CheckCircleIcon size="1x" class="text-success" />

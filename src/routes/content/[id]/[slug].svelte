@@ -36,10 +36,14 @@
 	import PersonCard from '$lib/components/PersonCard.svelte';
 	import type { Boardgame, Content, Person, Contentcreator } from '$lib/datatypes';
 	import { _ } from 'svelte-i18n';
+	import EditButton from '$lib/components/EditButton.svelte';
 
 	export let boardgames: Boardgame[];
 	export let content: Content;
 	export let people: Person[];
+	let youtubeID: string;
+	if(content.Content_link?.includes('youtube'))
+		youtubeID = content.Content_link.slice(content.Content_link.indexOf('=')+1)
 </script>
 
 <Seo title="Event" />
@@ -50,14 +54,19 @@
 			<div class="badge">{$_('content.media.' + content.Content_media)}</div>
 			<div class="badge badge-outline">{$_('content.type.' + content.Content_type)}</div>
 		</div>
-		<h3>Link</h3>
+		<h2>Link</h2>
 		{#if content.Content_link}
-			<a href={content.Content_link} target="_blank">{content.Content_link}</a>
+			{#if youtubeID}
+			<iframe width="300" height="200" src="https://www.youtube.com/embed/{youtubeID}?controls=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+			{:else}
+				<a href={content.Content_link} target="_blank">{content.Content_link}</a>
+			{/if}
 		{:else}
 			N/A
 		{/if}
 		<h2>{$_('description._')}</h2>
 		<p>{@html content.Content_description || 'N/A'}</p>
+		<EditButton type="content" id={content.Content_ID}/>
 	</div>
 	<div class="flex flex-col w-2/3 text-left">
 		<h2>Featured Board Games</h2>

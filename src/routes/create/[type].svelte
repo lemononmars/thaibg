@@ -2,6 +2,7 @@
 	import { getSubmissionPackage, TypeSubmissionAllowed } from '$lib/datatypes';
 	import type { SubmissionPackage } from '$lib/datatypes';
 	import { fromBucket, getVarPrefix } from '$lib/supabase';
+	import type { SubmissionData } from '$lib/supabase';
 	import type {Alert} from '$lib/alert/alert.type'
 	import {handleAlert} from '$lib/alert/alert.store'
 
@@ -48,7 +49,7 @@
 
    // HURRAY ! It runs on server now
 	// TODO: make sure nothing breaks in production
-	export async function postSubmission(data): Promise<Response> {
+	export async function postSubmission(data: SubmissionData): Promise<Response> {
       const res = await fetch('/api/post/submission', {
          method: 'POST',
          cache: 'default',
@@ -166,6 +167,7 @@
 
 		let res = await postSubmission({
 			content: submission,
+			rolesSubmission: {},
 			relations: relationMultiSelects,
 			pageType: type,
 			id,

@@ -1,13 +1,16 @@
 <script lang=ts>
 	import { SearchIcon, DeleteIcon } from 'svelte-feather-icons';
 
-	export let selectOptions = [];
-	export let selects = [];
+	export let selectOptions: string[] = [];
+	export let selects: string[];
+	if(!selects)
+		selects = []
+
 	let searchString = '';
 	let dropdownOpen = false;
 
 	$: filteredOptions = selectOptions.filter(
-		(s) => !selects.includes(s) && s?.toLowerCase().includes(searchString?.toLowerCase())
+		(s) => !selects?.includes(s) && s?.toLowerCase().includes(searchString?.toLowerCase())
 	);
 
 	function select(data) {

@@ -35,7 +35,7 @@ export const OrganizationSubmissionPackage = () => {
 		selects: {},
 		multiselects: {},
 		required: [
-			
+			'Organization_name'	
 		]
 	};
 };

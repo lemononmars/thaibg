@@ -69,10 +69,25 @@ export function getDefaultImageURL(type: string): string {
 	return DIR_IMAGE + `${type}/` + DEFAULT_IMAGE_FILE;
 }
 
-type SubmissionType = 'create' | 'edit' | 'report';
-interface submissionData {
+export function createSlug(name: string) {
+   if(!name || name.length == 0)
+      return 'no-slug'
+
+   return name
+      .toLowerCase()
+      .replace(/\s/g, '-') // replace white spaces by dashes
+      .replace(/[^\w\-]/g, '') // remove non alphanumeric characters (except dashes of course)
+}
+
+type SubmissionType = 'new' | 'edit' | 'report';
+
+/*
+	define the shape of the data submitted from the webpage
+*/
+export interface SubmissionData {
 	type: SubmissionType;
 	content: any;
+	rolesSubmission: Record<string, any[]>;
 	relations: Record<string, any[]>;
 	pageType: string;
 	id: string;
@@ -83,23 +98,27 @@ interface submissionData {
 /**
  * add the submission to supabase table
  * NOTE: this should only runs on server (aka. api/post)
- * @param {submissionData} submissionData of object. see above
+ * @param {SubmissionData} submissionData of object. see above
  * @returns {Promise} promise object with {status: ..., message: ...}
  */
 export async function addToSubmission(
-	submissionData: submissionData,
+	submissionData: SubmissionData,
 	requireApproval: boolean
 ): Promise<Record<string, any>> {
+
 	// find a new unique ID for this submission
 	const IDColumn: string = 'id';
 	const submissionIndex = await findNewUniqueID('Submission', IDColumn);
+	const pageType = submissionData.pageType
 	let index: number
+
+	// create an object to be added to the database table
 	let newSubmission = {
 		id: submissionIndex,
-		Submission_type: submissionData.type,
+		Submission_type: submissionData.type, // new, edit, report
 		Submission_content: JSON.stringify(submissionData.content),
 		Submission_relations: JSON.stringify(submissionData.relations),
-		Submission_page_type: submissionData.pageType,
+		Submission_page_type: pageType,
 		Submission_user_ID: submissionData.id,
 		Submission_username: submissionData.username,
 		Submission_comment: submissionData.comment,
@@ -116,29 +135,41 @@ export async function addToSubmission(
 
 	// if admin approval is not require, also add it to the database
 	if(!requireApproval) {
-		// when creating a new person, we also create new roles
-		if(submissionData.pageType === 'person') {
+		
+		// when creating a new person or organization, we also create new roles from extra submissions
+		if(pageType === 'person' || pageType === 'organization') {
 			let rolesContent = {}
-			for(const role of Object.keys(submissionData.relations)) {
+			for(const role of Object.keys(submissionData.rolesSubmission)) {
 				const rolePrefix = getVarPrefix(role)
-				const res = await addToDatabase(
-					JSON.stringify(submissionData.relations[role][0]),
-					role,
-					newSubmission.Submission_type
-				);
-				rolesContent = {...rolesContent, [rolePrefix + '_ID']: res.body.index}
-				// once we finish creating the new role
-				// we need to change the argument for addToDatabaseRelation()
-				submissionData.relations[role] = [{
-					id: res.body.index,
-				}]
+				// need to create an array because there can be multiple roles for each organization
+				if(pageType === 'organization')
+					rolesContent[role] = []
+				for(const data of submissionData.rolesSubmission[role]) {
+					const res = await addToDatabase(
+						JSON.stringify(data),
+						role,
+						newSubmission.Submission_type
+					);
+					if(pageType === 'organization')
+						rolesContent[role] = [
+							...rolesContent[role],
+							res.body.index
+						]
+					else
+						rolesContent[rolePrefix + '_ID'] = res.body.index
+				}
 			}
+			// match the shape for database table
+			if(pageType === 'organization')
+				rolesContent = {
+					Organization_relation: JSON.stringify(rolesContent)
+				}
 			newSubmission.Submission_content = JSON.stringify({
 				...JSON.parse(newSubmission.Submission_content),
 				...rolesContent
 			})
 		}
-		// we add the person after roles because we need new role IDs 
+		// we add the person or organization after roles because we want to add new role IDs at once
 		const res = await addToDatabase(
 			newSubmission.Submission_content,
 			newSubmission.Submission_page_type,
@@ -146,8 +177,8 @@ export async function addToSubmission(
 		);
 		index = res.body.index
 		
-		// finally, we add relational data that are not person's roles
-		if(submissionData.pageType !== 'person') 
+		// finally, we add relational data if any
+		if(!newSubmission.Submission_relations) 
 			await addToDatabaseRelation(
 				newSubmission.Submission_relations,
 				newSubmission.Submission_page_type,

@@ -96,6 +96,25 @@ export async function get({ url, params }) {
 			};
 	}
 
+	// for organizations.... well
+	if (type === 'organization') {
+		// const { data, error } = await from(getTableName(relation))
+		// 	.select(`${selectedColumns}, Person!inner(*)`)
+		// 	.eq(`Person.${getVarPrefix(relation)}_ID`, id);
+
+		// if (error)
+		// 	return {
+		// 		status: 404,
+		// 		body: {message: `No ${relation} associated with this person found`}
+		// 	};
+		// else
+			return {
+				status: 200,
+				headers: { 'Content-Type': 'application/json' },
+				body: [{}]
+			};
+	}
+
 	// in case of /api/designer/9/boardgame
 	// we'll look up Designer_Relation, not Boardgame_Relation
 	// similary, for /api/content/9/contentcreator

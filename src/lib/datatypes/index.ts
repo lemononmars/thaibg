@@ -1,14 +1,14 @@
-export * from './Person';
 export * from './Boardgame';
+export * from './Mechanics';
+
 export * from './Content';
 export * from './Event';
 export * from './Honor';
-export * from './Shop';
-export * from './Manufacturer';
-export * from './Publisher';
-export * from './Mechanics';
 
+export * from './Person';
 export * from './personRoles';
+export * from './Organization';
+export * from './organizationRoles';
 
 export const TypeSubmissionAllowed = [
 	'artist',
@@ -33,26 +33,26 @@ export const TypeSubmissionAllowed = [
 ];
 
 export const TypeNamesArray = [
-	'boardgame',
-	'person',
-	'designer',
-	'graphicdesigner',
-	'contentcreator',
 	'artist',
+	'boardgame',
+	'category',
+	'content',
+	'contentcreator',
+	'designer',
+	'event',
+	'graphicdesigner',
+	'honor',
+	'manufacturer',
+	'mechanics',
+	'organization',
+	'person',
 	'playtester',
 	'producer',
-	'shop',
 	'publisher',
-	'content',
-	'honor',
-	'event',
+	'rulebookeditor',
+	'shop',
 	'sponsor',
 	'type',
-	'mechanics',
-	'category',
-	'manufacturer',
-	'rulebookeditor',
-	'crowdfunding'
 ];
 
 export type TypeName =
@@ -92,20 +92,20 @@ import { ArtistSubmissionPackage } from './personRoles/Artist';
 import { BoardgameSubmissionPackage } from './Boardgame';
 import { CategorySubmissionPackage } from './Category';
 import { ContentSubmissionPackage } from './Content';
-import { ContentcreatorSubmissionPackage } from './personRoles/Contentcreator';
+import { ContentcreatorSubmissionPackage } from './organizationRoles/Contentcreator';
 import { DesignerSubmissionPackage } from './personRoles/Designer';
 import { EventSubmissionPackage } from './Event';
 import { GraphicdesignerSubmissionPackage } from './personRoles/Graphicdesigner';
 import { HonorSubmissionPackage } from './Honor';
-import { ManufacturerSubmissionPackage } from './Manufacturer';
+import { ManufacturerSubmissionPackage } from './organizationRoles/Manufacturer';
 import { OrganizationSubmissionPackage } from './Organization';
 import { PersonSubmissionPackage } from './Person';
 import { PlaytesterSubmissionPackage } from './personRoles/Playtester';
 import { ProducerSubmissionPackage } from './personRoles/Producer';
-import { PublisherSubmissionPackage } from './Publisher';
+import { PublisherSubmissionPackage } from './organizationRoles/Publisher';
 import { RulebookeditorSubmissionPackage } from './personRoles/Rulebookeditor';
-import { ShopSubmissionPackage } from './Shop';
-import { SponsorSubmissionPackage } from './Sponsor';
+import { ShopSubmissionPackage } from './organizationRoles/Shop';
+import { SponsorSubmissionPackage } from './organizationRoles/Sponsor';
 /*
  * return necessary data for submission page
  */

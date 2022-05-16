@@ -3,7 +3,6 @@ export * from './Designer';
 export * from './Graphicdesigner';
 export * from './Playtester';
 export * from './Rulebookeditor';
-export * from './Contentcreator';
 export * from './Producer';
 
 export const personDeveloperRoles = [

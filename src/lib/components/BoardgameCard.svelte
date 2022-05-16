@@ -31,12 +31,12 @@
 
 <a href="/boardgame/{id}/{slug}">
 	<div
-		class="relative card w-auto ratio-aspect lg:w-64 pt-8 bg-base-100 card-compact shadow-xl transition ease-in-out hover:opacity-80 hover:scale-105 duration-30 group"
+		class="relative card w-auto ratio-aspect lg:w-64 pt-8 bg-base-100 card-compact shadow-xl transition ease-in-out hover:opacity-80 hover:scale-105 duration-30 group max-w-1/2 px-1 lg:px-0"
 	>
 		<figure>
 			<img
 				src={picture}
-				class="object-cover h-64 aspect-auto group-hover:scale-120"
+				class="object-cover w-full lg:h-64 aspect-auto group-hover:scale-120"
 				alt="picture of {name}"
 				on:error|once={(ev) => (ev.target.src = getDefaultImageURL('boardgame'))}
 			/>

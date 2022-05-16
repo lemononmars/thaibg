@@ -1,7 +1,8 @@
 <script context=module lang=ts>
 	import { getSubmissionPackage } from '$lib/datatypes';
 	import type { SubmissionPackage } from '$lib/datatypes';
-	import { fromBucket, getVarPrefix } from '$lib/supabase';
+	import { fromBucket, getVarPrefix, createSlug } from '$lib/supabase';
+	import type {SubmissionData} from '$lib/supabase'
 	import type {Alert} from '$lib/alert/alert.type'
 	import {handleAlert} from '$lib/alert/alert.store'
 
@@ -42,7 +43,7 @@
 	}
 
 	// TODO: make sure nothing breaks in production
-	export async function postSubmission(data): Promise<Response> {
+	export async function postSubmission(data: SubmissionData): Promise<Response> {
       const res = await fetch('/api/post/submission', {
          method: 'POST',
          cache: 'default',
@@ -55,6 +56,7 @@
 		return res;
 	}
 
+	// TODO: make this a post request?
 	export async function uploadpicture(type: string, file: File, fileName: string) {
 		// TODO: convert file? resize?
 		let { error: updateError } = await fromBucket('images').upload(
@@ -69,8 +71,8 @@
 	}
 
 	export async function getNewOrganization(id: number){
-		const newPerson = await fetch(`/api/organization/${id}`)
-		const data = await newPerson.json()
+		const newOrganization = await fetch(`/api/organization/${id}`)
+		const data = await newOrganization.json()
 		return data
 	}
 </script>
@@ -84,21 +86,25 @@
 	import { quintOut } from 'svelte/easing'
 	import UploadPicture from '$lib/components/UploadPicture.svelte';
 	import { _ } from 'svelte-i18n';
-	import { EditIcon, PlusCircleIcon, MinusCircleIcon, InfoIcon } from 'svelte-feather-icons';
-	import PersonCard from '$lib/components/PersonCard.svelte';
+	import { EditIcon, MinusCircleIcon } from 'svelte-feather-icons';
+	import PlainCard from '$lib/components/PlainCard.svelte';
+	import AddRoleButton from '$lib/components/AddRoleButton.svelte';
 
 	export let data: SubmissionPackage; // from load fucntion
 	const type: string = 'organization';
 	const { submission, keys, relations, selects, multiselects, required } = data; // destruct
 
 	// create an array for each relation
-	let rolesAdded: Record<string, any> = {};
+	interface RoleObject {
+		type: string,
+		pictureFile: File,
+		data: Record<string, any>
+	}
+	let rolesAdded: RoleObject[] = [];
 
 	// extra info
 	let comment: string;
-	const pictureKeys = keys.filter((k) => k.includes('picture')); // in case there are more than one picture
-	let pictureFiles: Record<string, File> = {};
-	pictureKeys.forEach((k) => (pictureFiles[k] = null));
+	let pictureFiles: Record<string, File> = {Organization_picture: null} // might also have a cover picture in the future
 
 	const roleSubmissionPackage = {
 		'manufacturer': getSubmissionPackage('manufacturer'),
@@ -107,10 +113,9 @@
 		'publisher': getSubmissionPackage('publisher'),
 		'contentcreator': getSubmissionPackage('contentcreator'),
 	}
-	let expandedRole: number = -1;
-	$: currentRole = relations[expandedRole] || ''
-	let editingRole: SubmissionPackage
-	$: editingRole = roleSubmissionPackage[relations[expandedRole]]
+	let editingRoleIndex: number = -1;
+	$: editingRoleType = rolesAdded[editingRoleIndex]?.type
+	let editingRolePackage: SubmissionPackage
 
 	// show user a page based on the submission state
 	const enum State {
@@ -121,23 +126,53 @@
 	}
 	let submitState = State.START;
 	let canSubmit: boolean = false
-	$: canSubmit = submission.Person_name || submission.Person_name_th
+	$: canSubmit = submission.Organization_name
+
+	// these are used so that we can display a link to the newly created entry right away
 	let newIndex: number
 	let promiseNewOrganization: Promise<any>
 
-	function handleExpand(idx: number) {
-		if(!rolesAdded[relations[idx]]) {
-			const prefix = getVarPrefix(relations[idx])
-			const newRoleInfo = {
-				[`${prefix}_name`]: submission.Organization_name,
-				[`${prefix}_picture`]: submission.Organization_picture,
-			}
-			rolesAdded[relations[idx]] = [newRoleInfo] // make it an array to match other relational objects
+	function addRole(role:string) {
+		const prefix = getVarPrefix(role)
+		const newRoleData = {
+			[`${prefix}_name`]: submission.Organization_name,
 		}
-		else if (expandedRole == idx)
-			expandedRole = -1
-		else
-			expandedRole = idx
+		const newRole: RoleObject = {
+			type: role,
+			pictureFile: pictureFiles.Organization_picture,
+			data: newRoleData
+		}
+		rolesAdded = [...rolesAdded, newRole]
+		rolesAdded = rolesAdded
+	}
+
+	function removeRole(idx: number) {
+		rolesAdded.splice(idx, 1)
+		rolesAdded = rolesAdded
+		editingRoleIndex = -1
+		scrollTop()
+	}
+
+	function handleExpand(idx: number) {
+		editingRolePackage = roleSubmissionPackage[rolesAdded[idx]['type']]
+		editingRoleIndex = idx
+	}
+	
+	function handleSave () {
+		const roleType = rolesAdded[editingRoleIndex]['type']
+		const required = roleSubmissionPackage[roleType].required
+		if (required && !required.every((k: string) => !!rolesAdded[editingRoleIndex]['data'][k])) {
+			const missingFields = required?.filter((k: string) => !rolesAdded[editingRoleIndex]['data'][k]).join(',')
+			const newAlert: Alert = {
+				type: 'error',
+				text: 'please fill all required fields: ' +  missingFields
+			}
+			handleAlert(newAlert)
+			return
+		}
+
+		editingRoleIndex = -1
+		scrollTop()
 	}
 
 	async function handleSubmit() {
@@ -152,7 +187,9 @@
 			return
 		}
 
-		if (!submission[getVarPrefix(type) + '_name'] && !submission[getVarPrefix(type) + '_name_th']) {
+		const typePrefix = getVarPrefix(type)
+
+		if (!submission[typePrefix + '_name'] && !submission[typePrefix + '_name_th']) {
 			const newAlert: Alert = {
 				type: 'error',
 				text: 'please enter either English or Thai name'
@@ -162,6 +199,7 @@
 		}
 
 		submitState = State.SUBMITTING;
+		scrollTop()
 
 		// attach submitter's info
 		let id = 'guest',
@@ -175,28 +213,50 @@
 		// generate a slug based on name (english)
 		// if only Thai name (_name_th) exists, treat it as no name
 		// might have to manually fix it in admin panel
-		let name = submission[getVarPrefix(type) + '_name'];
-		if (!name || name.length == 0) name = 'no-slug';
-
-		const slug = name
-			.toLowerCase()
-			.replace(/\s/g, '-') // replace white spaces by dashes
-			.replace(/[^\w\-]/g, ''); // remove non alphanumeric characters (except dashes of course)
-		submission[getVarPrefix(type) + '_slug'] = slug;
+		const slug = createSlug(submission[typePrefix + '_name'])
+		submission[typePrefix + '_slug'] = slug
 
 		// rename picture with random ID for hashing purpose
-		for (const pf in pictureFiles) {
+		for (const pf in Object.keys(pictureFiles)) {
 			if(pictureFiles[pf]) {
 				const randomID = Math.floor(Math.random() * 1000);
 				const randomIDString = ('000' + randomID).slice(-4);
-				submission[pf] = slug + randomIDString;
-				await uploadpicture(type, pictureFiles[pf], slug + randomIDString);
+				const pictureSlug = slug + '-' + randomIDString;
+				submission[pf] = pictureSlug
+				const pictureType = pf.substring(0, pf.indexOf('_'))
+				await uploadpicture(pictureType, pictureFiles[pf], pictureSlug);
 			}
+		}
+
+		for (const r in rolesAdded) {
+			if(rolesAdded[r]['pictureFile']) {
+				const randomID = Math.floor(Math.random() * 1000);
+				const randomIDString = ('000' + randomID).slice(-4);
+
+				const type = rolesAdded[r]['type']
+				const prefix = getVarPrefix(type)
+				const slug = createSlug(rolesAdded[r]['data'][prefix + '_name'])
+				const pictureSlug = slug + '-' + randomIDString
+				rolesAdded[r]['data'][prefix + '_picture'] = pictureSlug
+				await uploadpicture(type, rolesAdded[r]['pictureFile'], pictureSlug)
+			}
+		}
+
+		// convert the shape of rolesAdded
+		// from [{type: 'shop'}, {type:'manufacturere'}, ...]
+		// to {shop: [{}, {}, ...], manufacturer: [{}, ...]}
+		const rs = {}
+		for(const r of rolesAdded) {
+			if(!rs[r.type])
+				rs[r.type] = [r.data]
+			else
+				rs[r.type] = [... rs[r.type], r.data]
 		}
 
 		let res = await postSubmission({
 			content: submission,
-			relations: rolesAdded,
+			rolesSubmission: rs,
+			relations: {},
 			pageType: type,
 			id,
 			username,
@@ -223,15 +283,19 @@
 			handleAlert(newAlert)
 		}
 	}
+
+	function scrollTop() {
+		window.scroll({ top: 0, behavior: 'smooth' });
+	}
 </script>
 
-<Seo title="Create person" />
+<Seo title="Create organization" />
 
-<div class="text-gray-500">
-	{JSON.stringify(submission)}
-	{JSON.stringify(rolesAdded)}
+<!-- <div class="text-gray-500">
+	{JSON.stringify(submission)} <br>
+	roles added: {JSON.stringify(rolesAdded)} <br>
 	{JSON.stringify(pictureFiles)}
-	</div>
+</div> -->
 {#if submitState == State.START || submitState == State.ERROR}
 <div class="flex flex-col lg:flex-row lg:gap-4">
 <div class="bg-base-200 m-4 rounded-3xl mx-auto w-screen lg:w-1/2 max-w-fit">
@@ -274,44 +338,35 @@
 	</form>
 </div>
 <div class="lg:divider lg:divider-vertical"/>
-<div class="bg-base-200 m-4 rounded-3xl mx-auto w-screen lg:max-w-md">
+<div class="bg-base-200 m-4 rounded-3xl mx-auto w-screen lg:max-w-lg">
 	<div class="bg-error text-error py-4 mx-auto rounded-t-3xl">
 		<h1>{$_('page.create.add_roles')}</h1>
 	</div>
-	{#if (expandedRole == -1)}
-		<div class="flex flex-col justify-center items-center" in:fly={{ duration: 400, y: -20, easing: quintOut }} >
-			{#each relations as r, ridx}
-				<div>
-					<div class="btn-group my-2 group">
+	<!-- display organization roles-->
+	{#if (editingRoleIndex == -1)}
+		<div class="flex flex-col justify-center items-center" in:fly={{ duration: 1000, y: 20, easing: quintOut }} >
+			<div class="flex flex-row gap-1 m-1">
+				{#each relations as role}
+					<div on:click={()=>addRole(role)}><AddRoleButton {role}/></div>
+				{/each}
+			</div>
+			{#each rolesAdded as r, ridx}
+				<div class="flex flex-row justify-between items-center border-2 my-1 p-1" in:fly>
+					<div class="tooltip" data-tip="edit">
 						<div 
-							class="btn bg-base-200 hover:bg-success" 
-							class:bg-success={!!rolesAdded[r]}
+							class="btn bg-success" 
 							on:click={()=>handleExpand(ridx)}
 						>	
-							{#if rolesAdded[r]}
-								<div><EditIcon size=20/></div>
-							{:else}
-								<div><PlusCircleIcon size=20/></div>
-							{/if}
+							<EditIcon size=20/>
 						</div>
-						<div
-							class="btn w-48" class:bg-success={rolesAdded[r]}
-						>
-							{$_(`keyword.${r}`)}
-						</div>
-						<div 
-							class="btn bg-base-200 hover:bg-error"
-							class:bg-error={rolesAdded[r]}
-						>
-							{#if rolesAdded[r]}
-								<div on:click={()=>{delete rolesAdded[r]; rolesAdded = rolesAdded}}>
-									<MinusCircleIcon size=20/>
-								</div>
-							{:else}
-								<div>
-									<InfoIcon size=20/>
-								</div>
-							{/if}
+					</div>
+					<div class="w-60 text-sm truncate">
+						<p class="font-bold">{$_(`keyword.${r.type}`)}</p>
+						<p>{r.data[getVarPrefix(r.type) + '_name'] || ''}</p>
+					</div>
+					<div class="tooltip" data-tip="remove">
+						<div class="btn bg-error" on:click={()=>removeRole(ridx)}>
+							<MinusCircleIcon size=20/>
 						</div>
 					</div>
 				</div>
@@ -319,38 +374,40 @@
 		</div>
 	{/if}
 	
-	{#if (expandedRole > -1)}
-		<div in:fly={{ duration: 400, y: -20, easing: quintOut }} class="m-2">
+	<!-- edit a parcitular organization role -->
+	{#if (editingRoleIndex > -1)}
+		<div in:fly={{ duration: 1000, y: -20, easing: quintOut }} class="m-2">
 			<div class="grid grid-cols-1 lg:grid-cols-3 items-center gap-2">
-				<div class="col-span-3">Adding {relations[expandedRole]}</div>
+				<div class="col-span-3">Editing {editingRoleType}</div>
 				<!-- display the appropriate input type, based on key's name and selects/multiselects array-->
-				{#each editingRole.keys as k}
+				{#each editingRolePackage.keys as k}
 					<div class="justify-self-start lg:justify-self-end mx-2 flex flex-row gap-2">
 						<div>{$_(`key.${k}`)}</div>
-						<div class="text-error">{required?.includes(k)? '*' : ''}</div>
+						<div class="text-error">{editingRolePackage.required?.includes(k)? '*' : ''}</div>
 					</div>
 					<div class="justify-self-start lg:col-span-2 ">
-						{#if editingRole.selects[k]}
-							<select class="select select-bordered" bind:value={submission[k]}>
+						{#if editingRolePackage.selects[k]}
+							<select class="select select-bordered" bind:value={rolesAdded[editingRoleIndex]['data'][k]}>
 								<option disabled selected value={null}>{$_('page.create.select')}</option>
-								{#each editingRole.selects[k] as opt}
+								{#each editingRolePackage.selects[k] as opt}
 									<option value={opt}>{$_(`option.${opt}`)}</option>
 								{/each}
 							</select>
-						{:else if editingRole.multiselects[k]}
-							<MultipleSelect selectOptions={editingRole.multiselects[k]} bind:selects={rolesAdded[currentRole][0][k]} />
+						{:else if editingRolePackage.multiselects[k]}
+							<MultipleSelect selectOptions={editingRolePackage.multiselects[k]} bind:selects={rolesAdded[editingRoleIndex]['data'][k]} />
 						{:else if k.includes('_picture')}
-							<UploadPicture key={k} bind:pictureFile={pictureFiles[k]} />
+							<UploadPicture key={k} bind:pictureFile={rolesAdded[editingRoleIndex]['pictureFile']} />
 						{:else if k.includes('show')}
-							<input type="checkbox" bind:checked={rolesAdded[currentRole][0][k]} class="checkbox" />
+							<input type="checkbox" bind:checked={rolesAdded[editingRoleIndex]['data'][k]} class="checkbox" />
 						{:else if k.includes('description')}
-							<textarea class="textarea textarea-bordered" bind:value={rolesAdded[currentRole][0][k]} />
+							<textarea class="textarea textarea-bordered" bind:value={rolesAdded[editingRoleIndex]['data'][k]} />
 						{:else}
-							<input type="text" class="input input-bordered" bind:value={rolesAdded[currentRole][0][k]} />
+							<input type="text" class="input input-bordered" bind:value={rolesAdded[editingRoleIndex]['data'][k]} />
 						{/if}
 					</div>
 				{/each}
-				<div class="btn btn-success col-span-3" on:click={()=>handleExpand(expandedRole)}> Save	</div>
+				<div class="btn btn-error col-span-1" on:click={()=>removeRole(editingRoleIndex)}> Remove	</div>
+				<div class="btn btn-success col-span-2" on:click={handleSave}> Save	</div>
 			</div>
 		</div>
 	{/if}
@@ -376,6 +433,7 @@
 {/if}
 {/if}
 
+<div>
 {#if submitState == State.SUBMITTING}
 	<p>{$_('page.create.status.submitting')}</p>
 	<Spinner />
@@ -384,7 +442,7 @@
 	{#await promiseNewOrganization then res}
 		{#if res}
 			<div class="mx-auto">
-				<PersonCard person={res}/>
+				<PlainCard object={res} type={"organization"}/>
 			</div>
 		{/if}
 	{/await}
@@ -395,6 +453,7 @@
 	<p class="text-red">{$_('page.create.status.error')}</p>
 	<div class="btn" on:click|preventDefault={handleSubmit}>{$_('page.create.submit')}</div>
 {/if}
+</div>
 
 <style>
 	input {

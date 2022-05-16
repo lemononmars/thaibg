@@ -1,5 +1,5 @@
 <script lang="ts" context="module">
-	export async function load({ params }) {
+	export async function load({ params, fetch }) {
 		const res = await fetch(`/api/publisher/${params.id}`);
 		if (!res.ok) return { status: 400 };
 
@@ -27,6 +27,7 @@
 	import BoardgameCard from '$lib/components/BoardgameCard.svelte';
 	import { getImageURL, getDefaultImageURL } from '$lib/supabase';
 	import type { Publisher, Boardgame } from '$lib/datatypes';
+	import EditButton from '$lib/components/EditButton.svelte';
 	import { _ } from 'svelte-i18n';
 
 	export let publisherData: Publisher;
@@ -51,17 +52,14 @@
 				<h2>Description</h2>
 				<p>{@html publisherData.Publisher_description || 'N/A'}</p>
 			</div>
-			<ul>
-				<li>
-					Official link:
-					{#if publisherData.Publisher_link}
-						<a href={publisherData.Publisher_link} target="_blank">{publisherData.Publisher_link}</a
-						>
-					{:else}
-						N/A
-					{/if}
-				</li>
-			</ul>
+			<div>
+				{#if publisherData.Publisher_link}
+					<h2>Official link:</h2>
+					<a href={publisherData.Publisher_link} target="_blank">{publisherData.Publisher_link}</a
+					>
+				{/if}
+			</div>
+			<EditButton type="publisher" id={publisherData.Publisher_ID}/>
 		</div>
 	</div>
 

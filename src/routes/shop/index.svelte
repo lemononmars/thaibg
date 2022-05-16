@@ -20,7 +20,7 @@
 	import { _ } from 'svelte-i18n';
 	import DataView from '$lib/components/DataView.svelte';
 	import type { Shop } from '$lib/datatypes';
-	import {ShopTypeArray, ShopStatusArray} from '$lib/datatypes/Shop'
+	import {ShopTypeArray, ShopStatusArray} from '$lib/datatypes/organizationRoles/Shop'
 
 	export let shops: Shop[];
 	export let search: string; // from url params

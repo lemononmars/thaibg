@@ -13,7 +13,7 @@
 		};
 	}
 
-	export async function getBoardgames(id) {
+	export async function getBoardgames(id: number) {
 		const res = await fetch(`/api/shop/${id}/boardgame`);
 		if (!res.ok)
 			return { status: 404, message: 'cannot find any boardgame associated with that shop' };
@@ -32,6 +32,7 @@
 	import type { Shop } from '$lib/datatypes';
 	import ShopStatusBadge from '$lib/components/ShopStatusBadge.svelte';
 	import {_} from 'svelte-i18n'
+import EditButton from '$lib/components/EditButton.svelte';
 
 	export let shopData: Shop;
 	let promiseBoardgames: Promise<Shop[]>;
@@ -88,7 +89,9 @@
 					</div>
 				</div>
 			{/if}
+			<EditButton type="shop" id={shopData.Shop_ID}/>
 		</div>
+		
 	</div>
 	<!-- second column-->
 	<div class="flex flex-col gap-4">
