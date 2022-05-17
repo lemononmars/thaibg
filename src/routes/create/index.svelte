@@ -8,13 +8,6 @@
 	// add person somewhere ?
 	const creatorMenu = [
 		'person',
-		/*'designer',
-		'graphicdesigner',
-		'artist',
-		'playtester',
-		'rulebookeditor',
-		'producer'*/
-		//'manufacturer',
 	];
 	const supporterMenu = [
 		'organization'

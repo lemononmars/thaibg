@@ -21,12 +21,14 @@
 		mechanics = data
 			.sort((a:Mechanics,b:Mechanics) => {return a.Mech_name.localeCompare(b.Mech_name)})
 			.map((m: Mechanics) => ({
-				id: m.Mech_ID,
-				name: m.Mech_name,
-				slug: m.Mech_slug,
 				category: m.Mech_category,
-				picture: '/mechanics/' + m.Mech_picture,
-				type: 'mechanics'
+				data: {
+					id: m.Mech_ID,
+					name: m.Mech_name,
+					slug: m.Mech_slug,
+					picture: '/mechanics/' + m.Mech_picture,
+					type: 'mechanics'
+				}
 			}));
 
 		mechanics.forEach(m => {
@@ -47,7 +49,7 @@
 		<h2 id="{cat}">{$_(`mechanics.${cat}`)}</h2>
 		<div class="w-full text-center mb-16 grid grid-cols-1 lg:grid-cols-3 gap-4">
 			{#each categorizedMechanics[cat] as m}
-				<ListCard {...m}/>
+				<ListCard {...m.data}/>
 			{:else}
 				<Spinner />
 			{/each}

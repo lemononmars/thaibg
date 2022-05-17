@@ -87,6 +87,7 @@
 	import SearchMultipleSelect from '$lib/components/SearchMultipleSelect.svelte';
 	import UploadPicture from '$lib/components/UploadPicture.svelte';
 	import SveltyPicker from 'svelty-picker';
+	import {EditIcon, RefreshCcwIcon, SaveIcon} from 'svelte-feather-icons'
 	import {getImageURL, getDefaultImageURL} from '$lib/supabase'
 	import { _ } from 'svelte-i18n';
 	import {onMount} from 'svelte'
@@ -133,6 +134,9 @@
 	let pictureFiles: Record<string, File> = {};
 	pictureKeys.forEach((k) => (pictureFiles[k] = null));
 
+	// 
+	let editingKey: string = ''
+	let editingContent: any
 	// show user a page based on the submission state
 	const enum State {
 		START,
@@ -179,26 +183,38 @@
 			type: 'edit',
 			comment
 		});
+		let newAlert: Alert;
 		if (res.ok) {
 			submitState = State.SUCCESS;
-			const newAlert: Alert = {
+			newAlert = {
 				type: 'success',
 				text: 'Successfully submitted!'
 			}
-			handleAlert(newAlert)
 		}
 		else {
 			submitState = State.ERROR;
-			const newAlert: Alert = {
+			newAlert = {
 				type: 'error',
-				text: 'There was an error'
+				text: 'There was an error:' + JSON.stringify(res.body)
 			}
-			handleAlert(newAlert)
+		}
+		handleAlert(newAlert)
+	}
+
+	function handleEdit(k: string) {
+		if(editingKey === k) {
+			if(editingContent !== currentData[k])
+				submission[k] = currentData[k]
+			editingKey = null
+		}
+		else if(!editingKey) {
+			editingContent = currentData[k]
+			editingKey = k
 		}
 	}
 </script>
 
-<Seo title="Create {type}" />
+<Seo title="Edit {type}" />
 
 <svelte:window on:beforeunload={(e)=> {e.returnValue = '...'; return '...'}}/>
 
@@ -210,10 +226,6 @@
 {#if submitState == State.START || submitState == State.ERROR}
 	<form>
 		<div class="flex flex-col lg:grid lg:grid-cols-3 items-center gap-2">
-			<div class="text-info hidden lg:inline">Keys</div>
-			<div class="text-info hidden lg:inline">New data (leave blank if unchanged)</div>
-			<div class="text-info hidden lg:inline">Current data</div>
-			<div class="divider col-span-1 lg:col-span-3"></div>
 			<!-- display the appropriate input type, based on key's name and selects/multiselects array-->
 			{#each keys as k}
 				<div class="justify-self-start lg:justify-self-end mx-2 flex flex-row gap-2">
@@ -221,32 +233,31 @@
 				</div>
 				<div class="justify-self-center">
 					{#if selects[k]}
-						<select class="select select-bordered" bind:value={submission[k]}>
+						<select class="select select-bordered" bind:value={currentData[k]}>
 							<option disabled selected value={null}>{$_('page.create.select')}</option>
 							{#each selects[k] as opt}
 								<option value={opt}>{$_(`option.${opt}`)}</option>
 							{/each}
 						</select>
 					{:else if multiselects[k]}
-						<MultipleSelect selectOptions={multiselects[k]} bind:selects={submission[k]} />
+						<MultipleSelect selectOptions={multiselects[k]} bind:selects={currentData[k]} />
 					{:else if k.includes('_picture')}
 						<UploadPicture key={k} bind:pictureFile={pictureFiles[k]} />
 					{:else if k.includes('_time')}
 						<SveltyPicker
 							inputClasses="form-control"
 							format="yyyy-mm-dd"
-							bind:value={submission[k]}
+							bind:value={currentData[k]}
 						/>
 					{:else if k.includes('show')}
-						<input type="checkbox" bind:checked={submission[k]} class="checkbox" />
+						<input type="checkbox" bind:checked={currentData[k]} class="checkbox" disabled={editingKey !== k}/>
 					{:else if k.includes('description')}
-						<textarea class="textarea textarea-bordered" bind:value={submission[k]} />
+						<textarea class="textarea textarea-bordered" bind:value={currentData[k]} disabled={editingKey !== k}/>
 					{:else}
-						<input type="text" class="input input-bordered" bind:value={submission[k]} />
+						<input type="text" class="input input-bordered" bind:value={currentData[k]} disabled={editingKey !== k}/>
 					{/if}
 				</div>
-				<!-- show current Data-->
-				<div class="text-success justify-self-start break-all">
+				<div class="justify-self-start break-all flex flex-row items-center gap-2">
 					{#if k.includes('_picture')}
 						<img
 							src={getImageURL(type, currentData[k])}
@@ -255,7 +266,20 @@
 							on:error|once={(ev) => (ev.target.src = getDefaultImageURL(type))}
 						/>
 					{:else}
-						{currentData[k] || '-'}
+						<div 
+							class="btn" on:click={()=>handleEdit(k)} 
+							class:bg-success={editingKey === k}
+							class:invisible={editingKey && editingKey !== k}
+						>
+							{#if editingKey === k}
+								<SaveIcon size=12/>
+							{:else}
+								<EditIcon size=12/>
+							{/if}
+						</div>
+						{#if submission[k]}
+							<div class="text-success"><RefreshCcwIcon size=20/></div>
+						{/if}
 					{/if}
 				</div>
 			{/each}

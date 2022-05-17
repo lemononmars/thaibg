@@ -4,7 +4,7 @@
 	import { closeModal } from './modal.store';
 	import { modalEvtBindings } from './modal.action';
 
-	export let isOpen;
+	export let isOpen: boolean;
 	export let index;
 	export let isSidePanel: boolean = false;
 	$: transitionConfig = isSidePanel ? { x: 100 } : { y: 100 };

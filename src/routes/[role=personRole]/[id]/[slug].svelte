@@ -1,18 +1,26 @@
 <script lang="ts" context="module">
+	/*
+		This whole page is identical to /person/ID/SLUG
+	*/
 	import { getVarPrefix } from '$lib/supabase';
 	import { Person, personRoles } from '$lib/datatypes';
 	import type { PersonRole, Boardgame } from '$lib/datatypes';
 
-	export async function load({ params, url, fetch }) {
-		const res = await fetch(`/api/person/${params.id}`);
-		if (!res.ok) return { status: 404 };
-		let person: Person;
-		person = await res.json();
+	export async function load({ params, fetch }) {
+		let {id, role} = params;
+		const res = await fetch(`/api/${role}/${id}/person`);
+		// redirect to the default page
+		if (!res.ok)
+			return {
+				status: 303,
+				redirect: `/person?role=${role}`
+			};
 
+		const data = await res.json()
 		return {
 			props: {
-				person,
-				role: url.searchParams.get('role')
+				person: data[0],
+				role
 			}
 		};
 	}

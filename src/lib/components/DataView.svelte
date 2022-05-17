@@ -31,6 +31,10 @@
 	$: numData = data.length;
 	$: numPages = Math.ceil(numData / ENTRY_PER_PAGES);
 	let activePage = 0;
+	// reset active page whenever data is updated
+	$: if(data)
+		activePage = 0
+
 	$: dataCurrentPage = data.slice(activePage * ENTRY_PER_PAGES, (activePage + 1) * ENTRY_PER_PAGES);
 
 	$: firstPageEntry = activePage * ENTRY_PER_PAGES + 1;
@@ -44,7 +48,8 @@
 
 <div class="flex flex-col justify-center items-center relative mx-auto">
 	<!-- search bar, customized for each page-->
-	<SearchNavigation />
+	<SearchNavigation/>
+	<h1>List of {$_(`keyword.${type}`)}</h1>
 	<slot />
 	<div class="flex flex-col lg:flex-row items-center flex-wrap">
 		<!-- Select table view or grid view -->

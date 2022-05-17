@@ -88,7 +88,7 @@
 	import { _ } from 'svelte-i18n';
 	import { EditIcon, MinusCircleIcon } from 'svelte-feather-icons';
 	import PlainCard from '$lib/components/PlainCard.svelte';
-	import AddRoleButton from '$lib/components/AddRoleButton.svelte';
+	import RoleButtonAdd from '$lib/components/RoleButtonAdd.svelte';
 
 	export let data: SubmissionPackage; // from load fucntion
 	const type: string = 'organization';
@@ -347,7 +347,7 @@
 		<div class="flex flex-col justify-center items-center" in:fly={{ duration: 1000, y: 20, easing: quintOut }} >
 			<div class="flex flex-row gap-1 m-1">
 				{#each relations as role}
-					<div on:click={()=>addRole(role)}><AddRoleButton {role}/></div>
+					<div on:click={()=>addRole(role)}><RoleButtonAdd {role}/></div>
 				{/each}
 			</div>
 			{#each rolesAdded as r, ridx}

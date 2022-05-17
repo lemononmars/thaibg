@@ -2,6 +2,8 @@
 	import { getVarPrefix } from '$lib/supabase';
 	import { SearchIcon, DeleteIcon } from 'svelte-feather-icons';
 	import {_} from 'svelte-i18n'
+import type { TimeFormatter } from 'svelte-i18n/types/runtime/types';
+	import RoleButtonSearch from './RoleButtonAdd.svelte';
 	import Spinner from './Spinner.svelte';
 
 	export let selects = [];
@@ -15,7 +17,7 @@
 
 	let searchString: string = '';
 	let searchedData: simpleData[];
-	let typingTimer;
+	let typingTimer: ReturnType<typeof setTimeout>
 	let isTyping = false
 
 	function startTyping() {
@@ -51,60 +53,63 @@
 	}
 </script>
 
-<div class="flex flex-col mx-auto gap-1">
-	<div class="dropdown mb-4">
-		<!-- svelte-ignore a11y-label-has-associated-control -->
-		<label tabindex="0">
-			<div class="form-control">
-				<label class="label text-sm">{$_(`keyword.${type}`)}</label>
-				<div class="input-group input-sm">
-					<input
-						type="text"
-						placeholder="พิมพ์เพื่อค้นหา"
-						class="input input-bordered w-70"
-						bind:value={searchString}
-						on:keyup={() => stopTyping()}
-						on:keydown={()=> startTyping()}
-					/>
-					<div class="btn">
-						<SearchIcon size="20" />
+<div class="flex flex-row">
+	<RoleButtonSearch role={type}/>
+	<div class="flex flex-col mx-auto gap-1">
+		<div class="dropdown mb-4">
+			<!-- svelte-ignore a11y-label-has-associated-control -->
+			<label tabindex="0">
+				<div class="form-control">
+					<!-- <label class="label text-sm">{$_(`keyword.${type}`)}</label> -->
+					<div class="input-group input-sm">
+						<input
+							type="text"
+							placeholder={"Search " + $_(`keyword.${type}`)}
+							class="input input-bordered w-70"
+							bind:value={searchString}
+							on:keyup={() => stopTyping()}
+							on:keydown={()=> startTyping()}
+						/>
+						<div class="btn">
+							<SearchIcon size="20" />
+						</div>
 					</div>
 				</div>
-			</div>
-		</label>
-		<ul
-			tabindex="0"
-			class="p-2 shadow menu dropdown-content bg-base-100 rounded-box w-72 mt-4"
-			class:hidden={searchString.length == 0}
-		>
-			{#if isTyping}
-				<li><Spinner /></li>
-			{:else if searchedData}
-				{#each searchedData as d}
-					<li>
-						<div class="btn btn-ghost" on:click={() => select(d)}>
-							{d.name || ''}{d.name && d.name_th? ' - ' : ''}{d.name_th || ''}
-						</div>
-					</li>
-				{:else}
-					<li><div class="btn btn-outline btn-error">No match found</div></li>
-				{/each}
-				{#if searchedData.length > 15}
-					<li><div class="btn btn-outline btn-info">{searchedData.length - 15} more...</div></li>
+			</label>
+			<ul
+				tabindex="0"
+				class="p-2 shadow menu dropdown-content bg-base-100 rounded-box w-72 mt-4"
+				class:hidden={searchString.length == 0}
+			>
+				{#if isTyping}
+					<li><Spinner /></li>
+				{:else if searchedData}
+					{#each searchedData as d}
+						<li>
+							<div class="btn btn-ghost" on:click={() => select(d)}>
+								{d.name || ''}{d.name && d.name_th? ' - ' : ''}{d.name_th || ''}
+							</div>
+						</li>
+					{:else}
+						<li><div class="btn btn-outline btn-error"> <a href="/create/{type}" target="_blank">Create {type}</a></div></li>
+					{/each}
+					{#if searchedData.length > 15}
+						<li><div class="btn btn-outline btn-info">{searchedData.length - 15} more...</div></li>
+					{/if}
 				{/if}
-			{/if}
-		</ul>
-	</div>
-	{#each selects as s}
-		<div
-			class="badge hover:badge-error gap-2"
-			on:click={() => {
-				selects.splice(selects.indexOf(s), 1);
-				selects = selects;
-			}}
-		>
-			{s.name}
-			<DeleteIcon size="20" />
+			</ul>
 		</div>
-	{/each}
+		{#each selects as s}
+			<div
+				class="badge hover:badge-error gap-2 ml-3"
+				on:click={() => {
+					selects.splice(selects.indexOf(s), 1);
+					selects = selects;
+				}}
+			>
+				{s.name}
+				<DeleteIcon size="20" />
+			</div>
+		{/each}
+	</div>
 </div>

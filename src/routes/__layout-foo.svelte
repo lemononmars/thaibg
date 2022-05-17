@@ -8,7 +8,7 @@
 </script>
 
 <Header/>
-<main class="max-w-7xl h-full lg:px-2">
+<main class="w-full max-w-max h-full">
 	<slot/>
 </main>
 

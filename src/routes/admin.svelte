@@ -1,5 +1,7 @@
 <script lang=ts context=module>
 	import { from } from '$lib/supabase';
+	import { handleAlert} from '$lib/alert'
+	import type {Alert} from '$lib/alert/alert.type'
 
 	interface Settings {
 		requireApproval: boolean,
@@ -13,12 +15,19 @@
 	export async function load({ session, fetch }) {
 		const { user } = session;
 		// TODO: use admin role
-		if (user?.role !== 'authenticated')
+		console.log(user)
+		if (user?.role !== 'authenticated') {
+			const newAlert: Alert = {
+				type: 'error',
+				text: 'You are not allowed to access this admin page.'
+			}
+			handleAlert(newAlert)
 			return {
-				status: 401,
+				status: 303,
 				redirect: '/'
 			};
-		
+		}
+
 		const {data: submissionData, error: error1 } = await from('Submission').select('*').eq('Submission_status', 'pending');
 		if (error1) throw error1;
 		const res = await fetch('/api/adminsettings')
@@ -66,8 +75,6 @@
 </script>
 
 <script lang=ts>
-	import {alerts, handleAlert} from '$lib/alert'
-	import type {Alert} from '$lib/alert/alert.type'
 	export let data, settings: Settings;
 	// to be paginated?
 

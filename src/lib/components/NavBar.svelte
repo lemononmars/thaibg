@@ -1,14 +1,15 @@
-<!-- <script lang="ts" context="module">
+<!-- <script lang=ts context=module>
     export async function load({ session }) {
         const { user } = session
         return {
             props: {
-                user
+                user,
             }
         };
     }
 </script> -->
-<script lang="ts">
+
+<script lang=ts>
 	import { _, locale, locales, isLoading } from 'svelte-i18n';
 	import { getAvatar, getCurrUserProfile } from '$lib/user/profile';
 	import { user, signOut } from '$lib/user';
@@ -17,7 +18,8 @@
 		MenuIcon,
 		UserIcon,
 		SearchIcon,
-		ChevronUpIcon
+		ChevronUpIcon,
+		AlertOctagonIcon
 	} from 'svelte-feather-icons';
 	import { URL_DICEBEAR } from '$lib/constants';
 	import ToggleTheme from '$lib/components/ToggleTheme.svelte';
@@ -25,6 +27,10 @@
 	//import TBGAlogo from '$lib/assets/TBGA-logo-color.png';
 	import TBGAlogo from '$lib/assets/mascot.png';
 	import { onMount } from 'svelte';
+	import { page } from '$app/stores'
+	import { handleAlert} from '$lib/alert'
+	import type {Alert} from '$lib/alert/alert.type'
+	import Popover from './popover/Popover.svelte';
 
 	//export let user
 
@@ -39,13 +45,13 @@
 		{ path: '/person?role=graphicdesigner', title: $_('keyword.graphicdesigner') },
 		{ path: '/person?role=artist', title: $_('keyword.artist') },
 		{ path: '/person?role=playtester', title: $_('keyword.playtester') },
-		{ path: '/manufacturer', title: $_('keyword.manufacturer') },
 		{ path: '/person?role=rulebookeditor', title: $_('keyword.rulebookeditor') },
-		{ path: '/person?role=producer', title: $_('keyword.producer') }
+		{ path: '/person?role=producer', title: $_('keyword.producer') },
+		{ path: '/manufacturer', title: $_('keyword.manufacturer') },
 	];
 	$: supporterMenu = [
+		{ path: '/contentcreator', title: $_('keyword.contentcreator') },
 		{ path: '/shop', title: $_('keyword.shop') },
-		{ path: '/person?role=contentcreator', title: $_('keyword.contentcreator') },
 		{ path: '/publisher', title: $_('keyword.publisher') },
 		{ path: '/sponsor', title: $_('keyword.sponsor') }
 	];
@@ -60,12 +66,14 @@
 		en: 'ENG',
 		th: 'ไทย'
 	};
-	let avatar;
+	let avatar: string | Promise<string>;
 	onMount(async () => {
 		if ($user) {
 			const { data, error } = await getCurrUserProfile();
-			if (!error) avatar = getAvatar(data.avatar_url);
-			else avatar = URL_DICEBEAR + 'randombear' + '.svg';
+			if (!error) 
+				avatar = getAvatar(data.avatar_url);
+			else 
+				avatar = URL_DICEBEAR + 'randombear' + '.svg';
 		}
 	});
 
@@ -77,6 +85,56 @@
 
 	function mouseMove(event: MouseEvent) {
 		mouseY = event.clientY;
+	}
+
+	let openSearchModal: boolean = false
+	let openReportModal: boolean = false
+	let reportString: string = ''
+	let isReporting: boolean = false
+
+	async function handleReport() {
+		isReporting = true
+		let newAlert: Alert
+		if(!reportString) {
+			newAlert = {
+				type: 'error',
+				text: 'please enter your message' 
+			}
+			handleAlert(newAlert)
+			isReporting = false
+			return
+		}
+		const reportObject = {
+			Report_url: $page.url,
+			Report_content: reportString
+		}
+		const res = await fetch('/api/post/report', {
+         method: 'POST',
+         cache: 'default',
+         credentials: 'same-origin',
+         headers: {
+            'Content-Type': 'application/json'
+         },
+         body: JSON.stringify(reportObject)
+      })
+		if (res.ok)
+			newAlert = {
+				type: 'success',
+				text: 'Thank you! Your report has been received.'
+			}
+		else newAlert  = {
+				type: 'error',
+				text: res.statusText
+			}
+		handleAlert(newAlert)
+		openReportModal = false
+		openReportModal = openReportModal
+		isReporting = false
+	}
+
+	function closeReport(){
+		openReportModal = false
+		openReportModal = openReportModal
 	}
 </script>
 
@@ -164,12 +222,8 @@
 			<div class="hidden lg:block">
 				<ToggleTheme />
 			</div>
-			<div class="dropdown dropdown-hover dropdown-end">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label tabindex="0" class="m-1 btn"><SearchIcon size="20" /></label>
-				<ul tabindex="0" class="p-2 shadow menu dropdown-content w-52">
-					<input type="text" placeholder="search" class="bg-neutral text-bg-content" />
-				</ul>
+			<div class="hidden lg:block" on:click={()=>openSearchModal=true}>
+				<SearchIcon size="20" />
 			</div>
 
 			<div>
@@ -212,3 +266,28 @@
 		</div>
 	</div>
 {/if}
+
+<div
+	class="btn btn-accent fixed left-0 bottom-0 m-4 rounded-full z-10 hover:-translate-y-2 duration-200"
+	on:click|preventDefault={()=>openReportModal = true}
+>
+	<div class="tooltip" data-tip="report this page">
+		<AlertOctagonIcon size="15" />
+	</div>
+</div>
+
+<!-- Put this part before </body> tag -->
+<input type="checkbox" id="my-modal-6" class="modal-toggle"/>
+<div class="modal modal-bottom sm:modal-middle" class:modal-open={openReportModal}>
+	<div class="modal-box">
+		<h1>Report / Suggestion</h1>
+		<h2>URL</h2>
+		{$page.url}
+		<h2>Message</h2>
+		<textarea class="textarea bg-base-300 w-full" placeholder="Tell us!" bind:value={reportString}></textarea>
+		<div class="modal-action">
+			<label for="my-modal-6" class="btn btn-secondary" on:click={closeReport}>Cancel</label>
+			<label for="my-modal-6" class="btn" on:click={handleReport} class:loading={isReporting}>Report</label>
+		</div>
+	</div>
+</div>

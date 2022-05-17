@@ -130,6 +130,8 @@ import RoleButtonAdd from '$lib/components/RoleButtonAdd.svelte';
 	// use these to display the newly created person right away!
 	let newIndex: number
 	let promiseNewPerson: Promise<any>
+	let step: number = 0
+	let dir: number = 1
 
 	function addRole(role:string) {
 		if(rolesAdded.some(r=>r.type === role)) {
@@ -281,150 +283,156 @@ import RoleButtonAdd from '$lib/components/RoleButtonAdd.svelte';
 </script>
 
 <Seo title="Create person" />
-
-<div class="text-gray-500">
-	{JSON.stringify(submission)}
-	{JSON.stringify(rolesAdded)}
-	</div>
 {#if submitState == State.START || submitState == State.ERROR}
-<div class="flex flex-col lg:flex-row lg:gap-4">
-<div class="bg-base-200 m-4 rounded-3xl mx-auto w-screen lg:w-1/2 max-w-fit">
-	<div class="bg-error text-error py-4 mx-auto rounded-t-3xl">
-		<h1>{$_('page.create._')} {$_(`keyword.${type}`)}</h1>
-	</div>
-	
-	<form>
-		<div class="flex flex-col lg:flex-row lg:gap-10 place-items-start p-4">
-			<div class="grid grid-cols-1 lg:grid-cols-3 items-center gap-2">
-				<!-- display the appropriate input type, based on key's name and selects/multiselects array-->
-				{#each keys as k}
-					<div class="justify-self-start lg:justify-self-end mx-2 flex flex-row gap-2">
-						<div>{$_(`key.${k}`)}</div>
-						<div class="text-error">{required?.includes(k)? '*' : ''}</div>
-					</div>
-					<div class="justify-self-start lg:col-span-2 ">
-						{#if selects[k]}
-							<select class="select select-bordered" bind:value={submission[k]}>
-								<option disabled selected value={null}>{$_('page.create.select')}</option>
-								{#each selects[k] as opt}
-									<option value={opt}>{$_(`option.${opt}`)}</option>
-								{/each}
-							</select>
-						{:else if multiselects[k]}
-							<MultipleSelect selectOptions={multiselects[k]} bind:selects={submission[k]} />
-						{:else if k.includes('_picture')}
-							<UploadPicture key={k} bind:pictureFile={pictureFiles[k]} />
-						{:else if k.includes('show')}
-							<input type="checkbox" bind:checked={submission[k]} class="checkbox" />
-						{:else if k.includes('description')}
-							<textarea class="textarea textarea-bordered" bind:value={submission[k]} />
-						{:else}
-							<input type="text" class="input input-bordered" bind:value={submission[k]} />
-						{/if}
-					</div>
-				{/each}
-			</div>
+<ul class="steps w-full">
+	<li class="step" class:step-primary={step >= 0}>Basic info</li>
+	<li class="step" class:step-primary={step >= 1}>Role info</li>
+	<li class="step" class:step-primary={step >= 2}>Submit</li>
+ </ul>
+{#if step == 0}
+	<div class="bg-base-200 m-4 rounded-3xl mx-auto w-screen lg:w-1/2 max-w-fit" in:fly={{x:200*dir, duration:500}}>
+		<div class="bg-error text-error py-4 mx-auto rounded-t-3xl">
+			<h1>{$_('page.create._')} {$_(`keyword.${type}`)}</h1>
 		</div>
-	</form>
-</div>
-<div class="lg:divider lg:divider-vertical"/>
-<div class="bg-base-200 m-4 rounded-3xl mx-auto w-screen lg:w-1/2 max-w-2xl">
-	<div class="bg-error text-error py-4 mx-auto rounded-t-3xl">
-		<h1>{$_('page.create.add_roles')}</h1>
-	</div>
-	<!-- display organization roles-->
-	{#if (editingRoleIndex == -1)}
-		<div class="flex flex-col justify-center items-center" in:fly={{ duration: 1000, y: 20, easing: quintOut }} >
-			<div class="flex flex-row flex-wrap justify-center gap-1 m-1">
-				{#each relations as role}
-					<div 
-						on:click={()=>addRole(role)} 
-						class="shadow-md"
-						class:bg-success={rolesAdded.some(r=>r.type === role)}
-					>
-						<RoleButtonAdd {role}/>
-					</div>
-				{/each}
-			</div>
-			{#each rolesAdded as r, ridx}
-				<div class="flex flex-row justify-between items-center border-2 my-1 p-1" in:fly>
-					<div class="tooltip" data-tip="edit">
-						<div 
-							class="btn bg-success" 
-							on:click={()=>handleExpand(ridx)}
-						>	
-							<EditIcon size=20/>
+		
+		<form>
+			<div class="flex flex-col lg:flex-row lg:gap-10 place-items-start p-4">
+				<div class="grid grid-cols-1 lg:grid-cols-3 items-center gap-2">
+					<!-- display the appropriate input type, based on key's name and selects/multiselects array-->
+					{#each keys as k}
+						<div class="justify-self-start lg:justify-self-end mx-2 flex flex-row gap-2">
+							<div>{$_(`key.${k}`)}</div>
+							<div class="text-error">{required?.includes(k)? '*' : ''}</div>
 						</div>
-					</div>
-					<div class="w-60 text-sm truncate">
-						<p class="font-bold">{$_(`keyword.${r.type}`)}</p>
-						<p>{r.data[getVarPrefix(r.type) + '_name'] || ''}</p>
-					</div>
-					<div class="tooltip" data-tip="remove">
-						<div class="btn bg-error" on:click={()=>removeRole(ridx)}>
-							<MinusCircleIcon size=20/>
+						<div class="justify-self-start lg:col-span-2 ">
+							{#if selects[k]}
+								<select class="select select-bordered" bind:value={submission[k]}>
+									<option disabled selected value={null}>{$_('page.create.select')}</option>
+									{#each selects[k] as opt}
+										<option value={opt}>{$_(`option.${opt}`)}</option>
+									{/each}
+								</select>
+							{:else if multiselects[k]}
+								<MultipleSelect selectOptions={multiselects[k]} bind:selects={submission[k]} />
+							{:else if k.includes('_picture')}
+								<UploadPicture key={k} bind:pictureFile={pictureFiles[k]} />
+							{:else if k.includes('show')}
+								<input type="checkbox" bind:checked={submission[k]} class="checkbox" />
+							{:else if k.includes('description')}
+								<textarea class="textarea textarea-bordered" bind:value={submission[k]} />
+							{:else}
+								<input type="text" class="input input-bordered" bind:value={submission[k]} />
+							{/if}
 						</div>
-					</div>
+					{/each}
 				</div>
-			{/each}
+			</div>
+		</form>
+	</div>
+	<div class="btn" on:click={()=>{step = 1; dir = 1}}>Next</div>
+{:else if step == 1}
+	<div class="bg-base-200 m-4 rounded-3xl mx-auto w-screen lg:w-1/2 max-w-2xl" in:fly={{x:200*dir, duration:500}}>
+		<div class="bg-error text-error py-4 mx-auto rounded-t-3xl">
+			<h1>{$_('page.create.add_roles')}</h1>
 		</div>
-	{/if}
-	
-	<!-- edit a parcitular organization role -->
-	{#if (editingRoleIndex > -1)}
-		<div in:fly={{ duration: 1000, y: -20, easing: quintOut }} class="m-2">
-			<div class="grid grid-cols-1 lg:grid-cols-3 items-center gap-2">
-				<div class="col-span-3">Editing {editingRoleType}</div>
-				<!-- display the appropriate input type, based on key's name and selects/multiselects array-->
-				{#each editingRolePackage.keys as k}
-					<div class="justify-self-start lg:justify-self-end mx-2 flex flex-row gap-2">
-						<div>{$_(`key.${k}`)}</div>
-						<div class="text-error">{editingRolePackage.required?.includes(k)? '*' : ''}</div>
-					</div>
-					<div class="justify-self-start lg:col-span-2 ">
-						{#if editingRolePackage.selects[k]}
-							<select class="select select-bordered" bind:value={rolesAdded[editingRoleIndex]['data'][k]}>
-								<option disabled selected value={null}>{$_('page.create.select')}</option>
-								{#each editingRolePackage.selects[k] as opt}
-									<option value={opt}>{$_(`option.${opt}`)}</option>
-								{/each}
-							</select>
-						{:else if editingRolePackage.multiselects[k]}
-							<MultipleSelect selectOptions={editingRolePackage.multiselects[k]} bind:selects={rolesAdded[editingRoleIndex]['data'][k]} />
-						{:else if k.includes('_picture')}
-							<UploadPicture key={k} bind:pictureFile={rolesAdded[editingRoleIndex]['pictureFile']} />
-						{:else if k.includes('show')}
-							<input type="checkbox" bind:checked={rolesAdded[editingRoleIndex]['data'][k]} class="checkbox" />
-						{:else if k.includes('description')}
-							<textarea class="textarea textarea-bordered" bind:value={rolesAdded[editingRoleIndex]['data'][k]} />
-						{:else}
-							<input type="text" class="input input-bordered" bind:value={rolesAdded[editingRoleIndex]['data'][k]} />
-						{/if}
+		<!-- display organization roles-->
+		{#if (editingRoleIndex == -1)}
+			<div class="flex flex-col justify-center items-center" in:fly={{ duration: 1000, y: 20, easing: quintOut }} >
+				<div class="flex flex-row flex-wrap justify-center gap-1 m-1">
+					{#each relations as role}
+						<div 
+							on:click={()=>addRole(role)} 
+							class="shadow-md"
+							class:bg-success={rolesAdded.some(r=>r.type === role)}
+						>
+							<RoleButtonAdd {role}/>
+						</div>
+					{/each}
+				</div>
+				{#each rolesAdded as r, ridx}
+					<div class="flex flex-row justify-between items-center border-2 my-1 p-1" in:fly>
+						<div class="tooltip" data-tip="edit">
+							<div 
+								class="btn bg-success" 
+								on:click={()=>handleExpand(ridx)}
+							>	
+								<EditIcon size=20/>
+							</div>
+						</div>
+						<div class="w-60 text-sm truncate">
+							<p class="font-bold">{$_(`keyword.${r.type}`)}</p>
+							<p>{r.data[getVarPrefix(r.type) + '_name'] || ''}</p>
+						</div>
+						<div class="tooltip" data-tip="remove">
+							<div class="btn bg-error" on:click={()=>removeRole(ridx)}>
+								<MinusCircleIcon size=20/>
+							</div>
+						</div>
 					</div>
 				{/each}
-				<div class="btn btn-error col-span-1" on:click={()=>removeRole(editingRoleIndex)}> Remove	</div>
-				<div class="btn btn-success col-span-2" on:click={handleSave}> Save	</div>
 			</div>
-		</div>
-	{/if}
-</div>
-</div>
-	<div class="divider" />	
-	<div class="justify-self-end mx-2">{$_('page.create.comment')}</div>
-	<textarea
-		class="textarea textarea-bordered"
-		placeholder={$_('page.create.comment')}
-		bind:value={comment}
-	/><br />
-	{#if submitState == State.START}
-	<div class="tooltip" data-tip={canSubmit? "":"please fill in either English or Thai name"}>
-		<div 
-			class="btn" 
-			on:click|preventDefault={handleSubmit}
-			class:btn-disabled={!canSubmit}
-		>
-			{$_('page.create.submit')}
-		</div>
+		{/if}
+		
+		<!-- edit a parcitular organization role -->
+		{#if (editingRoleIndex > -1)}
+			<div in:fly={{ duration: 1000, y: -20, easing: quintOut }} class="m-2">
+				<div class="grid grid-cols-1 lg:grid-cols-3 items-center gap-2">
+					<div class="col-span-3">Editing {editingRoleType}</div>
+					<!-- display the appropriate input type, based on key's name and selects/multiselects array-->
+					{#each editingRolePackage.keys as k}
+						<div class="justify-self-start lg:justify-self-end mx-2 flex flex-row gap-2">
+							<div>{$_(`key.${k}`)}</div>
+							<div class="text-error">{editingRolePackage.required?.includes(k)? '*' : ''}</div>
+						</div>
+						<div class="justify-self-start lg:col-span-2 ">
+							{#if editingRolePackage.selects[k]}
+								<select class="select select-bordered" bind:value={rolesAdded[editingRoleIndex]['data'][k]}>
+									<option disabled selected value={null}>{$_('page.create.select')}</option>
+									{#each editingRolePackage.selects[k] as opt}
+										<option value={opt}>{$_(`option.${opt}`)}</option>
+									{/each}
+								</select>
+							{:else if editingRolePackage.multiselects[k]}
+								<MultipleSelect selectOptions={editingRolePackage.multiselects[k]} bind:selects={rolesAdded[editingRoleIndex]['data'][k]} />
+							{:else if k.includes('_picture')}
+								<UploadPicture key={k} bind:pictureFile={rolesAdded[editingRoleIndex]['pictureFile']} />
+							{:else if k.includes('show')}
+								<input type="checkbox" bind:checked={rolesAdded[editingRoleIndex]['data'][k]} class="checkbox" />
+							{:else if k.includes('description')}
+								<textarea class="textarea textarea-bordered" bind:value={rolesAdded[editingRoleIndex]['data'][k]} />
+							{:else}
+								<input type="text" class="input input-bordered" bind:value={rolesAdded[editingRoleIndex]['data'][k]} />
+							{/if}
+						</div>
+					{/each}
+					<div class="btn btn-error col-span-1" on:click={()=>removeRole(editingRoleIndex)}> Remove	</div>
+					<div class="btn btn-success col-span-2" on:click={handleSave}> Save	</div>
+				</div>
+			</div>
+		{/if}
+	</div>
+	<div class="btn" on:click={()=>{step = 0; dir = -1}}>Prev</div>
+	<div class="btn" on:click={()=>{step = 2; dir = 1}}>Next</div>
+{:else if step == 2}
+	<div class="bg-base-200 m-4 rounded-3xl mx-auto w-screen lg:w-1/2 max-w-2xl" in:fly={{x:200*dir, duration:500}}>
+		<div class="justify-self-end mx-2">{$_('page.create.comment')}</div>
+		<textarea
+			class="textarea textarea-bordered"
+			placeholder={$_('page.create.comment')}
+			bind:value={comment}
+		/><br />
+		{#if submitState == State.START}
+			<div class="tooltip" data-tip={canSubmit? "":"please fill in either English or Thai name"}>
+				<div 
+					class="btn" 
+					on:click|preventDefault={handleSubmit}
+					class:btn-disabled={!canSubmit}
+				>
+					{$_('page.create.submit')}
+				</div>
+			</div>
+		{/if}
+		<div class="btn" on:click={()=>{step = 1; dir = -1}}>Prev</div>
 	</div>
 {/if}
 {/if}
