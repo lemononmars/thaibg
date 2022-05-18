@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { TypeNamesArray } from '$lib/datatypes';
-	import { PersonRelationArray } from '$lib/datatypes';
+	import { TypeNamesArray, personRoles } from '$lib/datatypes';
+	import {onMount} from 'svelte'
 
 	import { getImageURL, getDefaultImageURL, getVarPrefix } from '$lib/supabase';
 	export let object;
@@ -11,22 +11,31 @@
 		slug = '',
 		picture = '',
 		name = 'invalid',
-		typeVar = '',
+		prefix = '',
 		roleQuery = '';
+	let pictureType = ''
 
-	// if type is invalid, make a blank card
-	if (object && TypeNamesArray.includes(type)) {
-		// make sure the role query points to the correct role
-		roleQuery = PersonRelationArray.includes(type) ? `?role=${type}` : '';
-		// afterward, everything else can point to the person
-		if (PersonRelationArray.includes(type)) type = 'person';
-		typeVar = getVarPrefix(type);
-
-		id = object[typeVar + '_ID'];
-		slug = object[typeVar + '_slug'];
-		picture = object[typeVar + '_picture'];
-		name = object[typeVar + '_name'] || object[typeVar + '_name_th'] || 'untitled';
-	}
+	onMount(async () => {
+		if (object && TypeNamesArray.includes(type)) {
+			prefix = getVarPrefix(type);
+			
+			id = object[prefix + '_ID'];
+			slug = object[prefix + '_slug'];
+			
+			if(personRoles.includes(type)) {
+				pictureType = 'person'
+				const res = await fetch(`/api/${type}/${id}/person?select=picture`)
+				const data = await res.json()
+				picture = data[0]['Person_picture']
+				console.log(picture)
+			}
+			else {
+				pictureType = type
+				picture = object[prefix + '_picture']
+			}
+			name = object[prefix + '_name'] || object[prefix + '_name_th'] || 'untitled';
+		}
+	})
 </script>
 
 <div class="flex flex-row items-center gap-4 pt-2">
@@ -35,7 +44,7 @@
 			class="w-16 h-16 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 hover:scale-105 duration-300"
 		>
 			<img
-				src={getImageURL(type, picture)}
+				src={getImageURL(pictureType, picture)}
 				alt="avatar"
 				class="object-contain"
 				on:error|once={(ev) => (ev.target.src = getDefaultImageURL(type))}

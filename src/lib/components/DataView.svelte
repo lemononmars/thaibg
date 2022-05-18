@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getImageURL, getDefaultImageURL, getVarPrefix } from '$lib/supabase';
-	import type { TypeName } from '$lib/datatypes';
-	import { BoardgameStatusArray, ShopStatusArray } from '$lib/datatypes';
+	import type { TypeName, DataTableColumns } from '$lib/datatypes';
+	import { BoardgameStatusArray, ShopStatusArray, personRoles } from '$lib/datatypes';
 
 	import SearchNavigation from './SearchNavigation.svelte';
 	import { GridIcon, ListIcon, CheckCircleIcon, SlashIcon } from 'svelte-feather-icons';
@@ -15,12 +15,7 @@
 	import BoardgameStatusBadge from './BoardgameStatusBadge.svelte';
 	import ShopStatusBadge from './ShopStatusBadge.svelte';
 
-	interface TableInfo {
-		headers: string[];
-		body: string[];
-	}
-
-	export let data, type: TypeName, tableInfo: TableInfo;
+	export let data, type: TypeName, dataTableColumns: DataTableColumns;
 	const typePrefix = getVarPrefix(type);
 
 	// default
@@ -84,8 +79,8 @@
 			<div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-4 lg:gap-4">
 				{#each dataCurrentPage as d (d[typePrefix + '_ID'])}
 					<div animate:flip={{ duration: 300 }}>
-						{#if type === 'person'}
-							<PersonCard person={d} />
+						{#if type === 'person' || personRoles.includes(type)}
+							<PersonCard person={d} role={type}/>
 						{:else if type === 'boardgame'}
 							<BoardgameCard bg={d} />
 						{:else if type === 'event'}
@@ -106,7 +101,7 @@
 						<tr>
 							<th>Image</th>
 							<th>Name</th>
-							{#each tableInfo.headers as t}
+							{#each dataTableColumns.headers as t}
 								<th class="hidden lg:table-cell">{t}</th>
 							{/each}
 						</tr>
@@ -137,7 +132,7 @@
 										{/if}
 									</a>
 								</td>
-								{#each tableInfo.body as t}
+								{#each dataTableColumns.body as t}
 									<td class="hidden lg:table-cell">
 										{#if typeof d[t] === 'boolean'}
 											{#if d[t] == true}

@@ -3,8 +3,8 @@
 		This whole page is identical to /person/ID/SLUG
 	*/
 	import { getVarPrefix } from '$lib/supabase';
-	import { Person, personRoles } from '$lib/datatypes';
-	import type { PersonRole, Boardgame } from '$lib/datatypes';
+	import { personRoles } from '$lib/datatypes';
+	import type { Person, PersonRole, Boardgame } from '$lib/datatypes';
 
 	export async function load({ params, fetch }) {
 		let {id, role} = params;

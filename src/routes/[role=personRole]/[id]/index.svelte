@@ -10,7 +10,7 @@
 		if (!res.ok)
 			return {
 				status: 303,
-				redirect: `/person?role=${role}`
+				redirect: `/${role}`
 			};
 
 		const data = await res.json()

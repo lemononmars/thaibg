@@ -17,7 +17,6 @@
 				.then((res) => res.json())
 				.then((data) => (basicData[type] = data));
 
-		console.log(basicData)
 		return {
 			props: {
 				bg: data,
@@ -33,13 +32,7 @@
 			const res = await fetch(`/api/boardgame/${BGID}/${role}`);
 			if (res.ok) {
 				const people = await res.json();
-				// get the person data from each corresponding role
-				// ex. /api/playtester/2/person
-				for (const p of people) {
-					await fetch(`/api/${role}/${p[getVarPrefix(role) + '_ID']}/person`)
-						.then((res) => res.json())
-						.then((d) => (data[role] = [...data[role], d[0]]));
-				}
+				data[role] = people
 			}
 		}
 		await fetch(`/api/boardgame/${BGID}/publisher`)
@@ -104,7 +97,6 @@
 	import Spinner from '$lib/components/Spinner.svelte';
 	import { fly } from 'svelte/transition';
 	import { onMount } from 'svelte';
-	import { user } from '$lib/user';
 	import { _ } from 'svelte-i18n';
 	import BoardgameStatusBadge from '$lib/components/BoardgameStatusBadge.svelte';
 	import EditButton from '$lib/components/EditButton.svelte'
@@ -157,14 +149,12 @@
 
 <!--Cover image-->
 <div class="w-full h-36">
-	<!-- <img
+	<img
 		src={getImageURL('boardgame', bg.TBG_picture_cover)}
 		class="object-cover w-full h-60"
 		alt="cover"
-		on:error|once={(ev) => (ev.target.src = getDefaultImageURL('boardgame'))}
-	/> -->
-
-	<img src="https://picsum.photos/800/600" class="object-cover w-full h-60" alt="cover" />
+		on:error|once={(ev) => (ev.target.src = "https://picsum.photos/800/600")}
+	/>
 </div>
 
 <div class="flex flex-col lg:flex-row text-left gap-6 mx-4 lg:mx-auto">

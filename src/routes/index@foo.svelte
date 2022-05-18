@@ -81,7 +81,7 @@
 </script>
 
 <Seo title="Home" />
-<div class="flex flex-col lg:flex-row w-full bg-base-200 py-10 lg:py-20 px-8 lg:px-32">
+<div class="flex flex-col lg:flex-row w-screen bg-base-200 py-10 lg:py-20 px-8 lg:px-32">
 	<div class="flex flex-col">
 		<h1>{$_('page.home.welcome.intro')}</h1>
 		<div class="grid grid-cols-1 lg:grid-cols-3 place-items-center py-8 m-2">
@@ -224,7 +224,7 @@
 				{#each res.developers as d, idx}
 					{@const developerRoles = ['UI Designer', 'Web Developer', 'Database Engineer']}
 					<div>
-						<PersonCard person={d} />
+						<PersonCard person={d}/>
 						<div class="my-4">{developerRoles[idx]}</div>
 					</div>
 				{/each}

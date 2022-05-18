@@ -38,46 +38,6 @@ export async function get({ url, params }) {
 				.join(',')
 		: '*';
 
-	// first, return the pure relational table (without inner join) if the user requests just that
-	// ex. artist/2/relation
-	// note that all queries are ignored
-	if (relation === 'relation') {
-		const { data, error } = await from(`${getTableName(type)}_Relation`)
-			.select(selectedColumns)
-			.eq(`${getTableName(type)}_Relation.${getVarPrefix(type)}_ID`, id);
-
-		if (error)
-			return {
-				status: 404,
-				body: { message: `No relationship table for ${type} found`, error }
-			};
-		else
-			return {
-				status: 200,
-				headers: { 'Content-Type': 'application/json' },
-				body: data
-			};
-	}
-
-	// in case of a person, we'll look up directly in ${role} table, not ${role}_Relation
-	if (relation === 'person') {
-		const { data, error } = await from('Person')
-			.select(`${selectedColumns}, ${getTableName(type)}!inner(*)`)
-			.eq(`${getTableName(type)}.${getVarPrefix(type)}_ID`, id);
-
-		if (error)
-			return {
-				status: 404,
-				body: {message: `No person associated with this ${type} found`}
-			};
-		else
-			return {
-				status: 200,
-				headers: { 'Content-Type': 'application/json' },
-				body: data
-			};
-	}
-
 	if (type === 'person') {
 		const { data, error } = await from(getTableName(relation))
 			.select(`${selectedColumns}, Person!inner(*)`)

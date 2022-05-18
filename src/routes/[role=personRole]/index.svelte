@@ -1,5 +1,5 @@
 <script context=module lang="ts">
-	import type { Person } from '$lib/datatypes';
+	import type { TypeName, PersonRole } from '$lib/datatypes';
 	import { personRoles } from '$lib/datatypes';
 	import { getVarPrefix } from '$lib/supabase';
 
@@ -16,7 +16,6 @@
 			const data = await res.json()
 			filteredData[d][getVarPrefix(role) + '_picture'] = data.Person_picture
 		}
-		// fetch 
 
 		return {
 			props: {
@@ -37,27 +36,35 @@
 	import { quintOut } from 'svelte/easing';
 	import { _ } from 'svelte-i18n';
 
-	export let people: Person[], search: string;
-	export let role: string; // see below
+	export let people: PersonRole[], search: string;
+	export let role: TypeName; // see below
+	const prefix = getVarPrefix(role)
 
 	let option = -1;
 	// handle error when role query is invalid
-	if (!role || personRoles.indexOf(role) == -1) option = -1;
-	else option = personRoles.indexOf(role);
+	if (!role || personRoles.indexOf(role) == -1) 
+		option = -1;
+	else 
+		option = personRoles.indexOf(role);
 
 	$: peopleFiltered = people.filter(
-		(p: Person) =>
-			(option == -1 || !!p[getVarPrefix(personRoles[option]) + '_ID']) && // no role, or has ID of that role
-			(p.Person_name?.toLowerCase().includes(searchString.toLowerCase()) || // name or name_th contains the string
-				p.Person_name_th?.includes(searchString))
+		p =>
+			// no role, or has ID of that role
+			(option == -1 || !!p[getVarPrefix(personRoles[option]) + '_ID']) 
+				&& 
+			(
+				p[prefix + '_name']?.toLowerCase().includes(searchString.toLowerCase())
+					|| p[prefix + '_name_th']?.includes(searchString)
+			)
 	);
 
 	let sorted = 0;
 	let searchString = search || '';
-	$: peopleSorted = peopleFiltered.sort((a: Person, b: Person) => compare(sorted, a, b));
-	function compare(s: number, a: Person, b: Person) {
-		if (s == 0) return a.Person_name?.localeCompare(b.Person_name);
-		else return b.Person_name?.localeCompare(a.Person_name);
+	$: peopleSorted = peopleFiltered.sort((a: PersonRole, b: PersonRole) => compare(sorted, a, b));
+
+	function compare(s: number, a: PersonRole, b: PersonRole) {
+		if (s == 0) return a[prefix + '_name']?.localeCompare(b[prefix+'_name']);
+		else return b[prefix + '_name']?.localeCompare(a[prefix+'_name']);
 	}
 
 	let showAdvancedFilter = false;
@@ -67,7 +74,7 @@
 		searchString = '';
 	}
 
-	const tableInfo = {
+	const dataTableColumns = {
 		headers: ['Number of Board Games', 'Latest Work', 'Last Updated'],
 		body: ['numBoardgames', 'latestWork', 'lastUpdated']
 	};
@@ -75,25 +82,11 @@
 
 <Seo title="People" />
 <div class="flex flex-col justify-center mx-auto">
-	<DataView data={peopleSorted} type="person" {tableInfo}>
-		<div><h1>{$_(`keyword.${role}`)}</h1></div>
+	<DataView data={peopleSorted} type={role} {dataTableColumns}>
 		<div class="flex flex-row items-center justify-between gap-2">
 			<!-- Search box -->
 			<SearchBar placeholder={`Search ${role} (en/th)`} bind:searchString />
-
-			<div class="btn gap-2" on:click={() => (showAdvancedFilter = !showAdvancedFilter)}>
-				Advanced Filter
-				{#if showAdvancedFilter}
-					<ChevronUpIcon size="1x" />
-				{:else}
-					<ChevronDownIcon size="1x" />
-				{/if}
-			</div>
 		</div>
-		<!-- Advanced filter (hidden by default) -->
-		{#if showAdvancedFilter}
-			<div transition:fly={{ duration: 400, y: -20, easing: quintOut }} class="m-2" />
-		{/if}
 	</DataView>
 
 	{#if peopleSorted?.length == 0}

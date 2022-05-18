@@ -41,12 +41,12 @@
 		{ path: '/category', title: $_('navbar.boardgame.category') }
 	];
 	$: creatorMenu = [
-		{ path: '/person?role=designer', title: $_('keyword.designer') },
-		{ path: '/person?role=graphicdesigner', title: $_('keyword.graphicdesigner') },
-		{ path: '/person?role=artist', title: $_('keyword.artist') },
-		{ path: '/person?role=playtester', title: $_('keyword.playtester') },
-		{ path: '/person?role=rulebookeditor', title: $_('keyword.rulebookeditor') },
-		{ path: '/person?role=producer', title: $_('keyword.producer') },
+		{ path: '/designer', title: $_('keyword.designer') },
+		{ path: '/graphicdesigner', title: $_('keyword.graphicdesigner') },
+		{ path: '/artist', title: $_('keyword.artist') },
+		{ path: '/playtester', title: $_('keyword.playtester') },
+		{ path: '/rulebookeditor', title: $_('keyword.rulebookeditor') },
+		{ path: '/producer', title: $_('keyword.producer') },
 		{ path: '/manufacturer', title: $_('keyword.manufacturer') },
 	];
 	$: supporterMenu = [

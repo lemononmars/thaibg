@@ -10,17 +10,17 @@
 		{ path: '/category', title: $_('navbar.boardgame.category') }
 	];
 	$: creatorMenu = [
-		{ path: '/person?role=designer', title: $_('keyword.designer') },
-		{ path: '/person?role=graphicdesigner', title: $_('keyword.graphicdesigner') },
-		{ path: '/person?role=artist', title: $_('keyword.artist') },
-		{ path: '/person?role=playtester', title: $_('keyword.playtester') },
+		{ path: '/designer', title: $_('keyword.designer') },
+		{ path: '/graphicdesigner', title: $_('keyword.graphicdesigner') },
+		{ path: '/artist', title: $_('keyword.artist') },
+		{ path: '/playtester', title: $_('keyword.playtester') },
 		{ path: '/manufacturer', title: $_('keyword.manufacturer') },
-		{ path: '/person?role=rulebookeditor', title: $_('keyword.rulebookeditor') },
-		{ path: '/person?role=producer', title: $_('keyword.producer') }
+		{ path: '/rulebookeditor', title: $_('keyword.rulebookeditor') },
+		{ path: '/producer', title: $_('keyword.producer') }
 	];
 	$: supporterMenu = [
 		{ path: '/shop', title: $_('shop._') },
-		{ path: '/person?role=contentcreator', title: $_('keyword.contentcreator') },
+		{ path: '/contentcreator', title: $_('keyword.contentcreator') },
 		{ path: '/publisher', title: $_('keyword.publisher') },
 		{ path: '/sponsor', title: $_('keyword.sponsor') }
 	];

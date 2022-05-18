@@ -256,7 +256,7 @@ async function addToDatabase(
 	if (submissionType === 'new') {
 		const IDColumn = getVarPrefix(type) + '_ID';
 		const index = await findNewUniqueID(type, IDColumn);
-		console.log('about to add ', type, ' with id ', index, ' to ', IDColumn, ' with info', parse)
+		//console.log('about to add ', type, ' with id ', index, ' to ', IDColumn, ' with info', parse)
 		const { error: newError } = await from(getTableName(type)).insert(
 			[
 				{
@@ -269,7 +269,7 @@ async function addToDatabase(
 			}
 		);
 		if (newError) throw newError;
-		console.log('successful!')
+
 		return { 
 			status: 201, 
 			body: {

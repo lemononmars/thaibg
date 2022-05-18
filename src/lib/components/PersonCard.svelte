@@ -1,15 +1,19 @@
 <script lang="ts">
-	import { getImageURL, getDefaultImageURL } from '$lib/supabase';
-	export let person;
+	import { getImageURL, getDefaultImageURL, getVarPrefix } from '$lib/supabase';
+	import type {PersonRole} from '$lib/datatypes'
+	export let person: PersonRole
+	export let role: string = 'person';
 
-	let id = person.Person_ID;
-	let slug = person.Person_slug;
-	let picture = getImageURL('person', person.Person_picture);
-	let name = person.Person_name;
-	let name_th = person.Person_name_th;
+	const prefix = getVarPrefix(role)
+
+	let id = person[prefix + '_ID'];
+	let slug = person[prefix + '_ID']
+	let picture = getImageURL(role, person[prefix + '_picture']);
+	let name = person[prefix + '_name']
+	let name_th = person[prefix + '_name_th']
 </script>
 
-<a href="/person/{id}/{slug}">
+<a href="/{role}/{id}/{slug}">
 	<div
 		class="
 			relative group card bg-base-100 card-compact shadow-xl 

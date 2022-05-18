@@ -1,7 +1,7 @@
 <script lang="ts" context="module">
 	import { getVarPrefix } from '$lib/supabase';
-	import { Person, personRoles } from '$lib/datatypes';
-	import type { PersonRole, Boardgame } from '$lib/datatypes';
+	import { personRoles } from '$lib/datatypes';
+	import type { Person, PersonRole, Boardgame } from '$lib/datatypes';
 
 	export async function load({ params, url, fetch }) {
 		const res = await fetch(`/api/person/${params.id}`);
