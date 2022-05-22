@@ -6,7 +6,6 @@ export interface Sponsor extends SponsorSubmission {
 
 export const SponsorDatabaseKeys = [
 	'Sponsor_name',
-	'Sponsor_location',
 	'Sponsor_link',
 	'Sponsor_description',
 	'Sponsor_picture',

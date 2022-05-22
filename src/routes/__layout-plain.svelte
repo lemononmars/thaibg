@@ -6,7 +6,7 @@
 	initialize();
 </script>
 
-<main class="w-full min-w-max h-full">
+<main class="w-full min-w-max h-full pt-4">
 	<AlertList />
 	<slot/>
 </main>

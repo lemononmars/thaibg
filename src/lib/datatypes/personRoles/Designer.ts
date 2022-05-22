@@ -1,6 +1,7 @@
 export interface Designer extends DesignerSubmission {
 	Designer_ID: number;
 	Designer_slug: string;
+	Designer_picture: string;
 	Designer_Relation?: DesignerRelation[];
 }
 

@@ -1,6 +1,6 @@
 <script lang="ts" context="module">
-	import { getImageURL, getDefaultImageURL, getVarPrefix } from '$lib/supabase';
-	import { personDeveloperRoles, ContentTypeArray, ContentMediaArray } from '$lib/datatypes';
+	import { getImageURL, getDefaultImageURL } from '$lib/supabase';
+	import { personRoles, ContentTypeArray, ContentMediaArray } from '$lib/datatypes';
 	import type { Content, Honor, Boardgame, Shop, Event } from '$lib/datatypes';
 	import { WEBSITE_URL } from '$lib/constants';
 
@@ -27,7 +27,7 @@
 
 	export async function getCreatorInfo(BGID: number) {
 		let data = [];
-		personDeveloperRoles.forEach((p) => (data[p] = []));
+		personRoles.forEach((p) => (data[p] = []));
 		for (const role of Object.keys(data)) {
 			const res = await fetch(`/api/boardgame/${BGID}/${role}`);
 			if (res.ok) {
@@ -173,7 +173,7 @@
 		{:then res}
 			{#if res}
 				<!--iterate through personRoles (designer, artist, graphicdesigner, playtester)-->
-				{#each personDeveloperRoles as role}
+				{#each personRoles as role}
 					<div>
 						<h3>{$_(`keyword.${role}`)}</h3>
 						{#each res[role] as d}

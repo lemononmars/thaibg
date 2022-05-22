@@ -1,6 +1,7 @@
 export interface Artist extends ArtistSubmission {
 	Artist_ID: number;
 	Artist_slug: string;
+	Artist_picture: string;
 	Artist_Relation: ArtistRelation[];
 }
 

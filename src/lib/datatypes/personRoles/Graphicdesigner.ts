@@ -1,6 +1,7 @@
 export interface Graphicdesigner extends GraphicdesignerSubmission {
 	Graphicdesigner_ID: number;
 	Graphicdesigner_slug: string;
+	Graphicdesigner_picture: string;
 	Graphicdesigner_Relation?: GraphicdesignerRelation[];
 }
 

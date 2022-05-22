@@ -48,7 +48,7 @@
 				)
 	 		) &&
 			(searchString === '' ||
-				d[prefix + '_name']?.toLowerCase().includes(searchString.toLowerCase()) || // name or name_th contains the string
+				d[prefix + '_name']?.toLowerCase().includes(searchString?.toLowerCase()) || // name or name_th contains the string
 				d[prefix + '_name_th']?.includes(searchString))
 	);
 

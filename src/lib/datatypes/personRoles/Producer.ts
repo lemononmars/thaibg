@@ -1,6 +1,7 @@
 export interface Producer extends ProducerSubmission {
 	Producer_ID: number;
 	Producer_slug: string;
+	Producer_picture: string;
 	Producer_Relation: ProducerRelation[];
 }
 

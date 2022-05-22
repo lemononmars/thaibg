@@ -1,6 +1,7 @@
 export interface Playtester extends PlaytesterSubmission {
 	Playtester_ID: number;
 	Playtester_slug: string;
+	Playtester_picture: string;
 	Playtester_Relation?: PlaytesterRelation[];
 }
 

@@ -1,7 +1,7 @@
 <script context=module lang=ts>
 	import { getSubmissionPackage, personRoles } from '$lib/datatypes';
 	import type { SubmissionPackage } from '$lib/datatypes';
-	import { fromBucket, getVarPrefix } from '$lib/supabase';
+	import { createSlug, fromBucket, getVarPrefix } from '$lib/supabase';
 	import type { SubmissionData } from '$lib/supabase'
 	import type {Alert} from '$lib/alert/alert.type'
 	import {handleAlert} from '$lib/alert/alert.store'
@@ -37,7 +37,7 @@
 
 		return {
 			props: {
-				data: getSubmissionPackage('person'),
+				submissionPackage: getSubmissionPackage('person'),
 			}
 		};
 	}
@@ -56,10 +56,14 @@
 		return res;
 	}
 
-	export async function uploadpicture(type: string, file: File, fileName: string) {
+	export async function uploadpicture(type: string, file: File, slug: string): Promise<string> {
 		// TODO: convert file? resize?
+		const randomID = Math.floor(Math.random() * 1000);
+		const randomIDString = ('000' + randomID).slice(-4);
+		const pictureSlug = slug + '-' + randomIDString;
+
 		let { error: updateError } = await fromBucket('images').upload(
-			`${type}/${fileName}`,
+			`${type}/${pictureSlug}`,
 			file,
 			{
 				upsert: false
@@ -67,6 +71,7 @@
 		);
 
 		if (updateError) throw updateError;
+		return pictureSlug
 	}
 
 	export async function getNewPerson(id: number){
@@ -80,18 +85,18 @@
 	import Seo from '$lib/components/SEO.svelte';
 	import { user, getCurrUserProfile } from '$lib/user';
 	import Spinner from '$lib/components/Spinner.svelte';
-	import MultipleSelect from '$lib/components/MultipleSelect.svelte';
 	import { fly } from 'svelte/transition'
 	import { quintOut } from 'svelte/easing'
-	import UploadPicture from '$lib/components/UploadPicture.svelte';
 	import { _ } from 'svelte-i18n';
-	import { EditIcon, PlusCircleIcon, MinusCircleIcon, InfoIcon } from 'svelte-feather-icons';
+	import { EditIcon , MinusCircleIcon } from 'svelte-feather-icons';
 	import PersonCard from '$lib/components/PersonCard.svelte';
-import RoleButtonAdd from '$lib/components/RoleButtonAdd.svelte';
+	import RoleButtonAdd from '$lib/components/RoleButtonAdd.svelte';
+	import InputForm from '$lib/components/InputForm.svelte';
 
-	export let data: SubmissionPackage; // from load fucntion
+	export let submissionPackage: SubmissionPackage; // from load fucntion
 	const type: string = 'person';
-	const { submission, keys, relations, selects, multiselects, required } = data; // destruct
+	let submission = submissionPackage.submission
+	submission.Person_show = true // default = show
 
 	// create an array for each relation
 	interface RoleObject {
@@ -105,8 +110,8 @@ import RoleButtonAdd from '$lib/components/RoleButtonAdd.svelte';
 		'designer': getSubmissionPackage('designer'),
 		'graphicdesigner': getSubmissionPackage('graphicdesigner'),
 		'playtester': getSubmissionPackage('playtester'),
+		'producer': getSubmissionPackage('producer'),
 		'rulebookeditor': getSubmissionPackage('rulebookeditor'),
-		'producer': getSubmissionPackage('producer')
 	}
 	let editingRoleIndex: number = -1;
 	$: editingRoleType = rolesAdded[editingRoleIndex]?.type
@@ -114,7 +119,6 @@ import RoleButtonAdd from '$lib/components/RoleButtonAdd.svelte';
 
 	// extra info
 	let comment: string;
-	let pictureFiles: Record<string, File> = {};
 
 	// show user a page based on the submission state
 	const enum State {
@@ -133,7 +137,7 @@ import RoleButtonAdd from '$lib/components/RoleButtonAdd.svelte';
 	let step: number = 0
 	let dir: number = 1
 
-	function addRole(role:string) {
+	function addRole(role: string) {
 		if(rolesAdded.some(r=>r.type === role)) {
 			const newAlert: Alert = {
 				type: 'error',
@@ -146,6 +150,8 @@ import RoleButtonAdd from '$lib/components/RoleButtonAdd.svelte';
 		const prefix = getVarPrefix(role)
 		const newRoleData = {
 			[`${prefix}_name`]: submission.Person_name,
+			[`${prefix}_name_th`]: submission.Person_name_th,
+			[`${prefix}_show`]: true
 		}
 		const newRole: RoleObject = {
 			type: role,
@@ -153,6 +159,10 @@ import RoleButtonAdd from '$lib/components/RoleButtonAdd.svelte';
 		}
 		rolesAdded = [...rolesAdded, newRole]
 		rolesAdded = rolesAdded
+
+		// open the tab immediately
+		editingRolePackage = roleSubmissionPackage[role]
+		editingRoleIndex = rolesAdded.length - 1
 	}
 
 	function removeRole(idx: number) {
@@ -186,8 +196,8 @@ import RoleButtonAdd from '$lib/components/RoleButtonAdd.svelte';
 
 	async function handleSubmit() {
 		if (submitState != State.START && submitState != State.ERROR) return;
-		if (required && !required.every(r => !!submission[r])) {
-			const missingFields = required?.filter(r => !submission[r]).join(',')
+		if (submissionPackage.required && !submissionPackage.required.every(r => !!submission[r])) {
+			const missingFields = submissionPackage.required?.filter(r => !submission[r]).join(',')
 			const newAlert: Alert = {
 				type: 'error',
 				text: 'please fill all required fields: ' +  missingFields
@@ -196,16 +206,8 @@ import RoleButtonAdd from '$lib/components/RoleButtonAdd.svelte';
 			return
 		}
 
-		if (!submission[getVarPrefix(type) + '_name'] && !submission[getVarPrefix(type) + '_name_th']) {
-			const newAlert: Alert = {
-				type: 'error',
-				text: 'please enter either English or Thai name'
-			}
-			handleAlert(newAlert)
-			return
-		}
-
 		submitState = State.SUBMITTING;
+		const typePrefix = getVarPrefix(type)
 
 		// attach submitter's info
 		let id = 'guest',
@@ -219,22 +221,20 @@ import RoleButtonAdd from '$lib/components/RoleButtonAdd.svelte';
 		// generate a slug based on name (english)
 		// if only Thai name (_name_th) exists, treat it as no name
 		// might have to manually fix it in admin panel
-		let name = submission[getVarPrefix(type) + '_name'];
-		if (!name || name.length == 0) name = 'no-slug';
+		const slug = createSlug(submission[typePrefix + '_name'])
+		submission[typePrefix + '_slug'] = slug;
 
-		const slug = name
-			.toLowerCase()
-			.replace(/\s/g, '-') // replace white spaces by dashes
-			.replace(/[^\w\-]/g, ''); // remove non alphanumeric characters (except dashes of course)
-		submission[getVarPrefix(type) + '_slug'] = slug;
+		const pictureFile = submission.Person_picture
+		if(pictureFile) {
+			const newPictureURL = 
+			await uploadpicture("person", pictureFile, slug);
+			submission.Person_picture = newPictureURL
 
-		// rename picture with random ID for hashing purpose
-		for (const pf in pictureFiles) {
-			if(pictureFiles[pf]) {
-				const randomID = Math.floor(Math.random() * 1000);
-				const randomIDString = ('000' + randomID).slice(-4);
-				submission[pf] = slug + randomIDString;
-				await uploadpicture(type, pictureFiles[pf], slug + randomIDString);
+			// also add the same image url to other roles
+			for(const r in rolesAdded) {
+				const roleType = rolesAdded[r]['type']
+				const rolePrefix = getVarPrefix(roleType)
+				rolesAdded[r]['data'][rolePrefix + '_picture'] = newPictureURL
 			}
 		}
 
@@ -290,56 +290,44 @@ import RoleButtonAdd from '$lib/components/RoleButtonAdd.svelte';
 	<li class="step" class:step-primary={step >= 2}>Submit</li>
  </ul>
 {#if step == 0}
-	<div class="bg-base-200 m-4 rounded-3xl mx-auto w-screen lg:w-1/2 max-w-fit" in:fly={{x:200*dir, duration:500}}>
+	<div class="bg-base-200 m-4 rounded-3xl mx-auto w-screen lg:w-1/2 max-w-fit" in:fly={{x:200*dir, duration:1000}}>
 		<div class="bg-error text-error py-4 mx-auto rounded-t-3xl">
 			<h1>{$_('page.create._')} {$_(`keyword.${type}`)}</h1>
 		</div>
 		
 		<form>
 			<div class="flex flex-col lg:flex-row lg:gap-10 place-items-start p-4">
-				<div class="grid grid-cols-1 lg:grid-cols-3 items-center gap-2">
-					<!-- display the appropriate input type, based on key's name and selects/multiselects array-->
-					{#each keys as k}
-						<div class="justify-self-start lg:justify-self-end mx-2 flex flex-row gap-2">
-							<div>{$_(`key.${k}`)}</div>
-							<div class="text-error">{required?.includes(k)? '*' : ''}</div>
-						</div>
-						<div class="justify-self-start lg:col-span-2 ">
-							{#if selects[k]}
-								<select class="select select-bordered" bind:value={submission[k]}>
-									<option disabled selected value={null}>{$_('page.create.select')}</option>
-									{#each selects[k] as opt}
-										<option value={opt}>{$_(`option.${opt}`)}</option>
-									{/each}
-								</select>
-							{:else if multiselects[k]}
-								<MultipleSelect selectOptions={multiselects[k]} bind:selects={submission[k]} />
-							{:else if k.includes('_picture')}
-								<UploadPicture key={k} bind:pictureFile={pictureFiles[k]} />
-							{:else if k.includes('show')}
-								<input type="checkbox" bind:checked={submission[k]} class="checkbox" />
-							{:else if k.includes('description')}
-								<textarea class="textarea textarea-bordered" bind:value={submission[k]} />
-							{:else}
-								<input type="text" class="input input-bordered" bind:value={submission[k]} />
-							{/if}
-						</div>
-					{/each}
-				</div>
+				<InputForm
+					{submissionPackage}
+					bind:inputs={submission}
+				>
+					<span name="header">
+						Edit
+					</span>
+				</InputForm>
 			</div>
 		</form>
 	</div>
-	<div class="btn" on:click={()=>{step = 1; dir = 1}}>Next</div>
+
+	<div class="tooltip" data-tip={canSubmit? "":"please fill in either English or Thai name"}>
+		<div 
+			class="btn"
+			on:click|preventDefault={()=>{step = 1; dir = 1}}
+			class:btn-disabled={!canSubmit}
+		>
+			Next
+		</div>
+	</div>
 {:else if step == 1}
-	<div class="bg-base-200 m-4 rounded-3xl mx-auto w-screen lg:w-1/2 max-w-2xl" in:fly={{x:200*dir, duration:500}}>
+	<div class="bg-base-200 m-4 rounded-3xl mx-auto w-screen lg:w-1/2 max-w-2xl" in:fly={{x:200*dir, duration:1000}}>
 		<div class="bg-error text-error py-4 mx-auto rounded-t-3xl">
 			<h1>{$_('page.create.add_roles')}</h1>
 		</div>
 		<!-- display organization roles-->
 		{#if (editingRoleIndex == -1)}
-			<div class="flex flex-col justify-center items-center" in:fly={{ duration: 1000, y: 20, easing: quintOut }} >
+			<div class="flex flex-col justify-center items-center py-4" in:fly={{ duration: 1000, y: 20, easing: quintOut }} >
 				<div class="flex flex-row flex-wrap justify-center gap-1 m-1">
-					{#each relations as role}
+					{#each submissionPackage.relations as role}
 						<div 
 							on:click={()=>addRole(role)} 
 							class="shadow-md"
@@ -375,64 +363,37 @@ import RoleButtonAdd from '$lib/components/RoleButtonAdd.svelte';
 		
 		<!-- edit a parcitular organization role -->
 		{#if (editingRoleIndex > -1)}
-			<div in:fly={{ duration: 1000, y: -20, easing: quintOut }} class="m-2">
-				<div class="grid grid-cols-1 lg:grid-cols-3 items-center gap-2">
-					<div class="col-span-3">Editing {editingRoleType}</div>
-					<!-- display the appropriate input type, based on key's name and selects/multiselects array-->
-					{#each editingRolePackage.keys as k}
-						<div class="justify-self-start lg:justify-self-end mx-2 flex flex-row gap-2">
-							<div>{$_(`key.${k}`)}</div>
-							<div class="text-error">{editingRolePackage.required?.includes(k)? '*' : ''}</div>
-						</div>
-						<div class="justify-self-start lg:col-span-2 ">
-							{#if editingRolePackage.selects[k]}
-								<select class="select select-bordered" bind:value={rolesAdded[editingRoleIndex]['data'][k]}>
-									<option disabled selected value={null}>{$_('page.create.select')}</option>
-									{#each editingRolePackage.selects[k] as opt}
-										<option value={opt}>{$_(`option.${opt}`)}</option>
-									{/each}
-								</select>
-							{:else if editingRolePackage.multiselects[k]}
-								<MultipleSelect selectOptions={editingRolePackage.multiselects[k]} bind:selects={rolesAdded[editingRoleIndex]['data'][k]} />
-							{:else if k.includes('_picture')}
-								<UploadPicture key={k} bind:pictureFile={rolesAdded[editingRoleIndex]['pictureFile']} />
-							{:else if k.includes('show')}
-								<input type="checkbox" bind:checked={rolesAdded[editingRoleIndex]['data'][k]} class="checkbox" />
-							{:else if k.includes('description')}
-								<textarea class="textarea textarea-bordered" bind:value={rolesAdded[editingRoleIndex]['data'][k]} />
-							{:else}
-								<input type="text" class="input input-bordered" bind:value={rolesAdded[editingRoleIndex]['data'][k]} />
-							{/if}
-						</div>
-					{/each}
-					<div class="btn btn-error col-span-1" on:click={()=>removeRole(editingRoleIndex)}> Remove	</div>
-					<div class="btn btn-success col-span-2" on:click={handleSave}> Save	</div>
-				</div>
+			<div in:fly={{ duration: 1000, y: -20, easing: quintOut }} class="p-4">
+				<InputForm
+					submissionPackage={editingRolePackage}
+					bind:inputs={rolesAdded[editingRoleIndex]['data']}
+				>
+					<span slot="header">
+						Editing {editingRoleType}
+					</span>
+				</InputForm>
+				<div class="btn btn-error col-span-1" on:click={()=>removeRole(editingRoleIndex)}> Remove	</div>
+				<div class="btn btn-success col-span-2" on:click={handleSave}>Save</div>
 			</div>
 		{/if}
 	</div>
 	<div class="btn" on:click={()=>{step = 0; dir = -1}}>Prev</div>
 	<div class="btn" on:click={()=>{step = 2; dir = 1}}>Next</div>
 {:else if step == 2}
-	<div class="bg-base-200 m-4 rounded-3xl mx-auto w-screen lg:w-1/2 max-w-2xl" in:fly={{x:200*dir, duration:500}}>
+	<div class="bg-base-200 m-4 rounded-3xl mx-auto w-screen lg:w-1/2 py-4" in:fly={{x:200*dir, duration:1000}}>
 		<div class="justify-self-end mx-2">{$_('page.create.comment')}</div>
 		<textarea
 			class="textarea textarea-bordered"
 			placeholder={$_('page.create.comment')}
 			bind:value={comment}
 		/><br />
-		{#if submitState == State.START}
-			<div class="tooltip" data-tip={canSubmit? "":"please fill in either English or Thai name"}>
-				<div 
-					class="btn" 
-					on:click|preventDefault={handleSubmit}
-					class:btn-disabled={!canSubmit}
-				>
-					{$_('page.create.submit')}
-				</div>
-			</div>
-		{/if}
 		<div class="btn" on:click={()=>{step = 1; dir = -1}}>Prev</div>
+		<div 
+			class="btn btn-success" 
+			on:click|preventDefault={handleSubmit}
+		>
+			{$_('page.create.submit')}
+		</div>
 	</div>
 {/if}
 {/if}
@@ -458,21 +419,3 @@ import RoleButtonAdd from '$lib/components/RoleButtonAdd.svelte';
 	<div class="btn" on:click|preventDefault={handleSubmit}>{$_('page.create.submit')}</div>
 {/if}
 </div>
-
-<style>
-	input {
-		@apply w-72;
-	}
-
-	select {
-		@apply w-72;
-	}
-
-	input.checkbox {
-		@apply w-5;
-	}
-
-	textarea {
-		@apply w-72;
-	}
-</style>

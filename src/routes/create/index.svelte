@@ -36,7 +36,9 @@
 		<div>
 			<h2>{menuTitles[idx]}</h2>
 			{#each menu as link}
-				<a href="/create/{link}">{$_(`keyword.${link}`)}</a><br />
+				<a href="/create/{link}" target="_blank">
+					{$_(`keyword.${link}`)}
+				</a><br />
 			{/each}
 		</div>
 	{/each}

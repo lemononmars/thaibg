@@ -5,14 +5,11 @@ export * from './Playtester';
 export * from './Rulebookeditor';
 export * from './Producer';
 
-export const personDeveloperRoles = [
+export const personRoles = [
 	'artist',
 	'designer',
 	'graphicdesigner',
 	'playtester',
+	'producer',
 	'rulebookeditor',
-	'producer'
 ];
-
-// treated differently because content creators are associated with contents, not board games
-export const personRoles = [...personDeveloperRoles, 'contentcreator'];

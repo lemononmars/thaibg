@@ -57,10 +57,14 @@
 	}
 
 	// TODO: make this a post request?
-	export async function uploadpicture(type: string, file: File, fileName: string) {
+	export async function uploadpicture(type: string, file: File, slug: string): Promise<string> {
 		// TODO: convert file? resize?
+		const randomID = Math.floor(Math.random() * 1000);
+		const randomIDString = ('000' + randomID).slice(-4);
+		const pictureSlug = slug + '-' + randomIDString;
+
 		let { error: updateError } = await fromBucket('images').upload(
-			`${type}/${fileName}`,
+			`${type}/${pictureSlug}`,
 			file,
 			{
 				upsert: false
@@ -68,6 +72,7 @@
 		);
 
 		if (updateError) throw updateError;
+		return pictureSlug
 	}
 
 	export async function getNewOrganization(id: number){
@@ -81,30 +86,28 @@
 	import Seo from '$lib/components/SEO.svelte';
 	import { user, getCurrUserProfile } from '$lib/user';
 	import Spinner from '$lib/components/Spinner.svelte';
-	import MultipleSelect from '$lib/components/MultipleSelect.svelte';
 	import { fly } from 'svelte/transition'
 	import { quintOut } from 'svelte/easing'
-	import UploadPicture from '$lib/components/UploadPicture.svelte';
 	import { _ } from 'svelte-i18n';
 	import { EditIcon, MinusCircleIcon } from 'svelte-feather-icons';
 	import PlainCard from '$lib/components/PlainCard.svelte';
 	import RoleButtonAdd from '$lib/components/RoleButtonAdd.svelte';
+	import InputForm from '$lib/components/InputForm.svelte';
 
 	export let data: SubmissionPackage; // from load fucntion
 	const type: string = 'organization';
-	const { submission, keys, relations, selects, multiselects, required } = data; // destruct
+	let submission = data.submission
+	submission.Organization_show = true // special case: default is true
 
 	// create an array for each relation
 	interface RoleObject {
 		type: string,
-		pictureFile: File,
 		data: Record<string, any>
 	}
 	let rolesAdded: RoleObject[] = [];
 
 	// extra info
 	let comment: string;
-	let pictureFiles: Record<string, File> = {Organization_picture: null} // might also have a cover picture in the future
 
 	const roleSubmissionPackage = {
 		'manufacturer': getSubmissionPackage('manufacturer'),
@@ -131,15 +134,18 @@
 	// these are used so that we can display a link to the newly created entry right away
 	let newIndex: number
 	let promiseNewOrganization: Promise<any>
+	let step: number = 0
+	let dir: number = 1
 
 	function addRole(role:string) {
 		const prefix = getVarPrefix(role)
 		const newRoleData = {
 			[`${prefix}_name`]: submission.Organization_name,
+			[`${prefix}_picture`]: submission.Organization_picture,
+			[`${prefix}_show`]: true
 		}
 		const newRole: RoleObject = {
 			type: role,
-			pictureFile: pictureFiles.Organization_picture,
 			data: newRoleData
 		}
 		rolesAdded = [...rolesAdded, newRole]
@@ -177,8 +183,8 @@
 
 	async function handleSubmit() {
 		if (submitState != State.START && submitState != State.ERROR) return;
-		if (required && !required.every(r => !!submission[r])) {
-			const missingFields = required?.filter(r => !submission[r]).join(',')
+		if (data.required && !data.required.every(r => !!submission[r])) {
+			const missingFields = data.required?.filter(r => !submission[r]).join(',')
 			const newAlert: Alert = {
 				type: 'error',
 				text: 'please fill all required fields: ' +  missingFields
@@ -216,29 +222,23 @@
 		const slug = createSlug(submission[typePrefix + '_name'])
 		submission[typePrefix + '_slug'] = slug
 
-		// rename picture with random ID for hashing purpose
-		for (const pf in Object.keys(pictureFiles)) {
-			if(pictureFiles[pf]) {
-				const randomID = Math.floor(Math.random() * 1000);
-				const randomIDString = ('000' + randomID).slice(-4);
-				const pictureSlug = slug + '-' + randomIDString;
-				submission[pf] = pictureSlug
-				const pictureType = pf.substring(0, pf.indexOf('_'))
-				await uploadpicture(pictureType, pictureFiles[pf], pictureSlug);
-			}
+		// upload organization's picture
+		const pictureFile = submission.Organization_picture
+		if(pictureFile) {
+			submission.Organization_picture = 
+			await uploadpicture("organization", pictureFile, slug);
 		}
 
+		// upload each role's picture individually
 		for (const r in rolesAdded) {
-			if(rolesAdded[r]['pictureFile']) {
-				const randomID = Math.floor(Math.random() * 1000);
-				const randomIDString = ('000' + randomID).slice(-4);
-
-				const type = rolesAdded[r]['type']
-				const prefix = getVarPrefix(type)
-				const slug = createSlug(rolesAdded[r]['data'][prefix + '_name'])
-				const pictureSlug = slug + '-' + randomIDString
-				rolesAdded[r]['data'][prefix + '_picture'] = pictureSlug
-				await uploadpicture(type, rolesAdded[r]['pictureFile'], pictureSlug)
+			const roleType = rolesAdded[r]['type']
+			const rolePictureFile = rolesAdded[r]['data'][getVarPrefix(roleType) + '_picture']
+			if(rolePictureFile) {
+				const rolPrefix = getVarPrefix(roleType)
+				const slug = createSlug(rolesAdded[r]['data'][rolPrefix + '_name'])
+				rolesAdded[r]['data'][rolPrefix + '_slug'] = slug
+				rolesAdded[r]['data'][rolPrefix + '_picture'] = 
+				await uploadpicture(roleType, rolePictureFile, slug)
 			}
 		}
 
@@ -290,63 +290,51 @@
 </script>
 
 <Seo title="Create organization" />
-
-<!-- <div class="text-gray-500">
-	{JSON.stringify(submission)} <br>
-	roles added: {JSON.stringify(rolesAdded)} <br>
-	{JSON.stringify(pictureFiles)}
-</div> -->
 {#if submitState == State.START || submitState == State.ERROR}
-<div class="flex flex-col lg:flex-row lg:gap-4">
-<div class="bg-base-200 m-4 rounded-3xl mx-auto w-screen lg:w-1/2 max-w-fit">
-	<div class="bg-error text-error py-4 mx-auto rounded-t-3xl">
-		<h1>{$_('page.create._')} {$_(`keyword.${type}`)}</h1>
-	</div>
-	
-	<form>
-		<div class="flex flex-col lg:flex-row lg:gap-10 place-items-start p-4">
-			<div class="grid grid-cols-1 lg:grid-cols-3 items-center gap-2">
-				<!-- display the appropriate input type, based on key's name and selects/multiselects array-->
-				{#each keys as k}
-					<div class="justify-self-start lg:justify-self-end mx-2 flex flex-row gap-2">
-						<div>{$_(`key.${k}`)}</div>
-						<div class="text-error">{required?.includes(k)? '*' : ''}</div>
-					</div>
-					<div class="justify-self-start lg:col-span-2 ">
-						{#if selects[k]}
-							<select class="select select-bordered" bind:value={submission[k]}>
-								<option disabled selected value={null}>{$_('page.create.select')}</option>
-								{#each selects[k] as opt}
-									<option value={opt}>{$_(`option.${opt}`)}</option>
-								{/each}
-							</select>
-						{:else if multiselects[k]}
-							<MultipleSelect selectOptions={multiselects[k]} bind:selects={submission[k]} />
-						{:else if k.includes('_picture')}
-							<UploadPicture key={k} bind:pictureFile={pictureFiles[k]} />
-						{:else if k.includes('show')}
-							<input type="checkbox" bind:checked={submission[k]} class="checkbox" />
-						{:else if k.includes('description')}
-							<textarea class="textarea textarea-bordered" bind:value={submission[k]} />
-						{:else}
-							<input type="text" class="input input-bordered" bind:value={submission[k]} />
-						{/if}
-					</div>
-				{/each}
-			</div>
+<ul class="steps w-full">
+	<li class="step" class:step-primary={step >= 0}>Basic info</li>
+	<li class="step" class:step-primary={step >= 1}>Role info</li>
+	<li class="step" class:step-primary={step >= 2}>Submit</li>
+ </ul>
+{#if step == 0}
+	<div class="bg-base-200 m-4 rounded-3xl mx-auto w-screen lg:w-1/2 max-w-fit" in:fly={{x:200*dir, duration:1000}}>
+		<div class="bg-error text-error py-4 mx-auto rounded-t-3xl">
+			<h1>{$_('page.create._')} {$_(`keyword.${type}`)}</h1>
 		</div>
-	</form>
-</div>
-<div class="lg:divider lg:divider-vertical"/>
-<div class="bg-base-200 m-4 rounded-3xl mx-auto w-screen lg:max-w-lg">
+		
+		<form>
+			<div class="flex flex-col lg:flex-row lg:gap-10 place-items-start p-4">
+				<InputForm
+					submissionPackage={data}
+					bind:inputs={submission}
+				>
+					<span name="header">
+						Edit
+					</span>
+				</InputForm>
+			</div>
+		</form>
+	</div>
+
+	<div class="tooltip" data-tip={canSubmit? "":"please fill in either English or Thai name"}>
+		<div 
+			class="btn" 
+			on:click|preventDefault={()=>{step = 1; dir = 1}}
+			class:btn-disabled={!canSubmit}
+		>
+			Next
+		</div>
+	</div>
+{:else if step == 1}
+	<div class="bg-base-200 m-4 rounded-3xl mx-auto w-screen lg:w-1/2 max-w-2xl" in:fly={{x:200*dir, duration:1000}}>
 	<div class="bg-error text-error py-4 mx-auto rounded-t-3xl">
 		<h1>{$_('page.create.add_roles')}</h1>
 	</div>
 	<!-- display organization roles-->
 	{#if (editingRoleIndex == -1)}
-		<div class="flex flex-col justify-center items-center" in:fly={{ duration: 1000, y: 20, easing: quintOut }} >
+		<div class="flex flex-col justify-center items-center py-2" in:fly={{ duration: 1000, y: 20, easing: quintOut }} >
 			<div class="flex flex-row gap-1 m-1">
-				{#each relations as role}
+				{#each data.relations as role}
 					<div on:click={()=>addRole(role)}><RoleButtonAdd {role}/></div>
 				{/each}
 			</div>
@@ -377,55 +365,33 @@
 	<!-- edit a parcitular organization role -->
 	{#if (editingRoleIndex > -1)}
 		<div in:fly={{ duration: 1000, y: -20, easing: quintOut }} class="m-2">
-			<div class="grid grid-cols-1 lg:grid-cols-3 items-center gap-2">
-				<div class="col-span-3">Editing {editingRoleType}</div>
-				<!-- display the appropriate input type, based on key's name and selects/multiselects array-->
-				{#each editingRolePackage.keys as k}
-					<div class="justify-self-start lg:justify-self-end mx-2 flex flex-row gap-2">
-						<div>{$_(`key.${k}`)}</div>
-						<div class="text-error">{editingRolePackage.required?.includes(k)? '*' : ''}</div>
-					</div>
-					<div class="justify-self-start lg:col-span-2 ">
-						{#if editingRolePackage.selects[k]}
-							<select class="select select-bordered" bind:value={rolesAdded[editingRoleIndex]['data'][k]}>
-								<option disabled selected value={null}>{$_('page.create.select')}</option>
-								{#each editingRolePackage.selects[k] as opt}
-									<option value={opt}>{$_(`option.${opt}`)}</option>
-								{/each}
-							</select>
-						{:else if editingRolePackage.multiselects[k]}
-							<MultipleSelect selectOptions={editingRolePackage.multiselects[k]} bind:selects={rolesAdded[editingRoleIndex]['data'][k]} />
-						{:else if k.includes('_picture')}
-							<UploadPicture key={k} bind:pictureFile={rolesAdded[editingRoleIndex]['pictureFile']} />
-						{:else if k.includes('show')}
-							<input type="checkbox" bind:checked={rolesAdded[editingRoleIndex]['data'][k]} class="checkbox" />
-						{:else if k.includes('description')}
-							<textarea class="textarea textarea-bordered" bind:value={rolesAdded[editingRoleIndex]['data'][k]} />
-						{:else}
-							<input type="text" class="input input-bordered" bind:value={rolesAdded[editingRoleIndex]['data'][k]} />
-						{/if}
-					</div>
-				{/each}
-				<div class="btn btn-error col-span-1" on:click={()=>removeRole(editingRoleIndex)}> Remove	</div>
-				<div class="btn btn-success col-span-2" on:click={handleSave}> Save	</div>
-			</div>
+			<InputForm
+				submissionPackage={editingRolePackage}
+				bind:inputs={rolesAdded[editingRoleIndex]['data']}
+			>
+				<span slot="header">
+					Editing {editingRoleType}
+				</span>
+			</InputForm>
+			<div class="btn btn-error col-span-1" on:click={()=>removeRole(editingRoleIndex)}> Remove	</div>
+			<div class="btn btn-success col-span-2" on:click={handleSave}> Save	</div>
 		</div>
 	{/if}
-</div>
-</div>
-	<div class="divider" />	
-	<div class="justify-self-end mx-2">{$_('page.create.comment')}</div>
-	<textarea
-		class="textarea textarea-bordered"
-		placeholder={$_('page.create.comment')}
-		bind:value={comment}
-	/><br />
-	{#if submitState == State.START}
-	<div class="tooltip" data-tip={canSubmit? "":"please fill in either English or Thai name"}>
+	</div>
+	<div class="btn" on:click={()=>{step = 0; dir = -1}}>Prev</div>
+	<div class="btn" on:click={()=>{step = 2; dir = 1}}>Next</div>
+{:else if step == 2}
+	<div class="bg-base-200 m-4 rounded-3xl mx-auto w-screen lg:w-1/2 py-4" in:fly={{x:200*dir, duration:1000}}>
+		<div class="justify-self-end mx-2">{$_('page.create.comment')}</div>
+		<textarea
+			class="textarea textarea-bordered"
+			placeholder={$_('page.create.comment')}
+			bind:value={comment}
+		/><br />
+		<div class="btn" on:click={()=>{step = 1; dir = -1}}>Prev</div>
 		<div 
-			class="btn" 
+			class="btn btn-success" 
 			on:click|preventDefault={handleSubmit}
-			class:btn-disabled={!canSubmit}
 		>
 			{$_('page.create.submit')}
 		</div>
@@ -449,26 +415,5 @@
 	
 	<br>
 	<p>{$_('page.create.status.submitmore')}</p><div class="btn" href="./create/{type}">Here</div>
-{:else if submitState == State.ERROR}
-	<p class="text-red">{$_('page.create.status.error')}</p>
-	<div class="btn" on:click|preventDefault={handleSubmit}>{$_('page.create.submit')}</div>
 {/if}
 </div>
-
-<style>
-	input {
-		@apply w-72;
-	}
-
-	select {
-		@apply w-72;
-	}
-
-	input.checkbox {
-		@apply w-5;
-	}
-
-	textarea {
-		@apply w-72;
-	}
-</style>

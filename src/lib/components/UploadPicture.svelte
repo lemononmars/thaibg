@@ -1,5 +1,6 @@
 <script lang=ts>
 	import {onMount} from 'svelte'
+	import {PlusCircleIcon, XCircleIcon, RefreshCwIcon} from 'svelte-feather-icons'
 	export let pictureFile: File;
 	export let key: string;
 	let displaypicture: HTMLImageElement;
@@ -26,12 +27,27 @@
 	}
 </script>
 
-<label class="btn btn-sm" for={key}
-	>{pictureFile ? 'Replace the picture' : 'Upload a picture'}</label
->
-{#if pictureFile}
-	<div class="btn btn-sm" on:click={() => (pictureFile = null)}>Remove</div>
-{/if}
+
+<div class="relative">
+	<label for={key}>
+		<div class="w-40 h-40 aspect-square btn btn-outline">
+			{#if pictureFile}
+				<img class="object-scale-down" src="#" alt="img" bind:this={displaypicture} />
+				<div class="absolute top-0 p-4 m-auto text-info opacity-0 hover:opacity-100 transition duration-500">
+					<RefreshCwIcon/>
+				</div>
+			{:else}
+				<PlusCircleIcon/>
+			{/if}
+		</div>
+	</label>
+	{#if pictureFile}
+		<div class="absolute top-2 right-2 w-8 h-8 text-error rounded " on:click={() => (pictureFile = null)}>
+			<XCircleIcon/>
+		</div>
+	{/if}
+</div>
+
 <input
 	class="sr-only"
 	type="file"
@@ -40,6 +56,4 @@
 	bind:value={pictureFile}
 	on:change={change}
 />
-{#if pictureFile}
-	<img class="w-48 aspect-auto" src="#" alt="img" bind:this={displaypicture} />
-{/if}
+

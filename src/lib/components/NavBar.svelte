@@ -24,13 +24,12 @@
 	import { URL_DICEBEAR } from '$lib/constants';
 	import ToggleTheme from '$lib/components/ToggleTheme.svelte';
 	import { fly } from 'svelte/transition';
-	//import TBGAlogo from '$lib/assets/TBGA-logo-color.png';
-	import TBGAlogo from '$lib/assets/mascot.png';
+	import TBGAlogo from '$lib/assets/TBGA-logo-color.png';
+	//import TBGAlogo from '$lib/assets/mascot.png';
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores'
 	import { handleAlert} from '$lib/alert'
 	import type {Alert} from '$lib/alert/alert.type'
-	import Popover from './popover/Popover.svelte';
 
 	//export let user
 

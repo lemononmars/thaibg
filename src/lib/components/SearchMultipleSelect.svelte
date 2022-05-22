@@ -17,6 +17,8 @@ import type { TimeFormatter } from 'svelte-i18n/types/runtime/types';
 
 	let searchString: string = '';
 	let searchedData: simpleData[];
+	let searchCount: number = 0;
+
 	let typingTimer: ReturnType<typeof setTimeout>
 	let isTyping = false
 
@@ -35,6 +37,7 @@ import type { TimeFormatter } from 'svelte-i18n/types/runtime/types';
 		const res = await fetch(`/api/${type}?search=${searchString}`);
 		if (res.ok) {
 			const data = await res.json();
+			searchCount = data.length
 			searchedData = data.slice(0, 15).map((d) => ({
 				id: d[getVarPrefix(type) + '_ID'],
 				name: d[getVarPrefix(type) + '_name'],
@@ -93,8 +96,8 @@ import type { TimeFormatter } from 'svelte-i18n/types/runtime/types';
 					{:else}
 						<li><div class="btn btn-outline btn-error"> <a href="/create/{type}" target="_blank">Create {type}</a></div></li>
 					{/each}
-					{#if searchedData.length > 15}
-						<li><div class="btn btn-outline btn-info">{searchedData.length - 15} more...</div></li>
+					{#if searchCount > 15}
+						<li><div class="btn btn-outline btn-info">{searchCount - 15} more...</div></li>
 					{/if}
 				{/if}
 			</ul>

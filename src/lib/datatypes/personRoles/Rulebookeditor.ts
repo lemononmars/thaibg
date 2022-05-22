@@ -1,6 +1,7 @@
 export interface Rulebookeditor extends RulebookeditorSubmission {
 	Rulebookeditor_ID: number;
 	Rulebookeditor_slug: string;
+	Rulebookeditor_picture: string;
 	Rulebookeditor_Relation?: RulebookeditorRelation[];
 }
 

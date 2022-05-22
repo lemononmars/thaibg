@@ -1,6 +1,6 @@
 <script lang="ts">
-	//import TBGAlogo from '$lib/assets/TBGA-logo-color.png';
-	import TBGAlogo from '$lib/assets/mascot.png';
+	import TBGAlogo from '$lib/assets/TBGA-logo-color.png';
+	//import TBGAlogo from '$lib/assets/mascot.png';
 	import { _ } from 'svelte-i18n';
 
 	$: boardgameMenu = [
