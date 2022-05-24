@@ -9,7 +9,10 @@
 		}
 	},
 	"keyword": {
+		"all": "ทั้งหมด",
+		"activity": "กิจกรรม",
 		"boardgame": "บอร์ดเกม",
+		"contribute": "ช่วยเหลือ",
 		"type": "ประเภท",
 		"mechanics": "กลไก",
 		"category": "หมวดหมู่",
@@ -29,7 +32,12 @@
 		"honor": "เกียรติยศ",
 		"content": "สื่อ",
 		"crowdfunding": "ระดมทุน",
-		"organization": "องค์กร"
+		"organization": "องค์กร",
+		"website": "เว็บไซต์",
+		"about": "เกี่ยวกับเรา",
+		"termofuse": "ข้อตกลงการใช้งาน",
+		"contact": "ติดต่อ",
+		"glossary": "อภิธานศัพท์"
 	},
 	"shop": {
 		"_": "ร้านค้า",
@@ -68,6 +76,7 @@
 		},
 		"create": {
 			"_": "เพิ่ม",
+			"new": "ใหม่",
 			"submit": "ส่งข้อมูล",
 			"comment": "เพิ่มโน้ตให้แอดมิน",
 			"select": "เลือก 1 ข้อ",
@@ -84,42 +93,6 @@
 		}
 	},
 	"navbar": {
-		"boardgame": {
-			"_": "บอร์ดเกม",
-			"list": "รายชื่อบอร์ดเกมไทย",
-			"type": "ประเภท",
-			"mechanics": "กลไก",
-			"category": "หมวดหมู่"
-		},
-		"person": {
-			"_": "ชุมชน",
-			"designer": "นักออกแบบ",
-			"artist": "ศิลปิน",
-			"graphicdesigner": "นักออกแบบกราฟิก",
-			"manufacturer": "ร้านผลิต/พิมพ์"
-		},
-		"creator": {
-			"_": "ฝ่ายสร้าง"
-		},
-		"supporter": {
-			"_": "ฝ่ายสนับสนุน",
-			"publisher": "ค่ายเกม",
-			"sponsor": "สปอนเซอร์",
-			"creator": "ผู้ผลิตเนื้อหา",
-			"shop": "ร้านค้า"
-		},
-		"activity": {
-			"_": "กิจกรรม",
-			"event": "งาน",
-			"honor": "เกียรติยศ",
-			"content": "เนื้อหา"
-		},
-		"website": {
-			"_": "เว็บไซต์",
-			"about": "เกี่ยวกับพวกเรา",
-			"termofuse": "ข้อตกลงการใช้งาน",
-			"contact": "ติดต่อ"
-		},
 		"title": {
 			"tbg": "ฐานข้อมูล",
 			"db": "บอร์ดเกมไทย (CLOSED BETA)"
@@ -306,7 +279,11 @@
 		"Organization_link": "เว็บไซต์",
 		"Organization_description": "คำอธิบาย",
 		"Organization_picture": "รูปภาพ",
-		"Organization_show": "แสดง?"
+		"Organization_show": "แสดง?",
+		"Type_description": "คำอธิบาย",
+		"Mech_category": "หมวดหมู่",
+		"Mech_link": "เว็บไซต์",
+		"Mech_description": "คำอธิบาย"
 	},
 	"option": {
 		"video": "วีดีโอ",

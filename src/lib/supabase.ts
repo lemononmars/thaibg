@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { personRoles } from './datatypes';
 
 type SupaStorageBucket = 'avatars' | 'images' | 'public';
 
@@ -57,6 +58,8 @@ export function getVarPrefix(type: string): string {
  * @returns {String}
  */
 export function getImageURL(type: string, url: string): string {
+	if(personRoles.includes(type))
+		type = 'person'
 	return DIR_IMAGE + `${type}/` + (url || DEFAULT_IMAGE_FILE);
 }
 
@@ -66,6 +69,8 @@ export function getImageURL(type: string, url: string): string {
  * @returns {String}
  */
 export function getDefaultImageURL(type: string): string {
+	if(personRoles.includes(type))
+		type = 'person'
 	return DIR_IMAGE + `${type}/` + DEFAULT_IMAGE_FILE;
 }
 
@@ -337,9 +342,12 @@ async function addToDatabaseRelation(
 
 			// TODO: make sure to check all cases
 			const mainRelation = relationType === 'boardgame' ? type : relationType; // swap
+			// special case 1: person -> add to Person table directly
+			// special case 2: content-contentcreator -> add to Content_Contentcreator_Relation
 			const relationTableName = (type === 'person' || relationType === 'person') 
-				? 'Person' 
-				: getTableName(mainRelation) + '_Relation';
+				? 'Person' : (type === 'content' && relationType === 'contentcreator') || (type === 'contentcreator' && relationType === 'content')
+				? 'Content_Contentcreator_Relation'
+				:getTableName(mainRelation) + '_Relation';
 			const relationVarPrefix = getVarPrefix(relationType)
 
 			// Finally, we can create and insert a new row
@@ -380,9 +388,10 @@ async function addToDatabaseRelation(
 
 			// TODO: make sure to check all cases
 			const mainRelation = relationType === 'boardgame' ? type : relationType; // swap
-			const relationTableName = (type.toLocaleLowerCase() === 'person' || relationType.toLocaleLowerCase() === 'person') 
-				? 'Person' 
-				: getTableName(mainRelation) + '_Relation';
+			const relationTableName = (type === 'person' || relationType === 'person') 
+				? 'Person' : (type === 'content' && relationType === 'contentcreator') || (type === 'contentcreator' && relationType === 'content')
+				? 'Content_Contentcreator_Relation'
+				:getTableName(mainRelation) + '_Relation';
 			const relationVarPrefix = getVarPrefix(relationType)
 
 			// retrieve current data so that we can decide

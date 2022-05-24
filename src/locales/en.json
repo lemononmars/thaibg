@@ -9,7 +9,10 @@
 		}
 	},
 	"keyword": {
+		"all": "All",
+		"activity": "Activity",
 		"boardgame": "Board Game",
+		"contribute": "Contribute",
 		"type": "Types",
 		"mechanics": "Mechanics",
 		"category": "Category",
@@ -29,7 +32,12 @@
 		"honor": "Honor",
 		"content": "Content",
 		"crowdfunding": "Crowdfunding",
-		"organization": "Organization"
+		"organization": "Organization",
+		"website": "Website",
+		"about": "About",
+		"termofuse": "Term of use",
+		"contact": "Contact",
+		"glossary": "Glossary"
 	},
 	"shop": {
 		"_": "Shop",
@@ -68,9 +76,10 @@
 			"obtainable": "Obtainable at these shops"
 		},
 		"create": {
-			"_": "Create new ",
+			"_": "Create",
+			"new": "new",
 			"submit": "Submit",
-			"comment": "Comment to admin",
+			"comment": "Add a comment to admin",
 			"select": "Select one option",
 			"status": {
 				"submitting": "Submitting... please wait",
@@ -85,42 +94,6 @@
 		}
 	},
 	"navbar": {
-		"boardgame": {
-			"_": "Board Game",
-			"list": "Thai Board Game List",
-			"type": "Types",
-			"mechanics": "Mechanics",
-			"category": "Categories"
-		},
-		"person": {
-			"_": "People",
-			"designer": "Designers",
-			"artist": "Artists",
-			"graphicdesigner": "Graphic Designers",
-			"manufacturer": "Manufacturers"
-		},
-		"creator": {
-			"_": "Creators"
-		},
-		"supporter": {
-			"_": "Supporters",
-			"publisher": "Publishers",
-			"sponsor": "Sponsors",
-			"creator": "Content Creators",
-			"shop": "Shops"
-		},
-		"activity": {
-			"_": "Activities",
-			"event": "Events",
-			"honor": "Honors",
-			"content": "Contents"
-		},
-		"website": {
-			"_": "Website",
-			"about": "About us",
-			"termofuse": "Term of use",
-			"contact": "Contact"
-		},
 		"title": {
 			"tbg": "Thailand Board Game",
 			"db": "Database (CLOSED BETA)"
@@ -309,7 +282,11 @@
 		"Organization_link": "Link",
 		"Organization_description": "Description",
 		"Organization_picture": "Picture",
-		"Organization_show": "Public?"
+		"Organization_show": "Public?",
+		"Type_description": "Description",
+		"Mech_category": "Category",
+		"Mech_link": "Link",
+		"Mech_description": "Description"
 	},
 	"key_example": {
 		"Event_name": "Thailand Board Game Show",

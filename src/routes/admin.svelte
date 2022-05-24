@@ -1,7 +1,8 @@
 <script lang=ts context=module>
-	import { from } from '$lib/supabase';
+	import { from, getVarPrefix } from '$lib/supabase';
 	import { handleAlert} from '$lib/alert'
 	import type {Alert} from '$lib/alert/alert.type'
+	import {personRoles} from '$lib/datatypes'
 
 	interface Settings {
 		requireApproval: boolean,
@@ -146,9 +147,42 @@
 		handleAlert(newAlert)
 		isSaving = false
 	}
+
+	let copying = false
+	async function copyPictureNames() {
+		copying = true
+		// const testRoles = ['rulebookeditor']
+		console.log('start testing')
+		const res = await fetch('/api/person')
+		const data = await res.json()
+		for(const p in data) {
+			const picture = data[p].Person_picture
+			// console.log(picture)
+			if(picture) {
+				for(const role in personRoles) {
+					const rolePrefix = getVarPrefix(personRoles[role])
+					const roleID = data[p][rolePrefix + '_ID']
+					if(roleID) {
+						console.log('role ', role, ' detected')
+						const {data: d, error:e } = await from(rolePrefix).upsert([{
+							[rolePrefix + '_ID']: roleID,
+							[rolePrefix + '_picture']: picture
+						}])
+						if(e)
+							handleAlert( {
+								type: 'success',
+								text: e.message
+							})
+					}
+				}
+			}
+		}
+		copying = false
+	}
 </script>
 
 <div class="overflow-x-auto w-full py-20">
+	<!-- <div class="btn" class:loading={copying} on:click={copyPictureNames}> Copy </div> -->
 	<div class="flex flew-col gap-2">
 		<div>Admin approval require <input type="checkbox" class="checkbox" bind:checked={settings.requireApproval}></div>
 		<div>Allow create <input type="checkbox" class="checkbox" bind:checked={settings.allowCreate}></div>

@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { getImageURL, getDefaultImageURL, getVarPrefix } from '$lib/supabase';
 	import type { TypeName, DataTableColumns } from '$lib/datatypes';
-	import { BoardgameStatusArray, ShopStatusArray, personRoles } from '$lib/datatypes';
+	import { BoardgameStatusArray, ShopStatusArray, personRoles, organizationRoles } from '$lib/datatypes';
 
-	import SearchNavigation from './SearchNavigation.svelte';
 	import { GridIcon, ListIcon, CheckCircleIcon, SlashIcon } from 'svelte-feather-icons';
 	import PersonCard from '$lib/components/PersonCard.svelte';
 	import BoardgameCard from '$lib/components/BoardgameCard.svelte';
 	import PlainCard from '$lib/components/PlainCard.svelte';
+	import OrganizationCard from '$lib/components/OrganizationCard.svelte';
 	import EventCard from '$lib/components/EventCard.svelte';
 	import ContentCard from '$lib/components/ContentCard.svelte';
 	import { flip } from 'svelte/animate';
@@ -15,7 +15,10 @@
 	import BoardgameStatusBadge from './BoardgameStatusBadge.svelte';
 	import ShopStatusBadge from './ShopStatusBadge.svelte';
 
-	export let data, type: TypeName, dataTableColumns: DataTableColumns;
+	export let 
+		data: any[], 
+		type: TypeName, 
+		dataTableColumns: DataTableColumns = {headers: [], body: []};
 	const typePrefix = getVarPrefix(type);
 
 	// default
@@ -41,10 +44,9 @@
 	}
 </script>
 
-<div class="flex flex-col justify-center items-center relative mx-auto">
+<div class="flex flex-col justify-center items-center w-full">
 	<!-- search bar, customized for each page-->
-	<SearchNavigation/>
-	<h1>List of {$_(`keyword.${type}`)}</h1>
+	<!--SearchNavigation/-->
 	<slot />
 	<div class="flex flex-col lg:flex-row items-center flex-wrap">
 		<!-- Select table view or grid view -->
@@ -81,6 +83,8 @@
 					<div animate:flip={{ duration: 300 }}>
 						{#if type === 'person' || personRoles.includes(type)}
 							<PersonCard person={d} role={type}/>
+						{:else if type === 'organization' || organizationRoles.includes(type)}
+							<OrganizationCard organization={d} role={type} />
 						{:else if type === 'boardgame'}
 							<BoardgameCard bg={d} />
 						{:else if type === 'event'}

@@ -1,6 +1,7 @@
 export interface Organization extends OrganizationSubmission {
 	Organization_ID: number;
 	Organization_slug: string;
+	Organization_relation: string; // stored as string, so you need to call JSON.parse()
 }
 
 export const OrganizationDatabaseKeys = [
@@ -26,6 +27,20 @@ export const OrganizationRelationArray = [
 	'sponsor',
 	'contentcreator'
 ];
+
+import type {
+	Manufacturer,
+	Publisher,
+	Shop,
+	Sponsor,
+	Contentcreator
+} from './organizationRoles';
+export type OrganizationRole =
+	| Manufacturer
+	| Publisher
+	| Shop
+	| Sponsor
+	| Contentcreator;
 
 export const OrganizationSubmissionPackage = () => {
 	return {

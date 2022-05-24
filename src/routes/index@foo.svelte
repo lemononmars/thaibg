@@ -125,9 +125,9 @@
 	</div>
 </div>
 
-<div class="flex flex-col w-full p-10">
-	<h1 class="w-full text-center">Upcoming Events</h1>
-	<div class="grid grid-cols-1 lg:grid-cols-4">
+<div class="flex flex-col w-screen px-4 py-10">
+	<h1 class="text-center">Upcoming Events</h1>
+	<div class="grid grid-cols-2 lg:grid-cols-3 place-items-center">
 		{#await promiseEvents}
 			<Spinner />
 		{:then res}
@@ -142,7 +142,7 @@
 	</div>
 </div>
 
-<div class="flex flex-col lg:flex-row bg-base-300 w-full py-4 px-4 lg:px-20">
+<div class="flex flex-col lg:flex-row bg-base-300 w-screen py-4 px-4 lg:px-20">
 	<div class="flex flex-col text-left">
 		<h2>Media</h2>
 		<h1>Hotness Contents</h1>
@@ -166,8 +166,8 @@
 	</div>
 </div>
 
-<div class="flex flex-col w-full">
-	<div class="flex flex-row w-full justify-between items-center">
+<div class="flex flex-col w-screen p-4">
+	<div class="flex flex-row justify-between items-center">
 		<div>
 			<h1>Hotness Board Game</h1>
 		</div>
@@ -195,7 +195,7 @@
 
 		<div
 			id="bg-carousel"
-			class="flex flex-row flex-nowrap gap-4 p-4 overflow-x-hidden overflow-y-none snap-center scroll-smooth relative"
+			class="flex flex-row flex-nowrap gap-4 p-4 overflow-x-scroll overflow-y-none snap-center scroll-smooth relative"
 			bind:this={bgCarousel}
 		>
 			{#await promiseBoardgames}
@@ -214,13 +214,13 @@
 </div>
 
 <!-- database creators -->
-<div class="flex flex-col w-full mx-4 mt-40">
+<div class="flex flex-col w-screen px-4 mt-40">
 	<h1 class="text-left my-4">Team of Developers</h1>
 	{#await promiseDevs}
 		<Spinner />
 	{:then res}
 		{#if res}
-			<div class="flex flex-col lg:flex-row gap-4">
+			<div class="grid grid-cols-2 lg:grid-cols-3 justify-start mx-auto gap-4">
 				{#each res.developers as d, idx}
 					{@const developerRoles = ['UI Designer', 'Web Developer', 'Database Engineer']}
 					<div>

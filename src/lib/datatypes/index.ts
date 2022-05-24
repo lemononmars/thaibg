@@ -1,5 +1,7 @@
 export * from './Boardgame';
 export * from './Mechanics';
+export * from './Category';
+export * from './Type';
 
 export * from './Content';
 export * from './Event';
@@ -97,6 +99,7 @@ import { DesignerSubmissionPackage } from './personRoles/Designer';
 import { EventSubmissionPackage, EventTypeArray } from './Event';
 import { GraphicdesignerSubmissionPackage } from './personRoles/Graphicdesigner';
 import { HonorSubmissionPackage, HonorTypeArray } from './Honor';
+import { MechanicsSubmissionPackage} from './Mechanics';
 import { ManufacturerSubmissionPackage, ManufacturerServiceArray } from './organizationRoles/Manufacturer';
 import { OrganizationSubmissionPackage } from './Organization';
 import { PersonSubmissionPackage } from './Person';
@@ -106,6 +109,7 @@ import { PublisherSubmissionPackage } from './organizationRoles/Publisher';
 import { RulebookeditorSubmissionPackage } from './personRoles/Rulebookeditor';
 import { ShopSubmissionPackage, ShopStatusArray, ShopTypeArray } from './organizationRoles/Shop';
 import { SponsorSubmissionPackage } from './organizationRoles/Sponsor';
+import { TypeSubmissionPackage } from './Type';
 /*
  * return necessary data for submission page
  */
@@ -147,6 +151,10 @@ export function getSubmissionPackage(type: TypeName): SubmissionPackage {
 			return CategorySubmissionPackage();
 		case 'organization':
 			return OrganizationSubmissionPackage();
+		case 'type':
+			return TypeSubmissionPackage();
+		case 'mechanics':
+			return MechanicsSubmissionPackage();
 	}
 }
 

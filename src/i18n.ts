@@ -8,6 +8,6 @@ export function initialize() {
 
 	init({
 		fallbackLocale: 'en',
-		initialLocale: getLocaleFromNavigator()?.slice(2)
+		initialLocale: getLocaleFromNavigator()?.slice(0,2)
 	});
 }

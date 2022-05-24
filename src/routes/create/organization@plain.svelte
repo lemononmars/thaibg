@@ -91,7 +91,7 @@
 	import { _ } from 'svelte-i18n';
 	import { EditIcon, MinusCircleIcon } from 'svelte-feather-icons';
 	import PlainCard from '$lib/components/PlainCard.svelte';
-	import RoleButtonAdd from '$lib/components/RoleButtonAdd.svelte';
+	import RoleButton from '$lib/components/RoleButton.svelte';
 	import InputForm from '$lib/components/InputForm.svelte';
 
 	export let data: SubmissionPackage; // from load fucntion
@@ -291,11 +291,12 @@
 
 <Seo title="Create organization" />
 {#if submitState == State.START || submitState == State.ERROR}
-<ul class="steps w-full">
+<ul class="steps w-screen fixed top-0 -translate-x-1/2 glass z-10">
 	<li class="step" class:step-primary={step >= 0}>Basic info</li>
 	<li class="step" class:step-primary={step >= 1}>Role info</li>
 	<li class="step" class:step-primary={step >= 2}>Submit</li>
  </ul>
+ <div class="h-16"></div>
 {#if step == 0}
 	<div class="bg-base-200 m-4 rounded-3xl mx-auto w-screen lg:w-1/2 max-w-fit" in:fly={{x:200*dir, duration:1000}}>
 		<div class="bg-error text-error py-4 mx-auto rounded-t-3xl">
@@ -335,7 +336,7 @@
 		<div class="flex flex-col justify-center items-center py-2" in:fly={{ duration: 1000, y: 20, easing: quintOut }} >
 			<div class="flex flex-row gap-1 m-1">
 				{#each data.relations as role}
-					<div on:click={()=>addRole(role)}><RoleButtonAdd {role}/></div>
+					<div on:click={()=>addRole(role)}><RoleButton {role} icon={"add"}/></div>
 				{/each}
 			</div>
 			{#each rolesAdded as r, ridx}

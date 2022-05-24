@@ -1,13 +1,14 @@
 <script lang="ts">
 	import { getImageURL, getDefaultImageURL, getVarPrefix } from '$lib/supabase';
 	import type {PersonRole} from '$lib/datatypes'
+
 	export let person: PersonRole
 	export let role: string = 'person';
-
+	console.log(person)
 	const prefix = getVarPrefix(role)
 
 	let id = person[prefix + '_ID'];
-	let slug = person[prefix + '_ID']
+	let slug = person[prefix + '_slug']
 	let picture = getImageURL(role, person[prefix + '_picture']);
 	let name = person[prefix + '_name']
 	let name_th = person[prefix + '_name_th']

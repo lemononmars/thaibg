@@ -1,6 +1,5 @@
 <script lang="ts" context="module">
-	export async function load({ session, params, fetch }) {
-		const { user } = session;
+	export async function load({ params, fetch }) {
 		const res = await fetch(`/api/organization/${params.id}`);
 		
 		if (!res.ok) return { status: 404 };
@@ -9,7 +8,6 @@
 		console.log(data)
 		return {
 			props: {
-				user,
 				organizationData: data || null
 			}
 		};
@@ -26,18 +24,19 @@
 
 <script lang="ts">
 	import Seo from '$lib/components/SEO.svelte';
+	import type {Organization} from '$lib/datatypes'
 	import Spinner from '$lib/components/Spinner.svelte';
 	import { onMount } from 'svelte';
 	import PlainCard from '$lib/components/PlainCard.svelte';
 	import { getImageURL, getDefaultImageURL } from '$lib/supabase';
 	import EditButton from '$lib/components/EditButton.svelte';
 
-	export let user, organizationData;
+	export let organizationData: Organization;
 	let orgRelationKeys = Object.keys(
 		JSON.parse(organizationData.Organization_relation)
 	)
 	let promises: Record<string, Promise<any>> = {}
-	orgRelationKeys.forEach(k=>promises[k] = new Promise((res, rej)=>{}))
+	orgRelationKeys.forEach(k=>promises[k] = null)
 	onMount(async () => {
 		for(const key of orgRelationKeys) {
 			promises[key] = await getOrgRelation(organizationData.Organization_ID, key);
@@ -60,7 +59,6 @@
 				/>
 				<div>
 					<h1>{organizationData.Organization_name}</h1>
-					<h2>{organizationData.Organization_name_th ? '(' + organizationData.Organization_name_th + ')' : ''}</h2>
 					<ul>
 						<li>
 							Official link:
@@ -98,9 +96,6 @@
 					{/if}
 				{/await}
 			{/each}
-		{/if}
-		{#if user && !user.guest}
-			<EditButton type={'organization'} id={organizationData.Organization_ID}/>
 		{/if}
 	</div>
 </div>

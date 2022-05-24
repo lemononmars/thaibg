@@ -88,9 +88,9 @@
 	import { fly } from 'svelte/transition'
 	import { quintOut } from 'svelte/easing'
 	import { _ } from 'svelte-i18n';
-	import { EditIcon , MinusCircleIcon } from 'svelte-feather-icons';
+	import { EditIcon , MinusCircleIcon, ChevronLeftIcon, ChevronRightIcon } from 'svelte-feather-icons';
 	import PersonCard from '$lib/components/PersonCard.svelte';
-	import RoleButtonAdd from '$lib/components/RoleButtonAdd.svelte';
+	import RoleButton from '$lib/components/RoleButton.svelte';
 	import InputForm from '$lib/components/InputForm.svelte';
 
 	export let submissionPackage: SubmissionPackage; // from load fucntion
@@ -284,13 +284,14 @@
 
 <Seo title="Create person" />
 {#if submitState == State.START || submitState == State.ERROR}
-<ul class="steps w-full">
-	<li class="step" class:step-primary={step >= 0}>Basic info</li>
-	<li class="step" class:step-primary={step >= 1}>Role info</li>
-	<li class="step" class:step-primary={step >= 2}>Submit</li>
+<ul class="steps w-full fixed top-0 -translate-x-1/2 glass">
+	<li class="step" class:step-primary={step >= 0} on:click={()=>step = 0}>Basic info</li>
+	<li class="step" class:step-primary={step >= 1} on:click={()=>step = 1}>Role info</li>
+	<li class="step" class:step-primary={step >= 2} on:click={()=>step = 2}>Submit</li>
  </ul>
+<div class="h-16"></div>
 {#if step == 0}
-	<div class="bg-base-200 m-4 rounded-3xl mx-auto w-screen lg:w-1/2 max-w-fit" in:fly={{x:200*dir, duration:1000}}>
+	<div class="bg-base-200 rounded-3xl mx-auto w-screen lg:w-1/2 max-w-fit" in:fly={{x:200*dir, duration:1000}}>
 		<div class="bg-error text-error py-4 mx-auto rounded-t-3xl">
 			<h1>{$_('page.create._')} {$_(`keyword.${type}`)}</h1>
 		</div>
@@ -311,11 +312,11 @@
 
 	<div class="tooltip" data-tip={canSubmit? "":"please fill in either English or Thai name"}>
 		<div 
-			class="btn"
+			class="btn hover:translate-x-4"
 			on:click|preventDefault={()=>{step = 1; dir = 1}}
 			class:btn-disabled={!canSubmit}
 		>
-			Next
+			Next <ChevronRightIcon size=20/>
 		</div>
 	</div>
 {:else if step == 1}
@@ -333,7 +334,7 @@
 							class="shadow-md"
 							class:bg-success={rolesAdded.some(r=>r.type === role)}
 						>
-							<RoleButtonAdd {role}/>
+							<RoleButton {role} icon={"add"}/>
 						</div>
 					{/each}
 				</div>
@@ -377,8 +378,8 @@
 			</div>
 		{/if}
 	</div>
-	<div class="btn" on:click={()=>{step = 0; dir = -1}}>Prev</div>
-	<div class="btn" on:click={()=>{step = 2; dir = 1}}>Next</div>
+	<div class="btn hover:-translate-x-4" on:click={()=>{step = 0; dir = -1}}> Prev <ChevronLeftIcon size=20/> </div>
+	<div class="btn hover:translate-x-4" on:click={()=>{step = 2; dir = 1}}> Next <ChevronRightIcon size=20/> </div>
 {:else if step == 2}
 	<div class="bg-base-200 m-4 rounded-3xl mx-auto w-screen lg:w-1/2 py-4" in:fly={{x:200*dir, duration:1000}}>
 		<div class="justify-self-end mx-2">{$_('page.create.comment')}</div>
@@ -387,7 +388,7 @@
 			placeholder={$_('page.create.comment')}
 			bind:value={comment}
 		/><br />
-		<div class="btn" on:click={()=>{step = 1; dir = -1}}>Prev</div>
+		<div class="btn hover:-translate-x-4" on:click={()=>{step = 1; dir = -1}}>Prev <ChevronLeftIcon size=20/></div>
 		<div 
 			class="btn btn-success" 
 			on:click|preventDefault={handleSubmit}

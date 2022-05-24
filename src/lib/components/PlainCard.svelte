@@ -1,9 +1,7 @@
 <script lang="ts">
-	import type { TypeName } from '$lib/datatypes';
-
 	import { getImageURL, getDefaultImageURL, getVarPrefix } from '$lib/supabase';
 	export let object;
-	export let type//: TypeName;
+	export let type: string//: TypeName;
 	const typeVar = getVarPrefix(type); //capitalize first letter
 
 	let id = object[typeVar + '_ID'];

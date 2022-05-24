@@ -75,13 +75,15 @@ export async function get({ url, params }) {
 			};
 	}
 
-	// in case of /api/designer/9/boardgame
+	// In case of /api/designer/9/boardgame
 	// we'll look up Designer_Relation, not Boardgame_Relation
-	// similary, for /api/content/9/contentcreator
-	// we look up Content_Relation
-	if (relation === 'boardgame' || (relation === 'contentcreator' && type === 'content'))
+	if (relation === 'boardgame')
 		relation = type;
-
+	// However, for /api/content/9/contentcreator
+	// we look up Content_Contentcreator_Relation
+	// since Content_Relation is reserved for boardgame-content
+	if ((relation === 'contentcreator' && type === 'content') || (relation === 'content' && type === 'contentcreator'))
+		relation = 'content_Contentcreator'
 	// in case of
 	// everything else stays the same
 	const selectStr = `${selectedColumns}, ${getTableName(relation)}_Relation!inner(*)`;

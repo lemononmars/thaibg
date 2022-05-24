@@ -39,7 +39,6 @@ export const HonorPosition = ['winner', 'runner-up', '1st runner-up', '2nd runne
 export interface HonorRelation {
 	Honor_ID: number;
 	TBG_ID: number;
-	TBG_name?: string;
 	Honor_position: string;
 	Honor_category: string; // e.g. best family game, most popular votes, staff's favorite
 }

@@ -3,62 +3,34 @@
 	//import TBGAlogo from '$lib/assets/mascot.png';
 	import { _ } from 'svelte-i18n';
 
-	$: boardgameMenu = [
-		{ path: '/boardgame', title: $_('navbar.boardgame.list') },
-		{ path: '/type', title: $_('navbar.boardgame.type') },
-		{ path: '/mechanics', title: $_('navbar.boardgame.mechanics') },
-		{ path: '/category', title: $_('navbar.boardgame.category') }
-	];
-	$: creatorMenu = [
-		{ path: '/designer', title: $_('keyword.designer') },
-		{ path: '/graphicdesigner', title: $_('keyword.graphicdesigner') },
-		{ path: '/artist', title: $_('keyword.artist') },
-		{ path: '/playtester', title: $_('keyword.playtester') },
-		{ path: '/manufacturer', title: $_('keyword.manufacturer') },
-		{ path: '/rulebookeditor', title: $_('keyword.rulebookeditor') },
-		{ path: '/producer', title: $_('keyword.producer') }
-	];
-	$: supporterMenu = [
-		{ path: '/shop', title: $_('shop._') },
-		{ path: '/contentcreator', title: $_('keyword.contentcreator') },
-		{ path: '/publisher', title: $_('keyword.publisher') },
-		{ path: '/sponsor', title: $_('keyword.sponsor') }
-	];
-	$: activityMenu = [
-		{ path: '/content', title: $_('content._') },
-		{ path: '/honor', title: $_('keyword.honor') },
-		{ path: '/event', title: $_('keyword.event') },
-		//{ path: '/crowdfunding', title: $_('keyword.crowdfunding') }
-	];
-	$: websiteMenu = [
-		{ path: '/about', title: $_('navbar.website.about') },
-		{ path: '/termofuse', title: $_('navbar.website.termofuse') },
-		{ path: '/contact', title: $_('navbar.website.contact') }
-	];
+	const boardgameMenu = ['boardgame', 'type', 'mechanics', 'category'];
+	const personMenu = ['designer','graphicdesigner','artist','playtester','rulebookeditor','producer'];
+	const organizationMenu = ['publisher','manufacturer','sponsor','shop','contentcreator'];
+	const activityMenu = ['content','honor','event'];
+	const websiteMenu = ['about','termofuse','contact', 'glossary']
 
-	$: menuTitles = [
-		$_('navbar.boardgame._'),
-		$_('navbar.creator._'),
-		$_('navbar.supporter._'),
-		$_('navbar.activity._'),
-		$_('navbar.website._')
-	];
-	$: menus = [boardgameMenu, creatorMenu, supporterMenu, activityMenu, websiteMenu];
+	const menuTitles = ['boardgame', 'person', 'organization', 'activity', 'website']
+	const menus = [boardgameMenu, personMenu, organizationMenu, activityMenu, websiteMenu]
 </script>
 
 <footer
-	class="mx-auto w-screen max-w-7xl sm:px-6 lg:px-8 p-10 footer bg-base-200 text-base-content"
+	class="mx-auto w-screen p-10 footer bg-base-200 text-base-content"
 >
-	<div>
-		<img class="h-20" src={TBGAlogo} alt="logo" />
-		<div class="w-30 break-words">{$_('navbar.title.db')}</div>
+	<div class="justify-center">
+		<a href="/">
+			<div>
+				<img class="h-20" src={TBGAlogo} alt="logo" />
+				<div class="w-30 break-words">{$_('navbar.title.tbg')}</div>
+				<div class="w-30 break-words">{$_('navbar.title.db')}</div>
+			</div>
+		</a>
 	</div>
 	{#each menuTitles as mt, idx}
-		<div>
-			<span class="footer-title">{mt}</span>
+		<div class="columns-2">
+			<span class="footer-title">{$_(`keyword.${mt}`)}</span>
 			{#each menus[idx] as m}
-				<a href={m.path} alt={m.title} class="link link-hover">
-					{m.title}
+				<a href="/{m}" alt={m} class="link link-hover">
+					{$_(`keyword.${m}`)}
 				</a>
 			{/each}
 		</div>

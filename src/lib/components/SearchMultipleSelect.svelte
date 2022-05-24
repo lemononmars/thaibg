@@ -2,8 +2,7 @@
 	import { getVarPrefix } from '$lib/supabase';
 	import { SearchIcon, DeleteIcon } from 'svelte-feather-icons';
 	import {_} from 'svelte-i18n'
-import type { TimeFormatter } from 'svelte-i18n/types/runtime/types';
-	import RoleButtonSearch from './RoleButtonAdd.svelte';
+	import RoleButton from './RoleButton.svelte';
 	import Spinner from './Spinner.svelte';
 
 	export let selects = [];
@@ -56,9 +55,11 @@ import type { TimeFormatter } from 'svelte-i18n/types/runtime/types';
 	}
 </script>
 
-<div class="flex flex-row">
-	<RoleButtonSearch role={type}/>
-	<div class="flex flex-col mx-auto gap-1">
+<div class="flex flex-col items-center">
+	<div>
+		<RoleButton role={type}/>
+	</div>
+	<div class="flex flex-col">
 		<div class="dropdown mb-4">
 			<!-- svelte-ignore a11y-label-has-associated-control -->
 			<label tabindex="0">
@@ -68,7 +69,7 @@ import type { TimeFormatter } from 'svelte-i18n/types/runtime/types';
 						<input
 							type="text"
 							placeholder={"Search " + $_(`keyword.${type}`)}
-							class="input input-bordered w-70"
+							class="input input-bordered w-36"
 							bind:value={searchString}
 							on:keyup={() => stopTyping()}
 							on:keydown={()=> startTyping()}

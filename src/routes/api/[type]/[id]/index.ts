@@ -20,7 +20,7 @@ export async function get({ params, url }) {
 	const selectedColumns = selected
 		? selected
 				.split(',')
-				.map((str) => getVarPrefix(params.type) + '_' + str)
+				.map((str: string) => getVarPrefix(params.type) + '_' + str)
 				.join(',')
 		: '*';
 

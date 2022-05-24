@@ -62,7 +62,10 @@ export async function get({ params, url }) {
 		};
 
 	// case-insensitive, and also allow searching in Thai language
-	const searchedData = data.filter(d => d[nameColumn]?.toLowerCase().includes(searched) || d[nameColumn + '_th']?.includes(searched));
+	const searchedData = data.filter(d => 
+		d[nameColumn]?.toLowerCase().includes(searched) 
+		|| d[nameColumn + '_th']?.includes(searched)
+	);
 	return {
 		status: 200,
 		headers: { 'Content-Type': 'application/json' },

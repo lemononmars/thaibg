@@ -19,7 +19,8 @@
 		UserIcon,
 		SearchIcon,
 		ChevronUpIcon,
-		AlertOctagonIcon
+		AlertOctagonIcon,
+		XIcon
 	} from 'svelte-feather-icons';
 	import { URL_DICEBEAR } from '$lib/constants';
 	import ToggleTheme from '$lib/components/ToggleTheme.svelte';
@@ -30,42 +31,29 @@
 	import { page } from '$app/stores'
 	import { handleAlert} from '$lib/alert'
 	import type {Alert} from '$lib/alert/alert.type'
+	import SearchNavigation from './SearchNavigation.svelte';
+	import RoleButton from '$lib/components/RoleButton.svelte';
 
 	//export let user
 
-	$: boardgameMenu = [
-		{ path: '/boardgame', title: $_('navbar.boardgame.list') },
-		{ path: '/type', title: $_('navbar.boardgame.type') },
-		{ path: '/mechanics', title: $_('navbar.boardgame.mechanics') },
-		{ path: '/category', title: $_('navbar.boardgame.category') }
-	];
-	$: creatorMenu = [
-		{ path: '/designer', title: $_('keyword.designer') },
-		{ path: '/graphicdesigner', title: $_('keyword.graphicdesigner') },
-		{ path: '/artist', title: $_('keyword.artist') },
-		{ path: '/playtester', title: $_('keyword.playtester') },
-		{ path: '/rulebookeditor', title: $_('keyword.rulebookeditor') },
-		{ path: '/producer', title: $_('keyword.producer') },
-		{ path: '/manufacturer', title: $_('keyword.manufacturer') },
-	];
-	$: supporterMenu = [
-		{ path: '/contentcreator', title: $_('keyword.contentcreator') },
-		{ path: '/shop', title: $_('keyword.shop') },
-		{ path: '/publisher', title: $_('keyword.publisher') },
-		{ path: '/sponsor', title: $_('keyword.sponsor') }
-	];
-	$: activityMenu = [
-		{ path: '/content', title: $_('content._') },
-		{ path: '/honor', title: $_('keyword.honor') },
-		{ path: '/event', title: $_('keyword.event') },
-		//{ path: '/crowdfunding', title: $_('keyword.crowdfunding') }
-	];
+	const boardgameMenu = ['boardgame', 'type', 'mechanics', 'category'];
+	const personMenu = ['designer','graphicdesigner','artist','playtester','rulebookeditor','producer'];
+	const organizationMenu = ['publisher','manufacturer','sponsor','shop','contentcreator'];
+	const activityMenu = ['content','honor','event'];
+	const contributeMenu = ['boardgame','person','organization']
+
+	const menuTitles = ['boardgame', 'person', 'organization', 'activity', 'contribute']
+	const menus = [boardgameMenu, personMenu, organizationMenu, activityMenu]
+
+	// use modulo to cycle through colors
+	const menuColors = ['success', 'warning', 'error']
 
 	const languageName = {
 		en: 'ENG',
 		th: 'ไทย'
 	};
 	let avatar: string | Promise<string>;
+
 	onMount(async () => {
 		if ($user) {
 			const { data, error } = await getCurrUserProfile();
@@ -90,6 +78,9 @@
 	let openReportModal: boolean = false
 	let reportString: string = ''
 	let isReporting: boolean = false
+
+	let openHamburgerMenu: boolean = false
+	let hoveringTab: number = -1
 
 	async function handleReport() {
 		isReporting = true
@@ -127,89 +118,81 @@
 			}
 		handleAlert(newAlert)
 		openReportModal = false
-		openReportModal = openReportModal
 		isReporting = false
 	}
 
 	function closeReport(){
 		openReportModal = false
-		openReportModal = openReportModal
+	}
+
+	function closeSearch() {
+		openSearchModal = false
+	}
+
+	let tabTimeOut: ReturnType<typeof setTimeout>
+	function openTab(index: number) {
+		clearTimeout(tabTimeOut)
+		if(hoveringTab != -1) {
+			hoveringTab = -1
+			tabTimeOut = setTimeout(() => {
+				hoveringTab = index
+			}, 200);
+		}
+		else
+			hoveringTab = index
 	}
 </script>
 
 <svelte:window bind:scrollY on:mousemove={mouseMove} />
 
-{#if scrollY < 40 || mouseY < 300}
-	<div class="navbar mb-2 bg-base-300 w-screen" transition:fly={{ y: -10, duration: 500 }}>
+{#if scrollY < 40 || mouseY < 200}
+	<div 
+		class="navbar bg-base-300 w-screen" 
+		transition:fly={{ y: -10, duration: 500 }}
+	>
 		<div class="navbar-start">
-			<div class="dropdown">
-				<div class="flex-none lg:hidden">
-					<label for="my-nav-drawer" class="btn btn-square btn-ghost">
-						<MenuIcon size="20" />
-					</label>
-				</div>
+			<div 
+				class="flex-none lg:hidden btn btn-square btn-ghost swap swap-rotate"
+				on:click={()=>openHamburgerMenu = !openHamburgerMenu}
+			>
+				{#if openHamburgerMenu}
+					<XIcon size="20" />
+				{:else}
+					<MenuIcon size="20" />
+				{/if}
 			</div>
-			<div class="hidden lg:flex lg:flex-row items-center gap-4">
-				<div>
-					<img class="h-20" src={TBGAlogo} alt="logo" />
+			<a rel="prefetch link-hover" href="/">
+				<div class="lg:flex lg:flex-row items-center gap-4">
+					<img class="w-20 aspect-square" src={TBGAlogo} alt="logo" />
+					<div class="hidden lg:flex lg:flex-row items-center gap-4">
+						<div class="flex flex-col">
+							<div class="text-secondary text-sm">{$_('navbar.title.tbg')}</div>
+							<div class="text-primary text-2xl">{$_('navbar.title.db')}</div>
+						</div>
+					</div>
 				</div>
-				<div class="flex flex-col">
-					<a rel="prefetch link-hover" href="/">
-						<div class="text-secondary text-sm">{$_('navbar.title.tbg')}</div>
-						<div class="text-primary text-2xl">{$_('navbar.title.db')}</div>
-					</a>
-				</div>
-			</div>
+			</a>
 		</div>
 		<div class="navbar-center hidden lg:flex gap-4">
-			<div class="dropdown dropdown-hover">
-				<span tabindex="0" class="hover:text-warning flex flex-row items-center">
-					{$_('navbar.boardgame._')}
+			{#each menuTitles as title, idx}
+				<div 
+					class="flex flex-row items-center hover:text-{menuColors[idx%3]}"
+					on:mouseover={()=>openTab(idx)}
+					on:focus={()=> hoveringTab = hoveringTab}
+				>
+					{$_(`keyword.${title}`)}
 					<ChevronDownIcon size="20" />
-				</span>
-				<ul tabindex="0" class="p-2 shadow menu dropdown-content w-52 bg-warning">
-					{#each boardgameMenu as m}
-						<li><a href={m.path} class="text-warning-content">{m.title}</a></li>
-					{/each}
-				</ul>
-			</div>
-			<div class="dropdown dropdown-hover">
-				<span tabindex="0" class="hover:text-success flex flex-row items-center">
-					{$_('navbar.creator._')}
-					<ChevronDownIcon size="20" />
-				</span>
-				<ul tabindex="0" class="p-2 shadow menu dropdown-content w-52 bg-success">
-					{#each creatorMenu as m}
-						<li><a href={m.path} class="text-success-content">{m.title}</a></li>
-					{/each}
-				</ul>
-			</div>
-			<div class="dropdown dropdown-hover">
-				<span tabindex="0" class="hover:text-error flex flex-row items-center">
-					{$_('navbar.supporter._')}
-					<ChevronDownIcon size="20" />
-				</span>
-				<ul tabindex="0" class="p-2 shadow menu dropdown-content w-52 bg-error">
-					{#each supporterMenu as m}
-						<li><a href={m.path} class="text-error-content">{m.title}</a></li>
-					{/each}
-				</ul>
-			</div>
-			<div class="dropdown dropdown-hover">
-				<span tabindex="0" class="hover:text-warning flex flex-row items-center">
-					{$_('navbar.activity._')}
-					<ChevronDownIcon size="20" />
-				</span>
-				<ul tabindex="0" class="p-2 shadow menu dropdown-content w-52 bg-warning">
-					{#each activityMenu as m}
-						<li><a href={m.path} class="text-warning-content">{m.title}</a></li>
-					{/each}
-				</ul>
+				</div>
+			{/each}
+		</div>
+		<div class="navbar-center flex lg:hidden gap-4">
+			<div class="btn" on:click={()=>openSearchModal=true}>
+				<div><SearchIcon size="20" /></div>
 			</div>
 		</div>
 		<!-- Right side: language, theme, search, profile-->
-		<div class="navbar-end flex flex-row items-center gap-4 px-4">
-			<div>
+		<div class="navbar-end flex flex-row items-center place-items-center gap-4 px-4">
+			<div class="hidden lg:flex lg:flex-row place-items-center">
 				{#if !$isLoading}
 					<select class="select select-md max-w-xs" bind:value={$locale}>
 						{#each $locales as l}
@@ -217,12 +200,10 @@
 						{/each}
 					</select>
 				{/if}
-			</div>
-			<div class="hidden lg:block">
 				<ToggleTheme />
-			</div>
-			<div class="hidden lg:block" on:click={()=>openSearchModal=true}>
-				<SearchIcon size="20" />
+				<div class="btn place-items-center" on:click={()=>openSearchModal=true}>
+					<div><SearchIcon size="20" /></div>
+				</div>
 			</div>
 
 			<div>
@@ -255,6 +236,65 @@
 			</div>
 		</div>
 	</div>
+	<!--area for dropdown menus-->
+	{#if hoveringTab > -1}
+		<div in:fly={{ y: -10, duration: 500 }}>
+			{#each menus as menu, idx}
+				{#if hoveringTab === idx}
+					<div 
+						class="flex flex-row gap-2 py-2 justify-center place-items-center w-screen bg-opacity-90 bg-{menuColors[idx%3]}" 
+						on:mouseleave={()=>hoveringTab=-1}
+					>
+						{#each menu as option}
+							<a href="/{option}">
+								<RoleButton role={option}/>
+							</a>
+						{/each}
+					</div>
+				{/if}
+			{/each}
+			{#if hoveringTab === 4}
+				<div 
+					class="flex flex-row gap-2 py-2 justify-center place-items-center w-screen bg-{menuColors[4%3]}" 
+					on:mouseleave={()=>hoveringTab=-1}
+				>
+					{#each contributeMenu as option}
+						<a href="/create/{option}" target="_blank">
+							<RoleButton role={option} icon={"add"}/>
+						</a>
+					{/each}
+					<a href="/create" target="_blank">
+						<RoleButton role={"role"} text={"all"} icon={"add"}/>
+					</a>
+				</div>
+			{/if}
+		</div>
+	{/if}
+	{#if openHamburgerMenu}
+		<div 
+			class="lg:hidden navbar flex flex-col justify-center bg-base-300 w-screen"
+			transition:fly={{ y: -10, duration: 1000 }}
+		>
+			<div class="place-items-center">
+				<SearchNavigation/>
+			</div>
+			<div class="flex flex-row">
+				<ToggleTheme/>
+				<div>
+					{#if !$isLoading}
+						<select class="select select-md max-w-xs" bind:value={$locale}>
+							{#each $locales as l}
+								<option value={l} selected>{languageName[l]}</option>
+							{/each}
+						</select>
+					{/if}
+				</div>
+			</div>
+			<div class="btn btn-block" on:click={()=>openHamburgerMenu = false}>
+				<ChevronUpIcon size="20"/>
+			</div>
+		</div>
+	{/if}
 {:else}
 	<div
 		class="btn btn-secondary fixed right-0 bottom-0 m-4 rounded-full z-10 hover:-translate-y-2 duration-200"
@@ -270,13 +310,13 @@
 	class="btn btn-accent fixed left-0 bottom-0 m-4 rounded-full z-10 hover:-translate-y-2 duration-200"
 	on:click|preventDefault={()=>openReportModal = true}
 >
-	<div class="tooltip" data-tip="report this page">
+	<div class="tooltip" data-tip="feedback">
 		<AlertOctagonIcon size="15" />
 	</div>
 </div>
 
-<!-- Put this part before </body> tag -->
-<input type="checkbox" id="my-modal-6" class="modal-toggle"/>
+<!--report modal -->
+<input type="checkbox" id="report-modal" class="modal-toggle"/>
 <div class="modal modal-bottom sm:modal-middle" class:modal-open={openReportModal}>
 	<div class="modal-box">
 		<h1>Report / Suggestion</h1>
@@ -285,8 +325,21 @@
 		<h2>Message</h2>
 		<textarea class="textarea bg-base-300 w-full" placeholder="Tell us!" bind:value={reportString}></textarea>
 		<div class="modal-action">
-			<label for="my-modal-6" class="btn btn-secondary" on:click={closeReport}>Cancel</label>
-			<label for="my-modal-6" class="btn" on:click={handleReport} class:loading={isReporting}>Report</label>
+			<div class="btn btn-secondary" on:click={closeReport}>Cancel</div>
+			<div class="btn" on:click={handleReport} class:loading={isReporting}>Report</div>
+		</div>
+	</div>
+</div>
+
+<!--search modal -->
+<input type="checkbox" id="search-modal" class="modal-toggle"/>
+<div class="modal modal-bottom sm:modal-middle" class:modal-open={openSearchModal}>
+	<div class="modal-box">
+		<h1>Search</h1>
+		<textarea class="textarea bg-base-300 w-full" placeholder="Type to search" bind:value={reportString}></textarea>
+		<div class="modal-action">
+			<div class="btn btn-secondary" on:click={closeSearch}>Close</div>
+			<a href="/search" target="_blank"><div class="btn">Advanced search</div></a>
 		</div>
 	</div>
 </div>

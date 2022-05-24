@@ -50,6 +50,7 @@
 	import Spinner from '$lib/components/Spinner.svelte';
 	import { onMount } from 'svelte';
 	import BoardgameCard from '$lib/components/BoardgameCard.svelte';
+	import DataViewer from '$lib/components/DataViewer.svelte';
 	import ContactLinks from '$lib/components/ContactLinks.svelte';
 	import EditButton from '$lib/components/EditButton.svelte';
 	import { _ } from 'svelte-i18n';
@@ -147,13 +148,14 @@
 					<div class="divider" />
 
 					<h2>Board games created by this {$_(personRoles[activeTab])}</h2>
-					<div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-3 gap-4">
+					<DataViewer data={res.contents} type="boardgame"/>
+					<!-- <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-3 gap-4">
 						{#each res.contents as bg}
 							<BoardgameCard {bg} />
 						{:else}
 							-
 						{/each}
-					</div>
+					</div> -->
 				{/if}
 			{:catch}
 				<p>Server is unavailable. Try again later.</p>

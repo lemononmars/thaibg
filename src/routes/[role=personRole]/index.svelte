@@ -8,15 +8,7 @@
 		const res = await fetch(`/api/${role}`);
 		if (!res.ok) return { status: 404, body: { message: 'cannot load this role' } };
 
-		// TODO: give up on efficiency and add picture columns for all tables?
 		let filteredData = await res.json();
-		for(const d in filteredData) {
-			const id = filteredData[d][getVarPrefix(role) + '_ID']
-			const res = await fetch(`/api/${role}/${id}/person?select=picture`)
-			const data = await res.json()
-			filteredData[d][getVarPrefix(role) + '_picture'] = data.Person_picture
-		}
-
 		return {
 			props: {
 				people: filteredData,
@@ -29,11 +21,8 @@
 
 <script lang="ts">
 	import Seo from '$lib/components/SEO.svelte';
-	import { ChevronDownIcon, ChevronUpIcon } from 'svelte-feather-icons';
-	import DataView from '$lib/components/DataView.svelte';
+	import DataViewer from '$lib/components/DataViewer.svelte';
 	import SearchBar from '$lib/components/SearchBar.svelte';
-	import { fly } from 'svelte/transition';
-	import { quintOut } from 'svelte/easing';
 	import { _ } from 'svelte-i18n';
 
 	export let people: PersonRole[], search: string;
@@ -75,19 +64,20 @@
 	}
 
 	const dataTableColumns = {
-		headers: ['Number of Board Games', 'Latest Work', 'Last Updated'],
-		body: ['numBoardgames', 'latestWork', 'lastUpdated']
+		headers: [],//['Number of Board Games', 'Latest Work', 'Last Updated'],
+		body: []//['numBoardgames', 'latestWork', 'lastUpdated']
 	};
 </script>
 
 <Seo title="People" />
 <div class="flex flex-col justify-center mx-auto">
-	<DataView data={peopleSorted} type={role} {dataTableColumns}>
+	<h1>List of {$_(`keyword.${role}`)}</h1>
+	<DataViewer data={peopleSorted} type={role} {dataTableColumns}>
 		<div class="flex flex-row items-center justify-between gap-2">
 			<!-- Search box -->
 			<SearchBar placeholder={`Search ${role} (en/th)`} bind:searchString />
 		</div>
-	</DataView>
+	</DataViewer>
 
 	{#if peopleSorted?.length == 0}
 		<div>

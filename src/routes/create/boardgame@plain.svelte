@@ -96,10 +96,8 @@
 	import { user, getCurrUserProfile } from '$lib/user';
 	import Spinner from '$lib/components/Spinner.svelte';
 	import { fly } from 'svelte/transition'
-	import { quintOut } from 'svelte/easing'
 	import { _ } from 'svelte-i18n';
 	import BoardgameCard from '$lib/components/BoardgameCard.svelte';
-	import RoleButtonAdd from '$lib/components/RoleButtonAdd.svelte';
 	import InputForm from '$lib/components/InputForm.svelte';
 	import SearchMultipleSelect from '$lib/components/SearchMultipleSelect.svelte';
 
@@ -209,20 +207,18 @@
 		}
 	}
 
-	function scrollTop() {
-		window.scroll({ top: 0, behavior: 'smooth' });
-	}
 </script>
 
 <Seo title="Create boardgame" />
 {#if submitState == State.START || submitState == State.ERROR}
-<ul class="steps w-full">
+<ul class="steps w-screen fixed top-0 -translate-x-1/2 glass z-10">
 	{#each stepTitles as s, idx}
-		<li class="step" class:step-primary={step >= idx}>
+		<li class="step text-xs lg:text-md" class:step-primary={step >= idx}>
 			{s}
 		</li>
 	{/each}
  </ul>
+<div class="h-16"></div>
 {#if step == 0}
 	<div class="bg-base-200 m-4 rounded-3xl mx-auto w-screen lg:w-1/2 max-w-fit" in:fly={{x:200*dir, duration:1000}}>
 		<div class="bg-error text-error py-4 mx-auto rounded-t-3xl">
@@ -272,7 +268,7 @@
 				</InputForm>
 			</div>
 		</form>
-		<div class="grid">
+		<div class="grid lg:grid-cols-3 gap-y-4">
 			{#each BoardgameProperties as r}
 				<SearchMultipleSelect bind:selects={relationMultiSelects[r]} type={r} />
 			{/each}
@@ -285,7 +281,7 @@
 		<div class="bg-error text-error py-4 mx-auto rounded-t-3xl">
 			<h1>{stepTitles[2]}</h1>
 		</div>
-		<div class="flex flex-col justify-center">
+		<div class="grid lg:grid-cols-3 gap-y-4">
 			{#each BoardgamePersonRelation as r}
 				<SearchMultipleSelect bind:selects={relationMultiSelects[r]} type={r} />
 			{/each}
@@ -301,7 +297,7 @@
 		<div class="bg-error text-error py-4 mx-auto rounded-t-3xl">
 			<h1>{stepTitles[3]}</h1>
 		</div>
-		<div class="flex flex-col justify-center">
+		<div class="grid grid-cols2 lg:grid-cols-3 gap-y-4">
 			{#each BoardgameETCRelation as r}
 				<SearchMultipleSelect bind:selects={relationMultiSelects[r]} type={r} />
 			{/each}

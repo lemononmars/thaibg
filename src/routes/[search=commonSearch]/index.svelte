@@ -1,6 +1,6 @@
 <script lang=ts context=module>
    import { getFilterOptions, getDataTableColumns } from '$lib/datatypes';
-   import type {TypeName, FilterOption, DataTableColumns} from '$lib/datatypes';
+   import type {TypeName, FilterOption, DataTableColumns, PersonRole} from '$lib/datatypes';
 
 	export async function load({ params, url, fetch }) {
       const {search: type} = params
@@ -28,10 +28,10 @@
 	import { fly } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
 	import { _ } from 'svelte-i18n';
-	import DataView from '$lib/components/DataView.svelte';
+	import DataViewer from '$lib/components/DataViewer.svelte';
    import { getVarPrefix } from '$lib/supabase';
 
-	export let data, type: TypeName;
+	export let data: PersonRole[], type: TypeName;
    export let filter: FilterOption[], dataTableColumns: DataTableColumns
 	export let searchString: string; // from url params
    let prefix = getVarPrefix(type)
@@ -52,13 +52,15 @@
 				d[prefix + '_name_th']?.includes(searchString))
 	);
 
-	let sorted = 0;
+	let sorted: number = 0;
 	searchString = searchString || ''
-	$: dataSorted = dataFiltered.sort((a, b) => compare(sorted, a, b));
+	$: dataSorted = dataFiltered.sort((a, b) => 
+		compare(sorted, a, b)
+	);
 
 	// TODO: allow advanced search settings
-	function compare(s: number, a, b) {
-      const result:boolean = a[prefix + '_name']?.localeCompare(b[prefix + '_name'])
+	function compare(s: number, a: PersonRole, b: PersonRole) {
+      const result = a[prefix + '_name']?.localeCompare(b[prefix + '_name'])
 		if (s == 0) return result
 		return !result
 	}
@@ -72,8 +74,9 @@
 </script>
 
 <Seo title="{type}" />
-<div class="flex flex-col justify-center items-center relative mx-auto">
-	<DataView data={dataSorted} {type} {dataTableColumns}>
+<div class="flex flex-col justify-center items-center w-full">
+	<h1>List of {$_(`keyword.${type}`)}</h1>
+	<DataViewer data={dataSorted} {type} {dataTableColumns}>
 		<!-- Search box -->
 		<div class="flex flex-row items-center gap-4">
 			<Searchbar placeholder="Search {type} (en/th)" bind:searchString />
@@ -118,7 +121,7 @@
 				</div>
 			</div>
 		{/if}
-	</DataView>
+	</DataViewer>
 	{#if dataSorted?.length == 0}
 		<div>
 			No result for "{searchString}". Try
