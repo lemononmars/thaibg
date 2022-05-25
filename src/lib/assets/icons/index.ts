@@ -7,6 +7,10 @@ import mechanicsIcon from './icon-mechanics.svg'
 import personIcon from './icon-person.svg'
 import roleIcon from './icon-role.svg'
 import shopIcon from './icon-shop.svg'
+import boardgameStage1 from './no-bgstage-1-planned.svg'
+import boardgameStage2 from './no-bgstage-2-pending.svg'
+import boardgameStage3 from './no-bgstage-3-prototype.svg'
+import boardgameStage4 from './no-bgstage-4-published.svg'
 
 import { personRoles, organizationRoles } from '$lib/datatypes'
 
@@ -41,3 +45,10 @@ export {
    roleIcon, 
    shopIcon
 }
+
+export const boardgameStageIcons = [
+   boardgameStage1,
+   boardgameStage2,
+   boardgameStage3,
+   boardgameStage4
+]

@@ -25,8 +25,7 @@
 	import { URL_DICEBEAR } from '$lib/constants';
 	import ToggleTheme from '$lib/components/ToggleTheme.svelte';
 	import { fly } from 'svelte/transition';
-	import TBGAlogo from '$lib/assets/TBGA-logo-color.png';
-	//import TBGAlogo from '$lib/assets/mascot.png';
+	import TBGAlogo from '$lib/assets/bookshelf.svg'//'$lib/assets/TBGA-logo-color.png';
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores'
 	import { handleAlert} from '$lib/alert'
@@ -40,7 +39,7 @@
 	const personMenu = ['designer','graphicdesigner','artist','playtester','rulebookeditor','producer'];
 	const organizationMenu = ['publisher','manufacturer','sponsor','shop','contentcreator'];
 	const activityMenu = ['content','honor','event'];
-	const contributeMenu = ['boardgame','person','organization']
+	const contributeMenu = ['boardgame','person','organization', 'content', 'event', 'honor']
 
 	const menuTitles = ['boardgame', 'person', 'organization', 'activity', 'contribute']
 	const menus = [boardgameMenu, personMenu, organizationMenu, activityMenu]
@@ -163,7 +162,7 @@
 			</div>
 			<a rel="prefetch link-hover" href="/">
 				<div class="lg:flex lg:flex-row items-center gap-4">
-					<img class="w-20 aspect-square" src={TBGAlogo} alt="logo" />
+					<img class="w-20 aspect-square bg-slate-300" src={TBGAlogo} alt="logo" />
 					<div class="hidden lg:flex lg:flex-row items-center gap-4">
 						<div class="flex flex-col">
 							<div class="text-secondary text-sm">{$_('navbar.title.tbg')}</div>
@@ -255,17 +254,17 @@
 			{/each}
 			{#if hoveringTab === 4}
 				<div 
-					class="flex flex-row gap-2 py-2 justify-center place-items-center w-screen bg-{menuColors[4%3]}" 
+					class="flex flex-row gap-2 py-2 justify-center place-items-center w-screen bg-warning" 
 					on:mouseleave={()=>hoveringTab=-1}
 				>
+					<a href="/create" target="_blank">
+						<RoleButton role={"role"} text={"all"} icon={"add"}/>
+					</a>
 					{#each contributeMenu as option}
 						<a href="/create/{option}" target="_blank">
 							<RoleButton role={option} icon={"add"}/>
 						</a>
 					{/each}
-					<a href="/create" target="_blank">
-						<RoleButton role={"role"} text={"all"} icon={"add"}/>
-					</a>
 				</div>
 			{/if}
 		</div>

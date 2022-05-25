@@ -38,6 +38,7 @@
 		return {
 			props: {
 				submissionPackage: getSubmissionPackage('person'),
+				adminSettings: data
 			}
 		};
 	}
@@ -94,6 +95,7 @@
 	import InputForm from '$lib/components/InputForm.svelte';
 
 	export let submissionPackage: SubmissionPackage; // from load fucntion
+	export let adminSettings
 	const type: string = 'person';
 	let submission = submissionPackage.submission
 	submission.Person_show = true // default = show
@@ -370,7 +372,7 @@
 					bind:inputs={rolesAdded[editingRoleIndex]['data']}
 				>
 					<span slot="header">
-						Editing {editingRoleType}
+						Editing {$_(`keyword.${editingRoleType}`)}
 					</span>
 				</InputForm>
 				<div class="btn btn-error col-span-1" on:click={()=>removeRole(editingRoleIndex)}> Remove	</div>
@@ -378,16 +380,18 @@
 			</div>
 		{/if}
 	</div>
-	<div class="btn hover:-translate-x-4" on:click={()=>{step = 0; dir = -1}}> Prev <ChevronLeftIcon size=20/> </div>
-	<div class="btn hover:translate-x-4" on:click={()=>{step = 2; dir = 1}}> Next <ChevronRightIcon size=20/> </div>
+	<div class="btn hover:-translate-x-4" on:click={()=>{step = 0; dir = -1; editingRoleIndex=-1}}> Prev <ChevronLeftIcon size=20/> </div>
+	<div class="btn hover:translate-x-4" on:click={()=>{step = 2; dir = 1; editingRoleIndex=-1}}> Next <ChevronRightIcon size=20/> </div>
 {:else if step == 2}
 	<div class="bg-base-200 m-4 rounded-3xl mx-auto w-screen lg:w-1/2 py-4" in:fly={{x:200*dir, duration:1000}}>
-		<div class="justify-self-end mx-2">{$_('page.create.comment')}</div>
-		<textarea
-			class="textarea textarea-bordered"
-			placeholder={$_('page.create.comment')}
-			bind:value={comment}
-		/><br />
+		{#if adminSettings.requireApproval}
+			<div class="justify-self-end mx-2">{$_('page.create.comment')}</div>
+			<textarea
+				class="textarea textarea-bordered"
+				placeholder={$_('page.create.comment')}
+				bind:value={comment}
+			/><br />
+		{/if}
 		<div class="btn hover:-translate-x-4" on:click={()=>{step = 1; dir = -1}}>Prev <ChevronLeftIcon size=20/></div>
 		<div 
 			class="btn btn-success" 

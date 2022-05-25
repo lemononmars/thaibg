@@ -69,7 +69,7 @@ export interface BoardgameSubmission {
 /*
  * pending, planned, prototype, published
  */
-export const BoardgameStatusArray = ['pending', 'planned', 'prototype', 'published'];
+export const BoardgameStatusArray = ['planned', 'pending',  'prototype', 'published'];
 export type BoardgameStatus = 'pending' | 'planned' | 'prototype' | 'published';
 
 // split for readablility

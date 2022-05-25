@@ -39,7 +39,7 @@ export const ShopStatusArray = ['active', 'inactive', 'closed'];
 export type ShopStatus = 'active' | 'inactive' | 'closed';
 
 export const ShopRelationArray = ['boardgame'];
-export const ShopTypeArray = ['online', 'physical', 'cafe', 'club', 'meetup']
+export const ShopTypeArray = ['online shop', 'physical shop', 'cafe', 'club', 'meetup']
 
 interface ShopRelation {
 	id: number;

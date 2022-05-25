@@ -9,10 +9,10 @@
 		}
 	},
 	"keyword": {
-		"all": "All",
+		"all": "See all",
 		"activity": "Activity",
 		"boardgame": "Board Game",
-		"contribute": "Contribute",
+		"contribute": "Add Data",
 		"type": "Types",
 		"mechanics": "Mechanics",
 		"category": "Category",
@@ -59,7 +59,7 @@
 				"contents": "Contents",
 				"text1": "All information",
 				"text2": "on Thailand board game industry",
-				"contribute": "Contribute",
+				"contribute": "Add data",
 				"contact": "Contact Us"
 			}
 		},

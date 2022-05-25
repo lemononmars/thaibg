@@ -10,7 +10,7 @@
 </script>
 
 <main class="w-full min-w-max h-full pt-4">
-	<div class="fixed bottom-0 left-0 border-2 m-2">
+	<div class="fixed top-0 right-0 border-2 mx-2 mt-10">
 		<ToggleTheme/>
 		{#if !$isLoading}
 			<select class="select select-md max-w-xs" bind:value={$locale}>

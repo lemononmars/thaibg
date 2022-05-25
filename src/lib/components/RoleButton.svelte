@@ -21,19 +21,21 @@
 >
 	<div class="relative">
 		<div class="group-hover:opacity-20 transition duration-1000">
-			<img 
-				src={roleIcon} 
-				alt="{role} image"
+			<object 
+				type="image/svg+xml"
+				data={roleIcon} 
+				class="logo"
+				aria-label="logo"
 			/>
 		</div>
 		<!-- svelte-ignore a11y-missing-attribute -->
 		<a>
-			<div class="text-success absolute top-0 m-1 text-opacity-0 group-hover:text-opacity-100  transition duration-500">
+			<div class="text-success absolute top-0 m-1 text-opacity-0 group-hover:text-opacity-100 transition duration-500">
 				<svelte:component this={icons[icon]}/>
 			</div>
 		</a>
 	</div>
-	<div class="h-10">
-		<p class="text-sm text-center">{role==='add'?$_('page.create._'):''}{$_(`keyword.${text}`)}</p>
+	<div class="h-10 align-center">
+		<p class="text-sm text-center text-base-content">{role==='add'?$_('page.create._'):''}{$_(`keyword.${text}`)}</p>
 	</div>
 </div>

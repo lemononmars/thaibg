@@ -81,7 +81,7 @@
 </script>
 
 <Seo title="Home" />
-<div class="flex flex-col lg:flex-row w-screen bg-base-200 py-10 lg:py-20 px-8 lg:px-32">
+<div class="flex flex-col lg:flex-row w-screen justify-items-center bg-base-200 py-10 lg:py-20 px-8 lg:px-32">
 	<div class="flex flex-col">
 		<h1>{$_('page.home.welcome.intro')}</h1>
 		<div class="grid grid-cols-1 lg:grid-cols-3 place-items-center py-8 m-2">
@@ -111,10 +111,10 @@
 			{$_('page.home.welcome.text1')} <br />
 			{$_('page.home.welcome.text2')}
 		</p>
-		<div class="flex flex-row items-center justify-center mt-4">
-			<a href="/create"><div class="btn btn-secondary">{$_('page.home.welcome.contribute')}</div></a
+		<div class="flex flex-col items-center justify-center mt-4 gap-2 w-full">
+			<a href="/create"><div class="btn btn-wide btn-secondary">{$_('page.home.welcome.contribute')}</div></a
 			>
-			<a href="/contact"><div class="btn btn-ghost">{$_('page.home.welcome.contact')}</div></a>
+			<a href="/contact"><div class="btn btn-ghost btn-wide">{$_('page.home.welcome.contact')}</div></a>
 		</div>
 	</div>
 

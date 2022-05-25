@@ -1,6 +1,5 @@
 <script lang="ts">
-	import TBGAlogo from '$lib/assets/TBGA-logo-color.png';
-	//import TBGAlogo from '$lib/assets/mascot.png';
+	import TBGAlogo from '$lib/assets/bookshelf.svg';
 	import { _ } from 'svelte-i18n';
 
 	const boardgameMenu = ['boardgame', 'type', 'mechanics', 'category'];
@@ -19,7 +18,7 @@
 	<div class="justify-center">
 		<a href="/">
 			<div>
-				<img class="h-20" src={TBGAlogo} alt="logo" />
+				<img class="h-20 bg-slate-300" src={TBGAlogo} alt="logo" />
 				<div class="w-30 break-words">{$_('navbar.title.tbg')}</div>
 				<div class="w-30 break-words">{$_('navbar.title.db')}</div>
 			</div>
