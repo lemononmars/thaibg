@@ -17,6 +17,8 @@ import { personRoles, organizationRoles } from '$lib/datatypes'
 export function getTypeIcon(type: string) {
    if(type === 'person' || personRoles.includes(type))
       return personIcon
+   if(type === 'shop')
+      return shopIcon
    if(type === 'organization' || organizationRoles.includes(type))
       return organizationIcon
    if(type === 'boardgame')
@@ -27,8 +29,6 @@ export function getTypeIcon(type: string) {
       return honorIcon
    if(type === 'mechanics' || type === 'type' || type === 'category')
       return mechanicsIcon
-   if(type === 'shop')
-      return shopIcon
    if(type === 'event')
       return eventIcon
    return roleIcon

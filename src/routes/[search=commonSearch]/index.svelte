@@ -4,7 +4,9 @@
 
 	export async function load({ params, url, fetch }) {
       const {search: type} = params
-		const res = await fetch(`/api/${type}`);
+		const searchSuffix = url.search
+		const searchString = url.searchParams.get('search')
+		const res = await fetch(`/api/${type}${searchSuffix}`);
 		if (!res.ok) return { status: 404 };
 
 		const data = await res.json();
@@ -15,7 +17,7 @@
             type,
             filter: getFilterOptions(type),
             dataTableColumns: getDataTableColumns(type),
-				searchString: url.searchParams.get('name')
+				searchString
 			}
 		};
 	}

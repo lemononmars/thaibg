@@ -4,7 +4,6 @@
 
 	export let person: PersonRole
 	export let role: string = 'person';
-	console.log(person)
 	const prefix = getVarPrefix(role)
 
 	let id = person[prefix + '_ID'];

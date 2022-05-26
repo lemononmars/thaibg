@@ -21,11 +21,10 @@
 >
 	<div class="relative">
 		<div class="group-hover:opacity-20 transition duration-1000">
-			<object 
-				type="image/svg+xml"
-				data={roleIcon} 
-				class="logo"
-				aria-label="logo"
+			<img 
+				src={roleIcon} 
+				class="aspect-auto"
+				alt={role}
 			/>
 		</div>
 		<!-- svelte-ignore a11y-missing-attribute -->

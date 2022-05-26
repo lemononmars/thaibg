@@ -1,5 +1,5 @@
 <script context=module lang=ts>
-	import { getSubmissionPackage, personRoles } from '$lib/datatypes';
+	import { getSubmissionPackage, personRoles, type AdminSettings } from '$lib/datatypes';
 	import type { SubmissionPackage } from '$lib/datatypes';
 	import { createSlug, fromBucket, getVarPrefix } from '$lib/supabase';
 	import type { SubmissionData } from '$lib/supabase'
@@ -93,9 +93,10 @@
 	import PersonCard from '$lib/components/PersonCard.svelte';
 	import RoleButton from '$lib/components/RoleButton.svelte';
 	import InputForm from '$lib/components/InputForm.svelte';
+	import CreateCard from './_createCard.svelte'
 
 	export let submissionPackage: SubmissionPackage; // from load fucntion
-	export let adminSettings
+	export let adminSettings: AdminSettings
 	const type: string = 'person';
 	let submission = submissionPackage.submission
 	submission.Person_show = true // default = show
@@ -293,11 +294,7 @@
  </ul>
 <div class="h-16"></div>
 {#if step == 0}
-	<div class="bg-base-200 rounded-3xl mx-auto w-screen lg:w-1/2 max-w-fit" in:fly={{x:200*dir, duration:1000}}>
-		<div class="bg-error text-error py-4 mx-auto rounded-t-3xl">
-			<h1>{$_('page.create._')} {$_(`keyword.${type}`)}</h1>
-		</div>
-		
+	<CreateCard bind:dir title={$_('page.create._') + " " + $_(`keyword.${type}`)}>
 		<form>
 			<div class="flex flex-col lg:flex-row lg:gap-10 place-items-start p-4">
 				<InputForm
@@ -310,7 +307,7 @@
 				</InputForm>
 			</div>
 		</form>
-	</div>
+	</CreateCard>
 
 	<div class="tooltip" data-tip={canSubmit? "":"please fill in either English or Thai name"}>
 		<div 
@@ -322,10 +319,7 @@
 		</div>
 	</div>
 {:else if step == 1}
-	<div class="bg-base-200 m-4 rounded-3xl mx-auto w-screen lg:w-1/2 max-w-2xl" in:fly={{x:200*dir, duration:1000}}>
-		<div class="bg-error text-error py-4 mx-auto rounded-t-3xl">
-			<h1>{$_('page.create.add_roles')}</h1>
-		</div>
+	<CreateCard bind:dir title={$_('page.create.add_roles')}>
 		<!-- display organization roles-->
 		{#if (editingRoleIndex == -1)}
 			<div class="flex flex-col justify-center items-center py-4" in:fly={{ duration: 1000, y: 20, easing: quintOut }} >
@@ -379,11 +373,11 @@
 				<div class="btn btn-success col-span-2" on:click={handleSave}>Save</div>
 			</div>
 		{/if}
-	</div>
+	</CreateCard>
 	<div class="btn hover:-translate-x-4" on:click={()=>{step = 0; dir = -1; editingRoleIndex=-1}}> Prev <ChevronLeftIcon size=20/> </div>
 	<div class="btn hover:translate-x-4" on:click={()=>{step = 2; dir = 1; editingRoleIndex=-1}}> Next <ChevronRightIcon size=20/> </div>
 {:else if step == 2}
-	<div class="bg-base-200 m-4 rounded-3xl mx-auto w-screen lg:w-1/2 py-4" in:fly={{x:200*dir, duration:1000}}>
+	<CreateCard bind:dir title={"Submit"}>
 		{#if adminSettings.requireApproval}
 			<div class="justify-self-end mx-2">{$_('page.create.comment')}</div>
 			<textarea
@@ -392,13 +386,13 @@
 				bind:value={comment}
 			/><br />
 		{/if}
-		<div class="btn hover:-translate-x-4" on:click={()=>{step = 1; dir = -1}}>Prev <ChevronLeftIcon size=20/></div>
-		<div 
-			class="btn btn-success" 
-			on:click|preventDefault={handleSubmit}
-		>
-			{$_('page.create.submit')}
-		</div>
+	</CreateCard>
+	<div class="btn hover:-translate-x-4" on:click={()=>{step = 1; dir = -1}}>Prev <ChevronLeftIcon size=20/></div>
+	<div 
+		class="btn btn-success" 
+		on:click|preventDefault={handleSubmit}
+	>
+		{$_('page.create.submit')}
 	</div>
 {/if}
 {/if}

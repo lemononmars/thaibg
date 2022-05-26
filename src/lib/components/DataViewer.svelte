@@ -18,11 +18,9 @@
 	export let 
 		data: any[], 
 		type: TypeName, 
-		dataTableColumns: DataTableColumns = {headers: [], body: []};
+		dataTableColumns: DataTableColumns = {headers: [], body: []},
+		listView: string = 'list'
 	const typePrefix = getVarPrefix(type);
-
-	// default
-	let listView = 'list';
 
 	// pagination
 	const ENTRY_PER_PAGES = 20; // make it dynamic?
@@ -44,9 +42,7 @@
 	}
 </script>
 
-<div class="flex flex-col justify-center items-center w-full">
-	<!-- search bar, customized for each page-->
-	<!--SearchNavigation/-->
+<div class="flex flex-col justify-center items-center">
 	<slot />
 	<div class="flex flex-col lg:flex-row items-center flex-wrap">
 		<!-- Select table view or grid view -->
@@ -99,7 +95,7 @@
 			</div>
 		{:else}
 			<!-- Table view -->
-			<div class="w-full max-w-full">
+			<div class="w-full">
 				<table class="table table-zebra table-compact lg:table-normal w-full">
 					<thead>
 						<tr>

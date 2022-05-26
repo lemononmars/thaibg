@@ -1,6 +1,6 @@
 <script context=module lang=ts>
 	import { getSubmissionPackage, TypeSubmissionAllowed } from '$lib/datatypes';
-	import type { SubmissionPackage } from '$lib/datatypes';
+	import type { SubmissionPackage, AdminSettings } from '$lib/datatypes';
 	import { fromBucket, getVarPrefix } from '$lib/supabase';
 	import type { SubmissionData } from '$lib/supabase';
 	import type {Alert} from '$lib/alert/alert.type'
@@ -45,7 +45,8 @@
 			props: {
 				data: getSubmissionPackage(type),
 				currentData,
-				type
+				type,
+				adminSettings
 			}
 		};
 	}
@@ -92,7 +93,10 @@
 	import { _ } from 'svelte-i18n';
 	import {onMount} from 'svelte'
 
-	export let data: SubmissionPackage, type: string, currentData; // from load fucntion
+	export let data: SubmissionPackage, 
+		type: string, 
+		currentData, // from load function
+		adminSettings: AdminSettings
 	const { submission, keys, relations, selects, multiselects } = data; // destruct
 	const varPrefix = getVarPrefix(type)
 	const currentDataID = currentData[varPrefix + '_ID']
@@ -288,19 +292,21 @@
 		{#if loadingRelationalData}
 			<Spinner/>
 		{:else}
-			<div class="flex flex-col justify-center">
+			<div class="lg:w-1/2 grid grid-cols-2 justify-center mx-auto" >
 				{#each relations as r}
 					<SearchMultipleSelect bind:selects={relationMultiSelects[r]} type={r} />
 				{/each}
 			</div>
 		{/if}
 		<div class="divider" />
-		<div class="justify-self-end mx-2">{$_('page.create.comment')}</div>
-		<textarea
-			class="textarea textarea-bordered"
-			placeholder={$_('page.create.comment')}
-			bind:value={comment}
-		/><br />
+		{#if adminSettings.requireApproval}
+			<div class="justify-self-end mx-2">{$_('page.create.comment')}</div>
+			<textarea
+				class="textarea textarea-bordered"
+				placeholder={$_('page.create.comment')}
+				bind:value={comment}
+			/><br />
+		{/if}
 		{#if submitState == State.START}
 			<div class="btn" on:click|preventDefault={handleSubmit}>{$_('page.create.submit')}</div>
 		{/if}

@@ -3,9 +3,11 @@
 	import { personRoles } from '$lib/datatypes';
 	import { getVarPrefix } from '$lib/supabase';
 
-	export async function load({ params, fetch }) {
-		const {role, name} = params;
-		const res = await fetch(`/api/${role}`);
+	export async function load({ params, fetch, url }) {
+		const {role} = params;
+		const {search} = url
+		const searchString = url.searchParams.get('search')
+		const res = await fetch(`/api/${role}${search}`);
 		if (!res.ok) return { status: 404, body: { message: 'cannot load this role' } };
 
 		let filteredData = await res.json();
@@ -13,7 +15,7 @@
 			props: {
 				people: filteredData,
 				role,
-				search: name || ''
+				searchString
 			}
 		};
 	}
@@ -25,7 +27,7 @@
 	import SearchBar from '$lib/components/SearchBar.svelte';
 	import { _ } from 'svelte-i18n';
 
-	export let people: PersonRole[], search: string;
+	export let people: PersonRole[], searchString: string = '';
 	export let role: TypeName; // see below
 	const prefix = getVarPrefix(role)
 
@@ -48,7 +50,6 @@
 	);
 
 	let sorted = 0;
-	let searchString = search || '';
 	$: peopleSorted = peopleFiltered.sort((a: PersonRole, b: PersonRole) => compare(sorted, a, b));
 
 	function compare(s: number, a: PersonRole, b: PersonRole) {

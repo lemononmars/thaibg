@@ -63,6 +63,8 @@
 	import ContentCard from '$lib/components/ContentCard.svelte';
 	import EventCard from '$lib/components/EventCard.svelte';
 	import { _ } from 'svelte-i18n';
+	import Supporters from '$lib/assets/logos'
+import About from './about.svelte';
 
 	export let stats;
 	let promiseEvents, promiseContents, promiseBoardgames, promiseDevs;
@@ -210,6 +212,26 @@
 				{/if}
 			{/await}
 		</div>
+	</div>
+</div>
+
+<!-- supporters -->
+<div class="flex flex-col bg-base-300 w-screen py-4 px-4 lg:px-20">
+	<div>
+		<h1 class="text-left my-4">Collaborators</h1>
+	</div>
+	<div class="flex flex-row gap-2">
+		{#each Supporters as s}
+			<a href={s.url} target="_blank">
+				<div class="avatar hover:animate-bounce">
+					<div class="w-60 mask mask-hexagon">
+						<img 
+							src={s.image} 
+							alt="logo">
+					</div>
+				</div>
+			</a>
+		{/each}
 	</div>
 </div>
 

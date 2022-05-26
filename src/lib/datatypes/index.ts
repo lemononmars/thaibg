@@ -11,6 +11,7 @@ export * from './Person';
 export * from './personRoles';
 export * from './Organization';
 export * from './organizationRoles';
+export * from './AdminSettings'
 
 export const TypeSubmissionAllowed = [
 	'artist',

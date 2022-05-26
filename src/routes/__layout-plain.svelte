@@ -1,24 +1,15 @@
 <script lang="ts">
 	import '../global.css';
 	import AlertList from '$lib/alert/AlertList.svelte';
+	import SettingsCompact from '$lib/components/SettingsCompact.svelte';
 	import { initialize } from '../i18n';
-	import {isLoading, locale, locales} from 'svelte-i18n'
-	import ToggleTheme from '$lib/components/ToggleTheme.svelte';
 
 	initialize();
-	const languageName = {'th': 'ไทย', 'en': 'ENG'}
 </script>
 
 <main class="w-full min-w-max h-full pt-4">
-	<div class="fixed top-0 right-0 border-2 mx-2 mt-10">
-		<ToggleTheme/>
-		{#if !$isLoading}
-			<select class="select select-md max-w-xs" bind:value={$locale}>
-				{#each $locales as l}
-					<option value={l} selected>{languageName[l]}</option>
-				{/each}
-			</select>
-		{/if}
+	<div class="fixed top-0 right-0 m-2 mt-20">
+		<SettingsCompact/>
 	</div>
 	<AlertList />
 	<slot/>

@@ -196,12 +196,10 @@
 <Seo title="Create {type}" />
 
 <div class="bg-base-200 m-4 rounded-3xl">
-	<div class="bg-error text-content-error py-4 my-4 mx-auto rounded-t-3xl">
-		<div class="text-content-error">{$_('page.create._')} {$_('page.create.new')} {$_(`keyword.${type}`)}</div>
+	<div class="bg-error py-4 mx-auto rounded-t-3xl">
+		<div class="text-content-error text-2xl">{$_('page.create._')} {$_('page.create.new')} {$_(`keyword.${type}`)}</div>
 	</div>
 	<div class="text-gray-500">
-	{JSON.stringify(submission)}
-	{JSON.stringify(relationMultiSelects)}
 	</div>
 		{#if submitState == State.START || submitState == State.ERROR}
 			<form>

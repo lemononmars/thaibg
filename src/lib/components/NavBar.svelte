@@ -31,6 +31,7 @@
 	import { handleAlert} from '$lib/alert'
 	import type {Alert} from '$lib/alert/alert.type'
 	import SearchNavigation from './SearchNavigation.svelte';
+	import SearchGlobal from './SearchGlobal.svelte';
 	import RoleButton from '$lib/components/RoleButton.svelte';
 
 	//export let user
@@ -335,10 +336,9 @@
 <div class="modal modal-bottom sm:modal-middle" class:modal-open={openSearchModal}>
 	<div class="modal-box">
 		<h1>Search</h1>
-		<textarea class="textarea bg-base-300 w-full" placeholder="Type to search" bind:value={reportString}></textarea>
+		<SearchGlobal/>
 		<div class="modal-action">
 			<div class="btn btn-secondary" on:click={closeSearch}>Close</div>
-			<a href="/search" target="_blank"><div class="btn">Advanced search</div></a>
 		</div>
 	</div>
 </div>

@@ -1,5 +1,5 @@
 <script context=module lang=ts>
-	import { getSubmissionPackage } from '$lib/datatypes';
+	import { getSubmissionPackage, type AdminSettings } from '$lib/datatypes';
 	import {
 		BoardgameDatabaseKeys1,
 		BoardgameDatabaseKeys2,
@@ -48,6 +48,7 @@
 		return {
 			props: {
 				submissionPackage: getSubmissionPackage('boardgame'),
+				adminSettings
 			}
 		};
 	}
@@ -100,8 +101,11 @@
 	import BoardgameCard from '$lib/components/BoardgameCard.svelte';
 	import InputForm from '$lib/components/InputForm.svelte';
 	import SearchMultipleSelect from '$lib/components/SearchMultipleSelect.svelte';
+	import CreateCard from './_createCard.svelte'
+import { ChevronLeftIcon } from 'svelte-feather-icons';
 
 	export let submissionPackage: SubmissionPackage; // from load fucntion
+	export let adminSettings: AdminSettings
 	const type: string = 'boardgame';
 	let submission = submissionPackage.submission
 	let {relations} = submissionPackage
@@ -220,11 +224,7 @@
  </ul>
 <div class="h-16"></div>
 {#if step == 0}
-	<div class="bg-base-200 m-4 rounded-3xl mx-auto w-screen lg:w-1/2 max-w-fit" in:fly={{x:200*dir, duration:1000}}>
-		<div class="bg-error text-error py-4 mx-auto rounded-t-3xl">
-			<h1>{stepTitles[0]}</h1>
-		</div>
-		
+	<CreateCard bind:dir title={stepTitles[0]}>
 		<form>
 			<div class="flex flex-col lg:flex-row lg:gap-10 place-items-start p-4">
 				<InputForm
@@ -240,7 +240,7 @@
 				</InputForm>
 			</div>
 		</form>
-	</div>
+	</CreateCard>
 
 	<div class="tooltip" data-tip={canSubmit? "":"please fill in either English or Thai name"}>
 		<div 
@@ -252,10 +252,7 @@
 		</div>
 	</div>
 {:else if step == 1}
-	<div class="bg-base-200 m-4 rounded-3xl mx-auto w-screen lg:w-1/2 max-w-2xl" in:fly={{x:200*dir, duration:1000}}>
-		<div class="bg-error text-error py-4 mx-auto rounded-t-3xl">
-			<h1>{stepTitles[1]}</h1>
-		</div>
+	<CreateCard bind:dir title={stepTitles[1]}>
 		<form>
 			<div class="flex flex-col lg:flex-row lg:gap-10 place-items-start p-4">
 				<InputForm
@@ -273,14 +270,11 @@
 				<SearchMultipleSelect bind:selects={relationMultiSelects[r]} type={r} />
 			{/each}
 		</div>
-	</div>
+	</CreateCard>
 	<div class="btn" on:click={()=>{step--; dir = -1}}>Prev</div>
 	<div class="btn" on:click={()=>{step++; dir = 1}}>Next</div>
 {:else if step == 2}
-	<div class="bg-base-200 m-4 rounded-3xl mx-auto w-screen lg:w-1/2 max-w-2xl" in:fly={{x:200*dir, duration:1000}}>
-		<div class="bg-error text-error py-4 mx-auto rounded-t-3xl">
-			<h1>{stepTitles[2]}</h1>
-		</div>
+	<CreateCard bind:dir title={stepTitles[2]}>
 		<div class="grid lg:grid-cols-3 gap-y-4">
 			{#each BoardgamePersonRelation as r}
 				<SearchMultipleSelect bind:selects={relationMultiSelects[r]} type={r} />
@@ -289,38 +283,38 @@
 				<SearchMultipleSelect bind:selects={relationMultiSelects[r]} type={r} />
 			{/each}
 		</div>
-	</div>
+	</CreateCard>
 	<div class="btn" on:click={()=>{step--; dir = -1}}>Prev</div>
 	<div class="btn" on:click={()=>{step++; dir = 1}}>Next</div>
 {:else if step == 3}
-	<div class="bg-base-200 m-4 rounded-3xl mx-auto w-screen lg:w-1/2 max-w-2xl" in:fly={{x:200*dir, duration:1000}}>
-		<div class="bg-error text-error py-4 mx-auto rounded-t-3xl">
-			<h1>{stepTitles[3]}</h1>
-		</div>
+	<CreateCard bind:dir title={stepTitles[3]}>
 		<div class="grid grid-cols2 lg:grid-cols-3 gap-y-4">
 			{#each BoardgameETCRelation as r}
 				<SearchMultipleSelect bind:selects={relationMultiSelects[r]} type={r} />
 			{/each}
 		</div>
-	</div>
+	</CreateCard>
 	<div class="btn" on:click={()=>{step--; dir = -1}}>Prev</div>
 	<div class="btn" on:click={()=>{step++; dir = 1}}>Next</div>
 {:else if step == 4}
-	<div class="bg-base-200 m-4 rounded-3xl mx-auto w-screen lg:w-1/2 py-4" in:fly={{x:200*dir, duration:1000}}>
-		<div class="justify-self-end mx-2">{$_('page.create.comment')}</div>
-		<textarea
-			class="textarea textarea-bordered"
-			placeholder={$_('page.create.comment')}
-			bind:value={comment}
-		/><br />
-		<div class="btn" on:click={()=>{step--; dir = -1}}>Prev</div>
-		<div 
-			class="btn btn-success" 
-			on:click|preventDefault={handleSubmit}
-		>
-			{$_('page.create.submit')}
-		</div>
+	<CreateCard bind:dir title={"Submit"}>
+		{#if adminSettings.requireApproval}
+			<div class="justify-self-end mx-2">{$_('page.create.comment')}</div>
+			<textarea
+				class="textarea textarea-bordered"
+				placeholder={$_('page.create.comment')}
+				bind:value={comment}
+			/><br />
+		{/if}
+	</CreateCard>
+	<div class="btn hover:-translate-x-4" on:click={()=>{step = 1; dir = -1}}>Prev <ChevronLeftIcon size=20/></div>
+	<div 
+		class="btn btn-success" 
+		on:click|preventDefault={handleSubmit}
+	>
+		{$_('page.create.submit')}
 	</div>
+
 {/if}
 {/if}
 

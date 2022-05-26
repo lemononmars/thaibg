@@ -130,14 +130,14 @@
 		</h2>
 	</div>
 	<!-- second column-->
-	<div class="flex flex-col gap-4">
+	<div class="flex flex-col w-full gap-4">
 		{#each relations as r}
 			<h1>List of {$_(`keyword.${r}`)} related to {pageData[prefix + '_name'] || pageData[prefix + '_name_th']}</h1>
 			{#await promiseRelations[r]}
 				<Spinner />
 			{:then data}
 				{#if data}
-					<DataViewer {data} type={r} dataTableColumns={{headers:[], body:[]}}/>
+					<DataViewer {data} type={r} dataTableColumns={{headers:[], body:[]}} listView="grid"/>
 					<!-- <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-3 gap-4">
 						{#each data as d}
 							{#if r === 'content'}

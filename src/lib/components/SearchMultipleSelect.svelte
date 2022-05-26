@@ -1,13 +1,15 @@
 <script lang=ts>
 	import { getVarPrefix } from '$lib/supabase';
-	import { SearchIcon, DeleteIcon } from 'svelte-feather-icons';
+	import { DeleteIcon, SearchIcon } from 'svelte-feather-icons';
 	import {_} from 'svelte-i18n'
-	import RoleButton from './RoleButton.svelte';
 	import Spinner from './Spinner.svelte';
+	import { getTypeIcon	} from '$lib/assets/icons'
 
+	
 	export let selects = [];
 	export let type: string;
-
+	const typeIcon = getTypeIcon(type)
+	
 	interface simpleData {
 		id: number,
 		name?: string,
@@ -56,33 +58,37 @@
 </script>
 
 <div class="flex flex-col items-center">
-	<div>
-		<RoleButton role={type}/>
-	</div>
-	<div class="flex flex-col">
-		<div class="dropdown mb-4">
+	<div class="flex flex-col w-full">
+		<div class="dropdown">
 			<!-- svelte-ignore a11y-label-has-associated-control -->
 			<label tabindex="0">
-				<div class="form-control">
-					<!-- <label class="label text-sm">{$_(`keyword.${type}`)}</label> -->
-					<div class="input-group input-sm">
-						<input
-							type="text"
-							placeholder={"Search " + $_(`keyword.${type}`)}
-							class="input input-bordered w-36"
-							bind:value={searchString}
-							on:keyup={() => stopTyping()}
-							on:keydown={()=> startTyping()}
-						/>
-						<div class="btn">
-							<SearchIcon size="20" />
-						</div>
+				<div class="flex flex-row h-12">
+					<div class="my-auto w-12">
+						<img 
+							src={typeIcon}
+							class="aspect-square"
+							alt={type}
+						>
+					</div>
+					<div class="flex flex-col">
+						<div class="label-text">{$_(`keyword.${type}`)}</div>
+						<label class="input-group input-group-xs">
+							<input
+								type="text"
+								placeholder={"Search"}
+								class="input input-xs input-bordered w-36"
+								bind:value={searchString}
+								on:keyup={() => stopTyping()}
+								on:keydown={()=> startTyping()}
+							/>
+							<div class="btn btn-xs"><SearchIcon size="20"/></div>
+						</label>
 					</div>
 				</div>
 			</label>
 			<ul
 				tabindex="0"
-				class="p-2 shadow menu dropdown-content bg-base-100 rounded-box w-72 mt-4"
+				class="p-2 shadow menu dropdown-content bg-base-100 rounded-box w-full"
 				class:hidden={searchString.length == 0}
 			>
 				{#if isTyping}
@@ -95,7 +101,7 @@
 							</div>
 						</li>
 					{:else}
-						<li><div class="btn btn-outline btn-error"> <a href="/create/{type}" target="_blank">Create {type}</a></div></li>
+						<li><div class="btn btn-outline btn-error"> <a href="/create/{type}" target="_blank">Create new {type}</a></div></li>
 					{/each}
 					{#if searchCount > 15}
 						<li><div class="btn btn-outline btn-info">{searchCount - 15} more...</div></li>
@@ -105,14 +111,19 @@
 		</div>
 		{#each selects as s}
 			<div
-				class="badge hover:badge-error gap-2 ml-3"
-				on:click={() => {
-					selects.splice(selects.indexOf(s), 1);
-					selects = selects;
-				}}
+				class="badge badge-outline w-full justify-between my-1"
 			>
-				{s.name}
-				<DeleteIcon size="20" />
+				<a href="/{type}/{s.id}" target="_blank">
+					<p class="truncate">{s.name}</p>
+				</a>
+				<div 
+					class="hover:badge-error" 
+					on:click={() => {
+						selects.splice(selects.indexOf(s), 1);
+						selects = selects;
+					}}>
+					<DeleteIcon size="20" />
+				</div>
 			</div>
 		{/each}
 	</div>
