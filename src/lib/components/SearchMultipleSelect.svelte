@@ -5,10 +5,20 @@
 	import Spinner from './Spinner.svelte';
 	import { getTypeIcon	} from '$lib/assets/icons'
 
-	
 	export let selects = [];
 	export let type: string;
+	export let relation: string
 	const typeIcon = getTypeIcon(type)
+
+	interface TBGShopData extends simpleData {
+		Shop_TBG_playable: boolean,
+		Shop_TBG_obtainable: boolean,
+	}
+
+	interface TBGHonorData extends simpleData {
+		Honor_position: string,
+		Honor_category: string
+	}
 	
 	interface simpleData {
 		id: number,
@@ -125,6 +135,15 @@
 					<DeleteIcon size="20" />
 				</div>
 			</div>
+			{#if relation}
+				{#if relation === 'honor'}
+					Position: <input type="text">
+					Category: <input type="text">
+				{:else if relation === 'shop'}
+					Playable: <input type="checkbox">
+					Obtainable: <input type="checkbox">
+				{/if}
+			{/if}
 		{/each}
 	</div>
 </div>

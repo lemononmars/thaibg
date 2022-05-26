@@ -1,6 +1,6 @@
 <script context=module lang=ts>
 	import { getSubmissionPackage, TypeSubmissionAllowed } from '$lib/datatypes';
-	import type { SubmissionPackage } from '$lib/datatypes';
+	import type { SubmissionPackage, AdminSettings } from '$lib/datatypes';
 	import { fromBucket, getVarPrefix, createSlug } from '$lib/supabase';
 	import type { SubmissionData } from '$lib/supabase';
 	import type {Alert} from '$lib/alert/alert.type'
@@ -42,7 +42,8 @@
 		return {
 			props: {
 				data: getSubmissionPackage(type),
-				type
+				type,
+				adminSettings
 			}
 		};
 	}
@@ -91,7 +92,9 @@
 	import PlainCard from '$lib/components/PlainCard.svelte'
 	import { _ } from 'svelte-i18n';
 
-	export let data: SubmissionPackage, type: string; // from load fucntion
+	export let data: SubmissionPackage, 
+		type: string, // from load fucntion
+		adminSettings: AdminSettings;
 	let {submission, relations, required} = data; // destruct
 	const typePrefix = getVarPrefix(type)
 	submission[typePrefix + '_show'] = true
@@ -215,18 +218,24 @@
 					<div class="divider divider-vertical"/>
 					<div class="flex flex-col justify-center">
 						{#each relations as r}
-							<SearchMultipleSelect bind:selects={relationMultiSelects[r]} type={r} />
+							<SearchMultipleSelect 
+								bind:selects={relationMultiSelects[r]} 
+								type={r} 
+								relation={type}
+							/>
 						{/each}
 					</div>
 				</div>
 			</form>
 			<div class="divider" />
+			{#if adminSettings.requireApproval}
 			<div class="justify-self-end mx-2">{$_('page.create.comment')}</div>
-			<textarea
-				class="textarea textarea-bordered"
-				placeholder={$_('page.create.comment')}
-				bind:value={comment}
-			/><br />
+				<textarea
+					class="textarea textarea-bordered"
+					placeholder={$_('page.create.comment')}
+					bind:value={comment}
+				/><br />
+			{/if}
 			{#if submitState == State.START}
 				<div class="tooltip" data-tip={canSubmit? "":"please fill in all required fields"}>
 					<div 
