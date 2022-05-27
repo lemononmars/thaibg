@@ -6,7 +6,7 @@
 	export async function load({ params, fetch, url }) {
 		const {role} = params;
 		const {search} = url
-		const searchString = url.searchParams.get('search')
+		const searchString = url.searchParams.get('search') || ''
 		const res = await fetch(`/api/${role}${search}`);
 		if (!res.ok) return { status: 404, body: { message: 'cannot load this role' } };
 

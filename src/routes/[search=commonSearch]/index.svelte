@@ -76,7 +76,7 @@
 </script>
 
 <Seo title="{type}" />
-<div class="flex flex-col justify-center items-center w-full">
+<div class="flex flex-col justify-center mx-auto">
 	<h1>List of {$_(`keyword.${type}`)}</h1>
 	<DataViewer data={dataSorted} {type} {dataTableColumns}>
 		<!-- Search box -->

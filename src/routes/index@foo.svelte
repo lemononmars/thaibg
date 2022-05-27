@@ -64,7 +64,7 @@
 	import EventCard from '$lib/components/EventCard.svelte';
 	import { _ } from 'svelte-i18n';
 	import Supporters from '$lib/assets/logos'
-import About from './about.svelte';
+	import heroImage from '$lib/assets/logos/database main image.png'
 
 	export let stats;
 	let promiseEvents, promiseContents, promiseBoardgames, promiseDevs;
@@ -74,7 +74,7 @@ import About from './about.svelte';
 		promiseBoardgames = getHotnessBoardgames();
 		promiseDevs = getDevelopers();
 	});
-	const boardgameCarouselWidth = 200;
+	const boardgameCarouselWidth = 600;
 
 	let bgCarousel;
 	function scrollCarousel(mult: number) {
@@ -83,10 +83,10 @@ import About from './about.svelte';
 </script>
 
 <Seo title="Home" />
-<div class="flex flex-col lg:flex-row w-screen justify-items-center bg-base-200 py-10 lg:py-20 px-8 lg:px-32">
-	<div class="flex flex-col">
+<div class="flex flex-col lg:flex-row w-screen bg-base-200 pt-10 px-4 lg:px-20">
+	<div class="flex flex-col order-last lg:order-none">
 		<h1>{$_('page.home.welcome.intro')}</h1>
-		<div class="grid grid-cols-1 lg:grid-cols-3 place-items-center py-8 m-2">
+		<div class="grid grid-cols-3 place-items-center py-8 m-2">
 			<div class="flex flex-col place-items-center">
 				<div class="flex flex-row items-center gap-2">
 					<div class="text-2xl">{stats.boardgame}</div>
@@ -120,10 +120,8 @@ import About from './about.svelte';
 		</div>
 	</div>
 
-	<div class="flex flex-grow justify-center place-items-center">
-		<div>
-			<UserCheckIcon size="200" />
-		</div>
+	<div class="flex flex-grow justify-center place-items-center order-first lg:order-none">
+		<img src={heroImage} alt="hero">
 	</div>
 </div>
 
@@ -144,7 +142,7 @@ import About from './about.svelte';
 	</div>
 </div>
 
-<div class="flex flex-col lg:flex-row bg-base-300 w-screen py-4 px-4 lg:px-20">
+<div class="flex flex-col lg:flex-row bg-base-300 w-screen p-4 lg:px-20">
 	<div class="flex flex-col text-left">
 		<h2>Media</h2>
 		<h1>Hotness Contents</h1>
@@ -168,7 +166,7 @@ import About from './about.svelte';
 	</div>
 </div>
 
-<div class="flex flex-col w-screen p-4">
+<div class="flex flex-col w-screen p-8">
 	<div class="flex flex-row justify-between items-center">
 		<div>
 			<h1>Hotness Board Game</h1>
@@ -179,16 +177,16 @@ import About from './about.svelte';
 			</a>
 		</div>
 	</div>
-	<div class="relative lg:ml-20">
+	<div class="relative">
 		<div
-			class="btn btn-accent absolute rounded-full left-0 bottom-0 z-10 opacity-20 hover:opacity-80"
+			class="btn btn-accent absolute rounded-full left-0 top-1/2 z-10 opacity-20 hover:opacity-80"
 			on:click={() => scrollCarousel(-1)}
 			class:hidden={bgCarousel?.scrollLeft <= boardgameCarouselWidth}
 		>
 			<ChevronLeftIcon size="30" />
 		</div>
 		<div
-			class="btn btn-accent absolute rounded-full right-0 bottom-0 z-10 opacity-20 hover:opacity-80"
+			class="btn btn-accent absolute rounded-full right-0 top-1/2 z-10 opacity-20 hover:opacity-80"
 			on:click={() => scrollCarousel(1)}
 			class:hidden={bgCarousel?.scrollLeft >= 9 * boardgameCarouselWidth}
 		>
@@ -205,7 +203,7 @@ import About from './about.svelte';
 			{:then res}
 				{#if res}
 					{#each res.boardgames as bg}
-						<div class="w-36 lg:w-72 aspect-auto shrink-0 snap-start">
+						<div class="snap-start flex-auto">
 							<BoardgameCard {bg} />
 						</div>
 					{/each}
@@ -220,7 +218,7 @@ import About from './about.svelte';
 	<div>
 		<h1 class="text-left my-4">Collaborators</h1>
 	</div>
-	<div class="flex flex-row gap-2">
+	<div class="flex flex-col lg:flex-row lg:mx-auto gap-2">
 		{#each Supporters as s}
 			<a href={s.url} target="_blank">
 				<div class="avatar hover:animate-bounce">
@@ -236,7 +234,7 @@ import About from './about.svelte';
 </div>
 
 <!-- database creators -->
-<div class="flex flex-col w-screen px-4 mt-40">
+<div class="flex flex-col w-screen py-4 px-4 lg:px-20">
 	<h1 class="text-left my-4">Team of Developers</h1>
 	{#await promiseDevs}
 		<Spinner />

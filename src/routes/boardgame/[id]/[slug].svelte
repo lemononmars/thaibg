@@ -151,7 +151,7 @@
 <div class="w-full h-36">
 	<img
 		src={getImageURL('boardgame', bg.TBG_picture_cover)}
-		class="object-cover w-full h-60"
+		class="object-cover w-full h-40 lg:h-60"
 		alt="cover"
 		on:error|once={(ev) => (ev.target.src = "https://picsum.photos/800/600")}
 	/>
@@ -159,15 +159,13 @@
 
 <div class="flex flex-col lg:flex-row text-left gap-6 mx-4 lg:mx-auto">
 	<!-- First column-->
-	<div class="flex flex-col gap-4 lg:basis-1/4 order-2 lg:order-1 px-2">
-		<div class="mx-auto">
-			<img
-				src={getImageURL('boardgame', bg.TBG_picture)}
-				alt="cover of {bg.TBG_name}"
-				class="hover:scale-110 w-60 aspect-auto duration-300"
-				on:error|once={(ev) => (ev.target.src = getDefaultImageURL('boardgame'))}
-			/>
-		</div>
+	<div class="flex flex-col gap-4 lg:basis-1/4 px-2 order-2 lg:order-1">
+		<img
+			src={getImageURL('boardgame', bg.TBG_picture)}
+			alt="cover of {bg.TBG_name}"
+			class="hidden lg:inline-block mx-auto hover:scale-110 w-60 aspect-auto duration-300"
+			on:error|once={(ev) => (ev.target.src = getDefaultImageURL('boardgame'))}
+		/>
 		{#await promiseCreatorInfo}
 			<Spinner />
 		{:then res}
@@ -206,7 +204,13 @@
 	</div>
 	<!-- Second column -->
 	<div class="flex flex-col justify-center gap-4 pt-10 lg:basis-1/2 order-1 lg:order-2 break-words">
-		<div class="flex flex-row items-center gap-2">
+		<img
+			src={getImageURL('boardgame', bg.TBG_picture)}
+			alt="cover of {bg.TBG_name}"
+			class="lg:hidden -mt-32 mx-auto hover:scale-110 w-60 aspect-auto duration-300"
+			on:error|once={(ev) => (ev.target.src = getDefaultImageURL('boardgame'))}
+		/>
+		<div class="hidden lg:flex lg:flex-row items-center gap-2">
 			<Social url="{WEBSITE_URL}/{bg.TBG_ID}" title={bg.TBG_name} />
 
 			{#if bg.TBG_link}
@@ -310,6 +314,20 @@
 				{/each}
 			</div>
 		</div>
+		<div class="flex flex-row lg:hidden items-center gap-2 mx-auto">
+			<Social url="{WEBSITE_URL}/{bg.TBG_ID}" title={bg.TBG_name} />
+
+			{#if bg.TBG_link}
+				<div class="tooltip" data-tip="external link">
+					<div class="btn btn-square">
+						<a href={bg.TBG_link} target="_blank">
+							<LinkIcon size="2x" />
+						</a>
+					</div>
+				</div>
+			{/if}
+			<EditButton type={'boardgame'} id={bg.TBG_ID}/>
+		</div>
 		<div class="divider" />
 		<div>
 			<h2>{$_('content._')}</h2>
@@ -359,7 +377,7 @@
 		<CommentSection type="boardgame" ID={BGID} />
 	</div>
 	<!-- third column-->
-	<div class="flex flex-col gap-4 pt-28 order-3 lg:basis-1/4">
+	<div class="flex flex-col gap-4 pt-28 order-last lg:basis-1/4">
 		<div>
 			<h2>{$_('keyword.honor')}</h2>
 			{#each honor as h}
