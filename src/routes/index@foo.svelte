@@ -84,23 +84,23 @@ import { getTypeIcon } from '$lib/assets/icons';
 </script>
 
 <Seo title="Home" />
-<div class="flex flex-col lg:flex-row w-screen bg-base-200 pt-10 px-4 lg:px-60 lg:gap-10">
-	<div class="flex flex-col order-first lg:order-none w-1/3">
+<div class="flex flex-col lg:flex-row w-screen bg-base-200 pt-10 px-4 lg:px-60 lg:gap-10 h-screen -mt-24 lg:-mt-28 justify-between">
+	<div class="flex flex-col order-first lg:order-none text-center lg:justify-center w-full mt-24 lg:w-1/3">
 		<h1>{$_('page.home.welcome.intro')}</h1>
 		<div class="grid grid-cols-3 items-start py-4">
 			<div class="flex flex-col place-items-center">
-				<div><img src={getTypeIcon('boardgame')} alt="icon" class="w-24 aspect-square"/></div>
-				<div class="text-2xl">{stats.boardgame}</div>
+				<div><img src={getTypeIcon('boardgame')} alt="icon" class="w-12 aspect-square"/></div>
+				<div class="text-xl">{stats.boardgame}</div>
 				<div><a href="/boardgame">{$_('page.home.welcome.boardgames')}</a></div>
 			</div>
 			<div class="flex flex-col place-items-center">
-				<div><img src={getTypeIcon('person')} alt="icon" class="w-24 aspect-square"/></div>
-				<div class="text-2xl">{stats.person}</div>
+				<div><img src={getTypeIcon('person')} alt="icon" class="w-12 aspect-square"/></div>
+				<div class="text-xl">{stats.person}</div>
 				<div><a href="/person">{$_('page.home.welcome.people')}</a></div>
 			</div>
 			<div class="flex flex-col place-items-center">
-				<div><img src={getTypeIcon('content')} alt="icon" class="w-24 aspect-square"/></div>
-				<div class="text-2xl">{stats.content}</div>
+				<div><img src={getTypeIcon('content')} alt="icon" class="w-12 aspect-square"/></div>
+				<div class="text-xl">{stats.content}</div>
 				<div><a href="/content">{$_('page.home.welcome.contents')}</a></div>
 			</div>
 		</div>
@@ -115,8 +115,8 @@ import { getTypeIcon } from '$lib/assets/icons';
 		</div>
 	</div>
 
-	<div class="order-last lg:order-none flex items-end w-2/3">
-		<img src={heroImage} alt="hero">
+	<div class="order-last lg:order-none flex items-end  lg:w-2/3">
+		<img src={heroImage} alt="hero" class="object-contain">
 	</div>
 </div>
 

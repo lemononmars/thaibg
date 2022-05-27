@@ -25,7 +25,6 @@
 	import { URL_DICEBEAR } from '$lib/constants';
 	import ToggleTheme from '$lib/components/ToggleTheme.svelte';
 	import { fly } from 'svelte/transition';
-	import TBGAlogo from '$lib/assets/bookshelf.svg'//'$lib/assets/TBGA-logo-color.png';
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores'
 	import { handleAlert} from '$lib/alert'
@@ -33,6 +32,7 @@
 	import SearchNavigation from './SearchNavigation.svelte';
 	import SearchGlobal from './SearchGlobal.svelte';
 	import RoleButton from '$lib/components/RoleButton.svelte';
+	import DatabaseLogo from '$lib/assets/logos/THBDDB-Logo.png'
 
 	//export let user
 
@@ -163,7 +163,7 @@
 			</div>
 			<a rel="prefetch link-hover" href="/">
 				<div class="lg:flex lg:flex-row items-center gap-4">
-					<img class="w-20 aspect-square bg-slate-300" src={TBGAlogo} alt="logo" />
+					<img class="w-20 aspect-square" src={DatabaseLogo} alt="logo" />
 					<div class="hidden lg:flex lg:flex-row items-center gap-4">
 						<div class="flex flex-col">
 							<div class="text-secondary text-sm">{$_('navbar.title.tbg')}</div>
