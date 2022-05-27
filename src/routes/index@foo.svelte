@@ -65,6 +65,7 @@
 	import { _ } from 'svelte-i18n';
 	import Supporters from '$lib/assets/logos'
 	import heroImage from '$lib/assets/logos/database main image.png'
+import { getTypeIcon } from '$lib/assets/icons';
 
 	export let stats;
 	let promiseEvents, promiseContents, promiseBoardgames, promiseDevs;
@@ -83,33 +84,27 @@
 </script>
 
 <Seo title="Home" />
-<div class="flex flex-col lg:flex-row w-screen bg-base-200 pt-10 px-4 lg:px-20">
-	<div class="flex flex-col order-last lg:order-none">
+<div class="flex flex-col lg:flex-row w-screen bg-base-200 pt-10 px-4 lg:px-60 lg:gap-10">
+	<div class="flex flex-col order-first lg:order-none w-1/3">
 		<h1>{$_('page.home.welcome.intro')}</h1>
-		<div class="grid grid-cols-3 place-items-center py-8 m-2">
+		<div class="grid grid-cols-3 items-start py-4">
 			<div class="flex flex-col place-items-center">
-				<div class="flex flex-row items-center gap-2">
-					<div class="text-2xl">{stats.boardgame}</div>
-					<div><PlayCircleIcon size="40" /></div>
-				</div>
-				<div>{$_('page.home.welcome.boardgames')}</div>
+				<div><img src={getTypeIcon('boardgame')} alt="icon" class="w-24 aspect-square"/></div>
+				<div class="text-2xl">{stats.boardgame}</div>
+				<div><a href="/boardgame">{$_('page.home.welcome.boardgames')}</a></div>
 			</div>
 			<div class="flex flex-col place-items-center">
-				<div class="flex flex-row items-center gap-2">
-					<div class="text-2xl">{stats.person}</div>
-					<div><UserCheckIcon size="40" /></div>
-				</div>
-				<div>{$_('page.home.welcome.people')}</div>
+				<div><img src={getTypeIcon('person')} alt="icon" class="w-24 aspect-square"/></div>
+				<div class="text-2xl">{stats.person}</div>
+				<div><a href="/person">{$_('page.home.welcome.people')}</a></div>
 			</div>
 			<div class="flex flex-col place-items-center">
-				<div class="flex flex-row items-center gap-2">
-					<div class="text-2xl">{stats.content}</div>
-					<div><CoffeeIcon size="40" /></div>
-				</div>
-				<div>{$_('page.home.welcome.contents')}</div>
+				<div><img src={getTypeIcon('content')} alt="icon" class="w-24 aspect-square"/></div>
+				<div class="text-2xl">{stats.content}</div>
+				<div><a href="/content">{$_('page.home.welcome.contents')}</a></div>
 			</div>
 		</div>
-		<p class="text-2xl text-secondary">
+		<p class="text-md text-secondary">
 			{$_('page.home.welcome.text1')} <br />
 			{$_('page.home.welcome.text2')}
 		</p>
@@ -120,7 +115,7 @@
 		</div>
 	</div>
 
-	<div class="flex flex-grow justify-center place-items-center order-first lg:order-none">
+	<div class="order-last lg:order-none flex items-end w-2/3">
 		<img src={heroImage} alt="hero">
 	</div>
 </div>
