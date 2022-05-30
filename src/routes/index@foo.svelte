@@ -53,9 +53,6 @@
 	import BoardgameCard from '$lib/components/BoardgameCard.svelte';
 	import PersonCard from '$lib/components/PersonCard.svelte';
 	import {
-		PlayCircleIcon,
-		UserCheckIcon,
-		CoffeeIcon,
 		ChevronRightIcon,
 		ChevronLeftIcon,
 		FilmIcon
@@ -65,7 +62,8 @@
 	import { _ } from 'svelte-i18n';
 	import Supporters from '$lib/assets/logos'
 	import heroImage from '$lib/assets/logos/database main image.png'
-import { getTypeIcon } from '$lib/assets/icons';
+	import { getTypeIcon } from '$lib/assets/icons';
+import ContactLinks from '$lib/components/ContactLinks.svelte';
 
 	export let stats;
 	let promiseEvents, promiseContents, promiseBoardgames, promiseDevs;
@@ -84,7 +82,7 @@ import { getTypeIcon } from '$lib/assets/icons';
 </script>
 
 <Seo title="Home" />
-<div class="flex flex-col lg:flex-row w-screen bg-base-200 pt-10 px-4 lg:px-60 lg:gap-10 h-screen -mt-24 lg:-mt-28 justify-between">
+<div class="flex flex-col lg:flex-row w-screen bg-base-200 pt-10 px-4 lg:px-60 lg:gap-10 -mt-24 justify-between">
 	<div class="flex flex-col order-first lg:order-none text-center lg:justify-center w-full mt-24 lg:w-1/3">
 		<h1>{$_('page.home.welcome.intro')}</h1>
 		<div class="grid grid-cols-3 items-start py-4">
@@ -115,7 +113,7 @@ import { getTypeIcon } from '$lib/assets/icons';
 		</div>
 	</div>
 
-	<div class="order-last lg:order-none flex items-end  lg:w-2/3">
+	<div class="order-last lg:order-none flex items-end lg:w-2/3">
 		<img src={heroImage} alt="hero" class="object-contain">
 	</div>
 </div>
@@ -208,22 +206,45 @@ import { getTypeIcon } from '$lib/assets/icons';
 	</div>
 </div>
 
+
+<!-- {#await promiseBoardgames}
+	<Spinner />
+{:then res}
+	{#if res}
+	<Carousel
+  particlesToShow={3}
+  particlesToScroll={2}
+>
+		{#each res.boardgames as bg}
+			<div class="snap-start flex-auto">
+				<BoardgameCard {bg} />
+			</div>
+		{/each}
+	</Carousel>
+	{/if}
+
+{/await} -->
+
+
 <!-- supporters -->
 <div class="flex flex-col bg-base-300 w-screen py-4 px-4 lg:px-20">
 	<div>
 		<h1 class="text-left my-4">Collaborators</h1>
 	</div>
-	<div class="flex flex-col lg:flex-row lg:mx-auto gap-2">
+	<div class="flex flex-col lg:flex-row place-content-center gap-2">
 		{#each Supporters as s}
-			<a href={s.url} target="_blank">
+			<div class="flex flex-col gap-2 justify-center mx-auto lg:mx-none">
 				<div class="avatar hover:animate-bounce">
-					<div class="w-60 mask mask-hexagon">
+					<div class="w-60 mask mask-squircle">
 						<img 
 							src={s.image} 
 							alt="logo">
 					</div>
 				</div>
-			</a>
+				<div>
+					<ContactLinks links={s.links}/>
+				</div>
+			</div>
 		{/each}
 	</div>
 </div>

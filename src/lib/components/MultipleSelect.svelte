@@ -1,10 +1,8 @@
 <script lang=ts>
-	import { SearchIcon, DeleteIcon } from 'svelte-feather-icons';
+	import { PlusCircleIcon, DeleteIcon } from 'svelte-feather-icons';
 
 	export let selectOptions: string[] = [];
-	export let selects: string[];
-	if(!selects)
-		selects = []
+	export let selects: string[] = [];
 
 	let searchString = '';
 	let dropdownOpen = false;
@@ -13,14 +11,14 @@
 		(s) => !selects?.includes(s) && s?.toLowerCase().includes(searchString?.toLowerCase())
 	);
 
-	function select(data) {
+	function select(data: string) {
 		selects = [...selects, data];
 		searchString = '';
 		dropdownOpen = false;
 	}
 
-	function addNewSelect(event) {
-		if (event.keyCode != 13) return;
+	function addNewSelect(event: KeyboardEvent) {
+		if (event.code != "Enter") return;
 
 		selects = [...selects, searchString];
 		searchString = '';
@@ -28,7 +26,7 @@
 	}
 </script>
 
-<div class="flex flex-col mx-auto gap-1">
+<div class="flex flex-col mx-auto gap-1 max-w-content">
 	<div class="dropdown mb-4">
 		<!-- svelte-ignore a11y-label-has-associated-control -->
 		<label tabindex="0">
@@ -36,14 +34,14 @@
 				<div class="input-group input-sm">
 					<input
 						type="text"
-						placeholder="พิมพ์เพื่อค้นหา"
+						placeholder="Type here"
 						class="input input-bordered w-70"
 						bind:value={searchString}
 						on:keypress={addNewSelect}
 						on:focus={() => (dropdownOpen = true)}
 					/>
 					<div class="btn">
-						<SearchIcon size="20" />
+						<PlusCircleIcon size="20" />
 					</div>
 				</div>
 			</div>
@@ -70,13 +68,13 @@
 	</div>
 	{#each selects as s}
 		<div
-			class="badge hover:badge-error gap-2"
+			class="badge hover:badge-error gap-2 w-full justify-between"
 			on:click={() => {
 				selects.splice(selects.indexOf(s), 1);
 				selects = selects;
 			}}
 		>
-			{s}
+			<p class="truncate">{s}</p>
 			<DeleteIcon size="20" />
 		</div>
 	{/each}

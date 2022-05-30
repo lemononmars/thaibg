@@ -10,13 +10,15 @@
 		let {id, role} = params;
 		const res = await fetch(`/api/${role}/${id}/person`);
 		// redirect to the default page
-		if (!res.ok)
+		const data = await res.json()
+		if (!res.ok || (data && data.length == 0))
 			return {
 				status: 303,
 				redirect: `/person?role=${role}`
 			};
 
-		const data = await res.json()
+		
+		
 		return {
 			props: {
 				person: data[0],
@@ -57,13 +59,13 @@
 	import Seo from '$lib/components/SEO.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
 	import { onMount } from 'svelte';
-	import BoardgameCard from '$lib/components/BoardgameCard.svelte';
 	import ContactLinks from '$lib/components/ContactLinks.svelte';
 	import EditButton from '$lib/components/EditButton.svelte';
 	import { _ } from 'svelte-i18n';
-import DataViewer from '$lib/components/DataViewer.svelte';
+	import DataViewer from '$lib/components/DataViewer.svelte';
 
 	export let person: Person, role: string;
+	console.log(person)
 	let activeroleTitles = personRoles.map((r) => !!person[getVarPrefix(r) + '_ID']);
 	let activeTab = 0;
 	if (role) activeTab = personRoles.indexOf(role);
@@ -108,12 +110,8 @@ import DataViewer from '$lib/components/DataViewer.svelte';
 			<h3>Bio</h3>
 			<p>{@html person.Person_description || '-'}</p>
 			<ContactLinks
-				links={{
-					website: person.Person_website,
-					facebook: person.Person_facebook,
-					twitter: person.Person_twitter,
-					email: person.Person_email
-				}}
+				links={person.Person_link}
+				email={person.Person_email}
 			/>
 			<EditButton type={'person'} id={person.Person_ID}/>
 		</div>

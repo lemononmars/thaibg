@@ -19,10 +19,10 @@ export interface ContentcreatorSubmission {
 	Contentcreator_name_th: string;
 	Contentcreator_picture: string;
 	Contentcreator_description: string;
-	Contentcreator_link: string;
+	Contentcreator_link: string[];
 }
 
-export const ContentcreatorRelationArray = ['person', 'content'];
+export const ContentcreatorRelationArray = ['organization', 'content'];
 
 interface ContentcreatorRelation {
 	id: number;

@@ -47,6 +47,7 @@
 	import {_} from 'svelte-i18n'
 	import EditButton from '$lib/components/EditButton.svelte';
 	import DataViewer from '$lib/components/DataViewer.svelte';
+import ContactLinks from '$lib/components/ContactLinks.svelte';
 
 	export let pageData, pageID: number, pageType: TypeName;
 	let prefix = getVarPrefix(pageType)
@@ -106,20 +107,12 @@
 					<a href={pageData.Content_link} target="_blank">{pageData.Content_link}</a>
 				{/if}
 			{:else}
-				<p>{pageData[k] || $_('incomplete')}</p>
+				<p class="whitespace-pre-wrap">{pageData[k] || $_('incomplete')}</p>
 			{/if}
 		{/each}
 		<div class="divider" />
 		{#if pageData[prefix + '_link']}
-			<h2>External link:
-				<div class="tooltip" data-tip="external link">
-					<div class="btn btn-square">
-						<a href={pageData[prefix + '_link']} target="_blank">
-							<LinkIcon size="2x" />
-						</a>
-					</div>
-				</div>
-			</h2>
+			<ContactLinks links={pageData[prefix + '_link']}/>
 		{/if}
 		<div class="flex flex-row items-center gap-2">
 			<h2>Share:</h2> 
@@ -138,19 +131,6 @@
 			{:then data}
 				{#if data}
 					<DataViewer {data} type={r} dataTableColumns={{headers:[], body:[]}} listView="grid"/>
-					<!-- <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-3 gap-4">
-						{#each data as d}
-							{#if r === 'content'}
-								<ContentCard content={d} />
-							{:else if r === 'boardgame'}
-								<BoardgameCard bg={d}/>
-							{:else}
-								<OrganizationCard organization={d} role={r}/>
-							{/if}
-						{:else}
-							{$_('incomplete')}
-						{/each}
-					</div> -->
 				{/if}
 			{/await}
 		{/each}

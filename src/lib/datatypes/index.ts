@@ -32,7 +32,6 @@ export const TypeSubmissionAllowed = [
 	'rulebookeditor',
 	'sponsor',
 	'shop',
-	//'crowdfunding'
 ];
 
 export const TypeNamesArray = [
@@ -81,6 +80,13 @@ export type TypeNameRole =
 	| 'playtester'
 	| 'rulebookeditor'
 	| 'producer';
+
+export const multilinksAllowedList = [
+	'organization',
+	'person',
+	'contentcreator',
+	'artist'
+]
 
 export interface SubmissionPackage {
 	submission: any;

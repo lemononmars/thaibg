@@ -325,8 +325,8 @@
 		<h2>Message</h2>
 		<textarea class="textarea bg-base-300 w-full" placeholder="Tell us!" bind:value={reportString}></textarea>
 		<div class="modal-action">
-			<div class="btn btn-secondary" on:click={closeReport}>Cancel</div>
-			<div class="btn" on:click={handleReport} class:loading={isReporting}>Report</div>
+			<div class="btn" on:click={closeReport}>Cancel</div>
+			<div class="btn btn-secondary" on:click={handleReport} class:loading={isReporting}>Send</div>
 		</div>
 	</div>
 </div>
@@ -335,7 +335,10 @@
 <input type="checkbox" id="search-modal" class="modal-toggle"/>
 <div class="modal modal-bottom sm:modal-middle" class:modal-open={openSearchModal}>
 	<div class="modal-box">
-		<h1>Search</h1>
+		<div class="flex flex-row justify-between items-center">
+			<div><h1>Search</h1></div>
+			<div class="btn btn-secondary btn-sm" on:click={closeSearch}>X</div>
+		</div>
 		<SearchGlobal/>
 		<div class="modal-action">
 			<div class="btn btn-secondary" on:click={closeSearch}>Close</div>

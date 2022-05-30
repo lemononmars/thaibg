@@ -15,7 +15,7 @@ export const OrganizationDatabaseKeys = [
 export interface OrganizationSubmission {
 	Organization_name: string;
 	Organization_description: string;
-	Organization_link: string;
+	Organization_link: string[];
 	Organization_picture: string;
 	Organization_show: boolean;
 }

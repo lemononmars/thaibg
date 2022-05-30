@@ -9,25 +9,29 @@ import { TypeNamesArray } from '$lib/datatypes';
  * @param {number} id object's ID
  * @return {object} an object of the desired id, or error if the ID doesn't exist
  */
+/** @type {import('/api/[type]/[id]/index.ts').RequestHandler} */
 export async function get({ params, url }) {
-	if (!TypeNamesArray.includes(params.type?.toLowerCase()))
+
+	let {type, id} = params
+	type = params.type?.toLowerCase() || '';
+	let typePrevix = getVarPrefix(type)
+	if (!TypeNamesArray.includes(type))
 		return {
 			status: 404,
-			message: `${params.type} is not a valid type`
+			message: `${type} is not a valid type`
 		};
 
 	const selected = url.searchParams.get('select');
 	const selectedColumns = selected
 		? selected
 				.split(',')
-				.map((str: string) => getVarPrefix(params.type) + '_' + str)
+				.map((str: string) => typePrevix + '_' + str)
 				.join(',')
 		: '*';
 
-	const type = params.type?.toLowerCase() || '';
 	const { data, error } = await from(getTableName(type))
 		.select(selectedColumns)
-		.eq(`${getVarPrefix(type)}_ID`, params.id)
+		.eq(`${typePrevix}_ID`, id)
 		.single();
 
 	if (error)

@@ -3,9 +3,8 @@
 		const res = await fetch(`/api/organization/${params.id}`);
 		
 		if (!res.ok) return { status: 404 };
-
 		const data = await res.json();
-		console.log(data)
+
 		return {
 			props: {
 				organizationData: data || null
@@ -13,33 +12,37 @@
 		};
 	}
 
-	export async function getOrgRelation(ID: number, type: string) {
-		const res = await fetch(`/api/organization/${ID}/${type}`);
-		if (!res.ok) return { status: 404, error: 'no board game found' };
-
-		const data = res.json();
-		return data;
+	export async function getOrgRelation(IDs: number[], type: string) {
+		let datas = []
+		for(const id of IDs) {
+			const res = await fetch(`/api/${type}/${id}`);
+			const data = await res.json();
+			datas = [...datas, data]
+		}
+		return datas
 	}
 </script>
 
 <script lang="ts">
 	import Seo from '$lib/components/SEO.svelte';
+	import {_} from 'svelte-i18n'
 	import type {Organization} from '$lib/datatypes'
 	import Spinner from '$lib/components/Spinner.svelte';
 	import { onMount } from 'svelte';
-	import PlainCard from '$lib/components/PlainCard.svelte';
+	import DataViewer from '$lib/components/DataViewer.svelte'
 	import { getImageURL, getDefaultImageURL } from '$lib/supabase';
+	import ContactLinks from '$lib/components/ContactLinks.svelte';
 	import EditButton from '$lib/components/EditButton.svelte';
 
 	export let organizationData: Organization;
-	let orgRelationKeys = Object.keys(
-		JSON.parse(organizationData.Organization_relation)
-	)
-	let promises: Record<string, Promise<any>> = {}
+	let orgRelations: Record<string, number[]> = JSON.parse(organizationData.Organization_relation)
+	const orgRelationKeys: string[] = Object.keys(orgRelations)
+
+	let promises: Record<string, Promise<any>[]> = {}
 	orgRelationKeys.forEach(k=>promises[k] = null)
 	onMount(async () => {
 		for(const key of orgRelationKeys) {
-			promises[key] = await getOrgRelation(organizationData.Organization_ID, key);
+			promises[key] = await getOrgRelation(orgRelations[key], key);
 		}
 	});
 </script>
@@ -51,48 +54,39 @@
 			Invalid organization ID!
 		{:else}
 			<div class="flex flex-col lg:flex-row lg:gap-4 w-full p-8 border-2 shadow-lg rounded-xl">
-				<img
-					src={getImageURL('organization', organizationData.Organization_picture)}
-					alt="image of {organizationData.Organization_name}"
-					class="w-72 mask mask-circle-2"
-					on:error|once={(ev) => (ev.target.src = getDefaultImageURL('organization'))}
-				/>
-				<div>
+				<div class="w-full lg:w-1/4">
+					<div class="avatar hover:scale-110 transition duration-200 mx-auto">
+						<div class="h-60 aspect-square rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+							<img
+								src={getImageURL('organization', organizationData.Organization_picture)}
+								alt="image of {organizationData.Organization_name}"
+								on:error|once={(ev) => (ev.target.src = getDefaultImageURL('organization'))}
+							/>
+						</div>
+					</div>
+					<ContactLinks links={organizationData.Organization_link}/>
+					<div>
+						<h3>Edit: </h3>
+						<EditButton type="organization" id={organizationData.Organization_ID}/>
+					</div>
+				</div>
+				<div class="w-full lg:w-3/4">
 					<h1>{organizationData.Organization_name}</h1>
-					<ul>
-						<li>
-							Official link:
-							{#if organizationData.Organization_link}
-								<a href={organizationData.Organization_link} target="_blank">{organizationData.Organization_link}</a
-								>
-							{:else}
-								N/A
-							{/if}
-						</li>
-					</ul>
+					
 					<h2>Description</h2>
-					<p>{@html organizationData.Organization_description || 'N/A'}</p>
+					<p class="whitespace-pre-wrap break-words">{@html organizationData.Organization_description || 'N/A'}</p>
 				</div>
 
 			</div>
 			<!-- <div>{likes.length}</div> -->
 			<div class="divider" />
-			<h2> Organization's relation</h2>
-			{organizationData.Organization_relation} 
-			{orgRelationKeys}
 			{#each orgRelationKeys as key}
 				{#await promises[key]}
 					<Spinner />
 				{:then res}
 					{#if res}
-						<h2>{key}</h2>
-						<div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-4 gap-4">
-							{#each res as obj}
-								<PlainCard object={obj} type={key}/>
-							{:else}
-								N/A
-							{/each}
-						</div>
+						<h2>{$_(`keyword.${key}`)}</h2>
+						<DataViewer listView={"grid"} data={res} type={key}/>
 					{/if}
 				{/await}
 			{/each}

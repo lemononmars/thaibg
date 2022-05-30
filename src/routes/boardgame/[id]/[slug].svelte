@@ -283,7 +283,7 @@
 		</div>
 		<div>
 			<h3>{$_('description._')}</h3>
-			{bg.TBG_description || $_('description.not_found')}
+			<p class="whitespace-pre-wrap">{bg.TBG_description || $_('description.not_found')}</p>
 		</div>
 		<div class="divider" />
 		<div>

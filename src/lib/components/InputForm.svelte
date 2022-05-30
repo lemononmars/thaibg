@@ -2,6 +2,7 @@
    import {_} from 'svelte-i18n'
    import MultipleSelect from './MultipleSelect.svelte';
    import UploadPicture from './UploadPicture.svelte';
+   import RichTextEditor from './RichTextEditor.svelte';
 
    export let inputs: Record<string, any>
    export let submissionPackage: Record<string, any>
@@ -34,7 +35,10 @@
          {:else if k.includes('show')}
             <input type="checkbox" bind:checked={inputs[k]} class="checkbox" />
          {:else if k.includes('description')}
+            <!-- <RichTextEditor/> -->
             <textarea class="textarea textarea-bordered" bind:value={inputs[k]} />
+         {:else if k.includes('_link')}
+            <MultipleSelect bind:selects={inputs[k]} />
          {:else}
             <input type="text" class="input input-bordered" bind:value={inputs[k]} />
          {/if}

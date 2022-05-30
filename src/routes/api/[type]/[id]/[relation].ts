@@ -58,20 +58,30 @@ export async function get({ url, params }) {
 
 	// for organizations.... well
 	if (type === 'organization') {
-		// const { data, error } = await from(getTableName(relation))
-		// 	.select(`${selectedColumns}, Person!inner(*)`)
-		// 	.eq(`Person.${getVarPrefix(relation)}_ID`, id);
+		const { data, error } = await from('Organization')
+			.select('Organization_relation')
 
-		// if (error)
-		// 	return {
-		// 		status: 404,
-		// 		body: {message: `No ${relation} associated with this person found`}
-		// 	};
-		// else
+		if (error)
+			return {
+				status: 404,
+				body: {message: `No ${relation} associated with this person found`}
+			};
+		
+		// orgData = [1, 3, 15]
+		const orgData = data[relation]
+		let newData: Record<string, any>[] = []
+
+		for(const d of orgData) {
+			const {data: data1} = await from(getTableName(relation))
+				.select(`${selectedColumns}`)
+				.eq(`${getVarPrefix(relation)}_ID`, orgData[d]);
+			newData = [...newData, data1]
+		}
+
 			return {
 				status: 200,
 				headers: { 'Content-Type': 'application/json' },
-				body: [{}]
+				body: newData
 			};
 	}
 

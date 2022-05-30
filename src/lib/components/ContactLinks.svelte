@@ -1,27 +1,48 @@
 <script lang="ts">
-	import { FacebookIcon, TwitterIcon, LinkIcon, MailIcon } from 'svelte-feather-icons';
-	interface Links {
-		website?: string;
-		facebook?: string;
-		twitter?: string;
-		email?: string;
+	import SocialIcons from '@rodneylab/svelte-social-icons'
+	export let links: string[] | string, email:string = null;
+
+	// some TYPE_link are arrays, some are strings
+	// so we need to convert them all to an array
+	if(!Array.isArray(links)) {
+		// it is possible we have stringified an array as a string
+		// so we need to parse it back
+		links = [links]
 	}
 
-	export let links: Links;
+	function getIcon(url: string){
+		if(!url)
+			return 'squarespace' as const
+		if(url.includes('facebook'))
+			return 'facebook' as const
+		if(url.includes('twitter'))
+			return 'twitter' as const
+		if(url.includes('github'))
+			return 'github' as const
+		if(url.includes('youtube'))
+			return 'youtube' as const
+		if(url.includes('spotify'))
+			return 'spotify' as const
+		if(url.includes('discord'))
+			return 'discord' as const
+		if(url.includes('@'))
+			return 'email' as const
+		return 'squarespace' as const
+	}
 </script>
 
-<div class="flex flex-row items-center gap-3">
-	<h3>Connect:</h3>
-	{#if links.website}
-		<a href="http://{links.website}" target="_blank"><LinkIcon size="40" /></a>
-	{/if}
-	{#if links.facebook}
-		<a href="http://{links.facebook}" target="_blank"><FacebookIcon size="40" /></a>
-	{/if}
-	{#if links.twitter}
-		<a href="http://{links.twitter}" target="_blank"><TwitterIcon size="40" /></a>
-	{/if}
-	{#if links.email}
-		<a href="mailto:{links.email}" target="_blank"><MailIcon size="40" /></a>
-	{/if}
+<div class="flex flex-col">
+	<h3>Contact:</h3>
+	<div class="flex flex-row items-center gap-1 flex-wrap">
+		{#if email}
+			<a href="mailto:{email}" target="_blank" class="hover:opacity-50 hover:-translate-y-2">
+				<SocialIcons network="email" fgColor="#FFFFFF"/>
+			</a>
+		{/if}
+		{#each links as l}
+			<a href="//{l}" target="_blank" class="hover:opacity-50 hover:-translate-y-2">
+				<SocialIcons network={getIcon(l)} fgColor="#FFFFFF"/>
+			</a>
+		{/each}
+	</div>
 </div>

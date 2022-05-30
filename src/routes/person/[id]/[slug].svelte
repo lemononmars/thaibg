@@ -100,12 +100,8 @@
 			<h3>Bio</h3>
 			<p>{@html person.Person_description || '-'}</p>
 			<ContactLinks
-				links={{
-					website: person.Person_website,
-					facebook: person.Person_facebook,
-					twitter: person.Person_twitter,
-					email: person.Person_email
-				}}
+				links={person.Person_link}
+				email={person.Person_email}
 			/>
 			<EditButton type={'person'} id={person.Person_ID}/>
 		</div>

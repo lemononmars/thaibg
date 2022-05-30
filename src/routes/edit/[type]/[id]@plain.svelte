@@ -1,5 +1,5 @@
 <script context=module lang=ts>
-	import { getSubmissionPackage, TypeSubmissionAllowed } from '$lib/datatypes';
+	import { getSubmissionPackage, TypeSubmissionAllowed, multilinksAllowedList } from '$lib/datatypes';
 	import type { SubmissionPackage, AdminSettings } from '$lib/datatypes';
 	import { fromBucket, getVarPrefix } from '$lib/supabase';
 	import type { SubmissionData } from '$lib/supabase';
@@ -78,6 +78,16 @@
 
 		if (updateError) throw updateError;
 	}
+
+	export async function getOrgRelation(IDs: number[], type: string) {
+		let datas = []
+		for(const id of IDs) {
+			const res = await fetch(`/api/${type}/${id}`);
+			const data = await res.json();
+			datas = [...datas, data]
+		}
+		return datas
+	}
 </script>
 
 <script lang="ts">
@@ -108,7 +118,7 @@
 
 	// populate it with relational data
 	keys.forEach(k=>{
-		if(selects[k] || multiselects[k])
+		if(selects[k] || multiselects[k] || k.includes('link'))
 			submission[k] = currentData[k]
 	})
 	onMount(async ()=>{
@@ -244,7 +254,7 @@
 							{/each}
 						</select>
 					{:else if multiselects[k]}
-						<MultipleSelect selectOptions={multiselects[k]} bind:selects={currentData[k]} />
+						<MultipleSelect selectOptions={multiselects[k]} bind:selects={submission[k]} />
 					{:else if k.includes('_picture')}
 						<UploadPicture key={k} bind:pictureFile={pictureFiles[k]} />
 					{:else if k.includes('_time')}
@@ -257,6 +267,9 @@
 						<input type="checkbox" bind:checked={currentData[k]} class="checkbox" disabled={editingKey !== k}/>
 					{:else if k.includes('description')}
 						<textarea class="textarea textarea-bordered" bind:value={currentData[k]} disabled={editingKey !== k}/>
+					{:else if k.includes('link') 
+						&& multilinksAllowedList.includes(k.slice(0,k.indexOf('_'))?.toLowerCase())}
+						<MultipleSelect bind:selects={submission[k]} />
 					{:else}
 						<input type="text" class="input input-bordered" bind:value={currentData[k]} disabled={editingKey !== k}/>
 					{/if}
@@ -294,7 +307,7 @@
 		{:else}
 			<div class="lg:w-1/2 grid grid-cols-2 justify-center mx-auto" >
 				{#each relations as r}
-					<SearchMultipleSelect bind:selects={relationMultiSelects[r]} type={r} />
+					<SearchMultipleSelect bind:selects={relationMultiSelects[r]} type={r} relation={type} />
 				{/each}
 			</div>
 		{/if}

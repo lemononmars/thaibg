@@ -37,6 +37,7 @@ export async function get({ url, params }) {
 		: '*';
 
 	// in case of a person, we'll look up directly in ${role} table, not ${role}_Relation
+	// TODO: properly change it to Person_Relation ???
 	const { data, error } = await from('Person')
 		.select(`${selectedColumns}, ${getTableName(type)}!inner(*)`)
 		.eq(`${getTableName(type)}.${getVarPrefix(type)}_ID`, id);

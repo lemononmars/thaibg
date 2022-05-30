@@ -8,6 +8,7 @@ import { TypeNamesArray } from '$lib/datatypes';
  * @param {string} type The type
  * @return {array} array of objects
  */
+/** @type {import('/api/[type]/index.ts').RequestHandler} */
 export async function get({ params, url }) {
 	const type = params.type;
 	// special case: admin settings

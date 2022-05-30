@@ -14,9 +14,7 @@ export const PersonDatabaseKeys = [
 	'Person_name_th',
 	'Person_nickname',
 	'Person_description',
-	'Person_facebook',
-	'Person_twitter',
-	'Person_website',
+	'Person_link',
 	'Person_email',
 	'Person_picture',
 	'Person_show'
@@ -26,9 +24,7 @@ export interface PersonSubmission {
 	Person_name: string;
 	Person_name_th: string;
 	Person_nickname: string;
-	Person_facebook: string;
-	Person_twitter: string;
-	Person_website: string;
+	Person_link: string[];
 	Person_email: string;
 	Person_description: string;
 	Person_picture: string;
