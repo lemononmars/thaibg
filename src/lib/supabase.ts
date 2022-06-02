@@ -117,6 +117,7 @@ export async function addToSubmission(
 	const pageType = submissionData.pageType
 	let index: number
 
+	console.log('new submission:', pageType, index)
 	// create an object to be added to the database table
 	let newSubmission = {
 		id: submissionIndex,
@@ -140,7 +141,7 @@ export async function addToSubmission(
 
 	// if admin approval is not require, also add it to the database
 	if(!requireApproval) {
-		
+		console.log('approval is not required, so we add the submission immediately')
 		// when creating a new person or organization, we also create new roles from extra submissions
 		if(pageType === 'person' || pageType === 'organization') {
 			let rolesContent = {}
@@ -183,7 +184,7 @@ export async function addToSubmission(
 		index = res.body.index
 		
 		// finally, we add relational data if any
-		if(!newSubmission.Submission_relations) 
+		if(newSubmission.Submission_relations) 
 			await addToDatabaseRelation(
 				newSubmission.Submission_relations,
 				newSubmission.Submission_page_type,
@@ -334,6 +335,8 @@ async function addToDatabaseRelation(
   */
 	const relationArrays = JSON.parse(JSONstring);
 	const varPrefix = getVarPrefix(type)
+	console.log('adding to relational database')
+	console.log(relationArrays)
 
 	// for new entries, simply create new rows
 	if(submissionType === 'new') {
@@ -383,87 +386,133 @@ async function addToDatabaseRelation(
 
 	// this is where things get complicated ....
 	if(submissionType === 'edit') {
-		for (const relationType of Object.keys(relationArrays)) {
-			const relationObjects: Relation[] = relationArrays[relationType];
+		// special case for organization:
+		// simply replace the array (or rather stringified version)
+		if(type === 'organization') {
+			let newRelationObject = {}
+			// final result should be 
+			// {"publisher": [1,20], "shop": [0]}
+			for (const relationType of Object.keys(relationArrays))
+				newRelationObject[relationType] = relationArrays[relationType].map((r: Relation) => r.id) 
 
-			// TODO: make sure to check all cases
-			const mainRelation = relationType === 'boardgame' ? type : relationType; // swap
-			const relationTableName = (type === 'person' || relationType === 'person') 
-				? 'Person' : (type === 'content' && relationType === 'contentcreator') || (type === 'contentcreator' && relationType === 'content')
-				? 'Content_Contentcreator_Relation'
-				:getTableName(mainRelation) + '_Relation';
-			const relationVarPrefix = getVarPrefix(relationType)
+			const insertObject = {
+				Organization_ID: index,
+				Organization_relation: JSON.stringify(newRelationObject)
+			}
+			await from('Organization')
+				.upsert([
+					insertObject
+				])
+		}
+		// otherwise, we need to add relational datas to multiple tables
+		else {
+			for (const relationType of Object.keys(relationArrays)) {
+				const relationObjects: Relation[] = relationArrays[relationType];
 
-			// retrieve current data so that we can decide
-			// whether to add or remove each entry
-			const {data: currentRelationObjects} = await from(relationTableName).select('*').eq(`${varPrefix}_ID`, index)
+				// yet another special case for organization
+				if(relationType === 'organization') {
+					// look at each organiation that we are supposed to add
+					for (const relation of relationObjects)  {
+						const {data: oldData} = await from('Organization')
+							.select('Organization_relation')
+							.eq('Organization_ID', relation.id)
 
-			// First, delete entries
-			// i.e. in the table, but not in the submission
-			if(currentRelationObjects)
-				for (const currentRelation of currentRelationObjects) {
-					if(!relationObjects || relationObjects.some(r => 
-						r.id == currentRelation[relationVarPrefix + '_ID']
-					))
-						continue;
+						let oldDataObject = JSON.parse(oldData[0].Organization_relation)
 
-					// for person, do not remove the row
-					// make the corresponding entry null instead
-					if(relationTableName === 'Person') {
-						let insertObject: Record<string, number> = {}
-						if(type === 'person') {
-							insertObject['Person_ID'] = index
-							insertObject[relationVarPrefix + '_ID'] = null
+						// if that entry doesn't exist yet, append it to the existing array
+						if(!oldDataObject[type]?.includes(index)) {
+							oldDataObject[type] = [...oldDataObject[type], index]
+			
+							const insertObject = {
+								Organization_ID: relation.id,
+								Organization_relation: JSON.stringify(oldDataObject)
+							}
+							await from('Organization')
+								.upsert([
+									insertObject
+								])
+						}
+					}
+				}
+
+				// TODO: make sure to check all cases
+				const mainRelation = relationType === 'boardgame' ? type : relationType; // swap
+				const relationTableName = (type === 'person' || relationType === 'person') 
+					? 'Person' : (type === 'content' && relationType === 'contentcreator') || (type === 'contentcreator' && relationType === 'content')
+					? 'Content_Contentcreator_Relation'
+					:getTableName(mainRelation) + '_Relation';
+				const relationVarPrefix = getVarPrefix(relationType)
+
+				// retrieve current data so that we can decide
+				// whether to add or remove each entry
+				const {data: currentRelationObjects} = await from(relationTableName).select('*').eq(`${varPrefix}_ID`, index)
+
+				// First, delete entries
+				// i.e. in the table, but not in the submission
+				if(currentRelationObjects)
+					for (const currentRelation of currentRelationObjects) {
+						if(!relationObjects || relationObjects.some(r => 
+							r.id == currentRelation[relationVarPrefix + '_ID']
+						))
+							continue;
+
+						// for person, do not remove the row
+						// make the corresponding entry null instead
+						if(relationTableName === 'Person') {
+							let insertObject: Record<string, number> = {}
+							if(type === 'person') {
+								insertObject['Person_ID'] = index
+								insertObject[relationVarPrefix + '_ID'] = null
+							}
+							else {
+								insertObject['Person_ID'] = currentRelation['Person_ID']
+								insertObject[varPrefix + '_ID'] = null
+							}
+							const {error} = await from(relationTableName)
+								.upsert([
+									insertObject
+								])
 						}
 						else {
-							insertObject['Person_ID'] = currentRelation['Person_ID']
-							insertObject[varPrefix + '_ID'] = null
+							const { error } = await from(relationTableName)
+								.delete()
+								.eq('id', currentRelation.id);
+							if (error) throw error;
 						}
-						const {error} = await from(relationTableName)
-							.upsert([
-								insertObject
-							])
 					}
-					else {
-						const { error } = await from(relationTableName)
-							.delete()
-							.eq('id', currentRelation.id);
+
+				// Then, add new entries
+				// i.e. in the submission, but not already in the table
+				if(relationObjects)
+					for (const relation of relationObjects) {
+						if(!currentRelationObjects || currentRelationObjects.some(cr => 
+							cr[relationVarPrefix + '_ID'] == relation.id
+						))
+							continue;
+
+						let insertObject: Object = {}
+						// when adding person relation, do not add a new row
+						if(relationTableName === 'Person')
+							insertObject = {
+								[relationVarPrefix + '_ID']: relation.id,
+								[varPrefix + '_ID']: index
+							};
+						else {
+							const relationIndex = await findNewUniqueID(relationTableName, 'id');
+							insertObject = {
+								id: relationIndex,
+								[relationVarPrefix + '_ID']: relation.id,
+								[varPrefix + '_ID']: index
+							}
+						}
+
+						const { error } = await from(relationTableName).upsert([insertObject], {
+							returning: 'minimal'
+						});
 						if (error) throw error;
 					}
-				}
-
-			// Then, add new entries
-			// i.e. in the submission, but not already in the table
-			if(relationObjects)
-				for (const relation of relationObjects) {
-					if(!currentRelationObjects || currentRelationObjects.some(cr => 
-						cr[relationVarPrefix + '_ID'] == relation.id
-					))
-						continue;
-
-					let insertObject: Object = {}
-					// when adding person relation, do not add a new row
-					if(relationTableName === 'Person')
-						insertObject = {
-							[relationVarPrefix + '_ID']: relation.id,
-							[varPrefix + '_ID']: index
-						};
-					else {
-						const relationIndex = await findNewUniqueID(relationTableName, 'id');
-						insertObject = {
-							id: relationIndex,
-							[relationVarPrefix + '_ID']: relation.id,
-							[varPrefix + '_ID']: index
-						}
-					}
-
-					const { error } = await from(relationTableName).upsert([insertObject], {
-						returning: 'minimal'
-					});
-					if (error) throw error;
-				}
+			}
 		}
-
 		return {
 			status: 200,
 			body: {

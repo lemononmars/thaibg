@@ -3,7 +3,6 @@
 		// ignore page's [slug] and redirect to the proper location
 		const res = await fetch(`/api/organization/${params.id}`);
 		const data = await res.json();
-		console.log(data)
 		
 		if (!res.ok || !data.Organization_show)
 			return {

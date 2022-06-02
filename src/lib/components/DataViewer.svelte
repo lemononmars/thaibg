@@ -12,7 +12,7 @@
 	import ContentCard from '$lib/components/ContentCard.svelte';
 	import { flip } from 'svelte/animate';
 	import { _ } from 'svelte-i18n';
-	import BoardgameStatusBadge from './BoardgameStatusBadge.svelte';
+	import TBGStageIcons from '$lib/assets/icons/TBGStageIcons.svelte';
 	import ShopStatusBadge from './ShopStatusBadge.svelte';
 
 	export let 
@@ -141,7 +141,7 @@
 												<SlashIcon size="1x" class="text-error" />
 											{/if}
 										{:else if BoardgameStatusArray.includes(d[t])}
-											<BoardgameStatusBadge status={d[t]} showText={true} />
+											<TBGStageIcons status={d[t]} showText={true} class="w-20"/>
 										{:else if ShopStatusArray.includes(d[t])}
 											<ShopStatusBadge status={d[t]} showText={true} />
 										{:else if Array.isArray(d[t])}

@@ -230,12 +230,15 @@
 
 <Seo title="Edit {type}" />
 
-<svelte:window on:beforeunload={(e)=> {e.returnValue = '...'; return '...'}}/>
-
+<svelte:window on:beforeunload={(e)=> {
+	if (submitState == State.SUCCESS)
+		return '';
+	e.returnValue = '...'; 
+	return '...'
+}}/>
+	
 <h1>{$_('page.edit._')} {$_(`keyword.${type}`)}</h1>
-<div class="text-gray-500">
-<!-- {JSON.stringify(submission)}
-{JSON.stringify(relationMultiSelects)} -->
+<div class="text-gray-500 break-words w-screen">
 </div>
 {#if submitState == State.START || submitState == State.ERROR}
 	<form>

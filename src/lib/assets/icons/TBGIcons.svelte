@@ -17,10 +17,10 @@
 
    const getFillColor = (type: string) => {
       if(type === 'person' || personRoles.includes(type))
-         return 'accent'
+         return 'fill-accent'
       if(type === 'organization' || organizationRoles.includes(type))
-         return 'secondary'
-      return 'primary'
+         return 'fill-secondary'
+      return 'fill-primary'
    }
 
    const iconType = getTypeIcon(type)
@@ -28,7 +28,7 @@
 </script>
 
 <svg 
-   class={$$props.class + ` fill-${fillColor}`} 
+   class={$$props.class + ` ${fillColor}`} 
    viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg"
 >
    {@html icons[iconType]}

@@ -96,13 +96,12 @@
 	import Seo from '$lib/components/SEO.svelte';
 	import { user, getCurrUserProfile } from '$lib/user';
 	import Spinner from '$lib/components/Spinner.svelte';
-	import { fly } from 'svelte/transition'
 	import { _ } from 'svelte-i18n';
 	import BoardgameCard from '$lib/components/BoardgameCard.svelte';
 	import InputForm from '$lib/components/InputForm.svelte';
 	import SearchMultipleSelect from '$lib/components/SearchMultipleSelect.svelte';
 	import CreateCard from './_createCard.svelte'
-import { ChevronLeftIcon } from 'svelte-feather-icons';
+	import { ChevronLeftIcon } from 'svelte-feather-icons';
 
 	export let submissionPackage: SubmissionPackage; // from load fucntion
 	export let adminSettings: AdminSettings

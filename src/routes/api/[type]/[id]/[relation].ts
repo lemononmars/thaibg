@@ -60,29 +60,62 @@ export async function get({ url, params }) {
 	if (type === 'organization') {
 		const { data, error } = await from('Organization')
 			.select('Organization_relation')
+			.eq('Organization_ID', id)
+			.single()
+		if (error)
+			return {
+				status: 404,
+				body: {message: `No ${relation} associated with this organization found`}
+			};
+		
+		// orgData = [1, 3, 15]
+		const orgData = JSON.parse(data.Organization_relation)[relation]
+		let newData: Record<string, any>[] = []
+
+		if(!orgData)
+			return {
+				status: 200,
+				headers: { 'Content-Type': 'application/json' },
+				body: []
+			};
+
+		for(const d of orgData) {
+			const {data: data1, error: error1} = await from(getTableName(relation))
+				.select(`${selectedColumns}`)
+				.eq(`${getVarPrefix(relation)}_ID`, d)
+				.single()
+			newData = [...newData, data1]
+		}	
+		return {
+			status: 200,
+			headers: { 'Content-Type': 'application/json' },
+			body: newData
+		};
+	}
+
+	if (relation === 'organization') {
+		const { data, error } = await from('Organization')
+			.select('*')
 
 		if (error)
 			return {
 				status: 404,
-				body: {message: `No ${relation} associated with this person found`}
+				body: {message: `No organization associated with this organization found`}
 			};
 		
-		// orgData = [1, 3, 15]
-		const orgData = data[relation]
 		let newData: Record<string, any>[] = []
-
-		for(const d of orgData) {
-			const {data: data1} = await from(getTableName(relation))
-				.select(`${selectedColumns}`)
-				.eq(`${getVarPrefix(relation)}_ID`, orgData[d]);
-			newData = [...newData, data1]
+		// search all organiation whose Organization_relation contains the ID
+		for(const org in data) {
+			const orgRelation = JSON.parse(data[org].Organization_relation)[type]
+			if(orgRelation.includes(parseInt(id)))
+				newData = [...newData, data[org]]
 		}
 
-			return {
-				status: 200,
-				headers: { 'Content-Type': 'application/json' },
-				body: newData
-			};
+		return {
+			status: 200,
+			headers: { 'Content-Type': 'application/json' },
+			body: newData
+		};
 	}
 
 	// In case of /api/designer/9/boardgame

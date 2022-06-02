@@ -49,7 +49,6 @@
 	import Seo from '$lib/components/SEO.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
 	import { onMount } from 'svelte';
-	import BoardgameCard from '$lib/components/BoardgameCard.svelte';
 	import DataViewer from '$lib/components/DataViewer.svelte';
 	import ContactLinks from '$lib/components/ContactLinks.svelte';
 	import EditButton from '$lib/components/EditButton.svelte';
@@ -98,7 +97,7 @@
 			<h1>{person.Person_name}</h1>
 			<h2>{person.Person_name_th ? '(' + person.Person_name_th + ')' : ''}</h2>
 			<h3>Bio</h3>
-			<p>{@html person.Person_description || '-'}</p>
+			<p class="whitespace-pre-wrap">{@html person.Person_description || '-'}</p>
 			<ContactLinks
 				links={person.Person_link}
 				email={person.Person_email}

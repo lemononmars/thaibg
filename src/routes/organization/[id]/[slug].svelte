@@ -27,6 +27,8 @@
 	import Seo from '$lib/components/SEO.svelte';
 	import {_} from 'svelte-i18n'
 	import type {Organization} from '$lib/datatypes'
+	import {organizationRoles} from '$lib/datatypes'
+	import {getVarPrefix} from '$lib/supabase'
 	import Spinner from '$lib/components/Spinner.svelte';
 	import { onMount } from 'svelte';
 	import DataViewer from '$lib/components/DataViewer.svelte'
@@ -34,17 +36,31 @@
 	import ContactLinks from '$lib/components/ContactLinks.svelte';
 	import EditButton from '$lib/components/EditButton.svelte';
 
-	export let organizationData: Organization;
+	export let organizationData: Organization
 	let orgRelations: Record<string, number[]> = JSON.parse(organizationData.Organization_relation)
-	const orgRelationKeys: string[] = Object.keys(orgRelations)
+	let filteredOrgRelations: Record<string, number[]> = {}
+
+	// filter only non-empty relations
+	Object.keys(orgRelations).forEach(r => {
+		if(orgRelations[r].length > 0)
+			filteredOrgRelations[r] = orgRelations[r]
+	})
+	const orgRelationKeys: string[] = Object.keys(filteredOrgRelations)
+
+	let activeTab = 0;
+	$: activeRole = orgRelationKeys[activeTab]
 
 	let promises: Record<string, Promise<any>[]> = {}
 	orgRelationKeys.forEach(k=>promises[k] = null)
 	onMount(async () => {
 		for(const key of orgRelationKeys) {
-			promises[key] = await getOrgRelation(orgRelations[key], key);
+			promises[key] = await getOrgRelation(filteredOrgRelations[key], key);
 		}
 	});
+
+	async function changeTab(idx: number) {
+		activeTab = idx;
+	}
 </script>
 
 <Seo title="organization" />
@@ -78,18 +94,32 @@
 				</div>
 
 			</div>
-			<!-- <div>{likes.length}</div> -->
-			<div class="divider" />
-			{#each orgRelationKeys as key}
-				{#await promises[key]}
-					<Spinner />
-				{:then res}
-					{#if res}
-						<h2>{$_(`keyword.${key}`)}</h2>
-						<DataViewer listView={"grid"} data={res} type={key}/>
-					{/if}
-				{/await}
-			{/each}
+
+			<div class="flex flex-col w-full mx-auto text-left p-2 justify-center">
+				<div class="tabs w-full m-10 mx-auto flex-grow">
+					{#each orgRelationKeys as r, idx}
+						<!-- svelte-ignore a11y-missing-attribute -->
+						<a
+							class="tab tab-lg tab-bordered text-xl text-success"
+							class:tab-active={idx == activeTab}
+							class:text-bold={idx == activeTab}
+							on:click={() => changeTab(idx)}
+						>
+							{$_(`keyword.${r}`)}
+						</a>
+					{/each}
+				</div>
+				<div class="flex flex-col justify-center">
+					{#await promises[activeRole]}
+						<Spinner />
+					{:then res}
+						{#if res}
+							<h2>{$_(`keyword.${activeRole}`)}</h2>
+							<DataViewer listView={"grid"} data={res} type={activeRole}/>
+						{/if}
+					{/await}
+				</div>
+			</div>
 		{/if}
 	</div>
 </div>

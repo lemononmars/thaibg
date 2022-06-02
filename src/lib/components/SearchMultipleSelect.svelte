@@ -7,7 +7,7 @@
 
 	export let selects = [];
 	export let type: string;
-	export let relation: string
+	export let relation: string = null
 	const typeIcon = getTypeIcon(type)
 
 	interface TBGShopData extends simpleData {
