@@ -93,12 +93,12 @@
 		LinkIcon,
 		PackageIcon
 	} from 'svelte-feather-icons';
+	import TBGStageIcons from '$lib/assets/icons/TBGStageIcons.svelte';
 	import Social from '$lib/components/Social.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
 	import { fly } from 'svelte/transition';
 	import { onMount } from 'svelte';
 	import { _ } from 'svelte-i18n';
-	import BoardgameStatusBadge from '$lib/components/BoardgameStatusBadge.svelte';
 	import EditButton from '$lib/components/EditButton.svelte'
 
 	// these are singulars (not plurals) so that we can access the database easily
@@ -231,7 +231,7 @@
 					<h2>({bg.TBG_name_th})</h2>
 				{/if}
 				<h2>{bg.TBG_released ? '(' + bg.TBG_released + ')' : ''}</h2>
-				<BoardgameStatusBadge status={bg.TBG_status} />
+				<TBGStageIcons stage={bg.TBG_status} />
 			</div>
 			<div>
 				<div class="tooltip" data-tip={owned ? 'Remove owned' : 'Mark as owned'}>
