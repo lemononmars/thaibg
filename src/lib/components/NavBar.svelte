@@ -45,8 +45,8 @@
 	const menuTitles = ['boardgame', 'person', 'organization', 'activity', 'contribute']
 	const menus = [boardgameMenu, personMenu, organizationMenu, activityMenu]
 
-	// use modulo to cycle through colors
-	const menuColors = ['success', 'warning', 'error']
+	const hoverColors = ['text-info', 'text-accent', 'text-secondary', 'text-base-300', 'text-warning']
+	const menuColors = ['bg-info', 'bg-accent', 'bg-secondary', 'bg-base-300', 'bg-warning']
 
 	const languageName = {
 		en: 'ENG',
@@ -176,7 +176,7 @@
 		<div class="navbar-center hidden lg:flex gap-4">
 			{#each menuTitles as title, idx}
 				<div 
-					class="flex flex-row items-center hover:text-{menuColors[idx%3]}"
+					class="flex flex-row items-center hover:{hoverColors[idx]}  hover:{menuColors[idx]}"
 					on:mouseover={()=>openTab(idx)}
 					on:focus={()=> hoveringTab = hoveringTab}
 				>
@@ -242,7 +242,7 @@
 			{#each menus as menu, idx}
 				{#if hoveringTab === idx}
 					<div 
-						class="flex flex-row gap-2 py-2 justify-center place-items-center w-screen bg-opacity-90 bg-{menuColors[idx%3]}" 
+						class="flex flex-row gap-2 py-2 justify-center place-items-center w-screen bg-opacity-90 {menuColors[idx]}" 
 						on:mouseleave={()=>hoveringTab=-1}
 					>
 						{#each menu as option}

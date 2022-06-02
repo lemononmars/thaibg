@@ -2,7 +2,6 @@
    import {_} from 'svelte-i18n'
    import MultipleSelect from './MultipleSelect.svelte';
    import UploadPicture from './UploadPicture.svelte';
-   import RichTextEditor from './RichTextEditor.svelte';
 
    export let inputs: Record<string, any>
    export let submissionPackage: Record<string, any>

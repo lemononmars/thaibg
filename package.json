@@ -64,13 +64,11 @@
 	},
 	"dependencies": {
 		"@rodneylab/svelte-social-icons": "^0.0.21",
-		"@tiptap/starter-kit": "^2.0.0-beta.185",
 		"daisyui": "^1.25.4",
-		"prosemirror-model": "^1.17.0",
 		"svelte-i18n": "^3.3.13",
 		"svelte-share-buttons-component": "^1.5.0",
-		"svelte-tiptap": "^0.5.2",
 		"svelty-picker": "^1.2.4",
+		"svg-to-svelte": "^2.2.1",
 		"theme-change": "^2.0.2"
 	}
 }

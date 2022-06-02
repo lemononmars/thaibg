@@ -2,6 +2,7 @@
 	import { getTypeIcon	} from '$lib/assets/icons'
 	import {PlusCircleIcon, SearchIcon} from 'svelte-feather-icons'
 	import {_} from 'svelte-i18n'
+	import TBGIcons from '$lib/assets/icons/TBGIcons.svelte'
 
 	type iconType = 'search' | 'add'
 	export let role: string
@@ -17,17 +18,13 @@
 </script>
 
 <div 
-	class="flex flex-col w-24 border-2 bg-base-100 rounded-md hover:scale-110 group"
+	class="flex flex-col w-24 h-32 border-2 bg-base-100 rounded-md hover:scale-110 group"
 >
 	<div class="relative">
 		<div class="group-hover:opacity-20 transition duration-1000">
-			<img 
-				src={roleIcon} 
-				class="aspect-auto"
-				alt={role}
-			/>
+			<TBGIcons type={role} class="w-20 h-20 mx-auto"/>
 		</div>
-		<!-- svelte-ignore a11y-missing-attribute -->
+		<!--svelte-ignore a11y-missing-attribute -->
 		<a>
 			<div class="text-success absolute top-0 m-1 text-opacity-0 group-hover:text-opacity-100 transition duration-500">
 				<svelte:component this={icons[icon]}/>
@@ -35,6 +32,10 @@
 		</a>
 	</div>
 	<div class="h-10 align-center">
-		<p class="text-sm text-center text-base-content">{role==='add'?$_('page.create._'):''}{$_(`keyword.${text}`)}</p>
+		<p 
+			class="text-sm text-center {text === 'all'? 'text-secondary':'text-base-content'}"
+			>
+			{role==='add'?$_('page.create._'):''}{$_(`keyword.${text}`)}
+		</p>
 	</div>
 </div>

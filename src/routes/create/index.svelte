@@ -54,11 +54,11 @@
 		</VerticalBlock>
 	</div>
 	<div class="flex flex-col rounded-xl shadow-xl m-4">
-		<div class="rounded-t-xl bg-info text-content-info p-4">
-			<h1>4 Stages of Board Game Development</h1>
+		<div class="rounded-t-xl bg-info py-10">
+			<p class="text-content-info text-4xl">4 Stages of Board Game Development</p>
 		</div>
-		<div class="mx-auto my-4">
-			<img src={boardGameStages} alt="board game stages" class="w-max aspect-auto"/>
+		<div class="mx-auto my-4 w-full">
+			<img src={boardGameStages} alt="board game stages" class="aspect-auto"/>
 		</div>
 	</div>
 </div>

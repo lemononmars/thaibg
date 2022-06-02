@@ -55,15 +55,14 @@
 	import {
 		ChevronRightIcon,
 		ChevronLeftIcon,
-		FilmIcon
 	} from 'svelte-feather-icons';
 	import ContentCard from '$lib/components/ContentCard.svelte';
 	import EventCard from '$lib/components/EventCard.svelte';
 	import { _ } from 'svelte-i18n';
 	import Supporters from '$lib/assets/logos'
 	import heroImage from '$lib/assets/logos/database main image.png'
-	import { getTypeIcon } from '$lib/assets/icons';
-import ContactLinks from '$lib/components/ContactLinks.svelte';
+	import TBGIcons from '$lib/assets/icons/TBGIcons.svelte'
+	import ContactLinks from '$lib/components/ContactLinks.svelte';
 
 	export let stats;
 	let promiseEvents, promiseContents, promiseBoardgames, promiseDevs;
@@ -87,17 +86,17 @@ import ContactLinks from '$lib/components/ContactLinks.svelte';
 		<h1>{$_('page.home.welcome.intro')}</h1>
 		<div class="grid grid-cols-3 items-start py-4">
 			<div class="flex flex-col place-items-center">
-				<div><img src={getTypeIcon('boardgame')} alt="icon" class="w-12 aspect-square"/></div>
+				<TBGIcons type={'boardgame'} class="w-12 aspect-square"/>
 				<div class="text-xl">{stats.boardgame}</div>
 				<div><a href="/boardgame">{$_('page.home.welcome.boardgames')}</a></div>
 			</div>
 			<div class="flex flex-col place-items-center">
-				<div><img src={getTypeIcon('person')} alt="icon" class="w-12 aspect-square"/></div>
+				<TBGIcons type={'person'} class="w-12 aspect-square"/>
 				<div class="text-xl">{stats.person}</div>
 				<div><a href="/person">{$_('page.home.welcome.people')}</a></div>
 			</div>
 			<div class="flex flex-col place-items-center">
-				<div><img src={getTypeIcon('content')} alt="icon" class="w-12 aspect-square"/></div>
+				<TBGIcons type={'content'} class="w-12 aspect-square"/>
 				<div class="text-xl">{stats.content}</div>
 				<div><a href="/content">{$_('page.home.welcome.contents')}</a></div>
 			</div>
@@ -142,9 +141,7 @@ import ContactLinks from '$lib/components/ContactLinks.svelte';
 		<a href="./contents" alt="Content List" class="btn flex flex-row items-center"
 			>see all <ChevronRightIcon size="20" /></a
 		>
-		<h1 class="mx-auto">
-			<FilmIcon size="4x" />
-		</h1>
+		<TBGIcons type={"content"} class="w-40 mx-auto"/>
 	</div>
 	<div class="flex-grow grid grid-cols-2 lg:grid-cols-3 gap-4 lg:p-10">
 		{#await promiseContents}

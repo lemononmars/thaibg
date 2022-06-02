@@ -1,5 +1,5 @@
 import Supporter1 from './bgdt logo.jpg'
-import Supporter2 from './lunar gravity logo.jpg'
+import Supporter2 from './lunar gravity logo.png'
 import Supporter3 from './wizards-of-learning.jpg'
 import Supporter4 from './TBGA-logo.png'
 

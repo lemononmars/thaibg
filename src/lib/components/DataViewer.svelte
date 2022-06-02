@@ -96,7 +96,7 @@
 		{:else}
 			<!-- Table view -->
 			<div class="w-full">
-				<table class="table table-zebra table-compact lg:table-normal w-full">
+				<table class="table table-zebra table-compact lg:table-normal w-full overflow-hidden">
 					<thead>
 						<tr>
 							<th>Image</th>

@@ -1,5 +1,5 @@
 <script context=module lang=ts>
-	import { getSubmissionPackage, personRoles, type AdminSettings } from '$lib/datatypes';
+	import { getSubmissionPackage, type AdminSettings } from '$lib/datatypes';
 	import type { SubmissionPackage } from '$lib/datatypes';
 	import { createSlug, fromBucket, getVarPrefix } from '$lib/supabase';
 	import type { SubmissionData } from '$lib/supabase'

@@ -1,10 +1,9 @@
 <script lang=ts>
 	import { getVarPrefix } from '$lib/supabase';
 	import { SearchIcon } from 'svelte-feather-icons';
-	import {getTypeIcon} from '$lib/assets/icons'
 	import {_} from 'svelte-i18n'
 	import Spinner from './Spinner.svelte';
-import RoleButton from './RoleButton.svelte';
+	import RoleButton from './RoleButton.svelte';
 
 	interface simpleData {
 		id: number,

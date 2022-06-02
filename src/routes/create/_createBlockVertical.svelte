@@ -1,7 +1,7 @@
 <script lang=ts>
+   import TBGIcons from '$lib/assets/icons/TBGIcons.svelte'
    import {_} from 'svelte-i18n'
    export let 
-      icon: string, 
       type: string, 
       description: string,
       width: number = 1
@@ -11,7 +11,8 @@
 
 <div class="flex flex-col lg:flex-row justify-center lg:rounded-md lg:shadow-xl p-4 lg:w-{widthRatio} lg:h-72">
    <div class="flex flex-col w-full lg:w-fit">
-      <img src={icon} alt="{type}" class="h-32 object-contain">
+      <!--img src={icon} alt="{type}" class="h-32 object-contain"-->
+      <TBGIcons class="h-32 mx-auto" {type}/>
       <div class="h-20">
          <h3>{$_(`keyword.${type}`)}</h3>
          <div class="text-xs h-20">{description}</div>
