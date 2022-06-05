@@ -1,5 +1,6 @@
 <script lang=ts>
    import type {ShopLocation} from '$lib/datatypes'
+   import {onMount} from 'svelte'
 
    let mapArea: HTMLElement
    let infowindowContent: HTMLElement
@@ -13,23 +14,37 @@
    export let ids: number[] = []
    export let id: number = 0
 
-   export let placeIndex: number = -1
-   $: if(placeIndex) {
-
-   }
+   export let placeIndex: number = 0
+   // TODO: add listener
 
    if(!places || places.length == 0) {
       places = new Array(place)
       names = new Array(name)
       ids = new Array(id)
    }
+   
+   let map: any
+   let infowindow: any
 
-   function initMap(): void {
+   $: if(placeIndex > -1 && map && infowindow) {
+      map.panTo(places[placeIndex].location)
+      infowindow.setPosition(places[placeIndex].location)
+   }
+
+   onMount(async()=>{
+      map = initMap()
+   })
+
+   function initMap(){
       const map = new google.maps.Map(
          mapArea,
+         {
+            center: places[0].location,
+            zoom: 15
+         }
       );
 
-      const infowindow = new google.maps.InfoWindow();
+      infowindow = new google.maps.InfoWindow();
       infowindow.setContent(infowindowContent);
 
       const bounds = new google.maps.LatLngBounds();
@@ -40,7 +55,7 @@
          marker.addListener("click", () => {
             infowindow.open(map, marker);
             placeIndex = index
-            map.setPlace(places[index])
+            map.panTo(places[index].location)
          });
 
          marker.setPlace({
@@ -50,10 +65,15 @@
 
          marker.setVisible(true);
          bounds.extend(p.location)
+
+         if(index == 0)
+            infowindow.open(map, marker);
       })
 
       if(places.length > 1)
          map.fitBounds(bounds);
+
+      return map
    }
 </script>
 
@@ -61,7 +81,7 @@
    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
    <script
      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCt3-uv6RT2jnV8nYYoArO7vRA_azJbLFg&region=TH&language=th&libraries=places&v=weekly"
-     on:load={initMap}
+     defer async
    />
 </svelte:head>
 
