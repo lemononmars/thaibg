@@ -51,8 +51,6 @@
 		};
 	}
 
-   // HURRAY ! It runs on server now
-	// TODO: make sure nothing breaks in production
 	export async function postSubmission(data: SubmissionData): Promise<Response> {
       const res = await fetch('/api/post/submission', {
          method: 'POST',
@@ -78,16 +76,6 @@
 
 		if (updateError) throw updateError;
 	}
-
-	export async function getOrgRelation(IDs: number[], type: string) {
-		let datas = []
-		for(const id of IDs) {
-			const res = await fetch(`/api/${type}/${id}`);
-			const data = await res.json();
-			datas = [...datas, data]
-		}
-		return datas
-	}
 </script>
 
 <script lang="ts">
@@ -102,6 +90,7 @@
 	import {getImageURL, getDefaultImageURL} from '$lib/supabase'
 	import { _ } from 'svelte-i18n';
 	import {onMount} from 'svelte'
+import GoogleMapFinder from '$lib/components/GoogleMapFinder.svelte';
 
 	export let data: SubmissionPackage, 
 		type: string, 
@@ -159,6 +148,22 @@
 		ERROR
 	}
 	let submitState = State.START;
+
+	let needMap: boolean = false
+   const locationKeyArray = keys.filter((k:string) => k.includes("location"))
+   let locationKey: string
+   if(locationKeyArray.length > 0) {
+      needMap = true
+      locationKey = locationKeyArray[0]
+      submission[locationKey] = {formatted_address: ""}
+   }
+   let openMapModal: boolean = false
+
+	function handleLocationSelect(event: any) {
+      openMapModal = false
+      // assuming there is only one TYPE_location key
+      submission[locationKey] = event.detail.place
+   }
 
 	async function handleSubmit() {
 		if (submitState != State.START && submitState != State.ERROR) return;
@@ -250,7 +255,7 @@
 				</div>
 				<div class="justify-self-center">
 					{#if selects[k]}
-						<select class="select select-bordered" bind:value={currentData[k]}>
+						<select class="select select-bordered" bind:value={currentData[k]} disabled={editingKey !== k}>
 							<option disabled selected value={null}>{$_('page.create.select')}</option>
 							{#each selects[k] as opt}
 								<option value={opt}>{$_(`option.${opt}`)}</option>
@@ -260,6 +265,22 @@
 						<MultipleSelect selectOptions={multiselects[k]} bind:selects={submission[k]} />
 					{:else if k.includes('_picture')}
 						<UploadPicture key={k} bind:pictureFile={pictureFiles[k]} />
+					{:else if k.includes('_location')}
+						<div class="flex flex-col gap-2">
+							<div 
+								class="btn btn-accent" 
+								on:click={()=>openMapModal = true} 
+								class:btn-disabled={editingKey !== k}
+							>
+								Select in Google Map
+							</div>
+							<textarea 
+								class="textarea textarea-bordered" 
+								placeholder="Select in Google Map first"
+								disabled={editingKey !== k}
+								bind:value={submission[k].formatted_address}
+							/>
+						</div>
 					{:else if k.includes('_time')}
 						<SveltyPicker
 							inputClasses="form-control"
@@ -308,7 +329,7 @@
 		{#if loadingRelationalData}
 			<Spinner/>
 		{:else}
-			<div class="lg:w-1/2 grid grid-cols-2 justify-center mx-auto" >
+			<div class="lg:w-1/2 grid grid-cols-1 lg:grid-cols-2 justify-center" >
 				{#each relations as r}
 					<SearchMultipleSelect bind:selects={relationMultiSelects[r]} type={r} relation={type} />
 				{/each}
@@ -338,6 +359,14 @@
 {:else if submitState == State.ERROR}
 	<p class="text-red">{$_('page.create.status.error')}</p>
 	<div class="btn" on:click|preventDefault={handleSubmit}>{$_('page.create.submit')}</div>
+{/if}
+
+{#if needMap}
+   <input type="checkbox" id="map-modal" class="modal-toggle"/>
+   <div class="modal modal-bottom sm:modal-middle w-full h-full p-10 flex flex-col" class:modal-open={openMapModal}>
+      <GoogleMapFinder on:select={handleLocationSelect}/>
+      <div class="btn btn-warning" on:click={()=>openMapModal = false}>Close</div>
+   </div>
 {/if}
 
 <style>

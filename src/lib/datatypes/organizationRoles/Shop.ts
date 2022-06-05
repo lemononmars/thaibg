@@ -27,7 +27,7 @@ export interface ShopSubmission {
 	Shop_description: string;
 	Shop_picture: string;
 	Shop_province: string;
-	Shop_location: string;
+	Shop_location: ShopLocation;
 	Shop_start_year: number;
 	Shop_capacity: number;
 	Shop_type: string[];
@@ -47,6 +47,17 @@ interface ShopRelation {
 	TBG_ID: number;
 	Shop_TBG_obtainable: boolean;
 	Shop_TBG_playable: boolean;
+}
+
+interface Location {
+	lat: number,
+	lng: number
+}
+
+export interface ShopLocation {
+	place_id?: string,
+	formatted_address?: string,
+	location?: Location,
 }
 
 export const ShopSubmissionPackage = () => {

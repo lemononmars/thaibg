@@ -35,19 +35,16 @@
 <script lang="ts">
 	import Seo from '$lib/components/SEO.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
-	// import BoardgameCard from '$lib/components/BoardgameCard.svelte';
-	// import OrganizationCard from '$lib/components/OrganizationCard.svelte';
-	// import ContentCard from '$lib/components/ContentCard.svelte';
 	import HonorTables from '$lib/components/HonorTables.svelte';
 	import Social from '$lib/components/Social.svelte';
-	import { LinkIcon} from 'svelte-feather-icons';
 	import { onMount } from 'svelte';
 	import type { TypeName } from '$lib/datatypes';
 	import {getSubmissionPackage} from '$lib/datatypes'
 	import {_} from 'svelte-i18n'
 	import EditButton from '$lib/components/EditButton.svelte';
 	import DataViewer from '$lib/components/DataViewer.svelte';
-import ContactLinks from '$lib/components/ContactLinks.svelte';
+	import ContactLinks from '$lib/components/ContactLinks.svelte';
+	import GoogleMapDisplay from '$lib/components/GoogleMapDisplay.svelte';
 
 	export let pageData, pageID: number, pageType: TypeName;
 	let prefix = getVarPrefix(pageType)
@@ -77,6 +74,7 @@ import ContactLinks from '$lib/components/ContactLinks.svelte';
 	});
 
 	let youtubeID: string;
+	let pageName: string = pageData[prefix + '_name'] || pageData[prefix + '_name_th']
 	if((pageType === 'content') && pageData.Content_link?.includes('youtube'))
 		youtubeID = pageData.Content_link.slice(pageData.Content_link.indexOf('=')+1)
 </script>
@@ -95,7 +93,7 @@ import ContactLinks from '$lib/components/ContactLinks.svelte';
 			</div>
 		</div>
 
-		<h1>{pageData[prefix + '_name'] || pageData[prefix + '_name_th']}</h1>
+		<h1>{pageName}</h1>
 		<h2>{pageData[prefix + '_name'] ? pageData[prefix + '_name_th'] || '': ''} </h2>
 		<div class="divider" />
 		{#each keys as k}
@@ -106,6 +104,17 @@ import ContactLinks from '$lib/components/ContactLinks.svelte';
 				{:else}
 					<a href={pageData.Content_link} target="_blank">{pageData.Content_link}</a>
 				{/if}
+			{:else if k.includes("location")}
+				{#if pageData?.Shop_location?.location}
+					<div class="h-40 w-full">
+						<GoogleMapDisplay 
+							place={pageData.Shop_location} 
+							name={pageName} 
+							id={pageID}
+						/>
+					</div>
+				{/if}
+				<p class="text-sm">{pageData[k]? pageData[k].formatted_address : $_('incomplete')}</p>
 			{:else}
 				<p class="whitespace-pre-wrap">{pageData[k] || $_('incomplete')}</p>
 			{/if}

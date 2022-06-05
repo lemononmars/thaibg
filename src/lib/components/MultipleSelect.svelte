@@ -3,11 +3,13 @@
 
 	export let selectOptions: string[] = [];
 	export let selects: string[] = [];
+	if(!selects)
+		selects = []
 
 	let searchString = '';
 	let dropdownOpen = false;
 
-	$: filteredOptions = selectOptions.filter(
+	$: filteredOptions = selectOptions?.filter(
 		(s) => !selects?.includes(s) && s?.toLowerCase().includes(searchString?.toLowerCase())
 	);
 

@@ -304,16 +304,17 @@
 			<ChevronUpIcon size="15" />
 		</div>
 	</div>
+
+	<div
+		class="btn btn-accent fixed left-0 bottom-0 m-4 rounded-full z-10 hover:-translate-y-2 duration-200"
+		on:click|preventDefault={()=>openReportModal = true}
+	>
+		<div class="tooltip" data-tip="feedback">
+			<AlertOctagonIcon size="15" />
+		</div>
+	</div>
 {/if}
 
-<div
-	class="btn btn-accent fixed left-0 bottom-0 m-4 rounded-full z-10 hover:-translate-y-2 duration-200"
-	on:click|preventDefault={()=>openReportModal = true}
->
-	<div class="tooltip" data-tip="feedback">
-		<AlertOctagonIcon size="15" />
-	</div>
-</div>
 
 <!--report modal -->
 <input type="checkbox" id="report-modal" class="modal-toggle"/>

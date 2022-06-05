@@ -3,6 +3,7 @@
 </script>
 
 <Seo title="About" />
+
 <div class="flex flex-col justify-left text-left">
 	<div>
 		<h1>What is this website?</h1>
@@ -19,3 +20,4 @@
 		<div class="divider" />
 	</div>
 </div>
+
