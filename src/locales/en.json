@@ -37,7 +37,8 @@
     "about": "About",
     "termofuse": "Term of use",
     "contact": "Contact",
-    "glossary": "Glossary"
+    "glossary": "Glossary",
+    "listof": "List of "
   },
   "shop": {
     "_": "Shop",
@@ -59,7 +60,8 @@
         "text1": "All information",
         "text2": "on Thai board game industry",
         "contribute": "Add data",
-        "contact": "Contact Us"
+        "contact": "Contact Us",
+        "recentchanges": "Recent changes"
       }
     },
     "about": {
@@ -411,7 +413,6 @@
     "planned": "Planned",
     "prototype": "Prototype",
     "published": "Published",
-    "province": {
       "krabi": "Krabi",
       "bangkok": "Bangkok",
       "kanchanaburi": "Kanchanaburi",
@@ -489,7 +490,6 @@
       "uthaithani": "Uthaithani",
       "ubonratchathani": "Ubonratchathani",
       "betong": "Betong"
-    }
   },
   "mechanics": {
     "action": "Actions",

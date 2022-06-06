@@ -94,7 +94,7 @@ import GoogleMapFinder from '$lib/components/GoogleMapFinder.svelte';
 
 	export let data: SubmissionPackage, 
 		type: string, 
-		currentData, // from load function
+		currentData: any, // from load function
 		adminSettings: AdminSettings
 	const { submission, keys, relations, selects, multiselects } = data; // destruct
 	const varPrefix = getVarPrefix(type)
@@ -112,6 +112,7 @@ import GoogleMapFinder from '$lib/components/GoogleMapFinder.svelte';
 	})
 	onMount(async ()=>{
 		for(const r of relations) {
+			console.log(r)
 			const res = await fetch(`/api/${type}/${currentDataID}/${r}`)
 			const data =  await res.json()
 			const relationPrefix = getVarPrefix(r)
@@ -129,6 +130,7 @@ import GoogleMapFinder from '$lib/components/GoogleMapFinder.svelte';
 			}
 		}
 		loadingRelationalData = false
+		console.log(relationMultiSelects)
 	})
 
 	// extra info
@@ -328,7 +330,7 @@ import GoogleMapFinder from '$lib/components/GoogleMapFinder.svelte';
 		{#if loadingRelationalData}
 			<Spinner/>
 		{:else}
-			<div class="lg:w-1/2 grid grid-cols-1 lg:grid-cols-2 justify-center" >
+			<div class="lg:w-1/2 grid grid-cols-1 lg:grid-cols-2 justify-center mx-auto" >
 				{#each relations as r}
 					<SearchMultipleSelect bind:selects={relationMultiSelects[r]} type={r} relation={type} />
 				{/each}

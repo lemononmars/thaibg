@@ -37,6 +37,7 @@ export const TypeSubmissionAllowed = [
 
 export const TypeNamesArray = [
 	...TypeSubmissionAllowed,
+	'mechanics',
 	'type',
 ];
 
@@ -248,7 +249,10 @@ export function getDataTableColumns(type: TypeName) {
 				body: ['TBG_released', 'TBG_status']
 			}
 		case 'organization':
-			return BLANK_COLUMNS
+			return  {
+				headers: ['Relation'],
+				body: ['Organization_relation']
+			}
 		case 'sponsor':
 			return BLANK_COLUMNS
 		case 'shop':
@@ -258,8 +262,8 @@ export function getDataTableColumns(type: TypeName) {
 			}
 		case 'person': 
 			return {
-				headers: ['Artist', 'Designer', 'Graphic Designer'],
-				body: ['Artist_ID', 'Designer_ID', 'Graphicdesigner_ID']
+				headers: ['Artist', 'Designer', 'Graphic Designer', 'Playtester', 'Rulebook Editor', 'Producer'],
+				body: ['Artist_ID', 'Designer_ID', 'Graphicdesigner_ID', 'Playtester_ID', 'Rulebookeditor_ID', 'Producer_ID']
 			}
 		default:
 			return BLANK_COLUMNS

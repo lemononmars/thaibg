@@ -5,6 +5,11 @@
 		const res = await fetch('/api/submission')
       const data = await res.json()
 
+      data.sort((a: SubmissionPublic,b: SubmissionPublic)=> {
+         return b?.Submission_date.toString()
+            .localeCompare(a?.Submission_date.toString())
+      })
+
 		return {
 			props: {
 				data,
@@ -17,11 +22,11 @@
 	export let data: SubmissionPublic[]
 
 	const tableInfo = {
-		headers: ['ID', 'Type', 'Page type', 'Username', 'Date', 'Content'],
+		headers: ['Type', 'Page type', 'ID', 'Username', 'Date', 'Status'],
 		body: [
-			'id',
 			'Submission_type',
 			'Submission_page_type',
+         'Submission_page_ID',
 			'Submission_username',
 			'Submission_date',
 			'Submission_status',
@@ -43,10 +48,18 @@
 			{#each data as d}
 				<tr>
 					{#each tableInfo.body as t}
-						<td class="break-words">
-							{d[t] ? ('' + d[t]) : '-'}
-						</td>
-					{/each}
+                  <td class="break-words">
+                     {#if t === 'Submission_page_ID' && d.Submission_page_ID}
+                        <a href="/{d.Submission_page_type}/{d.Submission_page_ID}" target="_blank">
+                              {d.Submission_page_ID}
+                           </a>
+                     {:else if t === 'Submission_date'}
+                        {d[t]?.toString()}
+                     {:else}
+                        {d[t] ? ('' + d[t]) : '-'}
+                     {/if}
+                  </td>
+               {/each}
 				</tr>
 			{/each}
 		</tbody>

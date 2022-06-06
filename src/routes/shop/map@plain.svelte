@@ -35,15 +35,18 @@
    let placeIndex: number = -1
 </script>
 
-<div class="absolute h-full w-full flex flex-row">
-   {#if shops.length > 0}
-      <div class="w-1/4">
+<div class="h-screen right-0 flex flex-row justify-between gap-4">
+   <div class="w-1/4 flex flex-col gap-2">
+      {#if shops.length > 0}
+         <h2>Select shop to zoom!</h2>
          {#each names as name, idx}
             <div class="btn" on:click={()=>placeIndex = idx}>{name}</div>
          {/each}
-      </div>
+      {:else}
+         No shop.....
+      {/if}
+   </div>
+   <div class="w-3/4">
       <GoogleMapDisplay {names} {ids} {places} bind:placeIndex/>
-   {:else}
-      No shop.....
-   {/if}
+   </div>
 </div>

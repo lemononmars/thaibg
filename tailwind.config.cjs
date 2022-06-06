@@ -35,7 +35,12 @@ module.exports = {
 					'warning-focus': '#FFC550',
 					error: '#F87272',
 					'error-focus': '#F87272'
-				}
+				},
+				dark:{
+					...require('daisyui/colors/themes')['[data-theme=dark]'],
+					primary: '#33CCFF',
+					'primary-focus': '#33CCFF',
+				},
 			},
 			'dark'
 		]

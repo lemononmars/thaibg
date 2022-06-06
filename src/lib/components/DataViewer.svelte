@@ -141,7 +141,7 @@
 												<SlashIcon size="1x" class="text-error" />
 											{/if}
 										{:else if BoardgameStatusArray.includes(d[t])}
-											<TBGStageIcons status={d[t]} showText={true} class="w-20"/>
+											<TBGStageIcons status={d[t]} showText={true} class="w-12"/>
 										{:else if ShopStatusArray.includes(d[t])}
 											<ShopStatusBadge status={d[t]} showText={true} />
 										{:else if Array.isArray(d[t])}

@@ -13,3 +13,12 @@ export const personRoles = [
 	'producer',
 	'rulebookeditor',
 ];
+
+import type {Artist} from './Artist'
+import type {Designer} from './Designer'
+import type {Graphicdesigner} from './Graphicdesigner'
+import type {Playtester} from './Playtester'
+import type {Rulebookeditor} from './Rulebookeditor'
+import type {Producer} from './Producer'
+
+export type PersonRole = Artist | Designer | Graphicdesigner | Playtester | Rulebookeditor | Producer

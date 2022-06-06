@@ -8,20 +8,28 @@
 
 	export async function load({ params, fetch }) {
 		let {id, role} = params;
-		const res = await fetch(`/api/${role}/${id}/person`);
-		// redirect to the default page
-		const data = await res.json()
-		if (!res.ok || (data && data.length == 0))
-			return {
-				status: 303,
-				redirect: `/person?role=${role}`
-			};
+		let person: Person
 
-		
+		if(role === 'person') {
+			const res = await fetch(`/api/person/${params.id}`);
+			if (!res.ok) return { status: 404 };
+			person = await res.json();
+		}
+		else {
+			const res = await fetch(`/api/${role}/${id}/person`);
+			// redirect to the default page
+			const data = await res.json()
+			if (!res.ok || (data && data.length == 0))
+				return {
+					status: 303,
+					redirect: `/person?role=${role}`
+				};
+			person = data[0]
+		}
 		
 		return {
 			props: {
-				person: data[0],
+				person,
 				role
 			}
 		};
@@ -65,24 +73,20 @@
 	import DataViewer from '$lib/components/DataViewer.svelte';
 
 	export let person: Person, role: string;
-	console.log(person)
-	let activeroleTitles = personRoles.map((r) => !!person[getVarPrefix(r) + '_ID']);
-	let activeTab = 0;
-	if (role) activeTab = personRoles.indexOf(role);
-	// response to url ?role=Designer
-	else if (activeroleTitles.indexOf(true)) activeTab = activeroleTitles.indexOf(true);
-	// first non-empty role
-	else activeTab = 0; // if all else fails, just use first index
+	let activeRoleTitles = personRoles.filter((r) => !!person[getVarPrefix(r) + '_ID']);
+	let activeRole: string = role
+	if (role === 'person') 
+		activeRole = activeRoleTitles[0]
 
 	let rolePromise: Promise<any>;
 
 	onMount(async () => {
-		rolePromise = getRoleContent(personRoles[activeTab], person);
+		rolePromise = getRoleContent(activeRole, person);
 	});
 
-	async function changeTab(idx: number) {
-		activeTab = idx;
-		if (activeroleTitles[activeTab]) rolePromise = getRoleContent(personRoles[activeTab], person);
+	async function changeTab(role: string) {
+		activeRole = role;
+		rolePromise = getRoleContent(activeRole, person);
 	}
 </script>
 
@@ -119,19 +123,17 @@
 
 	<div class="flex flex-col w-full lg:w-3/4 text-left p-2 justify-center">
 		<div class="tabs w-full m-10 mx-auto flex-grow">
-			{#each personRoles as r, idx}
-				{#if activeroleTitles[idx]}
-					<!-- svelte-ignore a11y-missing-attribute -->
-					<a
-						class="tab tab-lg tab-bordered text-xl"
-						class:text-success={!!activeroleTitles[idx]}
-						class:tab-active={idx == activeTab}
-						class:text-bold={idx == activeTab}
-						on:click={() => changeTab(idx)}
-					>
-						{$_(`keyword.${r}`)}
-					</a>
-				{/if}
+			{#each activeRoleTitles as r, idx}
+				<!-- svelte-ignore a11y-missing-attribute -->
+				<a
+					class="tab tab-lg tab-bordered text-xl"
+					class:text-success={!!activeRoleTitles[idx]}
+					class:tab-active={r === activeRole}
+					class:text-bold={r === activeRole}
+					on:click={() => changeTab(r)}
+				>
+					{$_(`keyword.${r}`)}
+				</a>
 			{/each}
 		</div>
 		<div class="flex flex-col justify-center">
@@ -140,28 +142,21 @@
 			{:then res}
 				{#if res}
 					<div>
-						<h2>{$_(`keyword.${personRoles[activeTab]}`)}'s Name</h2>
+						<h2>{$_(`keyword.${activeRole}`)}'s Name</h2>
 						<p>{res.name || '-'}</p>
-						<h2>{$_(`keyword.${personRoles[activeTab]}`)}'s Description</h2>
+						<h2>{$_(`keyword.${activeRole}`)}'s Description</h2>
 						<p>{@html res.description || '-'}</p>
-						{#if personRoles[activeTab] === 'rulebookeditor'}
+						{#if activeRole === 'rulebookeditor'}
 							<h2>Languages</h2>
 							<p>{res.language}</p>
 						{/if}
-						<EditButton type={personRoles[activeTab]} id={res.id}/>
+						<EditButton type={activeRole} id={res.id}/>
 					</div>
 
 					<div class="divider" />
 
-					<h2>Board games created by this {$_(personRoles[activeTab])}</h2>
+					<h2>Board games created by this {$_(activeRole)}</h2>
 					<DataViewer data={res.contents} type="boardgame"/>
-					<!-- <div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-3 gap-4">
-						{#each res.contents as bg}
-							<BoardgameCard {bg} />
-						{:else}
-							-
-						{/each}
-					</div> -->
 				{/if}
 			{:catch}
 				<p>Server is unavailable. Try again later.</p>

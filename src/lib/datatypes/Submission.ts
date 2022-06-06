@@ -11,6 +11,7 @@ export interface Submission extends SubmissionPublic{
 export interface SubmissionPublic {
    Submission_type: SubmissionType;
 	Submission_page_type: string;
+   Submission_page_ID: number;
 	Submission_username: string;
    Submission_date: Date;
    Submission_status: string

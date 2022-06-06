@@ -231,7 +231,7 @@
 					<h2>({bg.TBG_name_th})</h2>
 				{/if}
 				<h2>{bg.TBG_released ? '(' + bg.TBG_released + ')' : ''}</h2>
-				<TBGStageIcons stage={bg.TBG_status} />
+				<TBGStageIcons stage={bg.TBG_status} showText={true} />
 			</div>
 			<div>
 				<div class="tooltip" data-tip={owned ? 'Remove owned' : 'Mark as owned'}>

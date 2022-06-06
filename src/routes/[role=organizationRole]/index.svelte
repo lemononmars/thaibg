@@ -1,12 +1,12 @@
 <script lang=ts context=module>
-   import { getFilterOptions, getDataTableColumns, BoardgameStatusArray, type Boardgame } from '$lib/datatypes';
-   import type {TypeName, FilterOption, DataTableColumns, PersonRole} from '$lib/datatypes';
+   import { getFilterOptions, getDataTableColumns } from '$lib/datatypes';
+   import type {TypeName, FilterOption, DataTableColumns, OrganizationRole} from '$lib/datatypes';
 
 	export async function load({ params, url, fetch }) {
-      const {search: type} = params
+      const {role} = params
 		const searchSuffix = url.search
 		const searchString = url.searchParams.get('search')
-		const res = await fetch(`/api/${type}${searchSuffix}`);
+		const res = await fetch(`/api/${role}${searchSuffix}`);
 		if (!res.ok) return { status: 404 };
 
 		const data = await res.json();
@@ -14,9 +14,9 @@
 		return {
 			props: {
 				data,
-            type,
-            filter: getFilterOptions(type),
-            dataTableColumns: getDataTableColumns(type),
+            role,
+            filter: getFilterOptions(role),
+            dataTableColumns: getDataTableColumns(role),
 				searchString
 			}
 		};
@@ -33,17 +33,12 @@
 	import DataViewer from '$lib/components/DataViewer.svelte';
    import { getVarPrefix } from '$lib/supabase';
 
-	export let data: any[], type: TypeName;
+	export let data: OrganizationRole[], role: TypeName;
    export let filter: FilterOption[], dataTableColumns: DataTableColumns
 	export let searchString: string; // from url params
-   let prefix = getVarPrefix(type)
+   let prefix = getVarPrefix(role)
 
-	// unselect every options
 	let filterOptions = filter.map(f => -1)
-	// force default to be 'published' games
-	if(type === 'boardgame') {
-		filterOptions[0] = 3
-	}
 
 	$: dataFiltered = data.filter(
 		(d) =>
@@ -66,7 +61,7 @@
 	);
 
 	// TODO: allow advanced search settings
-	function compare(s: number, a: PersonRole, b: PersonRole) {
+	function compare(s: number, a: OrganizationRole, b: OrganizationRole) {
       const result = a[prefix + '_name']?.localeCompare(b[prefix + '_name'])
 		if (s == 0) return result
 		return !result
@@ -80,13 +75,13 @@
 	}
 </script>
 
-<Seo title="{type}" />
+<Seo title="{role}" />
 <div class="flex flex-col justify-center mx-auto">
-	<h1>List of {$_(`keyword.${type}`)}</h1>
-	<DataViewer data={dataSorted} {type} {dataTableColumns}>
+	<h1>{$_('keyword.listof')}{$_(`keyword.${role}`)}</h1>
+	<DataViewer data={dataSorted} type={role} {dataTableColumns}>
 		<!-- Search box -->
 		<div class="flex flex-row items-center gap-4">
-			<Searchbar placeholder="Search {type} (en/th)" bind:searchString />
+			<Searchbar placeholder="Search {role} (en/th)" bind:searchString />
 			{#if filter?.length > 0}
 				<div
 					class="btn gap-2"

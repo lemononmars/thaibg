@@ -7,7 +7,7 @@
 	initialize();
 </script>
 
-<main class="w-full min-w-max h-full pt-4">
+<main class="w-full min-w-max h-full pt-0">
 	<div class="fixed top-0 right-0 m-2 mt-20">
 		<SettingsCompact/>
 	</div>

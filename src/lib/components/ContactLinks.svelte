@@ -4,6 +4,8 @@
 		links: string[], 
 		email:string = null;
 
+	if(!links)
+		links = []
 	function getIcon(url: string){
 		if(!url)
 			return 'squarespace' as const

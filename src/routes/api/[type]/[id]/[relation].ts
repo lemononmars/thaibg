@@ -16,8 +16,6 @@ import { TypeNamesArray } from '$lib/datatypes';
 export async function get({ url, params }) {
 	let { type, id, relation } = params;
 
-	// sanitize
-	// make sure 'type' is correct
 	if (
 		(!TypeNamesArray.includes(type?.toLowerCase()) ||
 			!TypeNamesArray.includes(relation?.toLowerCase())) &&
@@ -41,8 +39,7 @@ export async function get({ url, params }) {
 	if (type === 'person') {
 		const { data, error } = await from(getTableName(relation))
 			.select(`${selectedColumns}, Person!inner(*)`)
-			.eq(`Person.${getVarPrefix(relation)}_ID`, id);
-
+			.eq(`Person.Person_ID`, id);
 		if (error)
 			return {
 				status: 404,
@@ -106,7 +103,7 @@ export async function get({ url, params }) {
 		let newData: Record<string, any>[] = []
 		// search all organiation whose Organization_relation contains the ID
 		for(const org in data) {
-			const orgRelation = JSON.parse(data[org].Organization_relation)[type]
+			const orgRelation = JSON.parse(data[org].Organization_relation)[type] || []
 			if(orgRelation.includes(parseInt(id)))
 				newData = [...newData, data[org]]
 		}

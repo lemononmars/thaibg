@@ -27,7 +27,6 @@
 				const res = await fetch(`/api/${type}/${id}/person?select=picture`)
 				const data = await res.json()
 				picture = data[0]['Person_picture']
-				console.log(picture)
 			}
 			else {
 				pictureType = type

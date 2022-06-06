@@ -72,7 +72,7 @@
 
 <Seo title="People" />
 <div class="flex flex-col justify-center mx-auto">
-	<h1>List of {$_(`keyword.${role}`)}</h1>
+	<h1>{$_('keyword.listof')}{$_(`keyword.${role}`)}</h1>
 	<DataViewer data={peopleSorted} type={role} {dataTableColumns}>
 		<div class="flex flex-row items-center justify-between gap-2">
 			<!-- Search box -->

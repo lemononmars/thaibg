@@ -1,13 +1,13 @@
 import { createClient } from '@supabase/supabase-js';
 import { personRoles } from './datatypes';
 
-type SupaStorageBucket = 'avatars' | 'images' | 'public';
+type SupaStorageBucket = 'avatars' | 'images' ;
 
 // TODO: not hard-code this?
 // use env variables, somehow?
 // VITE_SUPABASE_URL ends with .co, not .in
 const DIR_IMAGE = 'https://llhkvvndjjpbdtdvxnvn.supabase.in/storage/v1/object/public/images/';
-const DEFAULT_IMAGE_FILE = 'no_cover.jpg';
+const DEFAULT_IMAGE_FILE = 'default.jpg';
 
 export const supabaseClient = createClient(
 	String(import.meta.env.VITE_SUPABASE_URL),
@@ -117,7 +117,6 @@ export async function addToSubmission(
 	const pageType = submissionData.pageType
 	let index: number
 
-	console.log('new submission:', pageType, index)
 	// create an object to be added to the database table
 	let newSubmission = {
 		id: submissionIndex,
@@ -125,6 +124,7 @@ export async function addToSubmission(
 		Submission_content: JSON.stringify(submissionData.content),
 		Submission_relations: JSON.stringify(submissionData.relations),
 		Submission_page_type: pageType,
+		Submission_page_ID: submissionData.type === 'new'? null: submissionData.content[getVarPrefix(pageType) + '_ID'],
 		Submission_user_ID: submissionData.id,
 		Submission_username: submissionData.username,
 		Submission_comment: submissionData.comment,
@@ -141,7 +141,6 @@ export async function addToSubmission(
 
 	// if admin approval is not require, also add it to the database
 	if(!requireApproval) {
-		console.log('approval is not required, so we add the submission immediately')
 		// when creating a new person or organization, we also create new roles from extra submissions
 		if(pageType === 'person' || pageType === 'organization') {
 			let rolesContent = {}
@@ -262,7 +261,6 @@ async function addToDatabase(
 	if (submissionType === 'new') {
 		const IDColumn = getVarPrefix(type) + '_ID';
 		const index = await findNewUniqueID(type, IDColumn);
-		//console.log('about to add ', type, ' with id ', index, ' to ', IDColumn, ' with info', parse)
 		const { error: newError } = await from(getTableName(type)).insert(
 			[
 				{
@@ -335,8 +333,6 @@ async function addToDatabaseRelation(
   */
 	const relationArrays = JSON.parse(JSONstring);
 	const varPrefix = getVarPrefix(type)
-	console.log('adding to relational database')
-	console.log(relationArrays)
 
 	// for new entries, simply create new rows
 	if(submissionType === 'new') {
@@ -530,7 +526,7 @@ async function addToDatabaseRelation(
  * @param {String} column the column to be searched: [PREFIX_ID] for regular table, or [id] for relational table
  * @returns {Promise<number>} available index
  */
-async function findNewUniqueID(type: string, column: string): Promise<number> {
+export async function findNewUniqueID(type: string, column: string): Promise<number> {
 	let { data: idData, error: idError } = await from(getTableName(type)).select(column);
 	if (idError) throw idError;
 	let sortedData = idData.map((c) => c[column]).sort((a, b) => a - b);

@@ -40,15 +40,6 @@ export const PersonRelationArray = [
 	'producer'
 ];
 
-export type {
-	Artist,
-	Designer,
-	Graphicdesigner,
-	Playtester,
-	Rulebookeditor,
-	Producer
-} from './personRoles';
-
 export const PersonSubmissionPackage = () => {
 	return {
 		submission: <PersonSubmission>{},

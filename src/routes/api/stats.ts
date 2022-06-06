@@ -9,7 +9,7 @@ import { from, getTableName, getVarPrefix } from '$lib/supabase';
  * @return {object} array of objects
  */
 export async function get() {
-	const statsCategory = ['boardgame', 'person', 'content']; // to be added? 'event', 'manufacturer', 'publisher', 'shop']
+	const statsCategory = ['boardgame', 'person', 'organization']; // to be added? 'event', 'manufacturer', 'publisher', 'shop']
 	let stats = {};
 
 	for (const cat of statsCategory) {

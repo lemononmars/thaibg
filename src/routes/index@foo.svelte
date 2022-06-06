@@ -87,18 +87,18 @@
 		<div class="grid grid-cols-3 items-start py-4">
 			<div class="flex flex-col place-items-center">
 				<TBGIcons type={'boardgame'} class="w-12 aspect-square"/>
-				<div class="text-xl">{stats.boardgame}</div>
+				<div class="text-2xl">{stats.boardgame}</div>
 				<div><a href="/boardgame">{$_('page.home.welcome.boardgames')}</a></div>
 			</div>
 			<div class="flex flex-col place-items-center">
 				<TBGIcons type={'person'} class="w-12 aspect-square"/>
-				<div class="text-xl">{stats.person}</div>
+				<div class="text-2xl">{stats.person}</div>
 				<div><a href="/person">{$_('page.home.welcome.people')}</a></div>
 			</div>
 			<div class="flex flex-col place-items-center">
-				<TBGIcons type={'content'} class="w-12 aspect-square"/>
-				<div class="text-xl">{stats.content}</div>
-				<div><a href="/content">{$_('page.home.welcome.contents')}</a></div>
+				<TBGIcons type={'organization'} class="w-12 aspect-square"/>
+				<div class="text-2xl">{stats.organization}</div>
+				<div><a href="/content">{$_('keyword.organization')}</a></div>
 			</div>
 		</div>
 		<p class="text-md text-secondary">
@@ -108,7 +108,8 @@
 		<div class="flex flex-col items-center justify-center mt-4 gap-2 w-full">
 			<a href="/create"><div class="btn btn-wide btn-secondary">{$_('page.home.welcome.contribute')}</div></a
 			>
-			<a href="/contact"><div class="btn btn-ghost btn-wide">{$_('page.home.welcome.contact')}</div></a>
+			<!-- <a href="/contact"><div class="btn btn-ghost btn-wide">{$_('page.home.welcome.contact')}</div></a> -->
+			<a href="/recentchanges"><div class="btn btn-ghost btn-wide">{$_('page.home.welcome.recentchanges')}</div></a>
 		</div>
 	</div>
 

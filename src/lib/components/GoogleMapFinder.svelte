@@ -16,7 +16,6 @@
    })
 
    function initMap(): void {
-      console.log('map initiated')
       const map = new google.maps.Map(
          mapArea,
          {

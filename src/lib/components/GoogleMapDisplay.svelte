@@ -32,10 +32,10 @@
    }
 
    onMount(async()=>{
-      map = initMap()
+   //    map = initMap()
    })
 
-   function initMap(){
+   async function initMap(){
       const map = new google.maps.Map(
          mapArea,
          {
@@ -81,7 +81,7 @@
    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
    <script
      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCt3-uv6RT2jnV8nYYoArO7vRA_azJbLFg&region=TH&language=th&libraries=places&v=weekly"
-     defer async
+     defer async on:load={initMap}
    />
 </svelte:head>
 
