@@ -61,7 +61,7 @@
             <input type="checkbox" bind:checked={inputs[k]} class="checkbox" />
          {:else if k.includes('description')}
             <textarea class="textarea textarea-bordered" bind:value={inputs[k]} />
-         {:else if k.includes('_link')}
+         {:else if k.includes('_links')}
             <MultipleSelect bind:selects={inputs[k]} />
          {:else}
             <input type="text" class="input input-bordered" bind:value={inputs[k]} />

@@ -37,8 +37,8 @@
 	//export let user
 
 	const boardgameMenu = ['boardgame', 'type', 'mechanics', 'category'];
-	const personMenu = ['designer','graphicdesigner','artist','playtester','rulebookeditor','producer'];
-	const organizationMenu = ['publisher','manufacturer','sponsor','shop','contentcreator'];
+	const personMenu = ['person', 'designer','graphicdesigner','artist','playtester','rulebookeditor','producer'];
+	const organizationMenu = ['organization', 'publisher','manufacturer','sponsor','shop','contentcreator'];
 	const activityMenu = ['content','honor','event'];
 	const contributeMenu = ['boardgame','person','organization', 'content', 'event', 'honor']
 
@@ -245,10 +245,13 @@
 						class="flex flex-row gap-2 py-2 justify-center place-items-center w-screen bg-opacity-90 {menuColors[idx]}" 
 						on:mouseleave={()=>hoveringTab=-1}
 					>
-						{#each menu as option}
+						{#each menu as option, midx}
 							<a href="/{option}">
 								<RoleButton role={option}/>
 							</a>
+							{#if midx == 0 && (idx != 3)}
+								<div class="w-4"></div>
+							{/if}
 						{/each}
 					</div>
 				{/if}

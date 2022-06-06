@@ -7,7 +7,7 @@ export interface Organization extends OrganizationSubmission {
 export const OrganizationDatabaseKeys = [
 	'Organization_name',
 	'Organization_description',
-	'Organization_link',
+	'Organization_links',
 	'Organization_picture',
 	'Organization_show'
 ];
@@ -15,7 +15,7 @@ export const OrganizationDatabaseKeys = [
 export interface OrganizationSubmission {
 	Organization_name: string;
 	Organization_description: string;
-	Organization_link: string[];
+	Organization_links: string[];
 	Organization_picture: string;
 	Organization_show: boolean;
 }
@@ -28,19 +28,13 @@ export const OrganizationRelationArray = [
 	'contentcreator'
 ];
 
-import type {
+export type {
 	Manufacturer,
 	Publisher,
 	Shop,
 	Sponsor,
 	Contentcreator
 } from './organizationRoles';
-export type OrganizationRole =
-	| Manufacturer
-	| Publisher
-	| Shop
-	| Sponsor
-	| Contentcreator;
 
 export const OrganizationSubmissionPackage = () => {
 	return {

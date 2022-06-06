@@ -7,7 +7,7 @@ export interface Category extends CategorySubmission {
 export const CategoryDatabaseKeys = [
 	'Category_name',
 	'Category_name_th',
-	'Category_link',
+	'Category_links',
 	'Category_description',
 	'Category_picture'
 ];
@@ -15,7 +15,7 @@ export const CategoryDatabaseKeys = [
 export interface CategorySubmission {
 	Category_name: string;
 	Category_name_th: string;
-	Category_link: string;
+	Category_links: string[];
 	Category_description: string;
 	Category_picture: string;
 }

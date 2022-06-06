@@ -6,12 +6,11 @@ export interface Boardgame extends BoardgameSubmission {
 export const BoardgameDatabaseKeys = [
 	'TBG_name',
 	'TBG_name_th',
-	'TBG_link',
+	'TBG_links',
 	'TBG_description',
 	'TBG_age',
 	'TBG_weight',
 	'BGG_ID',
-	'BGG_link',
 	'TBG_released',
 	'TBG_player_min',
 	'TBG_player_max',
@@ -26,7 +25,7 @@ export const BoardgameDatabaseKeys = [
 export const BoardgameDatabaseKeys1 = [
 	'TBG_name',
 	'TBG_name_th',
-	'TBG_link',
+	'TBG_links',
 	'TBG_description',
 	'TBG_status',
 	'TBG_released',
@@ -42,7 +41,7 @@ export const BoardgameDatabaseKeys2 = [
 	'TBG_player_max',
 	'TBG_playtime_min',
 	'TBG_playtime_max',
-	'BGG_link',
+	'BGG_links',
 	'BGG_ID',
 ];
 
@@ -52,12 +51,12 @@ export interface BoardgameSubmission {
 	TBG_name_th: string;
 	TBG_picture: string;
 	TBG_picture_cover: string;
-	TBG_link: string;
+	TBG_links: string[];
 	TBG_description: string;
 	TBG_age: number;
 	TBG_weight: number;
 	BGG_ID: number;
-	BGG_link: string;
+	BGG_links: string;
 	TBG_released: number;
 	TBG_player_min: number;
 	TBG_player_max: number;

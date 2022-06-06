@@ -2,13 +2,14 @@ export interface Playtester extends PlaytesterSubmission {
 	Playtester_ID: number;
 	Playtester_slug: string;
 	Playtester_picture: string;
+	Playtester_cache: Record<string, any>;
 	Playtester_Relation?: PlaytesterRelation[];
 }
 
 export const PlaytesterDatabaseKeys = [
 	'Playtester_name',
 	'Playtester_name_th',
-	'Playtester_link',
+	'Playtester_links',
 	'Playtester_description',
 	'Playtester_show'
 ];
@@ -18,7 +19,7 @@ export interface PlaytesterSubmission {
 	Playtester_name: string;
 	Playtester_name_th: string;
 	Playtester_description: string;
-	Playtester_link: string;
+	Playtester_links: string[];
 }
 
 export const PlaytesterRelationArray = ['person', 'boardgame'];

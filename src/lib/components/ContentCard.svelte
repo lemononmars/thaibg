@@ -25,7 +25,7 @@
 	let media = content.Content_media;
 	let type = content.Content_type;
 	let name = content.Content_name;
-	let link = content.Content_link;
+	let link = content.Content_links;
 	let picture = getImageURL('content', content.Content_picture);
 
 	let promiseContentcreatorImageURLs;

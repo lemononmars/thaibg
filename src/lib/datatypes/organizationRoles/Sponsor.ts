@@ -1,12 +1,13 @@
 export interface Sponsor extends SponsorSubmission {
 	Sponsor_ID: number;
 	Sponsor_slug: string;
+	Sponsor_cache: Record<string, any>;
 	Sponsor_Relation?: SponsorRelation[];
 }
 
 export const SponsorDatabaseKeys = [
 	'Sponsor_name',
-	'Sponsor_link',
+	'Sponsor_links',
 	'Sponsor_description',
 	'Sponsor_picture',
 	'Sponsor_show'
@@ -15,7 +16,7 @@ export const SponsorDatabaseKeys = [
 export interface SponsorSubmission {
 	Sponsor_show: boolean;
 	Sponsor_name: string;
-	Sponsor_link: string;
+	Sponsor_links: string;
 	Sponsor_description: string;
 	Sponsor_picture: string;
 }

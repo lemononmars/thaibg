@@ -14,7 +14,7 @@ export const PersonDatabaseKeys = [
 	'Person_name_th',
 	'Person_nickname',
 	'Person_description',
-	'Person_link',
+	'Person_links',
 	'Person_email',
 	'Person_picture',
 	'Person_show'
@@ -24,7 +24,7 @@ export interface PersonSubmission {
 	Person_name: string;
 	Person_name_th: string;
 	Person_nickname: string;
-	Person_link: string[];
+	Person_links: string[];
 	Person_email: string;
 	Person_description: string;
 	Person_picture: string;
@@ -39,15 +39,8 @@ export const PersonRelationArray = [
 	'rulebookeditor',
 	'producer'
 ];
-export type PersonRelation =
-	| 'artist'
-	| 'designer'
-	| 'graphicdesigner'
-	| 'playtester'
-	| 'rulebookeditor'
-	| 'producer';
 
-import type {
+export type {
 	Artist,
 	Designer,
 	Graphicdesigner,
@@ -55,13 +48,6 @@ import type {
 	Rulebookeditor,
 	Producer
 } from './personRoles';
-export type PersonRole =
-	| Artist
-	| Designer
-	| Graphicdesigner
-	| Playtester
-	| Rulebookeditor
-	| Producer;
 
 export const PersonSubmissionPackage = () => {
 	return {

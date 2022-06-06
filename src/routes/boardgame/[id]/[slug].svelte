@@ -213,10 +213,10 @@
 		<div class="hidden lg:flex lg:flex-row items-center gap-2">
 			<Social url="{WEBSITE_URL}/{bg.TBG_ID}" title={bg.TBG_name} />
 
-			{#if bg.TBG_link}
+			{#if bg.TBG_links}
 				<div class="tooltip" data-tip="external link">
 					<div class="btn btn-square">
-						<a href={bg.TBG_link} target="_blank">
+						<a href={bg.TBG_links} target="_blank">
 							<LinkIcon size="2x" />
 						</a>
 					</div>
@@ -317,10 +317,10 @@
 		<div class="flex flex-row lg:hidden items-center gap-2 mx-auto">
 			<Social url="{WEBSITE_URL}/{bg.TBG_ID}" title={bg.TBG_name} />
 
-			{#if bg.TBG_link}
+			{#if bg.TBG_links}
 				<div class="tooltip" data-tip="external link">
 					<div class="btn btn-square">
-						<a href={bg.TBG_link} target="_blank">
+						<a href={bg.TBG_links} target="_blank">
 							<LinkIcon size="2x" />
 						</a>
 					</div>

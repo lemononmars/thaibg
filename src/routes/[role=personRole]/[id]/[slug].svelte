@@ -110,7 +110,7 @@
 			<h3>Bio</h3>
 			<p>{@html person.Person_description || '-'}</p>
 			<ContactLinks
-				links={person.Person_link}
+				links={person.Person_links}
 				email={person.Person_email}
 			/>
 			<EditButton type={'person'} id={person.Person_ID}/>

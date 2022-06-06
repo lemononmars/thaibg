@@ -1,5 +1,5 @@
 <script context=module lang=ts>
-	import { getSubmissionPackage, TypeSubmissionAllowed, multilinksAllowedList } from '$lib/datatypes';
+	import { getSubmissionPackage, TypeSubmissionAllowed } from '$lib/datatypes';
 	import type { SubmissionPackage, AdminSettings } from '$lib/datatypes';
 	import { fromBucket, getVarPrefix } from '$lib/supabase';
 	import type { SubmissionData } from '$lib/supabase';
@@ -291,8 +291,7 @@ import GoogleMapFinder from '$lib/components/GoogleMapFinder.svelte';
 						<input type="checkbox" bind:checked={currentData[k]} class="checkbox" disabled={editingKey !== k}/>
 					{:else if k.includes('description')}
 						<textarea class="textarea textarea-bordered" bind:value={currentData[k]} disabled={editingKey !== k}/>
-					{:else if k.includes('link') 
-						&& multilinksAllowedList.includes(k.slice(0,k.indexOf('_'))?.toLowerCase())}
+					{:else if k.includes('link')}
 						<MultipleSelect bind:selects={submission[k]} />
 					{:else}
 						<input type="text" class="input input-bordered" bind:value={currentData[k]} disabled={editingKey !== k}/>

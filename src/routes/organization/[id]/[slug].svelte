@@ -80,7 +80,7 @@
 							/>
 						</div>
 					</div>
-					<ContactLinks links={organizationData.Organization_link}/>
+					<ContactLinks links={organizationData.Organization_links}/>
 					<div>
 						<h3>Edit: </h3>
 						<EditButton type="organization" id={organizationData.Organization_ID}/>

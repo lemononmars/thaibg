@@ -2,13 +2,14 @@ export interface Designer extends DesignerSubmission {
 	Designer_ID: number;
 	Designer_slug: string;
 	Designer_picture: string;
+	Desigener_cache: Record<string, any>;
 	Designer_Relation?: DesignerRelation[];
 }
 
 export const DesignerDatabaseKeys = [
 	'Designer_name',
 	'Designer_name_th',
-	'Designer_link',
+	'Designer_links',
 	'Designer_description',
 	'Designer_show'
 ];
@@ -18,7 +19,7 @@ export interface DesignerSubmission {
 	Designer_name: string;
 	Designer_name_th: string;
 	Designer_description: string;
-	Designer_link: string;
+	Designer_links: string[];
 }
 
 export const DesignerRelationArray = ['person', 'boardgame'];
@@ -37,6 +38,6 @@ export const DesignerSubmissionPackage = () => {
 		keys: DesignerDatabaseKeys,
 		relations: DesignerRelationArray,
 		selects: {},
-		multiselects: {}
+		multiselects: {},
 	};
 };

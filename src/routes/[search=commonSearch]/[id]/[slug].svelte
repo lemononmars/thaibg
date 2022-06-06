@@ -75,8 +75,10 @@
 
 	let youtubeID: string;
 	let pageName: string = pageData[prefix + '_name'] || pageData[prefix + '_name_th']
-	if((pageType === 'content') && pageData.Content_link?.includes('youtube'))
-		youtubeID = pageData.Content_link.slice(pageData.Content_link.indexOf('=')+1)
+
+	function getYoutubeID(link: string){
+		return link.slice(pageData.Content_links.indexOf('=')+1)
+	}
 </script>
 
 <Seo title="{pageType}" />
@@ -98,12 +100,12 @@
 		<div class="divider" />
 		{#each keys as k}
 			<h2>{$_(`key.${k}`)}</h2>
-			{#if k === 'Content_link'}
-				{#if youtubeID}
-				<iframe width="300" height="200" src="https://www.youtube.com/embed/{youtubeID}?controls=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-				{:else}
-					<a href={pageData.Content_link} target="_blank">{pageData.Content_link}</a>
-				{/if}
+			{#if k === 'Content_links'}
+				{#each pageData[k] as link}
+					{#if link.includes('youtube')}
+						<iframe width="300" height="200" src="https://www.youtube.com/embed/{getYoutubeID(link)}?controls=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+					{/if}
+				{/each}	
 			{:else if k.includes("location")}
 				{#if pageData?.Shop_location?.location}
 					<div class="h-40 w-full">
@@ -120,12 +122,12 @@
 			{/if}
 		{/each}
 		<div class="divider" />
-		{#if pageData[prefix + '_link']}
-			<ContactLinks links={pageData[prefix + '_link']}/>
+		{#if pageData[prefix + '_links']}
+			<ContactLinks links={pageData[prefix + '_links']}/>
 		{/if}
 		<div class="flex flex-row items-center gap-2">
 			<h2>Share:</h2> 
-			<Social url={pageData[prefix + '_link']} title={pageData[prefix + '_name']} />
+			<Social url={pageData[prefix + '_links']} title={pageData[prefix + '_name']} />
 		</div>
 		<h2>Edit this page:
 			<EditButton type={pageType} id={pageData[prefix + '_ID']}/>

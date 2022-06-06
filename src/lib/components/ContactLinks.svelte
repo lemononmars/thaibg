@@ -1,14 +1,8 @@
 <script lang="ts">
 	import SocialIcons from '@rodneylab/svelte-social-icons'
-	export let links: string[] | string, email:string = null;
-
-	// some TYPE_link are arrays, some are strings
-	// so we need to convert them all to an array
-	if(!Array.isArray(links)) {
-		// it is possible we have stringified an array as a string
-		// so we need to parse it back
-		links = [links]
-	}
+	export let 
+		links: string[], 
+		email:string = null;
 
 	function getIcon(url: string){
 		if(!url)

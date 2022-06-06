@@ -12,6 +12,7 @@ export * from './personRoles';
 export * from './Organization';
 export * from './organizationRoles';
 export * from './AdminSettings'
+export * from './Submission'
 
 export const TypeSubmissionAllowed = [
 	'artist',
@@ -35,25 +36,7 @@ export const TypeSubmissionAllowed = [
 ];
 
 export const TypeNamesArray = [
-	'artist',
-	'boardgame',
-	'category',
-	'content',
-	'contentcreator',
-	'designer',
-	'event',
-	'graphicdesigner',
-	'honor',
-	'manufacturer',
-	'mechanics',
-	'organization',
-	'person',
-	'playtester',
-	'producer',
-	'publisher',
-	'rulebookeditor',
-	'shop',
-	'sponsor',
+	...TypeSubmissionAllowed,
 	'type',
 ];
 
@@ -72,21 +55,14 @@ export type TypeName =
 	| 'category'
 	| 'manufacturer'
 	| 'organization'
+	| 'contentcreator'
 export type TypeNameRole =
 	| 'designer'
 	| 'graphicdesigner'
-	| 'contentcreator'
 	| 'artist'
 	| 'playtester'
 	| 'rulebookeditor'
 	| 'producer';
-
-export const multilinksAllowedList = [
-	'organization',
-	'person',
-	'contentcreator',
-	'artist'
-]
 
 export interface SubmissionPackage {
 	submission: any;

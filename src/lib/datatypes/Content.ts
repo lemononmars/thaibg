@@ -7,7 +7,7 @@ export const ContentDatabaseKeys = [
 	'Content_name',
 	'Content_media',
 	'Content_type',
-	'Content_link',
+	'Content_links',
 	'Content_description',
 	'Content_show'
 ];
@@ -15,7 +15,7 @@ export const ContentDatabaseKeys = [
 export interface ContentSubmission {
 	Content_show: boolean;
 	Content_name: string;
-	Content_link: string;
+	Content_links: string[];
 	Content_description: string;
 	Content_media: ContentMedia;
 	Content_type: ContentType;
@@ -56,7 +56,7 @@ export const ContentSubmissionPackage = () => {
 			"Content_name",
 			"Content_media",
 			"Content_type",
-			"Content_link"
+			"Content_links"
 		]
 	};
 };

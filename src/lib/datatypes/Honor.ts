@@ -10,7 +10,7 @@ export const HonorDatabaseKeys = [
 	'Honor_year',
 	'Honor_type',
 	'Honor_organizer',
-	'Honor_link',
+	'Honor_links',
 	'Honor_description',
 	'Honor_picture',
 	'Honor_show'
@@ -19,7 +19,7 @@ export const HonorDatabaseKeys = [
 export interface HonorSubmission {
 	Honor_name: string;
 	Honor_name_th: string;
-	Honor_link: string;
+	Honor_links: string[];
 	Honor_description: string;
 	Honor_location: string;
 	Honor_time_start: Date;

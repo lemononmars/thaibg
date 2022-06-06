@@ -2,7 +2,7 @@
 export const MechanicsDatabaseKeys = [
 	'Mech_name',
 	'Mech_category',
-	'Mech_link',
+	'Mech_links',
 	'Mech_description',
 ];
 
@@ -13,7 +13,7 @@ export interface Mechanics extends MechanicsSubmission{
 
 export interface MechanicsSubmission{
 	Mech_name: string;
-	Mech_link: string;
+	Mech_links: string;
 	Mech_description: string;
 	Mech_category: string;
 	Mech_picture: string;

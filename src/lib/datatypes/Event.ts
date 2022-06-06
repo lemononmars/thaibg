@@ -11,7 +11,7 @@ export const EventDatabaseKeys = [
 	'Event_time_start',
 	'Event_time_end',
 	'Event_organizer',
-	'Event_link',
+	'Event_links',
 	'Event_description',
 	'Event_picture',
 	'Event_show'
@@ -20,7 +20,7 @@ export const EventDatabaseKeys = [
 export interface EventSubmission {
 	Event_show: boolean;
 	Event_name: string;
-	Event_link: string;
+	Event_links: string[];
 	Event_description: string;
 	Event_location: string;
 	Event_time_start: Date;

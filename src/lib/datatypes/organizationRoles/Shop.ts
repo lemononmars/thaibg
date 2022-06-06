@@ -1,8 +1,7 @@
-import { json } from "svelte-i18n";
-
 export interface Shop extends ShopSubmission {
 	Shop_ID: number;
 	Shop_slug: string;
+	Shop_cache: Record<string, any>;
 	Shop_Relation?: ShopRelation[];
 }
 
@@ -14,7 +13,7 @@ export const ShopDatabaseKeys = [
 	'Shop_year_start',
 	'Shop_capacity',
 	'Shop_description',
-	'Shop_link',
+	'Shop_links',
 	'Shop_type',
 	'Shop_picture',
 	'Shop_show'
@@ -23,7 +22,7 @@ export const ShopDatabaseKeys = [
 export interface ShopSubmission {
 	Shop_show: boolean;
 	Shop_name: string;
-	Shop_link: string;
+	Shop_links: string;
 	Shop_description: string;
 	Shop_picture: string;
 	Shop_province: string;
@@ -54,6 +53,7 @@ interface Location {
 	lng: number
 }
 
+// for google map
 export interface ShopLocation {
 	place_id?: string,
 	formatted_address?: string,
@@ -67,7 +67,7 @@ export const ShopSubmissionPackage = () => {
 		relations: ShopRelationArray,
 		selects: {
 			Shop_status: ShopStatusArray,
-			Shop_province: ThaiProvinceArray
+			Shop_province: ThaiProvinceMap
 		},
 		multiselects: {
 			Shop_type: ShopTypeArray
