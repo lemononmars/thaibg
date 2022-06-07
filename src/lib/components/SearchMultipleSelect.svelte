@@ -1,15 +1,11 @@
 <script lang=ts>
 	import { getVarPrefix } from '$lib/supabase';
-	import { DeleteIcon, SearchIcon } from 'svelte-feather-icons';
+	import { ChevronDownIcon, DeleteIcon, SearchIcon } from 'svelte-feather-icons';
 	import {_} from 'svelte-i18n'
 	import Spinner from './Spinner.svelte';
 	import { getTypeIcon	} from '$lib/assets/icons'
-
-	export let selects = [];
-	export let type: string;
-	export let relation: string = null
-	const typeIcon = getTypeIcon(type)
-
+	import {onMount} from 'svelte'
+	
 	interface TBGShopData extends simpleData {
 		Shop_TBG_playable: boolean,
 		Shop_TBG_obtainable: boolean,
@@ -26,25 +22,62 @@
 		name_th?: string
 	}
 
+	export let selects = [];
+	export let type: string;
+	export let relation: string = null
+	let staticData: simpleData[] = []
+	const staticTypes = ['type', 'category', 'mechanics']
+	const isStatic: boolean = staticTypes.includes(type)
+
+
+	onMount(async()=>{
+		if(isStatic) {
+			const res = await fetch(`/api/${type}`);
+			if (res.ok) {
+				const data = await res.json();
+				staticData = data.map((d) => ({
+					id: d[getVarPrefix(type) + '_ID'],
+					name: d[getVarPrefix(type) + '_name'],
+					name_th: d[getVarPrefix(type) + '_name_th']
+				})).sort((a,b)=>{
+					return a.name?.localeCompare(b.name)
+				});
+				searchedData = staticData
+			}
+		}
+	})
+
+	const typeIcon = getTypeIcon(type)
+
 	let searchString: string = '';
 	let searchedData: simpleData[];
 	let searchCount: number = 0;
 
 	let typingTimer: ReturnType<typeof setTimeout>
-	let isTyping = false
+	let isTyping: boolean = false
+	let revealOptions: boolean = false
 
 	function startTyping() {
 		isTyping = true
-		searchedData = []
+		if(!isStatic)
+			searchedData = []
 		clearTimeout(typingTimer)
 	}
 
 	function stopTyping() {
 		clearTimeout(typingTimer)
-		typingTimer = setTimeout(search, 500)
+		if(isStatic) 
+			search()
+		else
+			typingTimer = setTimeout(search, 500)
 	}
 
 	async function search() {
+		if(isStatic) {
+			searchedData = staticData.filter(d=>
+				d.name?.includes(searchString) || d.name_th?.includes(searchString)
+			)
+		}
 		const res = await fetch(`/api/${type}?search=${searchString}`);
 		if (res.ok) {
 			const data = await res.json();
@@ -63,7 +96,7 @@
 		if(selects.every(selected => selected.id != data.id))
 			selects = [...selects, data];
 		searchString = '';
-		searchedData = null;
+		revealOptions = false
 	}
 </script>
 
@@ -85,36 +118,46 @@
 						<label class="input-group input-group-xs">
 							<input
 								type="text"
-								placeholder={"Search"}
+								placeholder={isStatic? "Select": "Search"}
 								class="input input-xs input-bordered w-36"
 								bind:value={searchString}
 								on:keyup={() => stopTyping()}
 								on:keydown={()=> startTyping()}
 							/>
-							<div class="btn btn-xs"><SearchIcon size="20"/></div>
+							<div class="btn btn-xs" on:click={()=>revealOptions = !revealOptions}>
+								{#if isStatic}
+									<ChevronDownIcon size="20"/>
+								{:else}
+									<SearchIcon size="20"/>
+								{/if}
+							</div>
 						</label>
 					</div>
 				</div>
 			</label>
 			<ul
 				tabindex="0"
-				class="p-2 shadow menu dropdown-content bg-base-100 rounded-box w-full"
-				class:hidden={searchString.length == 0}
+				class="p-2 shadow menu dropdown-content bg-base-100 rounded-box w-full h-80 overflow-auto"
+				class:hidden={searchString.length == 0 && !revealOptions}
 			>
 				{#if isTyping}
 					<li><Spinner /></li>
 				{:else if searchedData}
 					{#each searchedData as d}
 						<li>
-							<div class="btn btn-ghost" on:click={() => select(d)}>
+							<div class="btn btn-ghost btn-xs" on:click={() => select(d)}>
 								{d.name || ''}{d.name && d.name_th? ' - ' : ''}{d.name_th || ''}
 							</div>
 						</li>
 					{:else}
-						<li><div class="btn btn-outline btn-error"> <a href="/create/{type}" target="_blank">Create new {type}</a></div></li>
+						{#if !isStatic}
+							<li><div class="btn btn-outline btn-error btn-xs text-left"> <a href="/create/{type}" target="_blank">Create new {type}</a></div></li>
+						{:else}
+						<li><div class="btn btn-outline btn-error btn-xs text-left"> Not found </div></li>
+						{/if}
 					{/each}
-					{#if searchCount > 15}
-						<li><div class="btn btn-outline btn-info">{searchCount - 15} more...</div></li>
+					{#if searchCount > 15 && !isStatic}
+						<li><div class="btn btn-outline btn-info btn-xs btn-disabled">{searchCount - 15} more...</div></li>
 					{/if}
 				{/if}
 			</ul>

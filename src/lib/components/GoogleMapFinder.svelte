@@ -1,6 +1,6 @@
 <script lang=ts>
    import type {ShopLocation} from '$lib/datatypes'
-   import { createEventDispatcher, onMount } from 'svelte'
+   import { createEventDispatcher } from 'svelte'
 
 	const dispatch = createEventDispatcher();
 
@@ -10,10 +10,6 @@
 
    let selectedPlace: ShopLocation = {}
    let place: any
-
-   onMount(async()=>{
-      initMap()
-   })
 
    function initMap(): void {
       const map = new google.maps.Map(
@@ -84,7 +80,7 @@
    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
    <script
      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCt3-uv6RT2jnV8nYYoArO7vRA_azJbLFg&libraries=places&v=weekly"
-     defer async
+     defer async on:load={initMap}
    />
 </svelte:head>
 

@@ -88,7 +88,7 @@
 	}
 	$: activeRolePrefix = getVarPrefix(activeRole)
 
-	const nonKeys = ['picture', 'slug', 'show', 'link']
+	const nonKeys = ['picture', 'slug', 'show', 'link', 'description']
 	let activeRoleKeys = getKeys() // move link to the bottom of the page
 
 	let roleDataPromise: Promise<OrganizationRole>;
@@ -154,7 +154,9 @@
 		</div>
 	</div>
 
-	<div class="flex flex-col w-full lg:w-3/4 text-left p-2 justify-center">
+	<div class="divider lg:hidden w-full"></div>
+	<!-- Second column: role tabs-->
+	<div class="flex flex-col w-full lg:w-3/4 text-left p-2">
 		<div class="tabs w-full mx-auto flex-grow">
 			{#each availableRoles as r, idx}
 				<!-- svelte-ignore a11y-missing-attribute -->
@@ -186,40 +188,46 @@
 				<Spinner />
 			{:then res}
 				{#if res}
-					<div class="flex flex-row gap-4">
-						<div class="flex flex-col gap-2">
-							<div class="avatar">
-								<div class="h-72 mask mask-circle hover:scale-110 duration-200 mx-auto">
-									<img
-										src={getImageURL(activeRole, res[activeRolePrefix + '_picture'])}
-										alt="image of {activeRole}"
-										on:error|once={(ev) => (ev.target.src = getDefaultImageURL(activeRole))}
-									/>
+					<div class="flex flex-col">
+						<div class="flex flex-col lg:flex-row gap-4">
+							<div class="flex flex-col gap-2 w-72">
+								<div class="avatar">
+									<div class="h-36 mask mask-circle hover:scale-110 duration-200 mx-auto">
+										<img
+											src={getImageURL(activeRole, res[activeRolePrefix + '_picture'])}
+											alt="image of {activeRole}"
+											on:error|once={(ev) => (ev.target.src = getDefaultImageURL(activeRole))}
+										/>
+									</div>
 								</div>
 							</div>
+							<div>
+							{#each activeRoleKeys as k}
+								<h2>{$_(`key.${k}`)}</h2>
+								{#if k.includes("location")}
+									{#if res[activeRolePrefix + '_location'].location}
+										<div class="h-40 w-full">
+											<GoogleMapDisplay 
+												place={res[activeRolePrefix + '_location']} 
+												name={res[activeRolePrefix + '_name']} 
+												id={res[activeRolePrefix + '_ID']}
+											/>
+										</div>
+									{/if}
+									<p class="text-sm">{res[k]? res[k].formatted_address : $_('incomplete')}</p>
+								{:else}
+									<p class="whitespace-pre-wrap">{res[k] || $_('incomplete')}</p>
+								{/if}
+							{/each}
+							</div>
+						</div>
+						<div class="flex flex-col gap-2 place-content-start">
 							<ContactLinks
 								links={res[activeRolePrefix + '_links']}
 							/>
 							<EditButton type={activeRole} id={activeRoleID}/>
-						</div>
-						<div>
-						{#each activeRoleKeys as k}
-							<h2>{$_(`key.${k}`)}</h2>
-							{#if k.includes("location")}
-								{#if res[activeRolePrefix + '_location'].location}
-									<div class="h-40 w-full">
-										<GoogleMapDisplay 
-											place={res[activeRolePrefix + '_location']} 
-											name={res[activeRolePrefix + '_name']} 
-											id={res[activeRolePrefix + '_ID']}
-										/>
-									</div>
-								{/if}
-								<p class="text-sm">{res[k]? res[k].formatted_address : $_('incomplete')}</p>
-							{:else}
-								<p class="whitespace-pre-wrap">{res[k] || $_('incomplete')}</p>
-							{/if}
-						{/each}
+							<h2>{$_(`key.${activeRolePrefix + '_description'}`)}</h2>
+							<p class="whitespace-pre-wrap">{res[activeRolePrefix + '_description']}</p>
 						</div>
 					</div>
 				{/if}

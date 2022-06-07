@@ -19,8 +19,16 @@
 		dropdownOpen = false;
 	}
 
-	function addNewSelect(event: KeyboardEvent) {
+	function handleKeyPress(event: KeyboardEvent) {
 		if (event.code != "Enter") return;
+		addNewSelect()
+	}
+	function addNewSelect() {
+		if(!searchString) return;
+		
+		// sanitize link: remove http:// prefix
+		if(searchString.includes('//'))
+			searchString = searchString.slice(searchString.indexOf('//') + 2)
 
 		selects = [...selects, searchString];
 		searchString = '';
@@ -39,10 +47,10 @@
 						placeholder="Type here"
 						class="input input-bordered w-70"
 						bind:value={searchString}
-						on:keypress={addNewSelect}
+						on:keypress={handleKeyPress}
 						on:focus={() => (dropdownOpen = true)}
 					/>
-					<div class="btn">
+					<div class="btn" on:click={addNewSelect}>
 						<PlusCircleIcon size="20" />
 					</div>
 				</div>
@@ -55,13 +63,13 @@
 		>
 			{#each filteredOptions as d}
 				<li>
-					<div class="btn btn-ghost" on:click={() => select(d)}>
+					<div class="btn btn-ghost btn-xs" on:click={() => select(d)}>
 						{d}
 					</div>
 				</li>
 			{:else}
 				<li>
-					<div class="btn btn-outline btn-info" on:click={() => select(searchString)}>
+					<div class="btn btn-outline btn-xs btn-info" on:click={() => select(searchString)}>
 						Add "{searchString}"
 					</div>
 				</li>
@@ -76,7 +84,7 @@
 				selects = selects;
 			}}
 		>
-			<p class="truncate">{s}</p>
+			<p class="w-60 truncate">{s}</p>
 			<DeleteIcon size="20" />
 		</div>
 	{/each}

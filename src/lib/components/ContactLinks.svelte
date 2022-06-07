@@ -23,6 +23,8 @@
 			return 'discord' as const
 		if(url.includes('@'))
 			return 'email' as const
+		if(url.includes('instagram'))
+			return 'instagram' as const
 		return 'squarespace' as const
 	}
 </script>

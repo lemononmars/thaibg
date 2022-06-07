@@ -41,7 +41,6 @@ export const BoardgameDatabaseKeys2 = [
 	'TBG_player_max',
 	'TBG_playtime_min',
 	'TBG_playtime_max',
-	'BGG_links',
 	'BGG_ID',
 ];
 
@@ -56,7 +55,6 @@ export interface BoardgameSubmission {
 	TBG_age: number;
 	TBG_weight: number;
 	BGG_ID: number;
-	BGG_links: string;
 	TBG_released: number;
 	TBG_player_min: number;
 	TBG_player_max: number;
