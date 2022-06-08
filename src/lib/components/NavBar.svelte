@@ -96,7 +96,7 @@
 		}
 		const reportObject = {
 			Report_url: $page.url,
-			Report_content: reportString
+			Report_content: reportString,
 		}
 		const res = await fetch('/api/post/report', {
          method: 'POST',

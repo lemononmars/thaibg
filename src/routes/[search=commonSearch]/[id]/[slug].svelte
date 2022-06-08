@@ -48,8 +48,9 @@
 
 	export let pageData, pageID: number, pageType: TypeName;
 	let prefix = getVarPrefix(pageType)
-	const nonKeys = ['picture', 'slug', 'show', 'name', 'link'] // move link to the bottom of the page
-	const keys = getSubmissionPackage(pageType).keys.filter(k => 
+	const nonKeys = ['picture', 'slug', 'show', 'name', 'links'] // move link to the bottom of the page
+	const allKeys = getSubmissionPackage(pageType).keys
+	const filteredKeys = allKeys.filter(k => 
 		nonKeys.every(
 			kk => !k.includes(kk)
 		)
@@ -73,11 +74,10 @@
 			promiseRelations[r] = getRelations(pageType, r, pageID)
 	});
 
-	let youtubeID: string;
 	let pageName: string = pageData[prefix + '_name'] || pageData[prefix + '_name_th']
 
 	function getYoutubeID(link: string){
-		return link.slice(pageData.Content_links.indexOf('=')+1)
+		return link.slice(link.indexOf('=')+1)
 	}
 </script>
 
@@ -85,7 +85,7 @@
 <div class="flex flex-col lg:flex-row text-left gap-6 p-4">
 	<!-- first column-->
 	<div class="flex flex-col w-full lg:w-1/5 max-w-none gap-2">
-		<div class="avatar hover:scale-110 transition duration-200 mx-auto">
+		<!-- <div class="avatar hover:scale-110 transition duration-200 mx-auto">
 			<div class="w-60 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
 				<img
 					src={getImageURL(pageType, pageData[prefix + '_picture'])}
@@ -93,20 +93,14 @@
 					on:error|once={(ev) => (ev.target.src = getDefaultImageURL(pageType))}
 				/>
 			</div>
-		</div>
+		</div> -->
 
 		<h1>{pageName}</h1>
 		<h2>{pageData[prefix + '_name'] ? pageData[prefix + '_name_th'] || '': ''} </h2>
 		<div class="divider" />
-		{#each keys as k}
+		{#each filteredKeys as k}
 			<h2>{$_(`key.${k}`)}</h2>
-			{#if k === 'Content_links'}
-				{#each pageData[k] as link}
-					{#if link.includes('youtube')}
-						<iframe width="300" height="200" src="https://www.youtube.com/embed/{getYoutubeID(link)}?controls=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-					{/if}
-				{/each}	
-			{:else if k.includes("location")}
+			{#if k.includes("location")}
 				{#if pageData?.Shop_location?.location}
 					<div class="h-40 w-full">
 						<GoogleMapDisplay 
@@ -121,6 +115,20 @@
 				<p class="whitespace-pre-wrap">{pageData[k] || $_('incomplete')}</p>
 			{/if}
 		{/each}
+		{#if allKeys.includes('Content_links')}
+			{#each pageData.Content_links as link}
+				{#if link.includes('youtube')}
+					<iframe width="250" height="150" 
+						src="https://www.youtube.com/embed/{getYoutubeID(link)}?controls=0" 
+						title="YouTube video player" 
+						frameborder="0" 
+						allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+						allowfullscreen
+						class="mx-auto"
+					/>
+				{/if}
+			{/each}
+		{/if}
 		<div class="divider" />
 		{#if pageData[prefix + '_links']}
 			<ContactLinks links={pageData[prefix + '_links']}/>

@@ -1,6 +1,6 @@
 <script context=module lang="ts">
 	import type { TypeName, PersonRole } from '$lib/datatypes';
-	import { personRoles } from '$lib/datatypes';
+	import { personRoles, getDataTableColumns } from '$lib/datatypes';
 	import { getVarPrefix } from '$lib/supabase';
 
 	export async function load({ params, fetch, url }) {
@@ -15,7 +15,8 @@
 			props: {
 				people: filteredData,
 				role,
-				searchString
+				searchString,
+				dataTableColumns: getDataTableColumns(role)
 			}
 		};
 	}
@@ -27,7 +28,7 @@
 	import SearchBar from '$lib/components/SearchBar.svelte';
 	import { _ } from 'svelte-i18n';
 
-	export let people: PersonRole[], searchString: string = '';
+	export let people: PersonRole[], searchString: string = '', dataTableColumns: Record<string, string[]>;
 	export let role: TypeName; // see below
 	const prefix = getVarPrefix(role)
 
@@ -63,11 +64,6 @@
 		option = -1;
 		searchString = '';
 	}
-
-	const dataTableColumns = {
-		headers: [],//['Number of Board Games', 'Latest Work', 'Last Updated'],
-		body: []//['numBoardgames', 'latestWork', 'lastUpdated']
-	};
 </script>
 
 <Seo title="People" />

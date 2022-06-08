@@ -11,7 +11,7 @@
 		name_th?: string
 	}
 	
-	const searchTypes = ['boardgame', 'person', 'publisher', 'shop', 'contentcreator', 'mechanics']
+	const searchTypes = ['boardgame', 'person', 'organization', 'mechanics']
 	let searchPromise: Record<string, Promise<any>> = {};
 	searchTypes.forEach(t => {
 		searchPromise[t] = null

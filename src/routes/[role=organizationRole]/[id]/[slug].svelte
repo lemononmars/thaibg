@@ -205,7 +205,7 @@
 							{#each activeRoleKeys as k}
 								<h2>{$_(`key.${k}`)}</h2>
 								{#if k.includes("location")}
-									{#if res[activeRolePrefix + '_location'].location}
+									{#if res[activeRolePrefix + '_location']?.location}
 										<div class="h-40 w-full">
 											<GoogleMapDisplay 
 												place={res[activeRolePrefix + '_location']} 

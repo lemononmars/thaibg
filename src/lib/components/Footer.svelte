@@ -3,8 +3,8 @@
 	import { _ } from 'svelte-i18n';
 
 	const boardgameMenu = ['boardgame', 'type', 'mechanics', 'category'];
-	const personMenu = ['designer','graphicdesigner','artist','playtester','rulebookeditor','producer'];
-	const organizationMenu = ['publisher','manufacturer','sponsor','shop','contentcreator'];
+	const personMenu = ['person', 'designer','graphicdesigner','artist','playtester','rulebookeditor','producer'];
+	const organizationMenu = ['organization', 'publisher','manufacturer','sponsor','shop','contentcreator'];
 	const activityMenu = ['content','honor','event'];
 	const websiteMenu = ['about','termofuse','contact', 'glossary']
 

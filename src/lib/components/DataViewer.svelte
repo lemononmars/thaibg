@@ -146,8 +146,17 @@
 											<ShopStatusBadge status={d[t]} showText={true} />
 										{:else if Array.isArray(d[t])}
 											{#each d[t] as a}
-												<div class="badge">{a}</div>
+												<div class="badge badge-outline">{a}</div>
 											{/each}
+										{:else if t.includes('cache')}
+											{@const cache = d[t.slice(0, t.indexOf('.'))]}
+											{#if t.includes('latestTBG')}
+												<a href='/boardgame/{cache.latestTBG.TBG_ID}'>{cache.latestTBG.TBG_name || cache.latestTBG.TBG_name_th || '-'}</a>
+											{:else if t.includes('latestContent')}
+												<a href='/content/{cache.latestContent.Content_ID}'><p class="truncate">{cache.latestContent.Content_name || '-'}</p></a>
+											{:else}
+												{cache[t.slice(t.indexOf('.')+1)]}
+											{/if}
 										{:else}
 											{d[t] || '-'}
 										{/if}

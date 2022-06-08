@@ -16,13 +16,13 @@
 	}
 
 	export async function getContents() {
-		const res = await fetch('/api/content');
+		const res = await fetch('/api/content?select=ID,name,slug,type,media');
 		const data = await res.json();
 		return { contents: data.slice(-10) };
 	}
 
 	export async function getHotnessBoardgames() {
-		const resBG = await fetch('/api/boardgame');
+		const resBG = await fetch('/api/boardgame?select=ID,name,name_th,picture,slug,description');
 		const dataBG = await resBG.json();
 		const numBoardgames = dataBG.length;
 		const NUM_BOARDGAMES_SHOWN = 10;

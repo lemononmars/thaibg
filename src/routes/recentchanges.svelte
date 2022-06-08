@@ -21,6 +21,10 @@
 <script lang=ts>
 	export let data: SubmissionPublic[]
 
+	$: filteredData = data.slice(0, numEntries)
+	let numEntries: number = 20
+	let numEntriesAllowed: number[] = [20, 50, 100]
+
 	const tableInfo = {
 		headers: ['Type', 'Page type', 'ID', 'Username', 'Date', 'Status'],
 		body: [
@@ -34,8 +38,19 @@
 	};
 </script>
 
-<div class="overflow-x-auto w-full py-20">
-	<table class="table w-full">
+
+<div class="overflow-x-clip w-full py-20">
+	<div class="btn-group my-2">
+		<button class="btn btn-ghost btn-disabled btn-xs">Show</button>
+		{#each numEntriesAllowed as n}
+			<button 
+				class="btn btn-xs" 
+				class:btn-active={numEntries == n}
+				on:click={()=>numEntries = n}
+			>{n}</button>
+		{/each}
+	 </div>
+	<table class="table w-full table-compact table-zebra">
 		<thead>
 			<tr>
 				{#each tableInfo.headers as t}
@@ -45,7 +60,7 @@
 		</thead>
 		<!-- Table body -->
 		<tbody>
-			{#each data as d}
+			{#each filteredData as d}
 				<tr>
 					{#each tableInfo.body as t}
                   <td class="break-words">

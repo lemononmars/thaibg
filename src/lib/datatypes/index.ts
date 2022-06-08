@@ -218,6 +218,11 @@ const BLANK_COLUMNS = {
 }
 export function getDataTableColumns(type: TypeName) {
 	switch(type) {
+		case 'boardgame':
+			return {
+				headers: ['Year', 'Status'],
+				body: ['TBG_released', 'TBG_status']
+			}
 		case 'event': 
 			return {
 				headers: ['Start', 'End', 'Type'],
@@ -233,28 +238,26 @@ export function getDataTableColumns(type: TypeName) {
 				headers: ['Type', 'Media'],
 				body: ['Content_type', 'Content_media']
 			}
-		case 'manufacturer':
-			return {
-				headers: ['Service'],//'Last Updated'],
-				body: ['Manufacturer_service']//, 'lastUpdated']
-			}
-		case 'publisher':
-			return {
-				headers: [],//['Number of Board Games', 'Latest Work', 'Last Updated'],
-				body: []//['numBoardgames', 'latestWork', 'lastUpdated']
-			}
-		case 'boardgame':
-			return {
-				headers: ['Year', 'Status'],
-				body: ['TBG_released', 'TBG_status']
-			}
 		case 'organization':
 			return  {
 				headers: ['Relation'],
 				body: ['Organization_relation']
 			}
+		case 'manufacturer':
+			return {
+				headers: ['Service', 'Published', 'Latest', 'Released'],
+				body: ['Manufacturer_service', 'Manufacturer_cache.numTBG', 'Manufacturer_cache.latestTBG', 'Manufacturer_cache.latestReleased']
+			}
+		case 'publisher':
+			return {
+				headers: ['Published', 'Latest', 'Released'],
+				body: ['Publisher_cache.numTBG', 'Publisher_cache.latestTBG', 'Publisher_cache.latestReleased']
+			}
 		case 'sponsor':
-			return BLANK_COLUMNS
+			return {
+				headers: ['Published', 'Latest', 'Released'],
+				body: ['Sponsor_cache.numTBG', 'Sponsor_cache.latestTBG', 'Sponsor_cache.latestReleased']
+			}
 		case 'shop':
 			return {
 				headers: ['Status', 'Province', 'Type'],
@@ -264,6 +267,41 @@ export function getDataTableColumns(type: TypeName) {
 			return {
 				headers: ['Artist', 'Designer', 'Graphic Designer', 'Playtester', 'Rulebook Editor', 'Producer'],
 				body: ['Artist_ID', 'Designer_ID', 'Graphicdesigner_ID', 'Playtester_ID', 'Rulebookeditor_ID', 'Producer_ID']
+			}
+		case 'artist':
+			return {
+				headers: ['Published', 'Latest', 'Released'],
+				body: ['Artist_cache.numTBG', 'Artist_cache.latestTBG', 'Artist_cache.latestReleased']
+			}
+		case 'designer':
+			return {
+				headers: ['Published', 'Latest', 'Released'],
+				body: ['Designer_cache.numTBG', 'Designer_cache.latestTBG', 'Designer_cache.latestReleased']
+			}
+		case 'graphicdesigner':
+			return {
+				headers: ['Published', 'Latest', 'Released'],
+				body: ['Graphicdesigner_cache.numTBG', 'Graphicdesigner_cache.latestTBG', 'Graphicdesigner_cache.latestReleased']
+			}
+		case 'playtester':
+			return {
+				headers: ['Published', 'Latest', 'Released'],
+				body: ['Playtester_cache.numTBG', 'Playtester_cache.latestTBG', 'Playtester_cache.latestReleased']
+			}
+		case 'rulebookeditor':
+			return {
+				headers: ['Published', 'Latest', 'Released'],
+				body: ['Rulebookeditor_cache.numTBG', 'Rulebookeditor_cache.latestTBG', 'Rulebookeditor_cache.latestReleased']
+			}
+		case 'producer':
+			return {
+				headers: ['Published', 'Latest', 'Released'],
+				body: ['Producer_cache.numTBG', 'Producer_cache.latestTBG', 'Producer_cache.latestReleased']
+			}
+		case 'contentcreator':
+			return {
+				headers: ['Created', 'Latest'],
+				body: ['Contentcreator_cache.numContent', 'Contentcreator_cache.latestContent']
 			}
 		default:
 			return BLANK_COLUMNS

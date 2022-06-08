@@ -18,9 +18,11 @@
 </script>
 
 <script lang="ts">
-	export let bg;
+	import type { Boardgame } from '$lib/datatypes';
 
-	let id: string = bg.TBG_ID;
+	export let bg: Boardgame;
+
+	let id: number = bg.TBG_ID;
 	let slug: string = bg.TBG_slug;
 	let picture: string = getImageURL('boardgame', bg.TBG_picture);
 	let name: string = bg.TBG_name || bg.TBG_name_th || '';
