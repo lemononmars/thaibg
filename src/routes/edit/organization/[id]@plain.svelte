@@ -1,43 +1,63 @@
 <script context=module lang=ts>
-	import { getSubmissionPackage, type AdminSettings } from '$lib/datatypes';
-	import type { SubmissionPackage } from '$lib/datatypes';
-	import { fromBucket, getVarPrefix, createSlug } from '$lib/supabase';
-	import type {SubmissionData} from '$lib/supabase'
+	import { getSubmissionPackage, organizationRoles} from '$lib/datatypes';
+	import type { SubmissionPackage, AdminSettings, Organization } from '$lib/datatypes';
+	import { createSlug, fromBucket, getVarPrefix } from '$lib/supabase';
+	import type { SubmissionData } from '$lib/supabase'
 	import type {Alert} from '$lib/alert/alert.type'
 	import {handleAlert} from '$lib/alert/alert.store'
 
-	export async function load({ session, fetch }) {
+	export async function load({ session, fetch, params }) {
+		const {id} = params;
 		const { user } = session
 
-		const adminSettings = await fetch('/api/adminsettings')
-		const data = await adminSettings.json()
+		const res = await fetch('/api/adminsettings')
+		const adminSettings = await res.json()
+		const res2 = await fetch(`/api/organization/${id}`)
+		const currentData: Organization = await res2.json()
 
 		// redirect if
 		// * type is invalid 
 		// * creating a new entry is not allowed
 		// * creating a new entry is allowed for registered user, not guest
-		if ((!data[0].allowCreate)
-			|| (!data[0].allowGuestCreate && !user)) {
+		if ((!adminSettings[0].allowEdit)
+			|| (!adminSettings[0].allowGuestEdit && !user)) {
 
 			let newAlert: Alert = {
 				type: 'error',
 				text: ''
 			}
-			if(!data[0].allowCreate) 
-				newAlert.text = 'Creating a new entry is not allowed. Please contact admin.'
+			if(!adminSettings[0].allowEdit) 
+				newAlert.text = 'Editing a new entry is not allowed. Please contact admin.'
 			else 
-				newAlert.text = 'Please login to create a new entry.'
+				newAlert.text = 'Please login to edit an entry.'
 			handleAlert(newAlert)
 
 			return {
 				status: 303,
-				redirect: '/create/'
+				redirect: '/'
 			};
+		}
+
+		let currentRolesData = []
+		const relations = JSON.parse(currentData.Organization_relation)
+
+		const roleKeys = Object.keys(relations)
+		for(const role of roleKeys) {
+			for(const roleID of relations[role]) {
+				const resRole = await fetch(`/api/${role}/${roleID}`)
+				currentRolesData = [...currentRolesData, {
+					type: role,
+					existing: true,
+					data: await resRole.json()
+				}]
+			}
 		}
 
 		return {
 			props: {
-				data: getSubmissionPackage('organization'),
+				submissionPackage: getSubmissionPackage('organization'),
+				currentData,
+				currentRolesData,
 				adminSettings
 			}
 		};
@@ -57,7 +77,6 @@
 		return res;
 	}
 
-	// TODO: make this a post request?
 	export async function uploadpicture(type: string, file: File, slug: string): Promise<string> {
 		// TODO: convert file? resize?
 		const randomID = Math.floor(Math.random() * 1000);
@@ -75,12 +94,6 @@
 		if (updateError) throw updateError;
 		return pictureSlug
 	}
-
-	export async function getNewOrganization(id: number){
-		const newOrganization = await fetch(`/api/organization/${id}`)
-		const data = await newOrganization.json()
-		return data
-	}
 </script>
 
 <script lang="ts">
@@ -90,29 +103,39 @@
 	import { fly } from 'svelte/transition'
 	import { quintOut } from 'svelte/easing'
 	import { _ } from 'svelte-i18n';
-	import { ChevronLeftIcon, ChevronRightIcon, EditIcon, MinusCircleIcon } from 'svelte-feather-icons';
-	import PlainCard from '$lib/components/PlainCard.svelte';
+	import { EditIcon , MinusCircleIcon, ChevronLeftIcon, ChevronRightIcon } from 'svelte-feather-icons';
 	import RoleButton from '$lib/components/RoleButton.svelte';
+	import InputEditForm from '$lib/components/InputEditForm.svelte';
+	import CreateCard from '../_createCard.svelte'
 	import InputForm from '$lib/components/InputForm.svelte';
-	import CreateCard from './_createCard.svelte'
-
-	export let submissionPackage: SubmissionPackage; // from load fucntion
-	export let adminSettings: AdminSettings
-	const type: string = 'organization';
-	let { submission, keys, relations, selects, multiselects, required } = submissionPackage; // destruct
-	submission.Organization_show = true // special case: default is true
 
 	// create an array for each relation
 	interface RoleObject {
 		type: string,
+		existing?: boolean,
 		data: Record<string, any>
 	}
-	let rolesAdded: RoleObject[] = [];
 
-	// extra info
-	let comment: string;
+	export let submissionPackage: SubmissionPackage,
+		adminSettings: AdminSettings,
+		currentData: Organization,
+		currentRolesData: RoleObject[]
+	const type: string = 'organization';
+	let { submission, keys, relations, selects, multiselects, required } = submissionPackage; // destruct
+	const varPrefix = getVarPrefix(type)
+	const currentDataID = currentData[varPrefix + '_ID']
 
-	const roleSubmissionPackage = {
+	// add Person_ID to submission
+	submission[varPrefix + '_ID'] = currentDataID
+
+	// create an array for each relation
+	let relationMultiSelects: Record<string, string[]> = {};
+	relations.forEach((r) => (relationMultiSelects[r] = []));
+
+	// add existing role data
+	let rolesAdded: RoleObject[] = currentRolesData
+
+	let roleSubmissionPackage = {
 		'manufacturer': getSubmissionPackage('manufacturer'),
 		'shop': getSubmissionPackage('shop'),
 		'sponsor': getSubmissionPackage('sponsor'),
@@ -123,6 +146,9 @@
 	$: editingRoleType = rolesAdded[editingRoleIndex]?.type
 	let editingRolePackage: SubmissionPackage
 
+	// extra info
+	let comment: string;
+
 	// show user a page based on the submission state
 	const enum State {
 		START,
@@ -132,18 +158,16 @@
 	}
 	let submitState = State.START;
 	let canSubmit: boolean = false
-	$: canSubmit = submission.Organization_name
+	$: canSubmit = required.every(r => !!submission[r] || !!currentData[r]) &&
+		(submission.Organization_name || currentData.Organization_name)
 
-	// these are used so that we can display a link to the newly created entry right away
-	let newIndex: number
-	let promiseNewOrganization: Promise<any>
 	let step: number = 0
 	let dir: number = 1
 
-	function addRole(role:string) {
+	function addRole(role: string) {
 		const rolePrefix = getVarPrefix(role)
 		const newRoleData = {
-			[`${rolePrefix}_name`]: submission.Organization_name,
+			[`${rolePrefix}_name`]: currentData.Organization_name,
 			[`${rolePrefix}_picture`]: submission.Organization_picture,
 			[`${rolePrefix}_show`]: true
 		}
@@ -172,8 +196,7 @@
 	}
 	
 	function handleSave () {
-		const roleType = rolesAdded[editingRoleIndex]['type']
-		const required = roleSubmissionPackage[roleType].required
+		const required = roleSubmissionPackage[editingRoleType].required
 		if (required && required.some((k: string) => !rolesAdded[editingRoleIndex]['data'][k])) {
 			const missingFields = required?.filter((k: string) => !rolesAdded[editingRoleIndex]['data'][k]).join(',')
 			const newAlert: Alert = {
@@ -190,7 +213,7 @@
 
 	async function handleSubmit() {
 		if (submitState != State.START && submitState != State.ERROR) return;
-		if (required && !required.every(r => !!submission[r])) {
+		if (required && !required.every(r => !!submission[r] || !!currentData[r])) {
 			const missingFields = required?.filter(r => !submission[r]).join(',')
 			const newAlert: Alert = {
 				type: 'error',
@@ -200,8 +223,8 @@
 			return
 		}
 
-		const typePrefix = getVarPrefix(type)
 		submitState = State.SUBMITTING;
+		const typePrefix = getVarPrefix(type)
 
 		// attach submitter's info
 		let id = 'guest',
@@ -216,20 +239,20 @@
 		// if only Thai name (_name_th) exists, treat it as no name
 		// might have to manually fix it in admin panel
 		const slug = createSlug(submission[typePrefix + '_name'])
-		submission[typePrefix + '_slug'] = slug
+		submission[typePrefix + '_slug'] = slug;
 
-		// upload organization's picture
 		const pictureFile = submission.Organization_picture
 		if(pictureFile && (typeof pictureFile !== 'string')) {
-			submission.Organization_picture = 
-			await uploadpicture("organization", pictureFile, slug);
+			const newPictureURL = 
+			await uploadpicture("person", pictureFile, slug);
+			submission.Organization_picture = newPictureURL
 		}
 
 		// upload each role's picture individually
 		for (const r in rolesAdded) {
 			const roleType = rolesAdded[r]['type']
 			const rolePictureFile = rolesAdded[r]['data'][getVarPrefix(roleType) + '_picture']
-			if(rolePictureFile) {
+			if(rolePictureFile && (typeof rolePictureFile !== 'string')) {
 				const rolPrefix = getVarPrefix(roleType)
 				const slug = createSlug(rolesAdded[r]['data'][rolPrefix + '_name'])
 				rolesAdded[r]['data'][rolPrefix + '_slug'] = slug
@@ -238,9 +261,6 @@
 			}
 		}
 
-		// convert the shape of rolesAdded
-		// from [{type: 'shop'}, {type:'manufacturere'}, ...]
-		// to {shop: [{}, {}, ...], manufacturer: [{}, ...]}
 		const rs = {}
 		for(const r of rolesAdded) {
 			if(!rs[r.type])
@@ -256,17 +276,14 @@
 			pageType: type,
 			id,
 			username,
-			type: 'new',
+			type: 'edit',
 			comment
 		});
 		if (res.ok) {
 			submitState = State.SUCCESS;
-			const resBody = await res.json()
-			newIndex = resBody.index
-			promiseNewOrganization = getNewOrganization(newIndex)
 			const newAlert: Alert = {
 				type: 'success',
-				text: 'Successfully submitted! with:' + newIndex
+				text: 'Successfully submitted!'
 			}
 			handleAlert(newAlert)
 		}
@@ -285,26 +302,23 @@
 	}
 </script>
 
-<Seo title="Create organization" />
+<Seo title="Edit organization" />
 {#if submitState == State.START || submitState == State.ERROR}
-<ul class="steps w-screen fixed top-0 -translate-x-1/2 glass z-10">
-	<li class="step" class:step-primary={step >= 0}>Basic info</li>
-	<li class="step" class:step-primary={step >= 1}>Role info</li>
-	<li class="step" class:step-primary={step >= 2}>Submit</li>
+<ul class="steps w-full fixed top-0 -translate-x-1/2 glass z-10">
+	<li class="step" class:step-primary={step >= 0} on:click={()=>step = 0}>Edit basic info</li>
+	<li class="step" class:step-primary={step >= 1} on:click={()=>step = 1}>Edit role info</li>
+	<li class="step" class:step-primary={step >= 2} on:click={()=>step = 2}>Submit</li>
  </ul>
- <div class="h-16"></div>
+<div class="h-16"></div>
 {#if step == 0}
-	<CreateCard bind:dir title={$_('page.create._') + " " + $_(`keyword.${type}`)}>
-		<form>
-			<div class="flex flex-col lg:flex-row lg:gap-10 place-items-start p-4">
-				<InputForm
-					{submissionPackage}
-					bind:inputs={submission}
-				>
-				</InputForm>
-			</div>
-		</form>
+	<CreateCard bind:dir title={$_('page.edit._') + $_(`keyword.${type}`)}>
+		<InputEditForm
+			{submissionPackage}
+			bind:inputs={submission}
+			{currentData}
+		/>
 	</CreateCard>
+
 	<div class="tooltip" data-tip={canSubmit? "":"please fill in either English or Thai name"}>
 		<div 
 			class="btn hover:translate-x-4"
@@ -316,56 +330,77 @@
 	</div>
 {:else if step == 1}
 	<CreateCard bind:dir title={$_('page.create.add_roles')}>
-	<!-- display organization roles-->
-	{#if (editingRoleIndex == -1)}
-		<div class="flex flex-col justify-center items-center py-2" in:fly={{ duration: 1000, y: 20, easing: quintOut }} >
-			<div class="grid grid-rows-2 lg:grid-rows-1 grid-flow-col justify-center gap-1 m-1">
-				{#each relations as role}
-					<div on:click={()=>addRole(role)}><RoleButton {role} icon={"add"}/></div>
+		<!-- display person roles-->
+		<!-- <p class="break-words w-screen">{JSON.stringify(currentData)} {JSON.stringify(rolesAdded)}</p> -->
+		{#if (editingRoleIndex == -1)}
+			<div class="flex flex-col justify-center items-center py-4" in:fly={{ duration: 1000, y: 20, easing: quintOut }} >
+				<div class="grid grid-rows-2 lg:grid-rows-1 grid-flow-col justify-center gap-1 m-1">
+					{#each relations as role}
+						<div 
+							on:click={()=>addRole(role)} 
+							class="shadow-md"
+						>
+							<RoleButton {role} icon={"add"}/>
+						</div>
+					{/each}
+				</div>
+				{#each rolesAdded as r, ridx}
+					<div class="flex flex-row justify-between items-center border-2 my-1 p-1" in:fly>
+						<div class="tooltip" data-tip="edit">
+							<div 
+								class="btn bg-success" 
+								on:click={()=>handleExpand(ridx)}
+							>	
+								<EditIcon size=20/>
+							</div>
+						</div>
+						<div class="w-48 text-sm truncate">
+							<p class="font-bold">{$_(`keyword.${r.type}`)}</p>
+							<p>{r.data[getVarPrefix(r.type) + '_name'] || ''}</p>
+						</div>
+						<div class="tooltip" data-tip="remove" class:hidden={r.existing}>
+							<div 
+								class="btn bg-error" 
+								on:click={()=>removeRole(ridx)}
+							>
+								<MinusCircleIcon size=20/>
+							</div>
+						</div>
+					</div>
 				{/each}
 			</div>
-			{#each rolesAdded as r, ridx}
-				<div class="flex flex-row justify-between items-center border-2 my-1 p-1" in:fly>
-					<div class="tooltip" data-tip="edit">
-						<div 
-							class="btn bg-success" 
-							on:click={()=>handleExpand(ridx)}
-						>	
-							<EditIcon size=20/>
-						</div>
-					</div>
-					<div class="w-60 text-sm truncate">
-						<p class="font-bold">{$_(`keyword.${r.type}`)}</p>
-						<p>{r.data[getVarPrefix(r.type) + '_name'] || ''}</p>
-					</div>
-					<div class="tooltip" data-tip="remove">
-						<div class="btn bg-error" on:click={()=>removeRole(ridx)}>
-							<MinusCircleIcon size=20/>
-						</div>
-					</div>
-				</div>
-			{/each}
-		</div>
-	{/if}
-	
-	<!-- edit a parcitular organization role -->
-	{#if (editingRoleIndex > -1)}
-		<div in:fly={{ duration: 1000, y: -20, easing: quintOut }} class="m-2">
-			<InputForm
-				submissionPackage={editingRolePackage}
-				bind:inputs={rolesAdded[editingRoleIndex]['data']}
-			>
-				<span slot="header">
-					Editing {editingRoleType}
-				</span>
-			</InputForm>
-			<div class="btn btn-error col-span-1" on:click={()=>removeRole(editingRoleIndex)}> Remove	</div>
-			<div class="btn btn-success col-span-2" on:click={handleSave}> Save	</div>
-		</div>
-	{/if}
+		{/if}
+		
+		<!-- edit a parcitular organization role -->
+		{#if (editingRoleIndex > -1)}
+			<div in:fly={{ duration: 1000, y: -20, easing: quintOut }} class="p-4">
+				{#if currentRolesData[editingRoleIndex]}
+					<InputEditForm
+						submissionPackage={editingRolePackage}
+						bind:inputs={rolesAdded[editingRoleIndex]['data']}
+						currentData={currentRolesData[editingRoleIndex]['data']}
+					>
+						<span slot="header">
+							Editing {$_(`keyword.${editingRoleType}`)}
+						</span>
+					</InputEditForm>
+				{:else}
+					<InputForm
+						submissionPackage={editingRolePackage}
+						bind:inputs={rolesAdded[editingRoleIndex]['data']}
+					>
+						<span slot="header">
+							Adding {$_(`keyword.${editingRoleType}`)}
+						</span>
+					</InputForm>
+				{/if}
+				<div class="btn btn-error col-span-1" on:click={()=>removeRole(editingRoleIndex)}> Remove	</div>
+				<div class="btn btn-success col-span-2" on:click={handleSave}>Save</div>
+			</div>
+		{/if}
 	</CreateCard>
-	<div class="btn" on:click={()=>{step = 0; dir = -1}}>Prev</div>
-	<div class="btn" on:click={()=>{step = 2; dir = 1}}>Next</div>
+	<div class="btn hover:-translate-x-4" on:click={()=>{step = 0; dir = -1; editingRoleIndex=-1}}> Prev <ChevronLeftIcon size=20/> </div>
+	<div class="btn hover:translate-x-4" on:click={()=>{step = 2; dir = 1; editingRoleIndex=-1}}> Next <ChevronRightIcon size=20/> </div>
 {:else if step == 2}
 	<CreateCard bind:dir title={"Submit"}>
 		{#if adminSettings.requireApproval}
@@ -393,15 +428,11 @@
 	<Spinner />
 {:else if submitState == State.SUCCESS}
 	<p>{$_('page.create.status.success')}</p>
-	{#await promiseNewOrganization then res}
-		{#if res}
-			<div class="mx-auto">
-				<PlainCard object={res} type={"organization"}/>
-			</div>
-		{/if}
-	{/await}
-	
+	<a href="/organization/{currentDataID}">{currentData.Organization_name}</a>
 	<br>
-	<p>{$_('page.create.status.submitmore')}</p><div class="btn" href="./create/{type}">Here</div>
+	<p>{$_('page.create.status.submitmore')}</p><a href='/'>Return home</a>
+{:else if submitState == State.ERROR}
+	<p class="text-red">{$_('page.create.status.error')}</p>
+	<div class="btn" on:click|preventDefault={handleSubmit}>{$_('page.create.submit')}</div>
 {/if}
 </div>

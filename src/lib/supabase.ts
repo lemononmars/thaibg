@@ -60,7 +60,10 @@ export function getVarPrefix(type: string): string {
 export function getImageURL(type: string, url: string): string {
 	if(personRoles.includes(type))
 		type = 'person'
-	return DIR_IMAGE + `${type}/` + (url || DEFAULT_IMAGE_FILE);
+	// in case user submit prefix name instead
+	if(type === 'TBG')
+		type = 'boardgame'
+	return DIR_IMAGE + `${type.toLowerCase()}/` + (url || DEFAULT_IMAGE_FILE);
 }
 
 /**
@@ -150,17 +153,23 @@ export async function addToSubmission(
 				if(pageType === 'organization')
 					rolesContent[role] = []
 				for(const data of submissionData.rolesSubmission[role]) {
+					// it is possible that you edit a person, while also adding new roles
+					// in this case, we determine whether to add or edit role by looking at relations
+					// person: find ROLE_ID in Person table
+					// organization: find ROLE_ID in data (about to be submitted)
+					let roleSubmissionType: string = data[rolePrefix + '_ID'] ? 'edit' : 'new'
 					const res = await addToDatabase(
 						JSON.stringify(data),
 						role,
-						newSubmission.Submission_type
+						roleSubmissionType
 					);
+
 					if(pageType === 'organization')
 						rolesContent[role] = [
 							...rolesContent[role],
-							res.body.index
+							roleSubmissionType === 'new' ? res.body.index : data[rolePrefix + '_ID']
 						]
-					else
+					else if(roleSubmissionType === 'new')
 						rolesContent[rolePrefix + '_ID'] = res.body.index
 				}
 			}
@@ -254,7 +263,7 @@ export async function changeSubmissionStatus(
 
 async function addToDatabase(
 	JSONstring: string,
-	type: string,
+	type: string, 
 	submissionType: string
 ): Promise<Record<string, any>> {
 	const parse = JSON.parse(JSONstring);
@@ -277,10 +286,10 @@ async function addToDatabase(
 		return { 
 			status: 201, 
 			body: {
-			message: 'new entry created',
-			index
-		}
-    };
+				message: 'new entry created',
+				index
+			}
+	 	};
 	}
 
   // in case of edit,
@@ -353,18 +362,13 @@ async function addToDatabaseRelation(
 			for (const relation of relationObjects) {
 				const relationIndex = await findNewUniqueID(relationTableName, 'id');
 
-				let insertObject: Object = {}
+				let insertObject: Object = {
+					[relationVarPrefix + '_ID']: relation.id,
+					[varPrefix + '_ID']: index
+				};
 				if(relationTableName === 'Person')
-					insertObject = {
-						[relationVarPrefix + '_ID']: relation.id,
-						[varPrefix + '_ID']: index
-					};
-				else
-					insertObject = {
-						id: relationIndex,
-						[relationVarPrefix + '_ID']: relation.id,
-						[varPrefix + '_ID']: index
-					}
+					insertObject['id'] = relationIndex
+						
 				const { error } = await from(relationTableName).upsert([insertObject], {
 					returning: 'minimal'
 				});

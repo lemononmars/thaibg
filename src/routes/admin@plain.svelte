@@ -194,7 +194,6 @@
 					const latestContent = data2.length > 0? data2.sort((a:Content, b:Content)=> {
 						return b.Content_ID - a.Content_ID
 					})[0] : {}
-					console.log(latestContent)
 					newCache = [...newCache, {
 						Contentcreator_ID: roleID,
 						Contentcreator_cache: {

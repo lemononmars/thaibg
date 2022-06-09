@@ -71,6 +71,7 @@
 	import { _ } from 'svelte-i18n';
 	import DataViewer from '$lib/components/DataViewer.svelte';
 	import GoogleMapDisplay from '$lib/components/GoogleMapDisplay.svelte'
+import Picture from '$lib/components/Picture.svelte';
 
 	export let organizationData: Organization, role: string, roleID: number;
 	const orgRelation = JSON.parse(organizationData.Organization_relation)
@@ -134,15 +135,7 @@
 <div class="flex flex-col lg:flex-row justify-center items-start relative">
 	<!-- First column: Organization's name, bio, and contacts-->
 	<div class="text-left p-2 flex flex-col -mt-32 w-full lg:w-1/4 px-2">
-		<div class="avatar">
-			<div class="h-72 mask mask-circle hover:scale-110 duration-200 mx-auto">
-				<img
-					src={getImageURL('organization', organizationData.Organization_picture)}
-					alt="image of {organizationData.Organization_name}"
-					on:error|once={(ev) => (ev.target.src = getDefaultImageURL('organization'))}
-				/>
-			</div>
-		</div>
+		<Picture type='organization' picture={organizationData.Organization_picture}/>
 		<div>
 			<h1>{organizationData.Organization_name}</h1>
 			<h3>Bio</h3>
@@ -189,18 +182,8 @@
 			{:then res}
 				{#if res}
 					<div class="flex flex-col">
-						<div class="flex flex-col lg:flex-row gap-4">
-							<div class="flex flex-col gap-2 w-72">
-								<div class="avatar">
-									<div class="h-36 mask mask-circle hover:scale-110 duration-200 mx-auto">
-										<img
-											src={getImageURL(activeRole, res[activeRolePrefix + '_picture'])}
-											alt="image of {activeRole}"
-											on:error|once={(ev) => (ev.target.src = getDefaultImageURL(activeRole))}
-										/>
-									</div>
-								</div>
-							</div>
+						<div class="flex flex-col lg:flex-row gap-4 mt-2">
+							<Picture type={activeRole} picture={res[activeRolePrefix + '_picture']} height={36}/>
 							<div>
 							{#each activeRoleKeys as k}
 								<h2>{$_(`key.${k}`)}</h2>

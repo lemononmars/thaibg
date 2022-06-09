@@ -1,16 +1,24 @@
 <script lang=ts>
 	import {onMount} from 'svelte'
 	import {PlusCircleIcon, XCircleIcon, RefreshCwIcon} from 'svelte-feather-icons'
-	export let pictureFile: File;
+	import { getImageURL} from '$lib/supabase'
+	
+	export let pictureFile: File | string;
 	export let key: string;
+	let type = key.slice(0,key.indexOf('_'))
 	let displaypicture: HTMLImageElement;
 
 	onMount(async ()=>{
 		if(pictureFile) {
-			displaypicture.onload = () => {
-			URL.revokeObjectURL(displaypicture.src);
-		};
-		displaypicture.src = URL.createObjectURL(pictureFile);
+			if(typeof pictureFile === 'string') {
+				displaypicture.src = getImageURL(type, pictureFile)
+			}
+			else {
+				displaypicture.onload = () => {
+					URL.revokeObjectURL(displaypicture.src);
+				}
+				displaypicture.src = URL.createObjectURL(pictureFile as File);
+			}
 		}
 	})
 
@@ -23,11 +31,9 @@
 		displaypicture.onload = () => {
 			URL.revokeObjectURL(displaypicture.src);
 		};
-		displaypicture.src = URL.createObjectURL(pictureFile);
+		displaypicture.src = URL.createObjectURL(pictureFile as File);
 	}
 </script>
-
-
 <div class="relative">
 	<label for={key}>
 		<div class="w-40 h-40 aspect-square btn btn-outline">

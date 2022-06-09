@@ -90,15 +90,18 @@
 	import {getImageURL, getDefaultImageURL} from '$lib/supabase'
 	import { _ } from 'svelte-i18n';
 	import {onMount} from 'svelte'
-import GoogleMapFinder from '$lib/components/GoogleMapFinder.svelte';
+	import GoogleMapFinder from '$lib/components/GoogleMapFinder.svelte';
 
 	export let data: SubmissionPackage, 
 		type: string, 
 		currentData: any, // from load function
 		adminSettings: AdminSettings
-	const { submission, keys, relations, selects, multiselects } = data; // destruct
+	const { submission, keys, relations, selects, multiselects, required } = data; // destruct
 	const varPrefix = getVarPrefix(type)
 	const currentDataID = currentData[varPrefix + '_ID']
+
+	// for edit
+	submission[varPrefix + '_ID'] = currentDataID
 
 	// create an array for each relation
 	let relationMultiSelects: Record<string, string[]> = {};
@@ -112,7 +115,6 @@ import GoogleMapFinder from '$lib/components/GoogleMapFinder.svelte';
 	})
 	onMount(async ()=>{
 		for(const r of relations) {
-			console.log(r)
 			const res = await fetch(`/api/${type}/${currentDataID}/${r}`)
 			const data =  await res.json()
 			const relationPrefix = getVarPrefix(r)
@@ -130,7 +132,6 @@ import GoogleMapFinder from '$lib/components/GoogleMapFinder.svelte';
 			}
 		}
 		loadingRelationalData = false
-		console.log(relationMultiSelects)
 	})
 
 	// extra info
@@ -142,6 +143,7 @@ import GoogleMapFinder from '$lib/components/GoogleMapFinder.svelte';
 	// 
 	let editingKey: string = ''
 	let editingContent: any
+
 	// show user a page based on the submission state
 	const enum State {
 		START,
@@ -169,6 +171,15 @@ import GoogleMapFinder from '$lib/components/GoogleMapFinder.svelte';
 
 	async function handleSubmit() {
 		if (submitState != State.START && submitState != State.ERROR) return;
+		if (required && !required.every(r => !!submission[r])) {
+			const missingFields = required?.filter(r => !submission[r]).join(',')
+			const newAlert: Alert = {
+				type: 'error',
+				text: 'please fill all required fields: ' +  missingFields
+			}
+			handleAlert(newAlert)
+			return
+		}
 		submitState = State.SUBMITTING;
 
 		// attach submitter's info
@@ -193,9 +204,7 @@ import GoogleMapFinder from '$lib/components/GoogleMapFinder.svelte';
 
 		// also add current data's ID so that we don't need to find it again
 		let res = await postSubmission({
-			content: {
-				...submission, [varPrefix + '_ID']: currentDataID
-			},
+			content: submission,
 			rolesSubmission: {},
 			relations: relationMultiSelects,
 			pageType: type,

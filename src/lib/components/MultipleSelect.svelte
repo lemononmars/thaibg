@@ -3,6 +3,7 @@
 
 	export let selectOptions: string[] = [];
 	export let selects: string[] = [];
+	export let disabled:boolean = false
 	if(!selects)
 		selects = []
 
@@ -13,19 +14,18 @@
 		(s) => !selects?.includes(s) && s?.toLowerCase().includes(searchString?.toLowerCase())
 	);
 
-	function select(data: string) {
-		selects = [...selects, data];
-		searchString = '';
-		dropdownOpen = false;
-	}
-
 	function handleKeyPress(event: KeyboardEvent) {
 		if (event.code != "Enter") return;
 		addNewSelect()
 	}
+
+	function clickSelect(s: string) {
+		searchString = s
+		addNewSelect()
+	}
 	function addNewSelect() {
-		if(!searchString) return;
-		
+		if(disabled || !searchString) return;
+
 		// sanitize link: remove http:// prefix
 		if(searchString.includes('//'))
 			searchString = searchString.slice(searchString.indexOf('//') + 2)
@@ -33,6 +33,12 @@
 		selects = [...selects, searchString];
 		searchString = '';
 		dropdownOpen = false;
+	}
+
+	function remove(s: any) {
+		if(disabled) return
+		selects.splice(selects.indexOf(s), 1);
+		selects = selects;
 	}
 </script>
 
@@ -49,6 +55,7 @@
 						bind:value={searchString}
 						on:keypress={handleKeyPress}
 						on:focus={() => (dropdownOpen = true)}
+						{disabled}
 					/>
 					<div class="btn" on:click={addNewSelect}>
 						<PlusCircleIcon size="20" />
@@ -63,13 +70,13 @@
 		>
 			{#each filteredOptions as d}
 				<li>
-					<div class="btn btn-ghost btn-xs" on:click={() => select(d)}>
+					<div class="btn btn-ghost btn-xs" on:click={() => clickSelect(d)}>
 						{d}
 					</div>
 				</li>
 			{:else}
 				<li>
-					<div class="btn btn-outline btn-xs btn-info" on:click={() => select(searchString)}>
+					<div class="btn btn-outline btn-xs btn-info" on:click={addNewSelect}>
 						Add "{searchString}"
 					</div>
 				</li>
@@ -78,11 +85,9 @@
 	</div>
 	{#each selects as s}
 		<div
-			class="badge hover:badge-error gap-2 w-full justify-between"
-			on:click={() => {
-				selects.splice(selects.indexOf(s), 1);
-				selects = selects;
-			}}
+			class="badge gap-2 w-full justify-between"
+			class:hover:badge-error={!disabled}
+			on:click={() => remove(s)}
 		>
 			<p class="w-60 truncate">{s}</p>
 			<DeleteIcon size="20" />

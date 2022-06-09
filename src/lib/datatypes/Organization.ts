@@ -27,19 +27,19 @@ export const OrganizationRelationArray = [
 	'shop',
 	'sponsor',
 	'contentcreator',
-	'person'
+	//'person'
 ];
 
 export type OrganizationRoleName = 'manufacturer' | 'publisher' | 'shop' | 'sponsor' | 'contentcreator' 
 export type OrganizationRelation = OrganizationRoleName | 'person'
 
-export type {
-	Manufacturer,
-	Publisher,
-	Shop,
-	Sponsor,
-	Contentcreator
-} from './organizationRoles';
+// export type {
+// 	Manufacturer,
+// 	Publisher,
+// 	Shop,
+// 	Sponsor,
+// 	Contentcreator
+// } from './organizationRoles';
 
 export const OrganizationSubmissionPackage = () => {
 	return {
