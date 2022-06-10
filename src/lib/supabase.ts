@@ -367,8 +367,10 @@ async function addToDatabaseRelation(
 					[varPrefix + '_ID']: index
 				};
 				if(relationTableName === 'Person')
+					insertObject['Person_ID'] = relationIndex
+				else
 					insertObject['id'] = relationIndex
-						
+
 				const { error } = await from(relationTableName).upsert([insertObject], {
 					returning: 'minimal'
 				});
