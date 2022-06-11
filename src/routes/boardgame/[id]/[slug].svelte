@@ -100,6 +100,8 @@
 	import { onMount } from 'svelte';
 	import { _ } from 'svelte-i18n';
 	import EditButton from '$lib/components/EditButton.svelte'
+import Picture from '$lib/components/Picture.svelte';
+import DataViewer from '$lib/components/DataViewer.svelte';
 
 	// these are singulars (not plurals) so that we can access the database easily
 	export let bg: Boardgame, type, mechanics, category, honor: Honor[];
@@ -160,12 +162,7 @@
 <div class="flex flex-col lg:flex-row text-left gap-6 mx-4 lg:mx-auto">
 	<!-- First column-->
 	<div class="flex flex-col gap-4 lg:basis-1/4 px-2 order-2 lg:order-1">
-		<img
-			src={getImageURL('boardgame', bg.TBG_picture)}
-			alt="cover of {bg.TBG_name}"
-			class="hidden lg:inline-block mx-auto hover:scale-110 w-60 aspect-auto duration-300"
-			on:error|once={(ev) => (ev.target.src = getDefaultImageURL('boardgame'))}
-		/>
+		<Picture type="boardgame" picture={bg.TBG_picture} height={60} class="hidden lg:block" mask="square"/>
 		{#await promiseCreatorInfo}
 			<Spinner />
 		{:then res}
@@ -204,24 +201,19 @@
 	</div>
 	<!-- Second column -->
 	<div class="flex flex-col justify-center gap-4 pt-10 lg:basis-1/2 order-1 lg:order-2 break-words">
-		<img
-			src={getImageURL('boardgame', bg.TBG_picture)}
-			alt="cover of {bg.TBG_name}"
-			class="lg:hidden -mt-32 mx-auto hover:scale-110 w-60 aspect-auto duration-300"
-			on:error|once={(ev) => (ev.target.src = getDefaultImageURL('boardgame'))}
-		/>
+		<Picture type='boardgame' picture={bg.TBG_picture} height={60} class="lg:hidden" mask='square'/>
 		<div class="hidden lg:flex lg:flex-row items-center gap-2">
 			<Social url="{WEBSITE_URL}/{bg.TBG_ID}" title={bg.TBG_name} />
 
-			{#if bg.TBG_links}
+			{#each bg.TBG_links || [] as l}
 				<div class="tooltip" data-tip="external link">
 					<div class="btn btn-square">
-						<a href={bg.TBG_links} target="_blank">
+						<a href={l} target="_blank">
 							<LinkIcon size="2x" />
 						</a>
 					</div>
 				</div>
-			{/if}
+			{/each}
 			<EditButton type={'boardgame'} id={bg.TBG_ID}/>
 		</div>
 		<div class="flex flex-row justify-between items-center">
@@ -317,15 +309,15 @@
 		<div class="flex flex-row lg:hidden items-center gap-2 mx-auto">
 			<Social url="{WEBSITE_URL}/{bg.TBG_ID}" title={bg.TBG_name} />
 
-			{#if bg.TBG_links}
+			{#each bg.TBG_links || [] as l}
 				<div class="tooltip" data-tip="external link">
 					<div class="btn btn-square">
-						<a href={bg.TBG_links} target="_blank">
+						<a href={l} target="_blank">
 							<LinkIcon size="2x" />
 						</a>
 					</div>
 				</div>
-			{/if}
+			{/each}
 			<EditButton type={'boardgame'} id={bg.TBG_ID}/>
 		</div>
 		<div class="divider" />
@@ -362,13 +354,7 @@
 			{#if isLoadingContents}
 				<Spinner />
 			{:else if content}
-				<div class="grid grid-cols-2 gap-2">
-					{#each filteredContents as c (c.Content_ID)}
-						<ContentCard content={c} />
-					{:else}
-						{$_('content.not_found')}
-					{/each}
-				</div>
+				<DataViewer type={'content'} data={filteredContents}/>
 			{:else}
 				$_('incomplete')
 			{/if}

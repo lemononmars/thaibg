@@ -16,7 +16,7 @@
 	}
 
 	export async function getContents() {
-		const res = await fetch('/api/content?select=ID,name,slug,type,media');
+		const res = await fetch('/api/content?select=ID,name,slug,type,media,links');
 		const data = await res.json();
 		return { contents: data.slice(-10) };
 	}

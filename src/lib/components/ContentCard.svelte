@@ -1,34 +1,40 @@
 <script lang="ts" context="module">
-	import { getImageURL, getDefaultImageURL } from '$lib/supabase';
+
+	import type { Content } from '$lib/datatypes';
+	import {VideoIcon, FileTextIcon, MicIcon, Edit2Icon} from 'svelte-feather-icons'
+
 	export async function getContentcreatorImageURLs(id: number) {
 		const res = await fetch(`/api/content/${id}/contentcreator`);
-		if (!res.ok) return { status: 404, message: 'not found' };
-
+		if (!res.ok) return []
 		const data = await res.json();
+		return data.map((d)=> d.Contentcreator_picture)
+	}
 
-		let URLs = [];
-		for (const creator in data) {
-			await fetch(`/api/contentcreator/${data[creator].Contentcreator_ID}/person`)
-				.then((res) => res.json())
-				.then((d) => (URLs = [...URLs, getImageURL('person', d[0]?.Person_picture)]));
-		}
-		return URLs;
+	const iconComponents = {
+		'video': VideoIcon,
+		'article': Edit2Icon,
+		'file': FileTextIcon,
+		'podcast': MicIcon,
 	}
 </script>
 
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { _ } from 'svelte-i18n';
+	import Picture from './Picture.svelte';
 
-	export let content;
-	let id = content.Content_ID;
-	let media = content.Content_media;
-	let type = content.Content_type;
-	let name = content.Content_name;
-	let link = content.Content_links;
-	let picture = getImageURL('content', content.Content_picture);
+	export let content: Content;
+	const {
+		Content_ID: id, 
+		Content_media: media, 
+		Content_type: type, 
+		Content_name: name, 
+		Content_links: links
+	} = content
 
-	let promiseContentcreatorImageURLs;
+	console.log(content)
+
+	let promiseContentcreatorImageURLs: Promise<string[]>;
 	onMount(async () => {
 		promiseContentcreatorImageURLs = getContentcreatorImageURLs(id);
 	});
@@ -36,40 +42,29 @@
 
 <a href="/content/{content.Content_ID}">
 	<div
-		class="relative card w-auto ratio-aspect lg:w-64 pt-8 bg-base-100 card-compact shadow-xl transition ease-in-out hover:opacity-80 hover:scale-105 duration-30 group px-1 lg:px-0"
+		class="relative card w-auto ratio-aspect lg:w-64 bg-base-100 card-compact shadow-xl transition ease-in-out hover:opacity-80 hover:scale-105 duration-30 group px-1 lg:px-0"
 	>
-		<figure>
-			<img
-				src={picture}
-				class="object-cover w-full lg:h-64 aspect-auto group-hover:scale-120 "
-				alt="content thumbnail"
-				on:error|once={(ev) => (ev.target.src = getDefaultImageURL('content'))}
-			/>
-		</figure>
 		<div class="card-body">
 			<h2 class="card-title truncate line-clamp-2">{name}</h2>
 			<div class="flex flex-row">
-				<div class="badge">{$_('content.media.' + media)}</div>
+				<div class="badge">
+					<svelte:component this={iconComponents[media]}/>
+					{$_('content.media.' + media)}
+				</div>
 				<div class="badge badge-outline">{$_('content.type.' + type)}</div>
 			</div>
-			<div class="card-actions justify-end">
-				<a class="btn" href={link} target="_/">Link</a>
+			<div class="card-actions justify-end h-20">
+				{#each links || [] as l}
+					<a class="btn" href="//{l}" target="_/">Link</a>
+				{/each}
 			</div>
 		</div>
 
-		<div class="avatar-group -space-x-6 absolute top-0 right-0 m-1 ">
-			{#await promiseContentcreatorImageURLs then URLs}
-				{#if URLs}
-					{#each URLs as url}
-						<div class="relative avatar group-hover:animate-pulse">
-							<div class="w-12">
-								<img
-									src={url}
-									alt="Contentcreator thumbnail"
-									on:error|once={(ev) => (ev.target.src = getDefaultImageURL('Contentcreator'))}
-								/>
-							</div>
-						</div>
+		<div class="-space-x-6 absolute bottom-0 left-0 m-2 ">
+			{#await promiseContentcreatorImageURLs then pictures}
+				{#if pictures}
+					{#each pictures || [] as picture}
+						<Picture type={'contentcreator'} {picture} height={20} class="avatar relative"/>
 					{/each}
 				{/if}
 			{/await}

@@ -10,8 +10,8 @@
    const maskStr = 'mask-' + mask
 </script>
 
-<div class="avatar">
-   <div class="{heightStr} mask {maskStr} hover:scale-110 duration-200 mx-auto">
+<div class="avatar {$$props.class} {heightStr}">
+   <div class=" mask {maskStr} hover:scale-110 duration-200 mx-auto h-full aspect-square">
       <img
          src={getImageURL(type, picture)}
          alt="image of {type}"

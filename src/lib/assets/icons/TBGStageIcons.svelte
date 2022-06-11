@@ -12,7 +12,7 @@
    const icon = icons.stage[index+1] 
 </script>
 
-<div class="flex flex-col content-center">
+<div class="flex flex-col content-center h-20">
 <svg 
    class={$$props.class + " fill-info"} 
    viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg"
