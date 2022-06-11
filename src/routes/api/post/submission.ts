@@ -7,7 +7,13 @@ export async function post( {request} ){
 	const content = await request.json()
 	const {pageType, username, type} = content
 	const hookMessage = ':game_die: ' + username + ' - ' + type + ' - ' + pageType
-	sendhook(hookMessage)
+	console.log(hookMessage)
+	try {
+		sendhook(hookMessage)
+	}
+	catch (error) {
+		console.log(error)
+	}
 
 	const {data: settings} = await from('Admin_Settings').select('*').single()
 	const {requireApproval} = settings
