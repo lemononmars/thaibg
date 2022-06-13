@@ -188,7 +188,7 @@
 			submitState = State.ERROR;
 			const newAlert: Alert = {
 				type: 'error',
-				text: 'There was an error: ' + JSON.stringify(res)
+				text: 'There was an error: ' + JSON.stringify(res.body)
 			}
 			handleAlert(newAlert)
 		}
