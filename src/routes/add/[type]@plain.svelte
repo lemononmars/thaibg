@@ -195,7 +195,7 @@
 	}
 </script>
 
-<Seo title="Create {type}" />
+<Seo title="{$_('page.add._')} {type}" />
 
 <div class="bg-base-200 m-4 rounded-3xl">
 	<div class="bg-error py-4 mx-auto rounded-t-3xl">
@@ -203,7 +203,7 @@
 			{#if $locale?.includes('en')}
 				{$_('page.add._')} {$_('page.add.new')} {$_(`keyword.${type}`)}
 			{:else}
-				{$_('page.add._')}{$_(`keyword.${type}`){$_('page.add.new')}}
+				{$_('page.add._')}{$_(`keyword.${type}`)}{$_('page.add.new')}
 			{/if}
 		</div>
 	</div>

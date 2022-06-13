@@ -12,15 +12,17 @@
    const icon = icons.stage[index+1] 
 </script>
 
-<div class="flex flex-col content-center h-20">
-<svg 
-   class={$$props.class + " fill-info"} 
-   viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg"
->
-   {@html icon}
-</svg>
-
-{#if showText}
-   <p class="text-xs">{$_('boardgame.status.' + BoardgameStatusArray[index])}</p>
-{/if}
+<div class="flex flex-col content-center text-center w-fit">
+   <div class="aspect-auto">
+      <svg 
+         class={$$props.class} 
+         viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg"
+         width="100" height="100"
+      >
+         {@html icon}
+      </svg>
+   </div>
+   {#if showText}
+      <p class="text-xs">{$_('boardgame.status.' + BoardgameStatusArray[index])}</p>
+   {/if}
 </div>

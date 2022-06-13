@@ -10,7 +10,7 @@ import { TypeNamesArray } from '$lib/datatypes';
  */
 /** @type {import('/api/[type]/index.ts').RequestHandler} */
 export async function get({ params, url }) {
-	const type = params.type;
+	const {type} = params;
 	// special case: admin settings
 	if(type === 'adminsettings') {
 		const {data, error} = await from('Admin_Settings').select('*')
@@ -47,13 +47,17 @@ export async function get({ params, url }) {
 			.join(',')
 		: '*';
 
-	const { data, error } = await from(getTableName(type)).select(selectedColumns);
+	let { data, error } = await from(getTableName(type)).select(selectedColumns);
 
 	if (error)
 		return {
 			status: 500,
 			body: error
 		};
+
+	// parse from string in database table to array
+	if(type === 'organization')
+		data.forEach(d=> d.Organization_relation = JSON.parse(d.Organization_relation))
 
 	if (!searched)
 		return {

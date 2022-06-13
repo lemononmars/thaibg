@@ -6,13 +6,15 @@
 
 		const res = await fetch(`/api/${role}/${id}`);
 		// redirect to the default page
-		if (!res.ok)
+		if (!res.ok) {
 			return {
 				status: 303,
 				redirect: `/${role}`
 			};
+		}
 
 		const data = await res.json()
+
 		const slug = data[getVarPrefix(role) + '_slug']
 		return {
 			status: 303,

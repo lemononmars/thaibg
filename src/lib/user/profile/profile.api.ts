@@ -6,10 +6,10 @@ const GET_COL_SET = `username, id, avatar_url`;
 export const getUserProfile = (id: string) =>
 	from('profiles').select(GET_COL_SET).eq('id', id).single();
 
-export const getCurrUserProfile = () => getUserProfile(auth.user()!.id);
+export const getCurrUserProfile = () => getUserProfile(auth.user()?.id);
 
 export const updCurrUserProfile = (attrs: ProfileAttrs) =>
-	from('profiles').upsert({ ...attrs, id: auth.user()!.id, updated_at: new Date() });
+	from('profiles').upsert({ ...attrs, id: auth.user()?.id, updated_at: new Date() });
 
 export const updCurrUserAvatar = async (file: File) => {
 	const user = auth.user();
@@ -22,7 +22,7 @@ export const updCurrUserAvatar = async (file: File) => {
 		throw uploadError;
 	}
 
-	return await from('profiles').upsert({ id: auth.user()!.id, avatar_url: filePath });
+	return await from('profiles').upsert({ id: auth.user()?.id, avatar_url: filePath });
 };
 
 export const getAvatar = async (url: string) => {

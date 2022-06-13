@@ -53,7 +53,7 @@ export async function get({ url, params }) {
 			};
 	}
 
-	// for organizations.... well
+	// for organizations, look up in Organization_array
 	if (type === 'organization') {
 		const { data, error } = await from('Organization')
 			.select('Organization_relation')
@@ -66,7 +66,7 @@ export async function get({ url, params }) {
 			};
 		
 		// orgData = [1, 3, 15]
-		const orgData = JSON.parse(data.Organization_relation)[relation]
+		const orgData = JSON.parse(data.Organization_relation[relation])
 		let newData: Record<string, any>[] = []
 
 		if(!orgData)
@@ -90,8 +90,9 @@ export async function get({ url, params }) {
 		};
 	}
 
+	// look up in organization array
 	if (relation === 'organization') {
-		const { data, error } = await from('Organization')
+		let { data, error } = await from('Organization')
 			.select('*')
 
 		if (error)
@@ -103,11 +104,12 @@ export async function get({ url, params }) {
 		let newData: Record<string, any>[] = []
 		// search all organiation whose Organization_relation contains the ID
 		for(const org in data) {
-			const orgRelation = JSON.parse(data[org].Organization_relation)[type] || []
-			if(orgRelation.includes(parseInt(id)))
+			data[org].Organization_relation = JSON.parse(data[org].Organization_relation)
+			const orgRelation = data[org].Organization_relation[type]
+			if(orgRelation?.includes(parseInt(id))) {
 				newData = [...newData, data[org]]
+			}
 		}
-
 		return {
 			status: 200,
 			headers: { 'Content-Type': 'application/json' },

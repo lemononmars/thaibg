@@ -22,7 +22,7 @@
 			if (!res.ok || (data && data.length == 0))
 				return {
 					status: 303,
-					redirect: `/person?role=${role}`
+					redirect: `/${role}`
 				};
 			person = data[0]
 		}
@@ -63,7 +63,6 @@
 </script>
 
 <script lang="ts">
-	import { getImageURL, getDefaultImageURL } from '$lib/supabase';
 	import Seo from '$lib/components/SEO.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
 	import { onMount } from 'svelte';
@@ -71,6 +70,7 @@
 	import EditButton from '$lib/components/EditButton.svelte';
 	import { _ } from 'svelte-i18n';
 	import DataViewer from '$lib/components/DataViewer.svelte';
+	import Picture from '$lib/components/Picture.svelte';
 
 	export let person: Person, role: string;
 	let activeRoleTitles = personRoles.filter((r) => !!person[getVarPrefix(r) + '_ID']);
@@ -99,15 +99,7 @@
 <div class="flex flex-col lg:flex-row justify-center items-start relative">
 	<!-- First column: person's name, bio, and contacts-->
 	<div class="text-left p-2 flex flex-col -mt-32 w-full lg:w-1/4 px-2">
-		<div class="avatar">
-			<div class="h-72 mask mask-circle hover:scale-110 duration-200 mx-auto">
-				<img
-					src={getImageURL('person', person.Person_picture)}
-					alt="image of {person.Person_name}"
-					on:error|once={(ev) => (ev.target.src = getDefaultImageURL('person'))}
-				/>
-			</div>
-		</div>
+		<Picture type='person' picture={person.Person_picture} height={72}/>
 		<div>
 			<h1>{person.Person_name}</h1>
 			<h2>{person.Person_name_th ? '(' + person.Person_name_th + ')' : ''}</h2>

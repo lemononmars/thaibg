@@ -91,6 +91,7 @@
 	import { _ } from 'svelte-i18n';
 	import {onMount} from 'svelte'
 	import GoogleMapFinder from '$lib/components/GoogleMapFinder.svelte';
+import Picture from '$lib/components/Picture.svelte';
 
 	export let data: SubmissionPackage, 
 		type: string, 
@@ -310,12 +311,7 @@
 				</div>
 				<div class="justify-self-start break-all flex flex-row items-center gap-2">
 					{#if k.includes('_picture')}
-						<img
-							src={getImageURL(type, currentData[k])}
-							class="object-cover h-40 aspect-auto group-hover:scale-120"
-							alt="{type}"
-							on:error|once={(ev) => (ev.target.src = getDefaultImageURL(type))}
-						/>
+						<Picture {type} picture={currentData[k]} height={40}/>
 					{:else}
 						<div 
 							class="btn" on:click={()=>handleEdit(k)} 

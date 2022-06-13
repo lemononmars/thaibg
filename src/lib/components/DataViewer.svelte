@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getImageURL, getDefaultImageURL, getVarPrefix } from '$lib/supabase';
+	import { getVarPrefix } from '$lib/supabase';
 	import type { TypeName, DataTableColumns } from '$lib/datatypes';
 	import { BoardgameStatusArray, ShopStatusArray, personRoles, organizationRoles } from '$lib/datatypes';
 
@@ -14,6 +14,7 @@
 	import { _ } from 'svelte-i18n';
 	import TBGStageIcons from '$lib/assets/icons/TBGStageIcons.svelte';
 	import ShopStatusBadge from './ShopStatusBadge.svelte';
+	import Picture from './Picture.svelte';
 
 	export let 
 		data: any[], 
@@ -99,7 +100,9 @@
 				<table class="table table-zebra table-compact lg:table-normal w-full overflow-hidden">
 					<thead>
 						<tr>
-							<th>Image</th>
+							{#if type!=='content'}
+								<th>Image</th>
+							{/if}
 							<th>Name</th>
 							{#each dataTableColumns.headers as t}
 								<th class="hidden lg:table-cell">{t}</th>
@@ -110,18 +113,11 @@
 					<tbody>
 						{#each dataCurrentPage as d (d[typePrefix + '_ID'])}
 							<tr animate:flip={{ duration: 300 }}>
-								<td>
-									<div class="avatar">
-										<div class="h-10 lg:h-16 aspect-square hover:scale-150 object-contain">
-											<img
-												src={getImageURL(type, d[typePrefix + '_picture'])}
-												class="aspect-auto"
-												alt="thumbnail"
-												on:error|once={(ev) => (ev.target.src = getDefaultImageURL(type))}
-											/>
-										</div>
-									</div>
-								</td>
+								{#if type!=='content'}
+									<td>
+										<Picture {type} height={16} picture={d[typePrefix + '_picture']} mask='square'/>
+									</td>
+								{/if}
 								<td class="overflow-x-hidden">
 									<a href="/{type}/{d[typePrefix + '_ID']}">
 										<p class="break-words line-clamp-2">
@@ -141,7 +137,7 @@
 												<SlashIcon size="1x" class="text-error" />
 											{/if}
 										{:else if BoardgameStatusArray.includes(d[t])}
-											<TBGStageIcons status={d[t]} showText={true} class="w-12"/>
+											<TBGStageIcons status={d[t]} showText={true} class="h-12"/>
 										{:else if ShopStatusArray.includes(d[t])}
 											<ShopStatusBadge status={d[t]} showText={true} />
 										{:else if Array.isArray(d[t])}
@@ -157,6 +153,8 @@
 											{:else}
 												{cache[t.slice(t.indexOf('.')+1)]}
 											{/if}
+										{:else if t === 'Organization_relation'}
+											{Object.keys(d[t])}
 										{:else}
 											{d[t] || '-'}
 										{/if}

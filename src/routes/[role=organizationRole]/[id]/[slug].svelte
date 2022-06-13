@@ -1,9 +1,6 @@
 <script lang="ts" context="module">
-	/*
-		This whole page is identical to /Organization/ID/SLUG
-	*/
 	import { getVarPrefix } from '$lib/supabase';
-	import { getSubmissionPackage } from '$lib/datatypes';
+	import { getDataTableColumns, getSubmissionPackage } from '$lib/datatypes';
 	import type { Organization, OrganizationRole, Boardgame, Content, OrganizationRelation, TypeName } from '$lib/datatypes';
 
 	export async function load({ params, fetch }) {
@@ -13,12 +10,15 @@
 		if(role === 'organization'){
 			const res = await fetch(`/api/organization/${id}`);
 			// redirect to the default page
+
 			const data = await res.json()
-			if (!res.ok || (data && data.length == 0))
+			if (!res.ok || (data && data.length == 0)) {
+				
 				return {
 					status: 303,
 					redirect: `/organization`
 				};
+			}
 
 			organizationData = data
 		}
@@ -26,11 +26,12 @@
 			const res = await fetch(`/api/${role}/${id}/organization`);
 			// redirect to the default page
 			const data = await res.json()
-			if (!res.ok || (data && data.length == 0))
+			if (!res.ok || (data && data.length == 0)) {
 				return {
 					status: 303,
 					redirect: `/${role}`
 				};
+			}
 			organizationData = data[0]
 		}
 
@@ -62,7 +63,6 @@
 </script>
 
 <script lang="ts">
-	import { getImageURL, getDefaultImageURL } from '$lib/supabase';
 	import Seo from '$lib/components/SEO.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
 	import { onMount } from 'svelte';
@@ -71,14 +71,15 @@
 	import { _ } from 'svelte-i18n';
 	import DataViewer from '$lib/components/DataViewer.svelte';
 	import GoogleMapDisplay from '$lib/components/GoogleMapDisplay.svelte'
-import Picture from '$lib/components/Picture.svelte';
+	import Picture from '$lib/components/Picture.svelte';
 
 	export let organizationData: Organization, role: string, roleID: number;
-	const orgRelation = JSON.parse(organizationData.Organization_relation)
+	const orgRelation = organizationData.Organization_relation // already parsed from fetch
 	let availableRoles = <OrganizationRelation[]>Object.keys(orgRelation).filter(k=> 
 		orgRelation[k] && orgRelation[k].length > 0
 	)
 	let activeRole: string, activeRoleID: number
+
 	if(role === 'organization') {
 		activeRole = availableRoles[0]
 		activeRoleID = orgRelation[activeRole][0]
@@ -131,7 +132,6 @@ import Picture from '$lib/components/Picture.svelte';
 <div class="w-full h-60">
 	<img src="https://picsum.photos/800/600" class="object-cover w-full h-60" alt="cover" />
 </div>
-
 <div class="flex flex-col lg:flex-row justify-center items-start relative">
 	<!-- First column: Organization's name, bio, and contacts-->
 	<div class="text-left p-2 flex flex-col -mt-32 w-full lg:w-1/4 px-2">
@@ -183,7 +183,7 @@ import Picture from '$lib/components/Picture.svelte';
 				{#if res}
 					<div class="flex flex-col">
 						<div class="flex flex-col lg:flex-row gap-4 mt-2">
-							<Picture type={activeRole} picture={res[activeRolePrefix + '_picture']} height={36}/>
+							<Picture type={activeRole} picture={res[activeRolePrefix + '_picture']} height={32}/>
 							<div>
 							{#each activeRoleKeys as k}
 								<h2>{$_(`key.${k}`)}</h2>
@@ -222,7 +222,11 @@ import Picture from '$lib/components/Picture.svelte';
 				<Spinner />
 			{:then res}
 				{#if res}
-					<DataViewer data={res} type={activeRole === 'contentcreator'? 'content' : 'boardgame'}/>
+					<DataViewer 
+						data={res} 
+						type={activeRole === 'contentcreator'? 'content' : 'boardgame'}
+						dataTableColumns={getDataTableColumns(activeRole === 'contentcreator'? 'content' : 'boardgame')}
+					/>
 				{/if}
 			{:catch}
 				<p>Server is unavailable. Try again later.</p>

@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { TypeNamesArray, personRoles } from '$lib/datatypes';
+	import Picture from '$lib/components/Picture.svelte'
 	import {onMount} from 'svelte'
 
-	import { getImageURL, getDefaultImageURL, getVarPrefix } from '$lib/supabase';
+	import { getVarPrefix } from '$lib/supabase';
 	export let object;
 	export let type: string;
 	export let comment: string = '';
@@ -21,35 +22,15 @@
 			
 			id = object[prefix + '_ID'];
 			slug = object[prefix + '_slug'];
-			
-			if(personRoles.includes(type)) {
-				pictureType = 'person'
-				const res = await fetch(`/api/${type}/${id}/person?select=picture`)
-				const data = await res.json()
-				picture = data[0]['Person_picture']
-			}
-			else {
-				pictureType = type
-				picture = object[prefix + '_picture']
-			}
+			picture = object[prefix + '_picture']
+			pictureType = personRoles.includes(type) ? 'person' : type
 			name = object[prefix + '_name'] || object[prefix + '_name_th'] || 'untitled';
 		}
 	})
 </script>
 
 <div class="flex flex-row items-center gap-4 pt-2">
-	<div class="avatar">
-		<div
-			class="w-16 h-16 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 hover:scale-105 duration-300"
-		>
-			<img
-				src={getImageURL(pictureType, picture)}
-				alt="avatar"
-				class="object-contain"
-				on:error|once={(ev) => (ev.target.src = getDefaultImageURL(type))}
-			/>
-		</div>
-	</div>
+	<Picture type={pictureType} {picture} height={20} class="ring ring-primary ring-offset-base-100 ring-offset-2 mask mask-circle"/>
 	<div>
 		<a href="/{type}/{id}/{slug}{roleQuery}"> {name}</a>
 		<p>{comment}</p>

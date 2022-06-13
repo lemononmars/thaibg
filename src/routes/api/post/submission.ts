@@ -13,10 +13,11 @@ export async function post( {request} ){
 		message = sendhook(hookMessage)
 	}
 	catch (error) {
-		console.log(error)
 		return {
 			status: 501,
-			message: JSON.stringify(error) + ' ' + message
+			body: {
+				message: JSON.stringify(error) + ' ' + message
+			}
 		}
 	}
 

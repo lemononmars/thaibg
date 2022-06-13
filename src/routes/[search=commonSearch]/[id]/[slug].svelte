@@ -1,5 +1,5 @@
 <script lang="ts" context="module">
-	import { getImageURL, getDefaultImageURL, getVarPrefix } from '$lib/supabase';
+	import { getVarPrefix } from '$lib/supabase';
 
 	export async function load({ params, fetch }) {
 		const {id, search: type} = params
@@ -85,16 +85,6 @@
 <div class="flex flex-col lg:flex-row text-left gap-6 p-4">
 	<!-- first column-->
 	<div class="flex flex-col w-full lg:w-1/5 max-w-none gap-2">
-		<!-- <div class="avatar hover:scale-110 transition duration-200 mx-auto">
-			<div class="w-60 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-				<img
-					src={getImageURL(pageType, pageData[prefix + '_picture'])}
-					alt="image of {pageData[prefix + '_name']}"
-					on:error|once={(ev) => (ev.target.src = getDefaultImageURL(pageType))}
-				/>
-			</div>
-		</div> -->
-
 		<h1>{pageName}</h1>
 		<h2>{pageData[prefix + '_name'] ? pageData[prefix + '_name_th'] || '': ''} </h2>
 		<div class="divider" />

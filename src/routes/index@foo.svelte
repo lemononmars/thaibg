@@ -81,6 +81,7 @@
 </script>
 
 <Seo title="Home" />
+{ String(import.meta.env.VITE_DISCORD_WEBHOOK_ID)}
 <div class="flex flex-col lg:flex-row w-screen bg-base-200 pt-10 px-4 lg:px-60 lg:gap-10 -mt-24 justify-between">
 	<div class="flex flex-col order-first lg:order-none text-center lg:justify-center w-full mt-24 lg:w-1/3">
 		<h1>{$_('page.home.welcome.intro')}</h1>

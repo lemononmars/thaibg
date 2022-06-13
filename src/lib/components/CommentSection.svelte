@@ -62,9 +62,11 @@
 	onMount(async () => {
 		promiseComments = getComments(type, ID);
 		const { data, error } = await getCurrUserProfile();
-		if (data) guest = false;
-		yourUsername = data.username;
-		yourAvatarURL = await getAvatar(data.avatar_url);
+		if (data) {
+			guest = false;
+			yourUsername = data.username;
+			yourAvatarURL = await getAvatar(data.avatar_url);
+		}
 	});
 </script>
 

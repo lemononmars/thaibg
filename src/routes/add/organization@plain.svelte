@@ -1,6 +1,6 @@
 <script context=module lang=ts>
-	import { getSubmissionPackage, type AdminSettings } from '$lib/datatypes';
-	import type { SubmissionPackage } from '$lib/datatypes';
+	import { getSubmissionPackage } from '$lib/datatypes';
+	import type { SubmissionPackage, AdminSettings } from '$lib/datatypes';
 	import { fromBucket, getVarPrefix, generateSlug } from '$lib/supabase';
 	import type {SubmissionData} from '$lib/supabase'
 	import type {Alert} from '$lib/alert/alert.type'
@@ -37,7 +37,7 @@
 
 		return {
 			props: {
-				data: getSubmissionPackage('organization'),
+				submissionPackage: getSubmissionPackage('organization'),
 				adminSettings
 			}
 		};

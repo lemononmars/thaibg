@@ -34,6 +34,9 @@ export async function get({ params, url }) {
 		.eq(`${typePrevix}_ID`, id)
 		.single();
 
+	if(type === 'organization')
+		data.Organization_relation = JSON.parse(data.Organization_relation)
+
 	if (error)
 		return {
 			status: 404,

@@ -3,6 +3,7 @@
    import { createEventDispatcher } from 'svelte'
 
 	const dispatch = createEventDispatcher();
+   const apiKey = String(import.meta.env.VITE_GOOGLE_MAP_API_KEY)
 
    let inputBox: HTMLElement
    let mapArea: HTMLElement
@@ -79,7 +80,7 @@
 <svelte:head>
    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
    <script
-     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCt3-uv6RT2jnV8nYYoArO7vRA_azJbLFg&libraries=places&v=weekly"
+     src="https://maps.googleapis.com/maps/api/js?key={apiKey}&libraries=places&v=weekly"
      defer async on:load={initMap}
    />
 </svelte:head>

@@ -3,10 +3,10 @@
 
    export let type: string
    export let picture: string
-   export let height: number = 72
+   export let height: number = 0
    export let mask: string = 'circle'
 
-   const heightStr = 'h-' + height
+   let heightStr = height != 0 ? 'h-' + height : 'h-72'
    const maskStr = 'mask-' + mask
 </script>
 

@@ -55,7 +55,7 @@
 		class="relative card w-auto ratio-aspect lg:w-64 bg-base-100 card-compact shadow-xl transition ease-in-out hover:opacity-80 hover:scale-105 duration-30 group px-1 lg:px-0"
 	>
 		<div class="card-body">
-			<h2 class="card-title line-clamp-2">
+			<h2 class="card-title line-clamp-2 h-12 lg:h-16 text-sm lg:text-lg">
 				{name}
 			</h2>
 			<div class="flex flex-row">
@@ -65,7 +65,7 @@
 				</div>
 				<div class="badge badge-outline">{$_('content.type.' + type)}</div>
 			</div>
-			<div class="card-actions justify-between h-20">
+			<div class="flex flex-col lg:flex-row justify-center lg:justify-between lg:h-20 mt-2">
 				{#await promiseContentcreatorImageURLs then pictures}
 					<div class="avatar-group -space-x-6">
 						{#each pictures || [] as picture}
@@ -74,8 +74,8 @@
 					</div>
 				{/await}
 				{#each links || [] as l}
-					<a class="btn" href="//{l}" target="_/">
-						{actionText}
+					<a href="//{l}" target="_/">
+						<div class="btn">{actionText}</div>
 					</a>
 				{/each}
 			</div>

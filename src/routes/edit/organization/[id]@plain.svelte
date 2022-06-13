@@ -39,7 +39,7 @@
 		}
 
 		let currentRolesData = []
-		const relations = JSON.parse(currentData.Organization_relation)
+		const relations = currentData.Organization_relation // already parsed from fetch above
 
 		const roleKeys = Object.keys(relations)
 		for(const role of roleKeys) {
@@ -394,8 +394,10 @@
 						</span>
 					</InputForm>
 				{/if}
-				<div class="btn btn-error col-span-1" on:click={()=>removeRole(editingRoleIndex)}> Remove	</div>
-				<div class="btn btn-success col-span-2" on:click={handleSave}>Save</div>
+				{#if !rolesAdded[editingRoleIndex].existing}
+					<div class="btn btn-error col-span-1" on:click={()=>removeRole(editingRoleIndex)}> Remove	</div>
+				{/if}
+				<div class="btn btn-success btn-wide col-span-2" on:click={handleSave}>Save</div>
 			</div>
 		{/if}
 	</CreateCard>

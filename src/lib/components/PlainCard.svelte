@@ -1,6 +1,8 @@
 <script lang="ts">
-	import { getImageURL, getDefaultImageURL, getVarPrefix } from '$lib/supabase';
-	export let object;
+	import { getVarPrefix } from '$lib/supabase';
+	import Picture from '$lib/components/Picture.svelte';
+
+	export let object; // event, organization, etc.
 	export let type: string//: TypeName;
 	const typeVar = getVarPrefix(type); //capitalize first letter
 
@@ -19,12 +21,7 @@
 		hover:opacity-80 hover:scale-105 group"
 	>
 		<figure>
-			<img
-				src={getImageURL(type, picture)}
-				class="object-cover w-full lg:h-64 aspect-square"
-				alt="picture of {name}"
-				on:error|once={(ev) => (ev.target.src = getDefaultImageURL(type))}
-			/>
+			<Picture {type} {picture} height={64}/>
 		</figure>
 		<div class="card-body">
 			<h2 class="card-title line-clamp-3 text-sm lg:text-lg">{name}</h2>

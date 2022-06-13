@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { getImageURL, getDefaultImageURL, getVarPrefix } from '$lib/supabase';
+	import {getVarPrefix } from '$lib/supabase';
+	import Picture from '$lib/components/Picture.svelte';
 	import type {OrganizationRole, TypeName} from '$lib/datatypes'
 
 	export let organization: OrganizationRole;
@@ -21,12 +22,7 @@
 		hover:opacity-80 hover:scale-105 group"
 	>
 		<figure>
-			<img
-				src={getImageURL(role, picture)}
-				class="object-cover w-full lg:h-64 aspect-square"
-				alt="picture of {name}"
-				on:error|once={(ev) => (ev.target.src = getDefaultImageURL(role))}
-			/>
+			<Picture type='organization' {picture} height={64}/>
 		</figure>
 		<div class="card-body">
 			<h2 class="card-title line-clamp-3 text-sm lg:text-lg">{name}</h2>

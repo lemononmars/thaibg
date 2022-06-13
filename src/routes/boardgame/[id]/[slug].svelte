@@ -1,7 +1,7 @@
 <script lang="ts" context="module">
-	import { getImageURL, getDefaultImageURL } from '$lib/supabase';
-	import { personRoles, ContentTypeArray, ContentMediaArray } from '$lib/datatypes';
-	import type { Content, Honor, Boardgame, Shop, Event } from '$lib/datatypes';
+	import { getImageURL } from '$lib/supabase';
+	import { personRoles, ContentTypeArray, ContentMediaArray} from '$lib/datatypes';
+	import type { Content, Honor, Boardgame, Shop, Event, Mechanics, Category, Type } from '$lib/datatypes';
 	import { WEBSITE_URL } from '$lib/constants';
 
 	export async function load({ params, fetch }) {
@@ -81,7 +81,6 @@
 
 <script lang="ts">
 	import Seo from '$lib/components/SEO.svelte';
-	import ContentCard from '$lib/components/ContentCard.svelte';
 	import PlainLink from '$lib/components/PlainLink.svelte';
 	import CommentSection from '$lib/components/CommentSection.svelte';
 	import {
@@ -100,11 +99,11 @@
 	import { onMount } from 'svelte';
 	import { _ } from 'svelte-i18n';
 	import EditButton from '$lib/components/EditButton.svelte'
-import Picture from '$lib/components/Picture.svelte';
-import DataViewer from '$lib/components/DataViewer.svelte';
+	import Picture from '$lib/components/Picture.svelte';
+	import DataViewer from '$lib/components/DataViewer.svelte';
 
 	// these are singulars (not plurals) so that we can access the database easily
-	export let bg: Boardgame, type, mechanics, category, honor: Honor[];
+	export let bg: Boardgame, type: Type[], mechanics: Mechanics[], category: Category[], honor: Honor[];
 	export let content: Content[] = [];
 	const BGID = bg.TBG_ID;
 
