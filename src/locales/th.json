@@ -100,6 +100,7 @@
 			"db": "บอร์ดเกมไทย (CLOSED BETA)"
 		}
 	},
+	"status": "สถานะ",
 	"minutes": "นาที",
 	"age": "อายุ",
 	"numPlayers": "จำนวนผู้เล่น",
@@ -173,11 +174,14 @@
 		"BGG_links": "Board Game Geek เว็บไซต์",
 		"TBG_keyword": "คีย์เวิร์ด",
 		"TBG_released": "ผลิตในปี",
+		"TBG_player": "จำนวนผู้เล่น",
 		"TBG_player_min": "จำนวนผู้เล่นขั้นต่ำ",
 		"TBG_player_max": "จำนวนผู้เล่นมากสุด",
+		"TBG_playtime": "เวลาที่ใช้เล่น",
 		"TBG_playtime_min": "เวลาที่ใช้เล่นขั้นต่ำ",
 		"TBG_playtime_max": "เวลาที่ใช้เล่นมากสุด",
 		"TBG_status": "สถานะปัจจุบัน",
+		"TBG_type": "ประเภท",
 		"TBG_picture": "ภาพ (หน้ากล่อง)",
 		"TBG_picture_cover": "ภาพ (อุปกรณ์)",
 		"TBG_show": "แสดง?",
@@ -386,7 +390,15 @@
 		"uttaradit": "อุตรดิตถ์",
 		"uthaithani": "อุทัยธานี",
 		"ubonratchathani": "อุบลราชธานี",
-		"betong": "เบตง"
+		"betong": "เบตง",
+		"abstractgame": "เกมกลยุทธ์นามธรรม",
+		"childerngame": "เกมสำหรับเด็ก",
+		"customizablegame": "เกมที่จัดแต่งได้",
+		"familygame": "เกมครอบครัว",
+		"partygame": "เกมปาร์ตี้",
+		"strategygame": "เกมกลยุทธ์",
+		"thematicgame": "เกมทางธีม",
+		"wargame": "เกมสงคราม"
 	},
 	"mechanics": {
 		"action": "แอ็คชัน", 

@@ -36,9 +36,9 @@ export interface ShopSubmission {
 // add in construction status?
 export const ShopStatusArray = ['active', 'inactive', 'closed'];
 export type ShopStatus = 'active' | 'inactive' | 'closed';
+export const ShopTypeArray = ['online shop', 'physical shop', 'cafe', 'club', 'meetup']
 
 export const ShopRelationArray = ['boardgame', 'organization'];
-export const ShopTypeArray = ['online shop', 'physical shop', 'cafe', 'club', 'meetup']
 
 interface ShopRelation {
 	id: number;
@@ -67,7 +67,7 @@ export const ShopSubmissionPackage = () => {
 		relations: ShopRelationArray,
 		selects: {
 			Shop_status: ShopStatusArray,
-			Shop_province: ThaiProvinceMap
+			Shop_province: ThaiProvince
 		},
 		multiselects: {
 			Shop_type: ShopTypeArray
@@ -82,7 +82,7 @@ export const ShopSubmissionPackage = () => {
 	};
 };
 
-const ThaiProvinceMap = [
+export const ThaiProvince = [
 	'krabi',
 	'bangkok',
 	'kanchanaburi',
@@ -161,5 +161,3 @@ const ThaiProvinceMap = [
 	'ubonratchathani',
 	'betong'
 ]
-
-export const ThaiProvinceArray = ThaiProvinceMap.map(p => 'province.' + p)

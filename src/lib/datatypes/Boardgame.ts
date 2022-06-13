@@ -90,14 +90,14 @@ export const BoardgameRelationArray = [
 ];
 
 export const BoardGameTypeArray = [
-	`Abstract Strategy Games`,
-	`Children's Games`,
-	`Customizable Games`,
-	`Family Games`,
-	`Party Games`,
-	`Strategy Games`,
-	`Thematic Games`,
-	`Wargames`
+	"abstractgame",
+   "childerngame",
+   "customizablegame",
+   "familygame",
+   "partygame",
+   "strategygame",
+   "thematicgame",
+   "wargame"
 ]
 
 export const BoardgameSubmissionPackage = () => {

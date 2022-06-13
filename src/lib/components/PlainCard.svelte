@@ -21,7 +21,7 @@
 		hover:opacity-80 hover:scale-105 group"
 	>
 		<figure>
-			<Picture {type} {picture} height={64}/>
+			<Picture {type} {picture} height={64} mask="square"/>
 		</figure>
 		<div class="card-body">
 			<h2 class="card-title line-clamp-3 text-sm lg:text-lg">{name}</h2>

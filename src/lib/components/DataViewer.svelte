@@ -3,7 +3,7 @@
 	import type { TypeName, DataTableColumns } from '$lib/datatypes';
 	import { BoardgameStatusArray, ShopStatusArray, personRoles, organizationRoles } from '$lib/datatypes';
 
-	import { GridIcon, ListIcon, CheckCircleIcon, SlashIcon } from 'svelte-feather-icons';
+	import { GridIcon, ListIcon, CheckCircleIcon, SlashIcon, SlidersIcon, ChevronDownIcon, ChevronUpIcon } from 'svelte-feather-icons';
 	import PersonCard from '$lib/components/PersonCard.svelte';
 	import BoardgameCard from '$lib/components/BoardgameCard.svelte';
 	import PlainCard from '$lib/components/PlainCard.svelte';
@@ -34,12 +34,30 @@
 
 	$: dataCurrentPage = data.slice(activePage * ENTRY_PER_PAGES, (activePage + 1) * ENTRY_PER_PAGES);
 
-	$: firstPageEntry = activePage * ENTRY_PER_PAGES + 1;
+	$: firstPageEntry = numData === 0 ? 0 : activePage * ENTRY_PER_PAGES + 1;
 	$: lastPageEntry = Math.min((activePage + 1) * ENTRY_PER_PAGES, numData);
 
 	function changePage(page: number) {
 		activePage = page;
 		window.scroll({ top: 0, behavior: 'smooth' });
+	}
+
+	let sortingColumn: number = -1
+	let sortDescend: boolean = true
+	$: sortingIcon = sortDescend ? ChevronUpIcon : ChevronDownIcon
+
+	function sortData(idx: number) {
+		if(idx === sortingColumn)
+			sortDescend = !sortDescend
+		else {
+			sortingColumn = idx
+			sortDescend = true
+		}
+		const key = sortingColumn == -1 ? getVarPrefix(type) + '_name' : dataTableColumns.body[idx]
+		data = data.sort((a,b)=>{
+			const result = String(a[key])?.localeCompare(String(b[key]))
+			return sortDescend ? -1 * result : result
+		})
 	}
 </script>
 
@@ -103,9 +121,30 @@
 							{#if type!=='content'}
 								<th>Image</th>
 							{/if}
-							<th>Name</th>
-							{#each dataTableColumns.headers as t}
-								<th class="hidden lg:table-cell">{t}</th>
+							<th>
+								<div class="flex flex-row align-middle gap-2">
+								Name
+								<div on:click={()=>sortData(-1)}>
+									{#if sortingColumn == -1}
+										<svelte:component this={sortingIcon} size=20/>
+									{:else}
+										<SlidersIcon size=20/>
+									{/if}
+								</div>
+							</div></th>
+							{#each dataTableColumns.headers as t, idx}
+								<th class="hidden lg:table-cell">
+									<div class="flex flex-row align-middle gap-2">
+										{t}
+										<div on:click={()=>sortData(idx)}>
+											{#if idx === sortingColumn}
+												<svelte:component this={sortingIcon} size=20/>
+											{:else}
+												<SlidersIcon size=20/>
+											{/if}
+										</div>
+									</div>
+								</th>
 							{/each}
 						</tr>
 					</thead>

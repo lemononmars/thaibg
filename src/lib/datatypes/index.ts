@@ -75,7 +75,7 @@ export interface SubmissionPackage {
 }
 
 import { ArtistSubmissionPackage } from './personRoles/Artist';
-import { BoardgameStatusArray, BoardgameSubmissionPackage } from './Boardgame';
+import { BoardgameStatusArray, BoardgameSubmissionPackage, BoardGameTypeArray } from './Boardgame';
 import { CategorySubmissionPackage } from './Category';
 import { ContentMediaArray, ContentSubmissionPackage, ContentTypeArray } from './Content';
 import { ContentcreatorSubmissionPackage } from './organizationRoles/Contentcreator';
@@ -91,7 +91,7 @@ import { PlaytesterSubmissionPackage } from './personRoles/Playtester';
 import { ProducerSubmissionPackage } from './personRoles/Producer';
 import { PublisherSubmissionPackage } from './organizationRoles/Publisher';
 import { RulebookeditorSubmissionPackage } from './personRoles/Rulebookeditor';
-import { ShopSubmissionPackage, ShopStatusArray, ShopTypeArray } from './organizationRoles/Shop';
+import { ShopSubmissionPackage, ShopStatusArray, ShopTypeArray, ThaiProvince } from './organizationRoles/Shop';
 import { SponsorSubmissionPackage } from './organizationRoles/Sponsor';
 import { TypeSubmissionPackage } from './Type';
 /*
@@ -137,45 +137,76 @@ export function getSubmissionPackage(type: TypeName): SubmissionPackage {
 			return OrganizationSubmissionPackage();
 		case 'type':
 			return TypeSubmissionPackage();
-		case 'mechanics':
+		case 'mechanics': // just in case... mechanics shouldn't be editted or added
 			return MechanicsSubmissionPackage();
 	}
 }
 
-export interface FilterOption {
-	name: string,
+type FilterType = 'single' | 'multiple' | 'select' | 'range'
+
+interface FilterSingle {
+	type: 'single' | 'select',
 	key: string,
+	default?: number,
 	options: string[]
 }
+
+interface FilterMultiple {
+	type: 'multiple',
+	key: string,
+	default?: number[],
+	options: string[]
+}
+
+interface FilterRange {
+	type: 'range',
+	checkBetween: boolean,
+	default?: number,
+	key: string,
+	keyMin?: string,
+	keyMax?: string,
+	min: number,
+	max: number,
+	step: number
+}
+
+export interface OptionRange {
+	min?: number,
+	max?: number,
+	step?: number
+}
+
+
+export type FilterOption = FilterMultiple | FilterRange | FilterSingle
 
 export function getFilterOptions(type: TypeName): FilterOption[] {
 	switch(type) {
 		case 'event':
 			return [{
-				name: 'Event type',
 				key: 'Event_type',
+				type: 'single',
 				options: EventTypeArray
 			}]
 		case 'honor':
 			return [{
-				name: 'Honor type',
 				key: 'Honor_type',
+				type: 'single',
 				options: HonorTypeArray
 			}]
 		case 'content':
 			return [{
-				name: 'Content type',
 				key: 'Content_type',
+				type: 'single',
 				options: ContentTypeArray
 			},
 			{
-				name: 'Content media',
 				key: 'Content_media',
+				type: 'single',
 				options: ContentMediaArray
 			}]
 		case 'manufacturer':
 			return [{
-				name: 'Service',
+				type: 'single',
 				key: 'Manufacturer_service',
 				options: ManufacturerServiceArray
 			}]
@@ -183,24 +214,72 @@ export function getFilterOptions(type: TypeName): FilterOption[] {
 			return []
 		case 'boardgame':
 			return [{
-				name: 'Status',
 				key: 'TBG_status',
+				default: [3],
+				type: 'multiple',
 				options: BoardgameStatusArray
-			}]
+			},
+			// {
+			// 	key: 'Type_name',
+			// 	type: 'select',
+			// 	options: BoardGameTypeArray
+			// },
+			{
+				type: 'range',
+				checkBetween: false,
+				key: 'TBG_age',
+				min: 2,
+				max: 20,
+				step: 2
+			},
+			{
+				type: 'range',
+				key: 'TBG_playtime',
+				checkBetween: true,
+				keyMin: 'TBG_playtime_min',
+				keyMax: 'TBG_playtime_max',
+				min: 10,
+				max: 120, 
+				step: 10
+			},
+			{
+				type: 'range',
+				checkBetween: true,
+				key: 'TBG_player',
+				keyMin: 'TBG_player_min',
+				keyMax: 'TBG_player_max',
+				min: 1, 
+				max: 8, 
+				step: 1
+			},
+			{
+				type: 'range',
+				checkBetween: false,
+				key: 'TBG_weight',
+				min: 1, 
+				max: 5, 
+				step: 0.5
+			}
+		]
 		case 'organization':
 			return []
 		case 'sponsor':
 			return []
 		case 'shop':
 			return [{
-				name: 'Status',
+				type: 'single',
 				key: 'Shop_status',
 				options: ShopStatusArray
 			},
 			{
-				name: 'Type',
+				type: 'single',
 				key: 'Shop_type',
 				options: ShopTypeArray
+			},
+			{
+				type: 'select',
+				key: 'Shop_province',
+				options: ThaiProvince
 			}]
 		default:
 			return []

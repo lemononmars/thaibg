@@ -15,6 +15,7 @@ import { TypeNamesArray } from '$lib/datatypes';
 /** @type {import('/api/[type]/[id]/relation').RequestHandler} */
 export async function get({ url, params }) {
 	let { type, id } = params;
+	const typePrefix = getVarPrefix(type)
 	if (!TypeNamesArray.includes(type?.toLowerCase()))
 		return {
 			status: 404,
@@ -25,13 +26,14 @@ export async function get({ url, params }) {
 	const selectedColumns = selected
 		? selected
 			.split(',')
-			.map((str: string) => getVarPrefix(type) + '_' + str)
+			.map((str: string) =>typePrefix + '_' + str)
 			.join(',')
 		: '*';
 
-	const { data, error } = await from(`${getTableName(type)}_Relation`)
-		.select(selectedColumns)
-		.eq(`${getTableName(type)}_Relation.${getVarPrefix(type)}_ID`, id);
+	const tableName = `${getTableName(type)}_Relation`
+	const { data, error } = await from(tableName)
+		.select(`${selectedColumns}`)
+		.eq(`${typePrefix}_ID`, id);
 
 	if (error)
 		return {
