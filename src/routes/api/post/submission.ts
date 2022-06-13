@@ -6,20 +6,20 @@ import { sendhook} from '$lib/discord'
 export async function post( {request} ){
 	const content = await request.json()
 	const {pageType, username, type} = content
-	const hookMessage = ':game_die: ' + username + ' - ' + type + ' - ' + pageType
+	// const hookMessage = ':game_die: ' + username + ' - ' + type + ' - ' + pageType
 	
-	let message: string
-	try {
-		message = sendhook(hookMessage)
-	}
-	catch (error) {
-		return {
-			status: 501,
-			body: {
-				message: JSON.stringify(error) + ' ' + message
-			}
-		}
-	}
+	// let message: string
+	// try {
+	// 	message = sendhook(hookMessage)
+	// }
+	// catch (error) {
+	// 	return {
+	// 		status: 501,
+	// 		body: {
+	// 			message: JSON.stringify(error) + ' ' + message
+	// 		}
+	// 	}
+	// }
 
 	const {data: settings} = await from('Admin_Settings').select('*').single()
 	const {requireApproval} = settings

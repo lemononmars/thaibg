@@ -191,6 +191,7 @@
 				text: 'There was an error: ' + JSON.stringify(res.body)
 			}
 			handleAlert(newAlert)
+			console.log(JSON.stringify(res.body))
 		}
 	}
 </script>
