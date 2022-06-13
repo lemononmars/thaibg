@@ -274,9 +274,9 @@
 		{#if currentPanel === 'settings'}
 			<div class="flex flex-col gap-2 content-start text-left">
 				<div><input type="checkbox" class="checkbox" bind:checked={settings.requireApproval}> Admin approval require </div>
-				<div><input type="checkbox" class="checkbox" bind:checked={settings.allowCreate}> Allow create</div>
+				<div><input type="checkbox" class="checkbox" bind:checked={settings.allowCreate}> Allow add</div>
 				{#if settings.allowCreate}
-					<div> <input type="checkbox" class="checkbox" bind:checked={settings.allowGuestCreate}> Allow guest create</div>
+					<div> <input type="checkbox" class="checkbox" bind:checked={settings.allowGuestCreate}> Allow guest add</div>
 				{/if}
 				<div><input type="checkbox"  class="checkbox" bind:checked={settings.allowEdit}> Allow edit</div>
 				{#if settings.allowEdit}

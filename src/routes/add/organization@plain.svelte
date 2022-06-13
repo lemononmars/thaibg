@@ -1,8 +1,8 @@
 <script context=module lang=ts>
 	import { getSubmissionPackage, type AdminSettings } from '$lib/datatypes';
 	import type { SubmissionPackage } from '$lib/datatypes';
-	import { createSlug, fromBucket, getVarPrefix } from '$lib/supabase';
-	import type { SubmissionData } from '$lib/supabase'
+	import { fromBucket, getVarPrefix, createSlug } from '$lib/supabase';
+	import type {SubmissionData} from '$lib/supabase'
 	import type {Alert} from '$lib/alert/alert.type'
 	import {handleAlert} from '$lib/alert/alert.store'
 
@@ -26,19 +26,19 @@
 			if(!data[0].allowCreate) 
 				newAlert.text = 'Creating a new entry is not allowed. Please contact admin.'
 			else 
-				newAlert.text = 'Please login to create a new entry.'
+				newAlert.text = 'Please login to add a new entry.'
 			handleAlert(newAlert)
 
 			return {
 				status: 303,
-				redirect: '/create/'
+				redirect: '/add/'
 			};
 		}
 
 		return {
 			props: {
-				submissionPackage: getSubmissionPackage('person'),
-				adminSettings: data
+				data: getSubmissionPackage('organization'),
+				adminSettings
 			}
 		};
 	}
@@ -57,6 +57,7 @@
 		return res;
 	}
 
+	// TODO: make this a post request?
 	export async function uploadpicture(type: string, file: File, slug: string): Promise<string> {
 		// TODO: convert file? resize?
 		const randomID = Math.floor(Math.random() * 1000);
@@ -75,9 +76,9 @@
 		return pictureSlug
 	}
 
-	export async function getNewPerson(id: number){
-		const newPerson = await fetch(`/api/person/${id}`)
-		const data = await newPerson.json()
+	export async function getNewOrganization(id: number){
+		const newOrganization = await fetch(`/api/organization/${id}`)
+		const data = await newOrganization.json()
 		return data
 	}
 </script>
@@ -89,17 +90,17 @@
 	import { fly } from 'svelte/transition'
 	import { quintOut } from 'svelte/easing'
 	import { _ } from 'svelte-i18n';
-	import { EditIcon , MinusCircleIcon, ChevronLeftIcon, ChevronRightIcon } from 'svelte-feather-icons';
-	import PersonCard from '$lib/components/PersonCard.svelte';
+	import { ChevronLeftIcon, ChevronRightIcon, EditIcon, MinusCircleIcon } from 'svelte-feather-icons';
+	import PlainCard from '$lib/components/PlainCard.svelte';
 	import RoleButton from '$lib/components/RoleButton.svelte';
 	import InputForm from '$lib/components/InputForm.svelte';
 	import CreateCard from './_createCard.svelte'
 
 	export let submissionPackage: SubmissionPackage; // from load fucntion
 	export let adminSettings: AdminSettings
-	const type: string = 'person';
-	let submission = submissionPackage.submission
-	submission.Person_show = true // default = show
+	const type: string = 'organization';
+	let { submission, keys, relations, selects, multiselects, required } = submissionPackage; // destruct
+	submission.Organization_show = true // special case: default is true
 
 	// create an array for each relation
 	interface RoleObject {
@@ -108,20 +109,19 @@
 	}
 	let rolesAdded: RoleObject[] = [];
 
-	let roleSubmissionPackage = {
-		'artist': getSubmissionPackage('artist'),
-		'designer': getSubmissionPackage('designer'),
-		'graphicdesigner': getSubmissionPackage('graphicdesigner'),
-		'playtester': getSubmissionPackage('playtester'),
-		'producer': getSubmissionPackage('producer'),
-		'rulebookeditor': getSubmissionPackage('rulebookeditor'),
+	// extra info
+	let comment: string;
+
+	const roleSubmissionPackage = {
+		'manufacturer': getSubmissionPackage('manufacturer'),
+		'shop': getSubmissionPackage('shop'),
+		'sponsor': getSubmissionPackage('sponsor'),
+		'publisher': getSubmissionPackage('publisher'),
+		'contentcreator': getSubmissionPackage('contentcreator'),
 	}
 	let editingRoleIndex: number = -1;
 	$: editingRoleType = rolesAdded[editingRoleIndex]?.type
 	let editingRolePackage: SubmissionPackage
-
-	// extra info
-	let comment: string;
 
 	// show user a page based on the submission state
 	const enum State {
@@ -132,29 +132,20 @@
 	}
 	let submitState = State.START;
 	let canSubmit: boolean = false
-	$: canSubmit = submission.Person_name || submission.Person_name_th
+	$: canSubmit = submission.Organization_name
 
-	// use these to display the newly created person right away!
+	// these are used so that we can display a link to the newly created entry right away
 	let newIndex: number
-	let promiseNewPerson: Promise<any>
+	let promiseNewOrganization: Promise<any>
 	let step: number = 0
 	let dir: number = 1
 
-	function addRole(role: string) {
-		if(rolesAdded.some(r=>r.type === role)) {
-			const newAlert: Alert = {
-				type: 'error',
-				text: 'You have already added ' +  role + '!'
-			}
-			handleAlert(newAlert)
-			return
-		}
-
-		const prefix = getVarPrefix(role)
+	function addRole(role:string) {
+		const rolePrefix = getVarPrefix(role)
 		const newRoleData = {
-			[`${prefix}_name`]: submission.Person_name,
-			[`${prefix}_name_th`]: submission.Person_name_th,
-			[`${prefix}_show`]: true
+			[`${rolePrefix}_name`]: submission.Organization_name,
+			[`${rolePrefix}_picture`]: submission.Organization_picture,
+			[`${rolePrefix}_show`]: true
 		}
 		const newRole: RoleObject = {
 			type: role,
@@ -183,7 +174,7 @@
 	function handleSave () {
 		const roleType = rolesAdded[editingRoleIndex]['type']
 		const required = roleSubmissionPackage[roleType].required
-		if (required && !required.every((k: string) => !!rolesAdded[editingRoleIndex]['data'][k])) {
+		if (required && required.some((k: string) => !rolesAdded[editingRoleIndex]['data'][k])) {
 			const missingFields = required?.filter((k: string) => !rolesAdded[editingRoleIndex]['data'][k]).join(',')
 			const newAlert: Alert = {
 				type: 'error',
@@ -199,8 +190,8 @@
 
 	async function handleSubmit() {
 		if (submitState != State.START && submitState != State.ERROR) return;
-		if (submissionPackage.required && !submissionPackage.required.every(r => !!submission[r])) {
-			const missingFields = submissionPackage.required?.filter(r => !submission[r]).join(',')
+		if (required && !required.every(r => !!submission[r])) {
+			const missingFields = required?.filter(r => !submission[r]).join(',')
 			const newAlert: Alert = {
 				type: 'error',
 				text: 'please fill all required fields: ' +  missingFields
@@ -209,8 +200,8 @@
 			return
 		}
 
-		submitState = State.SUBMITTING;
 		const typePrefix = getVarPrefix(type)
+		submitState = State.SUBMITTING;
 
 		// attach submitter's info
 		let id = 'guest',
@@ -225,22 +216,31 @@
 		// if only Thai name (_name_th) exists, treat it as no name
 		// might have to manually fix it in admin panel
 		const slug = createSlug(submission[typePrefix + '_name'])
-		submission[typePrefix + '_slug'] = slug;
+		submission[typePrefix + '_slug'] = slug
 
-		const pictureFile = submission.Person_picture
-		if(pictureFile) {
-			const newPictureURL = 
-			await uploadpicture("person", pictureFile, slug);
-			submission.Person_picture = newPictureURL
+		// upload organization's picture
+		const pictureFile = submission.Organization_picture
+		if(pictureFile && (typeof pictureFile !== 'string')) {
+			submission.Organization_picture = 
+			await uploadpicture("organization", pictureFile, slug);
+		}
 
-			// also add the same image url to other roles
-			for(const r in rolesAdded) {
-				const roleType = rolesAdded[r]['type']
-				const rolePrefix = getVarPrefix(roleType)
-				rolesAdded[r]['data'][rolePrefix + '_picture'] = newPictureURL
+		// upload each role's picture individually
+		for (const r in rolesAdded) {
+			const roleType = rolesAdded[r]['type']
+			const rolePictureFile = rolesAdded[r]['data'][getVarPrefix(roleType) + '_picture']
+			if(rolePictureFile) {
+				const rolPrefix = getVarPrefix(roleType)
+				const slug = createSlug(rolesAdded[r]['data'][rolPrefix + '_name'])
+				rolesAdded[r]['data'][rolPrefix + '_slug'] = slug
+				rolesAdded[r]['data'][rolPrefix + '_picture'] = 
+				await uploadpicture(roleType, rolePictureFile, slug)
 			}
 		}
 
+		// convert the shape of rolesAdded
+		// from [{type: 'shop'}, {type:'manufacturere'}, ...]
+		// to {shop: [{}, {}, ...], manufacturer: [{}, ...]}
 		const rs = {}
 		for(const r of rolesAdded) {
 			if(!rs[r.type])
@@ -263,7 +263,7 @@
 			submitState = State.SUCCESS;
 			const resBody = await res.json()
 			newIndex = resBody.index
-			promiseNewPerson = getNewPerson(newIndex)
+			promiseNewOrganization = getNewOrganization(newIndex)
 			const newAlert: Alert = {
 				type: 'success',
 				text: 'Successfully submitted! with:' + newIndex
@@ -285,30 +285,26 @@
 	}
 </script>
 
-<Seo title="Create person" />
+<Seo title="Create organization" />
 {#if submitState == State.START || submitState == State.ERROR}
-<ul class="steps w-full fixed top-0 -translate-x-1/2 glass">
-	<li class="step" class:step-primary={step >= 0} on:click={()=>step = 0}>Basic info</li>
-	<li class="step" class:step-primary={step >= 1} on:click={()=>step = 1}>Role info</li>
-	<li class="step" class:step-primary={step >= 2} on:click={()=>step = 2}>Submit</li>
+<ul class="steps w-screen fixed top-0 -translate-x-1/2 glass z-10">
+	<li class="step" class:step-primary={step >= 0}>Basic info</li>
+	<li class="step" class:step-primary={step >= 1}>Role info</li>
+	<li class="step" class:step-primary={step >= 2}>Submit</li>
  </ul>
-<div class="h-16"></div>
+ <div class="h-16"></div>
 {#if step == 0}
-	<CreateCard bind:dir title={$_('page.create._') + " " + $_(`keyword.${type}`)}>
+	<CreateCard bind:dir title={$_('page.add._') + " " + $_(`keyword.${type}`)}>
 		<form>
 			<div class="flex flex-col lg:flex-row lg:gap-10 place-items-start p-4">
 				<InputForm
 					{submissionPackage}
 					bind:inputs={submission}
 				>
-					<span name="header">
-						Edit
-					</span>
 				</InputForm>
 			</div>
 		</form>
 	</CreateCard>
-
 	<div class="tooltip" data-tip={canSubmit? "":"please fill in either English or Thai name"}>
 		<div 
 			class="btn hover:translate-x-4"
@@ -319,70 +315,64 @@
 		</div>
 	</div>
 {:else if step == 1}
-	<CreateCard bind:dir title={$_('page.create.add_roles')}>
-		<!-- display organization roles-->
-		{#if (editingRoleIndex == -1)}
-			<div class="flex flex-col justify-center items-center py-4" in:fly={{ duration: 1000, y: 20, easing: quintOut }} >
-				<div class="flex flex-row flex-wrap justify-center gap-1 m-1">
-					{#each submissionPackage.relations as role}
-						<div 
-							on:click={()=>addRole(role)} 
-							class="shadow-md"
-							class:bg-success={rolesAdded.some(r=>r.type === role)}
-						>
-							<RoleButton {role} icon={"add"}/>
-						</div>
-					{/each}
-				</div>
-				{#each rolesAdded as r, ridx}
-					<div class="flex flex-row justify-between items-center border-2 my-1 p-1" in:fly>
-						<div class="tooltip" data-tip="edit">
-							<div 
-								class="btn bg-success" 
-								on:click={()=>handleExpand(ridx)}
-							>	
-								<EditIcon size=20/>
-							</div>
-						</div>
-						<div class="w-60 text-sm truncate">
-							<p class="font-bold">{$_(`keyword.${r.type}`)}</p>
-							<p>{r.data[getVarPrefix(r.type) + '_name'] || ''}</p>
-						</div>
-						<div class="tooltip" data-tip="remove">
-							<div class="btn bg-error" on:click={()=>removeRole(ridx)}>
-								<MinusCircleIcon size=20/>
-							</div>
-						</div>
-					</div>
+	<CreateCard bind:dir title={$_('page.add.add_roles')}>
+	<!-- display organization roles-->
+	{#if (editingRoleIndex == -1)}
+		<div class="flex flex-col justify-center items-center py-2" in:fly={{ duration: 1000, y: 20, easing: quintOut }} >
+			<div class="grid grid-rows-2 lg:grid-rows-1 grid-flow-col justify-center gap-1 m-1">
+				{#each relations as role}
+					<div on:click={()=>addRole(role)}><RoleButton {role} icon={"add"}/></div>
 				{/each}
 			</div>
-		{/if}
-		
-		<!-- edit a parcitular organization role -->
-		{#if (editingRoleIndex > -1)}
-			<div in:fly={{ duration: 1000, y: -20, easing: quintOut }} class="p-4">
-				<InputForm
-					submissionPackage={editingRolePackage}
-					bind:inputs={rolesAdded[editingRoleIndex]['data']}
-				>
-					<span slot="header">
-						Editing {$_(`keyword.${editingRoleType}`)}
-					</span>
-				</InputForm>
-				<div class="btn btn-error col-span-1" on:click={()=>removeRole(editingRoleIndex)}> Remove	</div>
-				<div class="btn btn-success col-span-2" on:click={handleSave}>Save</div>
-			</div>
-		{/if}
+			{#each rolesAdded as r, ridx}
+				<div class="flex flex-row justify-between items-center border-2 my-1 p-1" in:fly>
+					<div class="tooltip" data-tip="edit">
+						<div 
+							class="btn bg-success" 
+							on:click={()=>handleExpand(ridx)}
+						>	
+							<EditIcon size=20/>
+						</div>
+					</div>
+					<div class="w-60 text-sm truncate">
+						<p class="font-bold">{$_(`keyword.${r.type}`)}</p>
+						<p>{r.data[getVarPrefix(r.type) + '_name'] || ''}</p>
+					</div>
+					<div class="tooltip" data-tip="remove">
+						<div class="btn bg-error" on:click={()=>removeRole(ridx)}>
+							<MinusCircleIcon size=20/>
+						</div>
+					</div>
+				</div>
+			{/each}
+		</div>
+	{/if}
+	
+	<!-- edit a parcitular organization role -->
+	{#if (editingRoleIndex > -1)}
+		<div in:fly={{ duration: 1000, y: -20, easing: quintOut }} class="m-2">
+			<InputForm
+				submissionPackage={editingRolePackage}
+				bind:inputs={rolesAdded[editingRoleIndex]['data']}
+			>
+				<span slot="header">
+					Editing {editingRoleType}
+				</span>
+			</InputForm>
+			<div class="btn btn-error col-span-1" on:click={()=>removeRole(editingRoleIndex)}> Remove	</div>
+			<div class="btn btn-success col-span-2" on:click={handleSave}> Save	</div>
+		</div>
+	{/if}
 	</CreateCard>
-	<div class="btn hover:-translate-x-4" on:click={()=>{step = 0; dir = -1; editingRoleIndex=-1}}> Prev <ChevronLeftIcon size=20/> </div>
-	<div class="btn hover:translate-x-4" on:click={()=>{step = 2; dir = 1; editingRoleIndex=-1}}> Next <ChevronRightIcon size=20/> </div>
+	<div class="btn" on:click={()=>{step = 0; dir = -1}}>Prev</div>
+	<div class="btn" on:click={()=>{step = 2; dir = 1}}>Next</div>
 {:else if step == 2}
 	<CreateCard bind:dir title={"Submit"}>
 		{#if adminSettings.requireApproval}
-			<div class="justify-self-end mx-2">{$_('page.create.comment')}</div>
+			<div class="justify-self-end mx-2">{$_('page.add.comment')}</div>
 			<textarea
 				class="textarea textarea-bordered"
-				placeholder={$_('page.create.comment')}
+				placeholder={$_('page.add.comment')}
 				bind:value={comment}
 			/><br />
 		{/if}
@@ -392,29 +382,26 @@
 		class="btn btn-success" 
 		on:click|preventDefault={handleSubmit}
 	>
-		{$_('page.create.submit')}
+		{$_('page.add.submit')}
 	</div>
 {/if}
 {/if}
 
 <div>
 {#if submitState == State.SUBMITTING}
-	<p>{$_('page.create.status.submitting')}</p>
+	<p>{$_('page.add.status.submitting')}</p>
 	<Spinner />
 {:else if submitState == State.SUCCESS}
-	<p>{$_('page.create.status.success')}</p>
-	{#await promiseNewPerson then res}
+	<p>{$_('page.add.status.success')}</p>
+	{#await promiseNewOrganization then res}
 		{#if res}
 			<div class="mx-auto">
-				<PersonCard person={res}/>
+				<PlainCard object={res} type={"organization"}/>
 			</div>
 		{/if}
 	{/await}
 	
 	<br>
-	<p>{$_('page.create.status.submitmore')}</p><div class="btn" href="./create/{type}">Here</div>
-{:else if submitState == State.ERROR}
-	<p class="text-red">{$_('page.create.status.error')}</p>
-	<div class="btn" on:click|preventDefault={handleSubmit}>{$_('page.create.submit')}</div>
+	<p>{$_('page.add.status.submitmore')}</p><div class="btn" href="./add/{type}">Here</div>
 {/if}
 </div>

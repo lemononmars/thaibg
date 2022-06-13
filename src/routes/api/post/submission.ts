@@ -7,15 +7,16 @@ export async function post( {request} ){
 	const content = await request.json()
 	const {pageType, username, type} = content
 	const hookMessage = ':game_die: ' + username + ' - ' + type + ' - ' + pageType
-	console.log(hookMessage)
+	
+	let message: string
 	try {
-		sendhook(hookMessage)
+		message = sendhook(hookMessage)
 	}
 	catch (error) {
 		console.log(error)
 		return {
 			status: 501,
-			message: error
+			message: JSON.stringify(error) + ' message'
 		}
 	}
 

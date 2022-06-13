@@ -13,7 +13,7 @@
 		<p>Of course! All data are public and free to use.</p>
 		<div class="divider" />
 		<h1>I need to help. What should I do?</h1>
-		<p>You can create new entries, or add missing information from old entries.</p>
+		<p>You can add new entries, or add missing information from old entries.</p>
 		<div class="divider" />
 		<h1>Can I edit a page which is entirely unrelated to me?</h1>
 		<p>Our admins will see if that edit is reasonable.</p>

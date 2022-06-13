@@ -106,7 +106,7 @@
 			{$_('page.home.welcome.text2')}
 		</p>
 		<div class="flex flex-col items-center justify-center mt-4 gap-2 w-full">
-			<a href="/create"><div class="btn btn-wide btn-secondary">{$_('page.home.welcome.contribute')}</div></a
+			<a href="/add"><div class="btn btn-wide btn-secondary">{$_('page.home.welcome.contribute')}</div></a
 			>
 			<!-- <a href="/contact"><div class="btn btn-ghost btn-wide">{$_('page.home.welcome.contact')}</div></a> -->
 			<a href="/recentchanges"><div class="btn btn-ghost btn-wide">{$_('page.home.welcome.recentchanges')}</div></a>

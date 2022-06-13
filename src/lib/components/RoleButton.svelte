@@ -35,7 +35,7 @@
 		<p 
 			class="text-sm text-center {text === 'all'? 'text-secondary':'text-base-content'}"
 			>
-			{role==='add'?$_('page.create._'):''}{$_(`keyword.${text}`)}
+			{role==='add'?$_('page.add._'):''}{$_(`keyword.${text}`)}
 		</p>
 	</div>
 </div>

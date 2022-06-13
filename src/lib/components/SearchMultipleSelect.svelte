@@ -151,7 +151,7 @@
 						</li>
 					{:else}
 						{#if !isStatic}
-							<li><div class="btn btn-outline btn-error btn-xs text-left"> <a href="/create/{type}" target="_blank">Create new {type}</a></div></li>
+							<li><div class="btn btn-outline btn-error btn-xs text-left"> <a href="/add/{type}" target="_blank">Create new {type}</a></div></li>
 						{:else}
 						<li><div class="btn btn-outline btn-error btn-xs text-left"> Not found </div></li>
 						{/if}

@@ -30,12 +30,12 @@
 			else if(!data[0].allowCreate) 
 				newAlert.text = 'Creating a new entry is not allowed. Please contact admin.'
 			else 
-				newAlert.text = 'Please login to create a new entry.'
+				newAlert.text = 'Please login to add a new entry.'
 			handleAlert(newAlert)
 
 			return {
 				status: 303,
-				redirect: '/create/'
+				redirect: '/add/'
 			};
 		}
 
@@ -90,7 +90,7 @@
 	import InputForm from '$lib/components/InputForm.svelte';
 	import SearchMultipleSelect from '$lib/components/SearchMultipleSelect.svelte'
 	import PlainCard from '$lib/components/PlainCard.svelte'
-	import { _ } from 'svelte-i18n';
+	import { _, locale } from 'svelte-i18n';
 
 	export let data: SubmissionPackage, 
 		type: string, // from load fucntion
@@ -200,7 +200,13 @@
 
 <div class="bg-base-200 m-4 rounded-3xl">
 	<div class="bg-error py-4 mx-auto rounded-t-3xl">
-		<div class="text-content-error text-2xl">{$_('page.create._')} {$_('page.create.new')} {$_(`keyword.${type}`)}</div>
+		<div class="text-content-error text-2xl">
+			{#if $locale?.includes('en')}
+				{$_('page.add._')} {$_('page.add.new')} {$_(`keyword.${type}`)}
+			{:else}
+				{$_('page.add._')}{$_(`keyword.${type}`){$_('page.add.new')}}
+			{/if}
+		</div>
 	</div>
 	<div class="text-gray-500">
 	</div>
@@ -229,10 +235,10 @@
 			</form>
 			<div class="divider" />
 			{#if adminSettings.requireApproval}
-			<div class="justify-self-end mx-2">{$_('page.create.comment')}</div>
+			<div class="justify-self-end mx-2">{$_('page.add.comment')}</div>
 				<textarea
 					class="textarea textarea-bordered"
-					placeholder={$_('page.create.comment')}
+					placeholder={$_('page.add.comment')}
 					bind:value={comment}
 				/><br />
 			{/if}
@@ -243,7 +249,7 @@
 						on:click|preventDefault={handleSubmit}
 						class:btn-disabled={!canSubmit}
 					>
-						{$_('page.create.submit')}
+						{$_('page.add.submit')}
 					</div>
 				</div>
 			{/if}
@@ -253,10 +259,10 @@
 
 
 {#if submitState == State.SUBMITTING}
-	<p>{$_('page.create.status.submitting')}</p>
+	<p>{$_('page.add.status.submitting')}</p>
 	<Spinner />
 {:else if submitState == State.SUCCESS}
-	<p>{$_('page.create.status.success')}</p>
+	<p>{$_('page.add.status.success')}</p>
 	{#await promiseNewType then res}
 		{#if res}
 			<div class="mx-auto">
@@ -264,8 +270,8 @@
 			</div>
 		{/if}
 	{/await}
-	<p>{$_('page.create.status.submitmore')}</p><div class="btn" href="./create/{type}">Here</div>
+	<p>{$_('page.add.status.submitmore')}</p><div class="btn" href="./add/{type}">Here</div>
 {:else if submitState == State.ERROR}
-	<p class="text-red">{$_('page.create.status.error')}</p>
-	<div class="btn" on:click|preventDefault={handleSubmit}>{$_('page.create.submit')}</div>
+	<p class="text-red">{$_('page.add.status.error')}</p>
+	<div class="btn" on:click|preventDefault={handleSubmit}>{$_('page.add.submit')}</div>
 {/if}

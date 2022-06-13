@@ -330,7 +330,7 @@
 		</div>
 	</div>
 {:else if step == 1}
-	<CreateCard bind:dir title={$_('page.create.add_roles')}>
+	<CreateCard bind:dir title={$_('page.add.add_roles')}>
 		<!-- display person roles-->
 		<!-- <p class="break-words w-screen">{JSON.stringify(currentData)} {JSON.stringify(rolesAdded)}</p> -->
 		{#if (editingRoleIndex == -1)}
@@ -407,10 +407,10 @@
 {:else if step == 2}
 	<CreateCard bind:dir title={"Submit"}>
 		{#if adminSettings.requireApproval}
-			<div class="justify-self-end mx-2">{$_('page.create.comment')}</div>
+			<div class="justify-self-end mx-2">{$_('page.add.comment')}</div>
 			<textarea
 				class="textarea textarea-bordered"
-				placeholder={$_('page.create.comment')}
+				placeholder={$_('page.add.comment')}
 				bind:value={comment}
 			/><br />
 		{/if}
@@ -420,22 +420,22 @@
 		class="btn btn-success" 
 		on:click|preventDefault={handleSubmit}
 	>
-		{$_('page.create.submit')}
+		{$_('page.add.submit')}
 	</div>
 {/if}
 {/if}
 
 <div>
 {#if submitState == State.SUBMITTING}
-	<p>{$_('page.create.status.submitting')}</p>
+	<p>{$_('page.add.status.submitting')}</p>
 	<Spinner />
 {:else if submitState == State.SUCCESS}
-	<p>{$_('page.create.status.success')}</p>
+	<p>{$_('page.add.status.success')}</p>
 	<a href="/person/{currentDataID}">{currentData.Person_name || currentDataID.Person_name_th}</a>
 	<br>
-	<p>{$_('page.create.status.submitmore')}</p><a href='/'>Return home</a>
+	<p>{$_('page.add.status.submitmore')}</p><a href='/'>Return home</a>
 {:else if submitState == State.ERROR}
-	<p class="text-red">{$_('page.create.status.error')}</p>
-	<div class="btn" on:click|preventDefault={handleSubmit}>{$_('page.create.submit')}</div>
+	<p class="text-red">{$_('page.add.status.error')}</p>
+	<div class="btn" on:click|preventDefault={handleSubmit}>{$_('page.add.submit')}</div>
 {/if}
 </div>

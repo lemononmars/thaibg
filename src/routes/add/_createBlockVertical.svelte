@@ -17,8 +17,8 @@
          <h3>{$_(`keyword.${type}`)}</h3>
          <div class="text-xs h-20">{description}</div>
       </div>
-      <a href="/create/{type}" target="_blank">
-         <div class="btn btn-block btn-secondary mx-auto">{$_('page.create._')}</div>
+      <a href="/add/{type}" target="_blank">
+         <div class="btn btn-block btn-secondary mx-auto">{$_('page.add._')}</div>
       </a>
    </div>
    {#if width == 2}

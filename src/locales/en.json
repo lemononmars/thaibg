@@ -76,8 +76,8 @@
       "playable": "Playable at these shops",
       "obtainable": "Obtainable at these shops"
     },
-    "create": {
-      "_": "Create",
+    "add": {
+      "_": "Add",
       "new": "new",
       "submit": "Submit",
       "comment": "Add a comment for admin",

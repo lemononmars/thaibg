@@ -10,7 +10,7 @@
       <h3 class="text-xs -mt-2">{$_(`keyword.${type}`)}</h3>
    </div>
    <div class="text-xs text-left w-1/2">{description}</div>
-   <a href="/create/{type}" target="_blank">
-      <div class="btn btn-secondary">{$_('page.create._')}</div>
+   <a href="/add/{type}" target="_blank">
+      <div class="btn btn-secondary">{$_('page.add._')}</div>
    </a>
 </div>

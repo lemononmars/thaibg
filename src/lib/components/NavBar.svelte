@@ -261,11 +261,11 @@
 					class="flex flex-row gap-2 py-2 justify-center place-items-center w-screen bg-warning" 
 					on:mouseleave={()=>hoveringTab=-1}
 				>
-					<a href="/create" target="_blank">
+					<a href="/add" target="_blank">
 						<RoleButton role={"role"} text={"all"} icon={"add"}/>
 					</a>
 					{#each contributeMenu as option}
-						<a href="/create/{option}" target="_blank">
+						<a href="/add/{option}" target="_blank">
 							<RoleButton role={option} icon={"add"}/>
 						</a>
 					{/each}

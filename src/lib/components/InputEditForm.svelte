@@ -83,7 +83,7 @@
       <div class="justify-self-start lg:gap-4 lg:col-span-2 flex flex-row align-top">
          {#if selects[k]}
             <select class="select select-bordered" bind:value={currentData[k]} disabled={editingKey !== k}>
-               <option disabled selected value={null}>{$_('page.create.select')}</option>
+               <option disabled selected value={null}>{$_('page.add.select')}</option>
                {#each selects[k] as opt}
                   <option value={opt}>{$_(`option.${opt}`)}</option>
                {/each}

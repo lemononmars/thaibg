@@ -37,7 +37,7 @@
 
 			return {
 				status: 303,
-				redirect: '/create/'
+				redirect: '/add/'
 			};
 		}
 
@@ -267,7 +267,7 @@
 				<div class="justify-self-center">
 					{#if selects[k]}
 						<select class="select select-bordered" bind:value={currentData[k]} disabled={editingKey !== k}>
-							<option disabled selected value={null}>{$_('page.create.select')}</option>
+							<option disabled selected value={null}>{$_('page.add.select')}</option>
 							{#each selects[k] as opt}
 								<option value={opt}>{$_(`option.${opt}`)}</option>
 							{/each}
@@ -347,28 +347,28 @@
 		{/if}
 		<div class="divider" />
 		{#if adminSettings.requireApproval}
-			<div class="justify-self-end mx-2">{$_('page.create.comment')}</div>
+			<div class="justify-self-end mx-2">{$_('page.add.comment')}</div>
 			<textarea
 				class="textarea textarea-bordered"
-				placeholder={$_('page.create.comment')}
+				placeholder={$_('page.add.comment')}
 				bind:value={comment}
 			/><br />
 		{/if}
 		{#if submitState == State.START}
-			<div class="btn" on:click|preventDefault={handleSubmit}>{$_('page.create.submit')}</div>
+			<div class="btn" on:click|preventDefault={handleSubmit}>{$_('page.add.submit')}</div>
 		{/if}
 	</form>
 {/if}
 
 {#if submitState == State.SUBMITTING}
-	<p>{$_('page.create.status.submitting')}</p>
+	<p>{$_('page.add.status.submitting')}</p>
 	<Spinner />
 {:else if submitState == State.SUCCESS}
-	<p>{$_('page.create.status.success')}</p>
+	<p>{$_('page.add.status.success')}</p>
 	<p>Go back to <a href="/{type}/{currentData[getVarPrefix(type) + '_ID']}" class="text-info"> {currentData[getVarPrefix(type) + '_name']}</a></p>
 {:else if submitState == State.ERROR}
-	<p class="text-red">{$_('page.create.status.error')}</p>
-	<div class="btn" on:click|preventDefault={handleSubmit}>{$_('page.create.submit')}</div>
+	<p class="text-red">{$_('page.add.status.error')}</p>
+	<div class="btn" on:click|preventDefault={handleSubmit}>{$_('page.add.submit')}</div>
 {/if}
 
 {#if needMap}

@@ -318,10 +318,10 @@
 {:else if step == 4}
 	<CreateCard bind:dir title={"Submit"}>
 		{#if adminSettings.requireApproval}
-			<div class="justify-self-end mx-2">{$_('page.create.comment')}</div>
+			<div class="justify-self-end mx-2">{$_('page.add.comment')}</div>
 			<textarea
 				class="textarea textarea-bordered"
-				placeholder={$_('page.create.comment')}
+				placeholder={$_('page.add.comment')}
 				bind:value={comment}
 			/><br />
 		{/if}
@@ -331,7 +331,7 @@
 		class="btn btn-success" 
 		on:click|preventDefault={handleSubmit}
 	>
-		{$_('page.create.submit')}
+		{$_('page.add.submit')}
 	</div>
 
 {/if}
@@ -339,16 +339,16 @@
 
 <div>
 {#if submitState == State.SUBMITTING}
-	<p>{$_('page.create.status.submitting')}</p>
+	<p>{$_('page.add.status.submitting')}</p>
 	<Spinner />
 {:else if submitState == State.SUCCESS}
-	<p>{$_('page.create.status.success')}</p>
+	<p>{$_('page.add.status.success')}</p>
 	<p>Go back to <a href="/{type}/{currentData[getVarPrefix(type) + '_ID']}" class="text-info"> {currentData.TBG_name}</a></p>
 	
 	<br>
-	<p>{$_('page.create.status.submitmore')}</p><div class="btn" href="./create/{type}">Here</div>
+	<p>{$_('page.add.status.submitmore')}</p><div class="btn" href="./add/{type}">Here</div>
 {:else if submitState == State.ERROR}
-	<p class="text-red">{$_('page.create.status.error')}</p>
-	<div class="btn" on:click|preventDefault={handleSubmit}>{$_('page.create.submit')}</div>
+	<p class="text-red">{$_('page.add.status.error')}</p>
+	<div class="btn" on:click|preventDefault={handleSubmit}>{$_('page.add.submit')}</div>
 {/if}
 </div>

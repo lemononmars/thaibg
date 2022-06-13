@@ -7,4 +7,5 @@ const webhook = new WebhookClient({
 
 export function sendhook(message: string) {
 	webhook.send(message)
+   return 'webhook id =' + String(import.meta.env.VITE_DISCORD_WEBHOOK_ID)
 }
