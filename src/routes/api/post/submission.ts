@@ -13,6 +13,10 @@ export async function post( {request} ){
 	}
 	catch (error) {
 		console.log(error)
+		return {
+			status: 501,
+			message: error
+		}
 	}
 
 	const {data: settings} = await from('Admin_Settings').select('*').single()
