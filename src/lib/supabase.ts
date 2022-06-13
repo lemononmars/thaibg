@@ -77,7 +77,7 @@ export function getDefaultImageURL(type: string): string {
 	return DIR_IMAGE + `${type}/` + DEFAULT_IMAGE_FILE;
 }
 
-export function createSlug(name: string) {
+export function generateSlug(name: string) {
    if(!name || name.length == 0)
       return 'no-slug'
 

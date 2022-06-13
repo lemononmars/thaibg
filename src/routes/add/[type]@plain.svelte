@@ -1,7 +1,7 @@
 <script context=module lang=ts>
 	import { getSubmissionPackage, TypeSubmissionAllowed } from '$lib/datatypes';
 	import type { SubmissionPackage, AdminSettings } from '$lib/datatypes';
-	import { fromBucket, getVarPrefix, createSlug } from '$lib/supabase';
+	import { fromBucket, getVarPrefix, generateSlug } from '$lib/supabase';
 	import type { SubmissionData } from '$lib/supabase';
 	import type {Alert} from '$lib/alert/alert.type'
 	import {handleAlert} from '$lib/alert/alert.store'
@@ -51,7 +51,7 @@
    // HURRAY ! It runs on server now
 	// TODO: make sure nothing breaks in production
 	export async function postSubmission(data: SubmissionData): Promise<Response> {
-      const res = await fetch('/api/post/submission', {
+      return await fetch('/api/post/submission', {
          method: 'POST',
          cache: 'default',
          credentials: 'same-origin',
@@ -60,7 +60,6 @@
          },
          body: JSON.stringify(data)
       })
-		return res;
 	}
 
 	export async function uploadpicture(type: string, file: File, fileName: string) {
@@ -154,7 +153,7 @@
 			username = error || !data ? 'guest' : data.username;
 		}
 
-		const slug = createSlug(submission[typePrefix + '_name'])
+		const slug = generateSlug(submission[typePrefix + '_name'])
 		submission[typePrefix + '_slug'] = slug
 
 		// rename picture with random ID for hashing purpose
@@ -189,7 +188,7 @@
 			submitState = State.ERROR;
 			const newAlert: Alert = {
 				type: 'error',
-				text: 'There was an error: ' + JSON.stringify(res.body)
+				text: 'There was an error: ' + JSON.stringify(res)
 			}
 			handleAlert(newAlert)
 		}

@@ -1,7 +1,7 @@
 <script context=module lang=ts>
 	import { getSubmissionPackage, type AdminSettings } from '$lib/datatypes';
 	import type { SubmissionPackage } from '$lib/datatypes';
-	import { createSlug, fromBucket, getVarPrefix } from '$lib/supabase';
+	import { generateSlug, fromBucket, getVarPrefix } from '$lib/supabase';
 	import type { SubmissionData } from '$lib/supabase'
 	import type {Alert} from '$lib/alert/alert.type'
 	import {handleAlert} from '$lib/alert/alert.store'
@@ -224,7 +224,7 @@
 		// generate a slug based on name (english)
 		// if only Thai name (_name_th) exists, treat it as no name
 		// might have to manually fix it in admin panel
-		const slug = createSlug(submission[typePrefix + '_name'])
+		const slug = generateSlug(submission[typePrefix + '_name'])
 		submission[typePrefix + '_slug'] = slug;
 
 		const pictureFile = submission.Person_picture

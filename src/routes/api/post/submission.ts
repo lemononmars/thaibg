@@ -16,7 +16,7 @@ export async function post( {request} ){
 		console.log(error)
 		return {
 			status: 501,
-			message: JSON.stringify(error) + ' message'
+			message: JSON.stringify(error) + ' ' + message
 		}
 	}
 

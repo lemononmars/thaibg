@@ -1,7 +1,7 @@
 <script context=module lang=ts>
 	import { getSubmissionPackage, organizationRoles} from '$lib/datatypes';
 	import type { SubmissionPackage, AdminSettings, Organization } from '$lib/datatypes';
-	import { createSlug, fromBucket, getVarPrefix } from '$lib/supabase';
+	import { generateSlug, fromBucket, getVarPrefix } from '$lib/supabase';
 	import type { SubmissionData } from '$lib/supabase'
 	import type {Alert} from '$lib/alert/alert.type'
 	import {handleAlert} from '$lib/alert/alert.store'
@@ -238,7 +238,7 @@
 		// generate a slug based on name (english)
 		// if only Thai name (_name_th) exists, treat it as no name
 		// might have to manually fix it in admin panel
-		const slug = createSlug(submission[typePrefix + '_name'])
+		const slug = generateSlug(submission[typePrefix + '_name'])
 		submission[typePrefix + '_slug'] = slug;
 
 		const pictureFile = submission.Organization_picture
@@ -254,7 +254,7 @@
 			const rolePictureFile = rolesAdded[r]['data'][getVarPrefix(roleType) + '_picture']
 			if(rolePictureFile && (typeof rolePictureFile !== 'string')) {
 				const rolPrefix = getVarPrefix(roleType)
-				const slug = createSlug(rolesAdded[r]['data'][rolPrefix + '_name'])
+				const slug = generateSlug(rolesAdded[r]['data'][rolPrefix + '_name'])
 				rolesAdded[r]['data'][rolPrefix + '_slug'] = slug
 				rolesAdded[r]['data'][rolPrefix + '_picture'] = 
 				await uploadpicture(roleType, rolePictureFile, slug)
