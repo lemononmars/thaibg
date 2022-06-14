@@ -249,8 +249,10 @@ export function getFilterOptions(type: TypeName): FilterOption[] {
 			},
 			{
 				type: 'range',
-				checkBetween: true,
 				key: 'TBG_weight',
+				checkBetween: true,
+				keyMin: 'TBG_weight',
+				keyMax: 'TBG_weight',
 				min: 1, 
 				max: 5, 
 				step: 0.1,
