@@ -1,7 +1,7 @@
 <script context=module lang=ts>
 	import { getSubmissionPackage, TypeSubmissionAllowed } from '$lib/datatypes';
 	import type { SubmissionPackage, AdminSettings } from '$lib/datatypes';
-	import { fromBucket, getVarPrefix, generateSlug } from '$lib/supabase';
+	import { uploadPicture, getVarPrefix, generateSlug } from '$lib/supabase';
 	import type { SubmissionData } from '$lib/supabase';
 	import type {Alert} from '$lib/alert/alert.type'
 	import {handleAlert} from '$lib/alert/alert.store'
@@ -10,16 +10,16 @@
 		const type = params.type;
 		const { user } = session
 
-		const adminSettings = await fetch('/api/adminsettings')
-		const data = await adminSettings.json()
+		const res = await fetch('/api/adminsettings')
+		const adminSettings = await res.json()
 
 		// redirect if
 		// * type is invalid 
 		// * creating a new entry is not allowed
 		// * creating a new entry is allowed for registered user, not guest
 		if (!TypeSubmissionAllowed.includes(type) 
-			|| (!data[0].allowCreate)
-			|| (!data[0].allowGuestCreate && !user)) {
+			|| (!adminSettings[0].allowCreate)
+			|| (!adminSettings[0].allowGuestCreate && !user)) {
 
 			let newAlert: Alert = {
 				type: 'error',
@@ -27,7 +27,7 @@
 			}
 			if(!TypeSubmissionAllowed.includes(type))	
 				newAlert.text = `${type} is not a valid page.`
-			else if(!data[0].allowCreate) 
+			else if(!adminSettings[0].allowCreate) 
 				newAlert.text = 'Creating a new entry is not allowed. Please contact admin.'
 			else 
 				newAlert.text = 'Please login to add a new entry.'
@@ -41,15 +41,13 @@
 
 		return {
 			props: {
-				data: getSubmissionPackage(type),
+				submissionPackage: getSubmissionPackage(type),
 				type,
 				adminSettings
 			}
 		};
 	}
 
-   // HURRAY ! It runs on server now
-	// TODO: make sure nothing breaks in production
 	export async function postSubmission(data: SubmissionData): Promise<Response> {
       return await fetch('/api/post/submission', {
          method: 'POST',
@@ -62,22 +60,9 @@
       })
 	}
 
-	export async function uploadpicture(type: string, file: File, fileName: string) {
-		// TODO: convert file? resize?
-		let { error: updateError } = await fromBucket('images').upload(
-			`${type}/${fileName}`,
-			file,
-			{
-				upsert: false
-			}
-		);
-
-		if (updateError) throw updateError;
-	}
-
 	export async function getNewType(type: string, id: number){
-		const newBoardgame = await fetch(`/api/${type}/${id}`)
-		const data = await newBoardgame.json()
+		const newType = await fetch(`/api/${type}/${id}`)
+		const data = await newType.json()
 		return data
 	}
 </script>
@@ -90,11 +75,14 @@
 	import SearchMultipleSelect from '$lib/components/SearchMultipleSelect.svelte'
 	import PlainCard from '$lib/components/PlainCard.svelte'
 	import { _, locale } from 'svelte-i18n';
+	import CreateCard from './_createCard.svelte'
+	import { ChevronLeftIcon } from 'svelte-feather-icons';
 
-	export let data: SubmissionPackage, 
+	export let submissionPackage: SubmissionPackage, 
 		type: string, // from load fucntion
 		adminSettings: AdminSettings;
-	let {submission, relations, required} = data; // destruct
+	let {submission, relations, required} = submissionPackage; // destruct
+
 	const typePrefix = getVarPrefix(type)
 	submission[typePrefix + '_show'] = true
 
@@ -119,6 +107,13 @@
 	// use these to display the newly created boardgame right away!
 	let newIndex: number
 	let promiseNewType: Promise<any>
+	let step: number = 0
+	let dir: number = 1
+	const stepTitles = [
+		'Add general info',
+		'Add relations',
+		'Submit'
+	]
 
 	async function handleSubmit() {
 		if (submitState != State.START && submitState != State.ERROR) return;
@@ -160,7 +155,7 @@
 		const pictureFile = submission[typePrefix + '_picture']
 		if(pictureFile) {
 			submission[typePrefix + '_picture'] = 
-			await uploadpicture(type, pictureFile, slug);
+			await uploadPicture(type, pictureFile, slug);
 		}
 
 		let res = await postSubmission({
@@ -196,65 +191,69 @@
 	}
 </script>
 
-<Seo title="{$_('page.add._')} {type}" />
+<Seo title="{$_('page.add._')}{type}" />
 
-<div class="bg-base-200 m-4 rounded-3xl">
-	<div class="bg-error py-4 mx-auto rounded-t-3xl">
-		<div class="text-content-error text-2xl">
-			{#if $locale?.includes('en')}
-				{$_('page.add._')} {$_('page.add.new')} {$_(`keyword.${type}`)}
-			{:else}
-				{$_('page.add._')}{$_(`keyword.${type}`)}{$_('page.add.new')}
-			{/if}
+{#if submitState == State.START || submitState == State.ERROR}
+<ul class="steps w-screen fixed top-0 -translate-x-1/2 glass z-10">
+	{#each stepTitles as s, idx}
+		<li class="step text-xs lg:text-md" class:step-primary={step >= idx}>
+			{s}
+		</li>
+	{/each}
+ </ul>
+<div class="h-16"></div>
+{#if step == 0}
+	<CreateCard bind:dir title={stepTitles[0]}>
+		<form>
+			<div class="flex flex-col lg:flex-row lg:gap-10 place-items-start p-4">
+				<InputForm
+					{submissionPackage}
+					bind:inputs={submission}
+				>
+				</InputForm>
+			</div>
+		</form>
+	</CreateCard>
+	<div class="tooltip" data-tip={canSubmit? "":"please fill all required fields:"}>
+		<div 
+			class="btn"
+			on:click|preventDefault={()=>{step++; dir = 1}}
+			class:btn-disabled={!canSubmit}
+		>
+			Next
 		</div>
 	</div>
-	<div class="text-gray-500">
-	</div>
-		{#if submitState == State.START || submitState == State.ERROR}
-			<form>
-				<div class="flex flex-col lg:flex-row lg:gap-10 place-items-start p-4">
-					<InputForm
-						submissionPackage={data}
-						bind:inputs={submission}
-					>
-						<span name="header">
-							Edit
-						</span>
-					</InputForm>
-					<div class="divider divider-vertical"/>
-					<div class="flex flex-col justify-center">
-						{#each relations as r}
-							<SearchMultipleSelect 
-								bind:selects={relationMultiSelects[r]} 
-								type={r} 
-								relation={type}
-							/>
-						{/each}
-					</div>
-				</div>
-			</form>
-			<div class="divider" />
-			{#if adminSettings.requireApproval}
+{:else if step == 1}
+	<CreateCard bind:dir title={stepTitles[1]}>
+		<div class="grid grid-cols2 lg:grid-cols-3 gap-y-4">
+			{#each relations as r}
+				<SearchMultipleSelect bind:selects={relationMultiSelects[r]} type={r} />
+			{/each}
+		</div>
+	</CreateCard>
+	<div class="btn" on:click={()=>{step--; dir = -1}}>Prev</div>
+	<div class="btn" on:click={()=>{step++; dir = 1}}>Next</div>
+{:else if step == 2}
+	<CreateCard bind:dir title={"Submit"}>
+		{#if adminSettings.requireApproval}
 			<div class="justify-self-end mx-2">{$_('page.add.comment')}</div>
-				<textarea
-					class="textarea textarea-bordered"
-					placeholder={$_('page.add.comment')}
-					bind:value={comment}
-				/><br />
-			{/if}
-			{#if submitState == State.START}
-				<div class="tooltip" data-tip={canSubmit? "":"please fill in all required fields"}>
-					<div 
-						class="btn" 
-						on:click|preventDefault={handleSubmit}
-						class:btn-disabled={!canSubmit}
-					>
-						{$_('page.add.submit')}
-					</div>
-				</div>
-			{/if}
+			<textarea
+				class="textarea textarea-bordered"
+				placeholder={$_('page.add.comment')}
+				bind:value={comment}
+			/><br />
 		{/if}
+	</CreateCard>
+	<div class="btn hover:-translate-x-4" on:click={()=>{step = 1; dir = -1}}>Prev <ChevronLeftIcon size=20/></div>
+	<div 
+		class="btn btn-success" 
+		on:click|preventDefault={handleSubmit}
+	>
+		{$_('page.add.submit')}
 	</div>
+
+{/if}
+{/if}
 
 
 

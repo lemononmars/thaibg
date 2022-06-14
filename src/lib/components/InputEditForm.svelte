@@ -22,10 +22,13 @@
    let needMap: boolean = false
    const locationKeyArray = keys.filter((k:string) => k.includes("location"))
    let locationKey: string
+
    if(locationKeyArray.length > 0) {
       needMap = true
       locationKey = locationKeyArray[0]
-      inputs[locationKey] = {formatted_address: "No selection"}
+      inputs[locationKey] = {formatted_address: ""}
+      if(!currentData[locationKey])
+         currentData[locationKey] = {formatted_address: ""}
    }
    let openMapModal: boolean = false
    let editingKey: string = ''
@@ -35,17 +38,20 @@
       openMapModal = false
       // assuming there is only one TYPE_location key
       inputs[locationKey] = event.detail.place
+      currentData[locationKey] = event.detail.place
    }
 
    // only update input if the data gets changed
    function handleEdit(k: string) {
+      // save
 		if(editingKey === k) {
-			if(editingContent !== currentData[k]) {
+			if(k === locationKey || editingContent !== currentData[k]) {
 				inputs[k] = currentData[k]
             isEditted[k] = true
          }
 			editingKey = null
 		}
+      // start editing
 		else if(!editingKey) {
 			editingContent = currentData[k]
 			editingKey = k
@@ -53,17 +59,18 @@
 	}
 </script>
 
-<div class="grid grid-cols-1 lg:grid-cols-3 items-center align-center gap-2 py-4">
+<div class="grid grid-cols-1 lg:grid-cols-3 content-start gap-2 py-4">
    <div class="lg:col-span-3">
       <slot name="header"/>
    </div>
    {#each keys as k}
       <div class="justify-between items-center lg:justify-self-end mx-2 flex flex-row gap-2">
-         <div>{$_(`key.${k}`)}</div>
-         {#if required?.includes(k)}
-            <div class="text-error">*</div>
-         {/if}
-         <!-- edit buttons -->
+         <div class="flex flex-row align-text-center">
+            {$_(`key.${k}`)}
+            {#if required?.includes(k)}
+               <p class="text-error">*</p>
+            {/if}
+         </div>
          {#if !k.includes('_picture')}
             <div 
                class="btn btn-outline btn-xs" 
@@ -80,7 +87,7 @@
             </div>
          {/if}
       </div>
-      <div class="justify-self-start lg:gap-4 lg:col-span-2 flex flex-row align-top">
+      <div class="justify-self-start lg:gap-4 lg:col-span-2 flex flex-row mx-auto lg:mx-0">
          {#if selects[k]}
             <select class="select select-bordered" bind:value={currentData[k]} disabled={editingKey !== k}>
                <option disabled selected value={null}>{$_('page.add.select')}</option>
@@ -94,13 +101,20 @@
             <UploadPicture key={k} bind:pictureFile={currentData[k]}/>
          {:else if k.includes('_location')}
             <div class="flex flex-col gap-2">
-               <div class="btn btn-accent" on:click={()=>openMapModal = true}>Select in Google Map</div>
+               <div 
+                  class="btn btn-accent" 
+                  on:click={()=>openMapModal = true}
+                  class:btn-disabled={editingKey !== k}
+               >Select in Google Map</div>
                <textarea 
                   class="textarea textarea-bordered" 
                   placeholder="Select in Google Map first"
                   bind:value={currentData[k].formatted_address}
+                  disabled={editingKey !== k}
                />
             </div>
+         {:else if k.includes('_time')}
+            <input type="date" class="input" bind:value={inputs[k]}/>
          {:else if k.includes('show')}
             <input type="checkbox" bind:checked={currentData[k]} class="checkbox" disabled={editingKey !== k}/>
          {:else if k.includes('description')}

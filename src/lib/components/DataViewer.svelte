@@ -20,11 +20,13 @@
 		data: any[], 
 		type: TypeName, 
 		dataTableColumns: DataTableColumns = {headers: [], body: []},
-		listView: string = 'list'
+		listView: string = 'list',
+		numColumns: number = 4
 	const typePrefix = getVarPrefix(type);
+	const gridCols = 'grid-cols-' + numColumns
 
 	// pagination
-	const ENTRY_PER_PAGES = 20; // make it dynamic?
+	const ENTRY_PER_PAGES = 5 * numColumns; // make it dynamic?
 	$: numData = data.length;
 	$: numPages = Math.ceil(numData / ENTRY_PER_PAGES);
 	let activePage = 0;
@@ -93,7 +95,7 @@
 	{#if dataCurrentPage && data.length > 0}
 		{#if listView === 'grid'}
 			<!-- Grid view -->
-			<div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-4 lg:gap-4">
+			<div class="w-full text-center mb-4 grid grid-cols-2 lg:{gridCols} lg:gap-4">
 				{#each dataCurrentPage as d (d[typePrefix + '_ID'])}
 					<div animate:flip={{ duration: 300 }}>
 						{#if type === 'person' || personRoles.includes(type)}

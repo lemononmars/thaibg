@@ -142,8 +142,6 @@ export function getSubmissionPackage(type: TypeName): SubmissionPackage {
 	}
 }
 
-type FilterType = 'single' | 'multiple' | 'select' | 'range'
-
 interface FilterSingle {
 	type: 'single' | 'select',
 	key: string,
@@ -167,15 +165,9 @@ interface FilterRange {
 	keyMax?: string,
 	min: number,
 	max: number,
-	step: number
+	step: number,
+	pipStep: number,
 }
-
-export interface OptionRange {
-	min?: number,
-	max?: number,
-	step?: number
-}
-
 
 export type FilterOption = FilterMultiple | FilterRange | FilterSingle
 
@@ -229,8 +221,9 @@ export function getFilterOptions(type: TypeName): FilterOption[] {
 				checkBetween: false,
 				key: 'TBG_age',
 				min: 2,
-				max: 20,
-				step: 2
+				max: 18,
+				step: 1,
+				pipStep: 2
 			},
 			{
 				type: 'range',
@@ -238,27 +231,30 @@ export function getFilterOptions(type: TypeName): FilterOption[] {
 				checkBetween: true,
 				keyMin: 'TBG_playtime_min',
 				keyMax: 'TBG_playtime_max',
-				min: 10,
+				min: 0,
 				max: 120, 
-				step: 10
+				step: 5,
+				pipStep: 15,
 			},
 			{
 				type: 'range',
-				checkBetween: true,
 				key: 'TBG_player',
+				checkBetween: true,
 				keyMin: 'TBG_player_min',
 				keyMax: 'TBG_player_max',
 				min: 1, 
 				max: 8, 
-				step: 1
+				step: 1,
+				pipStep: 1
 			},
 			{
 				type: 'range',
-				checkBetween: false,
+				checkBetween: true,
 				key: 'TBG_weight',
 				min: 1, 
 				max: 5, 
-				step: 0.5
+				step: 0.1,
+				pipStep: 0.5
 			}
 		]
 		case 'organization':

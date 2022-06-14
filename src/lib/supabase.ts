@@ -87,6 +87,32 @@ export function generateSlug(name: string) {
       .replace(/[^\w\-]/g, '') // remove non alphanumeric characters (except dashes of course)
 }
 
+/**
+ * upload a file to /public/images
+ * @param {String} type type of object (e.g. boardgame, person)
+ * @param {String} file picture file (File)
+ * @param {String} slug object's slug
+ * @returns {String} file name
+ */
+export async function uploadPicture(type: string, file: File, slug: string): Promise<string> {
+	// TODO: convert file? resize?
+	const randomID = Math.floor(Math.random() * 1000);
+	const randomIDString = ('000' + randomID).slice(-4);
+	const pictureSlug = slug + '-' + randomIDString;
+
+	// TODO: check if file already exists and repalce instead?
+	let { error: updateError } = await fromBucket('images').upload(
+		`${type}/${pictureSlug}`,
+		file,
+		{
+			upsert: false
+		}
+	);
+
+	if (updateError) throw updateError;
+	return pictureSlug
+}
+
 type SubmissionType = 'new' | 'edit' | 'report';
 
 /*

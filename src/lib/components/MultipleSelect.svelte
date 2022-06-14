@@ -42,16 +42,16 @@
 	}
 </script>
 
-<div class="flex flex-col mx-auto gap-1 max-w-content">
-	<div class="dropdown mb-4">
+<div class="flex flex-col gap-1 w-72">
+	<div class="dropdown">
 		<!-- svelte-ignore a11y-label-has-associated-control -->
 		<label tabindex="0">
 			<div class="form-control">
-				<div class="input-group input-sm">
+				<div class="input-group">
 					<input
 						type="text"
 						placeholder="Type here"
-						class="input input-bordered w-70"
+						class="input input-bordered w-72"
 						bind:value={searchString}
 						on:keypress={handleKeyPress}
 						on:focus={() => (dropdownOpen = true)}
@@ -65,7 +65,7 @@
 		</label>
 		<ul
 			tabindex="0"
-			class="mt-6 shadow menu dropdown-content bg-base-100 rounded-box w-72"
+			class="shadow menu dropdown-content bg-base-100 rounded-box w-72"
 			class:hidden={!dropdownOpen}
 		>
 			{#each filteredOptions as d}
@@ -85,7 +85,7 @@
 	</div>
 	{#each selects as s}
 		<div
-			class="badge gap-2 w-full justify-between"
+			class="badge badge-outline gap-2 w-full justify-between"
 			class:hover:badge-error={!disabled}
 			on:click={() => remove(s)}
 		>

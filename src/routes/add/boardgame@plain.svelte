@@ -7,11 +7,10 @@
 		BoardgameInfoRelation,
 		BoardgameProperties,
 		BoardgameETCRelation,
-		BoardGameTypeArray
 	} from '$lib/datatypes/Boardgame'
 
 	import type { SubmissionPackage } from '$lib/datatypes';
-	import { generateSlug, fromBucket, getVarPrefix } from '$lib/supabase';
+	import { generateSlug, uploadPicture, getVarPrefix } from '$lib/supabase';
 	import type { SubmissionData } from '$lib/supabase'
 	import type {Alert} from '$lib/alert/alert.type'
 	import {handleAlert} from '$lib/alert/alert.store'
@@ -19,21 +18,21 @@
 	export async function load({ session, fetch }) {
 		const { user } = session
 
-		const adminSettings = await fetch('/api/adminsettings')
-		const data = await adminSettings.json()
+		const res = await fetch('/api/adminsettings')
+		const adminSettings = await res.json()
 
 		// redirect if
 		// * type is invalid 
 		// * creating a new entry is not allowed
 		// * creating a new entry is allowed for registered user, not guest
-		if ((!data[0].allowCreate)
-			|| (!data[0].allowGuestCreate && !user)) {
+		if ((!adminSettings[0].allowCreate)
+			|| (!adminSettings[0].allowGuestCreate && !user)) {
 
 			let newAlert: Alert = {
 				type: 'error',
 				text: ''
 			}
-			if(!data[0].allowCreate) 
+			if(!adminSettings[0].allowCreate) 
 				newAlert.text = 'Creating a new entry is not allowed. Please contact admin.'
 			else 
 				newAlert.text = 'Please login to add a new entry.'
@@ -53,7 +52,6 @@
 		};
 	}
 
-	// TODO: make sure nothing breaks in production
 	export async function postSubmission(data: SubmissionData): Promise<Response> {
       const res = await fetch('/api/post/submission', {
          method: 'POST',
@@ -65,24 +63,6 @@
          body: JSON.stringify(data)
       })
 		return res;
-	}
-
-	export async function uploadpicture(type: string, file: File, slug: string): Promise<string> {
-		// TODO: convert file? resize?
-		const randomID = Math.floor(Math.random() * 1000);
-		const randomIDString = ('000' + randomID).slice(-4);
-		const pictureSlug = slug + '-' + randomIDString;
-
-		let { error: updateError } = await fromBucket('images').upload(
-			`${type}/${pictureSlug}`,
-			file,
-			{
-				upsert: false
-			}
-		);
-
-		if (updateError) throw updateError;
-		return pictureSlug
 	}
 
 	export async function getNewBoardgame(id: number){
@@ -101,13 +81,12 @@
 	import InputForm from '$lib/components/InputForm.svelte';
 	import SearchMultipleSelect from '$lib/components/SearchMultipleSelect.svelte';
 	import CreateCard from './_createCard.svelte'
-	import { ChevronLeftIcon } from 'svelte-feather-icons';
+	import { ChevronLeftIcon, ChevronRightIcon } from 'svelte-feather-icons';
 
 	export let submissionPackage: SubmissionPackage; // from load fucntion
 	export let adminSettings: AdminSettings
 	const type: string = 'boardgame';
-	let submission = submissionPackage.submission
-	let {relations} = submissionPackage
+	let {relations, submission, required} = submissionPackage
 	
 	// create an array for each relation
 	let relationMultiSelects: Record<string, string[]> = {};
@@ -135,8 +114,8 @@
 	let step: number = 0
 	let dir: number = 1
 	const stepTitles = [
-		'Add General info',
-		'Add Board game specific info',
+		'Add general info',
+		'Add board game specific info',
 		'Add developers',
 		'Add other relations',
 		'Submit'
@@ -144,8 +123,8 @@
 
 	async function handleSubmit() {
 		if (submitState != State.START && submitState != State.ERROR) return;
-		if (submissionPackage.required && !submissionPackage.required.every(r => !!submission[r])) {
-			const missingFields = submissionPackage.required?.filter(r => !submission[r]).join(',')
+		if (required && !required.every(r => !!submission[r])) {
+			const missingFields = required.filter(r => !submission[r]).join(',')
 			const newAlert: Alert = {
 				type: 'error',
 				text: 'please fill all required fields: ' +  missingFields
@@ -175,7 +154,7 @@
 		const pictureFile = submission.TBG_picture
 		if(pictureFile) {
 			const newPictureURL = 
-			await uploadpicture("boardgame", pictureFile, slug);
+			await uploadPicture("boardgame", pictureFile, slug);
 			submission.TBG_picture = newPictureURL
 		}
 
@@ -247,7 +226,7 @@
 			on:click|preventDefault={()=>{step++; dir = 1}}
 			class:btn-disabled={!canSubmit}
 		>
-			Next
+			Next <ChevronRightIcon size=20/>
 		</div>
 	</div>
 {:else if step == 1}
@@ -270,8 +249,12 @@
 			{/each}
 		</div>
 	</CreateCard>
-	<div class="btn" on:click={()=>{step--; dir = -1}}>Prev</div>
-	<div class="btn" on:click={()=>{step++; dir = 1}}>Next</div>
+	<div class="btn" on:click={()=>{step--; dir = -1}}>
+		Prev <ChevronLeftIcon size=20/>
+	</div>
+	<div class="btn" on:click={()=>{step++; dir = 1}}>
+		Next <ChevronRightIcon size=20/>
+	</div>
 {:else if step == 2}
 	<CreateCard bind:dir title={stepTitles[2]}>
 		<div class="grid lg:grid-cols-3 gap-y-4">
@@ -283,8 +266,12 @@
 			{/each}
 		</div>
 	</CreateCard>
-	<div class="btn" on:click={()=>{step--; dir = -1}}>Prev</div>
-	<div class="btn" on:click={()=>{step++; dir = 1}}>Next</div>
+	<div class="btn" on:click={()=>{step--; dir = -1}}>
+		Prev <ChevronLeftIcon size=20/>
+	</div>
+	<div class="btn" on:click={()=>{step++; dir = 1}}>
+		Next <ChevronRightIcon size=20/>
+	</div>
 {:else if step == 3}
 	<CreateCard bind:dir title={stepTitles[3]}>
 		<div class="grid grid-cols2 lg:grid-cols-3 gap-y-4">

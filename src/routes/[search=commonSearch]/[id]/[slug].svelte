@@ -44,7 +44,8 @@
 	import EditButton from '$lib/components/EditButton.svelte';
 	import DataViewer from '$lib/components/DataViewer.svelte';
 	import ContactLinks from '$lib/components/ContactLinks.svelte';
-	import GoogleMapDisplay from '$lib/components/GoogleMapDisplay.svelte';
+	import GoogleMapEmbed from '$lib/components/GoogleMapEmbed.svelte';
+	import Picture from '$lib/components/Picture.svelte'
 
 	export let pageData, pageID: number, pageType: TypeName;
 	let prefix = getVarPrefix(pageType)
@@ -85,18 +86,23 @@
 <div class="flex flex-col lg:flex-row text-left gap-6 p-4">
 	<!-- first column-->
 	<div class="flex flex-col w-full lg:w-1/5 max-w-none gap-2">
+		{#if pageType !== 'content'}
+			<Picture type={pageType} picture={pageData[prefix + '_picture']}/>
+		{/if}
 		<h1>{pageName}</h1>
 		<h2>{pageData[prefix + '_name'] ? pageData[prefix + '_name_th'] || '': ''} </h2>
 		<div class="divider" />
 		{#each filteredKeys as k}
 			<h2>{$_(`key.${k}`)}</h2>
 			{#if k.includes("location")}
-				{#if pageData?.Shop_location?.location}
-					<div class="h-40 w-full">
-						<GoogleMapDisplay 
-							place={pageData.Shop_location} 
+				{#if pageData[prefix + '_location']?.location}
+					<div class="h-100 w-full">
+						<GoogleMapEmbed 
+							place={pageData[prefix + '_location']} 
 							name={pageName} 
 							id={pageID}
+							width={250}
+							height={150}
 						/>
 					</div>
 				{/if}
@@ -139,7 +145,13 @@
 				<Spinner />
 			{:then data}
 				{#if data}
-					<DataViewer {data} type={r} dataTableColumns={{headers:[], body:[]}} listView="grid"/>
+					<DataViewer 
+						{data} 
+						type={r} 
+						dataTableColumns={{headers:[], body:[]}} 
+						listView="grid"
+						numColumns={3}
+					/>
 				{/if}
 			{/await}
 		{/each}

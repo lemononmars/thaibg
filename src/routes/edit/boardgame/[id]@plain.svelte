@@ -10,7 +10,7 @@
 	} from '$lib/datatypes/Boardgame'
 
 	import type { SubmissionPackage, AdminSettings, Boardgame } from '$lib/datatypes';
-	import { fromBucket, getVarPrefix } from '$lib/supabase';
+	import { uploadPicture, getVarPrefix } from '$lib/supabase';
 	import type { SubmissionData } from '$lib/supabase'
 	import type {Alert} from '$lib/alert/alert.type'
 	import {handleAlert} from '$lib/alert/alert.store'
@@ -69,24 +69,6 @@
       })
 		return res;
 	}
-
-	export async function uploadpicture(type: string, file: File, slug: string): Promise<string> {
-		// TODO: convert file? resize?
-		const randomID = Math.floor(Math.random() * 1000);
-		const randomIDString = ('000' + randomID).slice(-4);
-		const pictureSlug = slug + '-' + randomIDString;
-
-		let { error: updateError } = await fromBucket('images').upload(
-			`${type}/${pictureSlug}`,
-			file,
-			{
-				upsert: false
-			}
-		);
-
-		if (updateError) throw updateError;
-		return pictureSlug
-	}
 </script>
 
 <script lang="ts">
@@ -105,11 +87,11 @@
 		currentData: Boardgame
 	const type: string = 'boardgame';
 	let { submission, keys, relations, selects, multiselects, required } = submissionPackage; // destruct
-	const varPrefix = getVarPrefix(type)
-	const currentDataID = currentData[varPrefix + '_ID']
+	const typePrefix = getVarPrefix(type)
+	const currentDataID = currentData[typePrefix + '_ID']
 
 	// for edit
-	submission[varPrefix + '_ID'] = currentDataID
+	submission[typePrefix + '_ID'] = currentDataID
 
 	// create an array for each relation
 	let relationMultiSelects: Record<string, string[]> = {};
@@ -181,7 +163,6 @@
 		}
 
 		submitState = State.SUBMITTING;
-		const typePrefix = getVarPrefix(type)
 
 		// attach submitter's info
 		let id = 'guest',
@@ -192,15 +173,11 @@
 			username = error || !data ? 'guest' : data.username;
 		}
 
-		// generate a slug based on name (english)
-		// if only Thai name (_name_th) exists, treat it as no name
-		// might have to manually fix it in admin panel
-
-		const slug = currentData[varPrefix + '_slug']
+		const slug = currentData[typePrefix + '_slug']
 		// rename picture with random ID for hashing purpose
 		const pictureFile = submission.TBG_picture
 		if(pictureFile && (typeof pictureFile !== 'string')) {
-			submission.TBG_picture = await uploadpicture(type, pictureFile, slug);
+			submission.TBG_picture = await uploadPicture(type, pictureFile, slug);
 		}
 
 		let res = await postSubmission({

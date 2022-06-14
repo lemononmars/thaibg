@@ -3,7 +3,7 @@
 		This whole page is identical to /person/ID/SLUG
 	*/
 	import { getVarPrefix } from '$lib/supabase';
-	import { personRoles } from '$lib/datatypes';
+	import { personRoles, getDataTableColumns } from '$lib/datatypes';
 	import type { Person, PersonRole, Boardgame } from '$lib/datatypes';
 
 	export async function load({ params, fetch }) {
@@ -148,7 +148,12 @@
 					<div class="divider" />
 
 					<h2>Board games created by this {$_(activeRole)}</h2>
-					<DataViewer data={res.contents} type="boardgame"/>
+					<DataViewer 
+						data={res.contents} 
+						type="boardgame"
+						dataTableColumns={getDataTableColumns('boardgame')}
+						numColumns={3}
+					/>
 				{/if}
 			{:catch}
 				<p>Server is unavailable. Try again later.</p>

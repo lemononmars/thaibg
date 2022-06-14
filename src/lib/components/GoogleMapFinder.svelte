@@ -1,6 +1,7 @@
 <script lang=ts>
    import type {ShopLocation} from '$lib/datatypes'
    import { createEventDispatcher } from 'svelte'
+   import {onMount} from 'svelte'
 
 	const dispatch = createEventDispatcher();
    const apiKey = String(import.meta.env.VITE_GOOGLE_MAP_API_KEY)
@@ -12,6 +13,10 @@
    let selectedPlace: ShopLocation = {}
    let place: any
 
+   onMount(async()=>{
+      initMap()
+   })
+
    function initMap(): void {
       const map = new google.maps.Map(
          mapArea,
@@ -19,7 +24,7 @@
             center: { lat: 13, lng: 99 },
             zoom: 6,
          }
-      );
+      )
 
       // Specify just the place data fields that you need.
       const autocomplete = new google.maps.places.Autocomplete(inputBox, {
@@ -69,7 +74,8 @@
    }
 
    function selectPlace() {
-      let unwrap = ({place_id, geometry, formatted_address}) => ({place_id, location: geometry.location, formatted_address})
+      let unwrap = ({place_id, geometry, formatted_address, name}) => 
+         ({place_id, location: geometry.location, formatted_address: name + ' ' + formatted_address})
       selectedPlace = unwrap(place)
       dispatch('select', {
 			place: selectedPlace
@@ -81,7 +87,7 @@
    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
    <script
      src="https://maps.googleapis.com/maps/api/js?key={apiKey}&libraries=places&v=weekly"
-     defer async on:load={initMap}
+     defer async
    />
 </svelte:head>
 

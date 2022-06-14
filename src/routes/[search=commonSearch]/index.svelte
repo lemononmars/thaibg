@@ -1,6 +1,6 @@
 <script lang=ts context=module>
    import { getFilterOptions, getDataTableColumns } from '$lib/datatypes';
-   import type {TypeName, FilterOption, DataTableColumns, PersonRole} from '$lib/datatypes';
+   import type {TypeName, FilterOption, DataTableColumns} from '$lib/datatypes';
 
 	export async function load({ params, url, fetch }) {
       const {search: type} = params
@@ -45,6 +45,7 @@
 	import { _ } from 'svelte-i18n';
 	import DataViewer from '$lib/components/DataViewer.svelte';
    import { getVarPrefix } from '$lib/supabase';
+	import RangeSlider from "svelte-range-slider-pips"
 
 	export let data: any[], type: TypeName;
    export let filters: FilterOption[], dataTableColumns: DataTableColumns
@@ -57,7 +58,7 @@
 			return f.default
 		switch(f.type) {
 			case 'multiple': return [-1]
-			case 'range': return f.min
+			case 'range': return f.checkBetween? [f.min, f.max] : [f.min]
 			default: return -1
 		}
 	})
@@ -108,11 +109,11 @@
 						f.type === 'range' 
 						&&
 						(
-							(!f.checkBetween && d[f.key] && d[f.key] <= filterOptions[idx])
+							(!f.checkBetween && d[f.key] && d[f.key] <= filterOptions[idx][0]) // check if data is at least input
 							||
 							(d[f.keyMin] || d[f.keyMax])
-							&& (!d[f.keyMin] || d[f.keyMin] <= filterOptions[idx]) 
-							&& (!d[f.keyMax] || d[f.keyMax] >= filterOptions[idx])
+							&& (!d[f.keyMin] || d[f.keyMin] <= filterOptions[idx][1]) // data min less than input max 
+							&& (!d[f.keyMax] || d[f.keyMax] >= filterOptions[idx][0]) // data max greater than input min
 						)
 					)
 				)
@@ -129,10 +130,10 @@
 	let showAdvancedFilter = false;
 
 	function resetSearch() {
-		filterOptions  = filters.map((f: FilterOption, idx) => {
+		filterOptions  = filters.map((f: FilterOption) => {
 			switch(f.type) {
 				case 'multiple': return [-1]
-				case 'range': return f.min
+				case 'range': return f.checkBetween? [f.min, f.max] : [f.min]
 				default: return -1
 			}
 		})
@@ -173,7 +174,7 @@
 								<p class="text-xs">{$_(`key.${f.key}`)}</p>
 								<input type="checkbox" class="toggle toggle-xs mx-auto" bind:checked={activeFilterOptions[fidx]}/>
 							</div>
-							<div class="w-3/4">
+							<div class="w-full lg:w-4/5">
 								{#if f.type === 'select'}
 									<select class="select" bind:value={filterOptions[fidx]} on:change={()=>activeFilterOptions[fidx] = true}>
 										<option selected value={-1}>{$_('keyword.all')}</option>
@@ -195,22 +196,29 @@
 										{/each}
 									</div>
 								{:else if f.type === 'range'}
-									<div class="flex flex-col gap-1 w-full"
+									<div class="flex flex-col gap-1 mx-auto lg:pr-8 -my-2"
 										class:opacity-20={!activeFilterOptions[fidx]}
 									>
-										<input 
-											type="range" class="range range-accent w-full" 
-											disabled={!activeFilterOptions[fidx]}
-											min={f.min} max={f.max} bind:value={filterOptions[fidx]} step={f.step} 
-										/>
-										<div class="w-full flex justify-between text-xs">
-											{#each Array(Math.floor((f.max - f.min)/(f.step))+1) as _, step}
-												<div class="self-center w-6 -translate-y-2">
-													|<br>
-													{f.min + f.step * step}
-												</div>
-											{/each}
-										</div>
+										{#if f.checkBetween}
+											<RangeSlider 
+												bind:values={filterOptions[fidx]}
+												id="rangeSlider"
+												range pushy float
+												disabled={!activeFilterOptions[fidx]}
+												min={f.min} max={f.max} 
+												pips all='label' pipstep={f.pipStep}
+											/>
+										{:else}
+											<RangeSlider
+												bind:values={filterOptions[fidx]}
+												id="rangeSlider"
+												float 
+												range="min"
+												disabled={!activeFilterOptions[fidx]}
+												min={f.min} max={f.max}
+												pips all="label" pipstep={f.pipStep}
+											/>
+										{/if}
 									</div>
 								{:else}
 									<div class="btn-group">

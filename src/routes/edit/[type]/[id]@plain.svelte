@@ -1,7 +1,7 @@
 <script context=module lang=ts>
 	import { getSubmissionPackage, TypeSubmissionAllowed } from '$lib/datatypes';
 	import type { SubmissionPackage, AdminSettings } from '$lib/datatypes';
-	import { fromBucket, getVarPrefix } from '$lib/supabase';
+	import { getVarPrefix, uploadPicture } from '$lib/supabase';
 	import type { SubmissionData } from '$lib/supabase';
 	import type {Alert} from '$lib/alert/alert.type'
 	import { handleAlert} from '$lib/alert/alert.store'
@@ -43,7 +43,7 @@
 
 		return {
 			props: {
-				data: getSubmissionPackage(type),
+				submissionPackage: getSubmissionPackage(type),
 				currentData,
 				type,
 				adminSettings
@@ -63,46 +63,29 @@
       })
 		return res;
 	}
-
-	export async function uploadpicture(type: string, file: File, fileName: string) {
-		// TODO: convert file? resize?
-		let { error: updateError } = await fromBucket('images').upload(
-			`${type}/${fileName}`,
-			file,
-			{
-				upsert: false
-			}
-		);
-
-		if (updateError) throw updateError;
-	}
 </script>
 
 <script lang="ts">
 	import Seo from '$lib/components/SEO.svelte';
 	import { user, getCurrUserProfile } from '$lib/user';
 	import Spinner from '$lib/components/Spinner.svelte';
-	import MultipleSelect from '$lib/components/MultipleSelect.svelte';
 	import SearchMultipleSelect from '$lib/components/SearchMultipleSelect.svelte';
-	import UploadPicture from '$lib/components/UploadPicture.svelte';
-	import SveltyPicker from 'svelty-picker';
-	import {EditIcon, RefreshCcwIcon, SaveIcon} from 'svelte-feather-icons'
-	import {getImageURL, getDefaultImageURL} from '$lib/supabase'
 	import { _ } from 'svelte-i18n';
 	import {onMount} from 'svelte'
-	import GoogleMapFinder from '$lib/components/GoogleMapFinder.svelte';
-import Picture from '$lib/components/Picture.svelte';
+	import InputEditForm from '$lib/components/InputEditForm.svelte';
+	import CreateCard from '../_createCard.svelte'
+	import { ChevronLeftIcon, ChevronRightIcon } from 'svelte-feather-icons';
 
-	export let data: SubmissionPackage, 
+	export let submissionPackage: SubmissionPackage, 
 		type: string, 
 		currentData: any, // from load function
 		adminSettings: AdminSettings
-	const { submission, keys, relations, selects, multiselects, required } = data; // destruct
-	const varPrefix = getVarPrefix(type)
-	const currentDataID = currentData[varPrefix + '_ID']
+	let { submission, keys, relations, selects, multiselects, required } = submissionPackage; // destruct
+	const typePrefix = getVarPrefix(type)
+	const currentDataID = currentData[typePrefix + '_ID']
 
 	// for edit
-	submission[varPrefix + '_ID'] = currentDataID
+	submission[typePrefix + '_ID'] = currentDataID
 
 	// create an array for each relation
 	let relationMultiSelects: Record<string, string[]> = {};
@@ -141,10 +124,6 @@ import Picture from '$lib/components/Picture.svelte';
 	let pictureFiles: Record<string, File> = {};
 	pictureKeys.forEach((k) => (pictureFiles[k] = null));
 
-	// 
-	let editingKey: string = ''
-	let editingContent: any
-
 	// show user a page based on the submission state
 	const enum State {
 		START,
@@ -154,26 +133,22 @@ import Picture from '$lib/components/Picture.svelte';
 	}
 	let submitState = State.START;
 
-	let needMap: boolean = false
-   const locationKeyArray = keys.filter((k:string) => k.includes("location"))
-   let locationKey: string
-   if(locationKeyArray.length > 0) {
-      needMap = true
-      locationKey = locationKeyArray[0]
-      submission[locationKey] = {formatted_address: ""}
-   }
-   let openMapModal: boolean = false
+	$: canSubmit = required.every(r => !!submission[r] || !!currentData[r]) &&
+		(submission[typePrefix + '_name'] || currentData[typePrefix + '_name'])
 
-	function handleLocationSelect(event: any) {
-      openMapModal = false
-      // assuming there is only one TYPE_location key
-      submission[locationKey] = event.detail.place
-   }
+	// use these to display the newly created boardgame right away!
+	let step: number = 0
+	let dir: number = 1
+	const stepTitles = [
+		'Edit General info',
+		'Edit relations',
+		'Submit'
+	]
 
 	async function handleSubmit() {
 		if (submitState != State.START && submitState != State.ERROR) return;
-		if (required && !required.every(r => !!submission[r])) {
-			const missingFields = required?.filter(r => !submission[r]).join(',')
+		if (required && !canSubmit) {
+			const missingFields = required?.filter(r => (!submission[r] && !currentData[r])).join(',')
 			const newAlert: Alert = {
 				type: 'error',
 				text: 'please fill all required fields: ' +  missingFields
@@ -192,15 +167,12 @@ import Picture from '$lib/components/Picture.svelte';
 			username = error || !data ? 'guest' : data.username;
 		}
 
-		const slug = currentData[varPrefix + '_slug']
-		// rename picture with random ID for hashing purpose
-		for (const pf in pictureFiles) {
-			if(pictureFiles[pf]) {
-				const randomID = Math.floor(Math.random() * 1000);
-				const randomIDString = ('000' + randomID).slice(-4);
-				submission[pf] = slug + randomIDString;
-				await uploadpicture(type, pictureFiles[pf], slug + randomIDString);
-			}
+		const slug = currentData[typePrefix + '_slug']
+		
+		// assuming there is only one picture
+		const pictureFile = submission[typePrefix + '_picture']
+		if(pictureFile && (typeof pictureFile !== 'string')) {
+			submission[typePrefix + '_picture'] = await uploadPicture(type, pictureFile, slug);
 		}
 
 		// also add current data's ID so that we don't need to find it again
@@ -231,18 +203,6 @@ import Picture from '$lib/components/Picture.svelte';
 		}
 		handleAlert(newAlert)
 	}
-
-	function handleEdit(k: string) {
-		if(editingKey === k) {
-			if(editingContent !== currentData[k])
-				submission[k] = currentData[k]
-			editingKey = null
-		}
-		else if(!editingKey) {
-			editingContent = currentData[k]
-			editingKey = k
-		}
-	}
 </script>
 
 <Seo title="Edit {type}" />
@@ -254,94 +214,52 @@ import Picture from '$lib/components/Picture.svelte';
 	return '...'
 }}/>
 	
-<h1>{$_('page.edit._')} {$_(`keyword.${type}`)}</h1>
-<div class="text-gray-500 break-words w-screen">
-</div>
+
 {#if submitState == State.START || submitState == State.ERROR}
-	<form>
-		<div class="flex flex-col lg:grid lg:grid-cols-3 items-center gap-2">
-			<!-- display the appropriate input type, based on key's name and selects/multiselects array-->
-			{#each keys as k}
-				<div class="justify-self-start lg:justify-self-end mx-2 flex flex-row gap-2">
-					<div>{$_(`key.${k}`)}</div>
-				</div>
-				<div class="justify-self-center">
-					{#if selects[k]}
-						<select class="select select-bordered" bind:value={currentData[k]} disabled={editingKey !== k}>
-							<option disabled selected value={null}>{$_('page.add.select')}</option>
-							{#each selects[k] as opt}
-								<option value={opt}>{$_(`option.${opt}`)}</option>
-							{/each}
-						</select>
-					{:else if multiselects[k]}
-						<MultipleSelect selectOptions={multiselects[k]} bind:selects={submission[k]} />
-					{:else if k.includes('_picture')}
-						<UploadPicture key={k} bind:pictureFile={pictureFiles[k]} />
-					{:else if k.includes('_location')}
-						<div class="flex flex-col gap-2">
-							<div 
-								class="btn btn-accent" 
-								on:click={()=>openMapModal = true} 
-								class:btn-disabled={editingKey !== k}
-							>
-								Select in Google Map
-							</div>
-							<textarea 
-								class="textarea textarea-bordered" 
-								placeholder="Select in Google Map first"
-								disabled={editingKey !== k}
-								bind:value={submission[k].formatted_address}
-							/>
-						</div>
-					{:else if k.includes('_time')}
-						<SveltyPicker
-							inputClasses="form-control"
-							format="yyyy-mm-dd"
-							bind:value={currentData[k]}
-						/>
-					{:else if k.includes('show')}
-						<input type="checkbox" bind:checked={currentData[k]} class="checkbox" disabled={editingKey !== k}/>
-					{:else if k.includes('description')}
-						<textarea class="textarea textarea-bordered" bind:value={currentData[k]} disabled={editingKey !== k}/>
-					{:else if k.includes('link')}
-						<MultipleSelect bind:selects={submission[k]} />
-					{:else}
-						<input type="text" class="input input-bordered" bind:value={currentData[k]} disabled={editingKey !== k}/>
-					{/if}
-				</div>
-				<div class="justify-self-start break-all flex flex-row items-center gap-2">
-					{#if k.includes('_picture')}
-						<Picture {type} picture={currentData[k]} height={40}/>
-					{:else}
-						<div 
-							class="btn" on:click={()=>handleEdit(k)} 
-							class:bg-success={editingKey === k}
-							class:invisible={editingKey && editingKey !== k}
-						>
-							{#if editingKey === k}
-								<SaveIcon size=12/>
-							{:else}
-								<EditIcon size=12/>
-							{/if}
-						</div>
-						{#if submission[k]}
-							<div class="text-success"><RefreshCcwIcon size=20/></div>
-						{/if}
-					{/if}
-				</div>
-			{/each}
+<ul class="steps w-screen fixed top-0 -translate-x-1/2 glass z-10">
+	{#each stepTitles as s, idx}
+		<li class="step text-xs lg:text-md" class:step-primary={step >= idx}>
+			{s}
+		</li>
+	{/each}
+ </ul>
+<div class="h-16"></div>
+
+{#if step == 0}
+	<CreateCard bind:dir title={stepTitles[0]}>
+		<InputEditForm
+			{submissionPackage}
+			bind:inputs={submission}
+			{currentData}
+		>
+		</InputEditForm>
+	</CreateCard>
+
+	<div class="tooltip" data-tip={canSubmit? "":"please fill in all required fields"}>
+		<div 
+			class="btn"
+			on:click|preventDefault={()=>{step++; dir = 1}}
+			class:btn-disabled={!canSubmit}
+		>
+			Next <ChevronRightIcon size=20/>
 		</div>
-		<div class="divider" />
-		{#if loadingRelationalData}
-			<Spinner/>
-		{:else}
-			<div class="lg:w-1/2 grid grid-cols-1 lg:grid-cols-2 justify-center mx-auto" >
+	</div>
+{:else if step == 1}
+	<CreateCard bind:dir title={stepTitles[1]}>
+		<div class="grid grid-cols2 lg:grid-cols-3 gap-y-4">
+			{#if loadingRelationalData}
+				<Spinner/>
+			{:else}
 				{#each relations as r}
-					<SearchMultipleSelect bind:selects={relationMultiSelects[r]} type={r} relation={type} />
+					<SearchMultipleSelect bind:selects={relationMultiSelects[r]} type={r} />
 				{/each}
-			</div>
-		{/if}
-		<div class="divider" />
+			{/if}
+		</div>
+	</CreateCard>
+	<div class="btn" on:click={()=>{step--; dir = -1}}>Prev</div>
+	<div class="btn" on:click={()=>{step++; dir = 1}}>Next</div>
+{:else if step == 2}
+	<CreateCard bind:dir title={"Submit"}>
 		{#if adminSettings.requireApproval}
 			<div class="justify-self-end mx-2">{$_('page.add.comment')}</div>
 			<textarea
@@ -350,10 +268,16 @@ import Picture from '$lib/components/Picture.svelte';
 				bind:value={comment}
 			/><br />
 		{/if}
-		{#if submitState == State.START}
-			<div class="btn" on:click|preventDefault={handleSubmit}>{$_('page.add.submit')}</div>
-		{/if}
-	</form>
+	</CreateCard>
+	<div class="btn hover:-translate-x-4" on:click={()=>{step = 1; dir = -1}}>Prev <ChevronLeftIcon size=20/></div>
+	<div 
+		class="btn btn-success" 
+		on:click|preventDefault={handleSubmit}
+	>
+		{$_('page.add.submit')}
+	</div>
+
+{/if}
 {/if}
 
 {#if submitState == State.SUBMITTING}
@@ -366,29 +290,3 @@ import Picture from '$lib/components/Picture.svelte';
 	<p class="text-red">{$_('page.add.status.error')}</p>
 	<div class="btn" on:click|preventDefault={handleSubmit}>{$_('page.add.submit')}</div>
 {/if}
-
-{#if needMap}
-   <input type="checkbox" id="map-modal" class="modal-toggle"/>
-   <div class="modal modal-bottom sm:modal-middle w-full h-full p-10 flex flex-col" class:modal-open={openMapModal}>
-      <GoogleMapFinder on:select={handleLocationSelect}/>
-      <div class="btn btn-warning" on:click={()=>openMapModal = false}>Close</div>
-   </div>
-{/if}
-
-<style>
-	input {
-		@apply w-72;
-	}
-
-	select {
-		@apply w-72;
-	}
-
-	input.checkbox {
-		@apply w-10;
-	}
-
-	textarea {
-		@apply w-72;
-	}
-</style>

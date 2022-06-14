@@ -44,10 +44,7 @@
 		}
 	}
 
-	let promiseContentcreatorImageURLs: Promise<string[]>;
-	onMount(async () => {
-		promiseContentcreatorImageURLs = getContentcreatorImageURLs(id);
-	});
+	let promiseContentcreatorImageURLs = getContentcreatorImageURLs(id);
 </script>
 
 <a href="/content/{content.Content_ID}">

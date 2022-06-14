@@ -35,6 +35,14 @@
 	h3 {
 		@apply text-base font-semibold text-accent mt-2;
 	}
+
+	#rangeSlider {
+		--range-slider: hsl(var(--p));
+		--range-handle-inactive: hsl(var(--p));
+		--range-handle: hsl(var(--p));
+		--range-handle-focus: hsl(var(--pf));
+		--range-float-text: hsl(var(--pc));
+	}
 }
 
 /* purge end ignore */

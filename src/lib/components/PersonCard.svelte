@@ -23,7 +23,7 @@
 			hover:opacity-80 hover:scale-105 group"
 	>
 		<figure>
-			<Picture type='person' {picture} height={64}/>
+			<Picture type='person' {picture} height={64} mask="square"/>
 		</figure>
 		<div class="card-body">
 			<h2 class="card-title truncate">{name || name_th || 'No name'}</h2>

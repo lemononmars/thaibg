@@ -70,7 +70,7 @@
 	import EditButton from '$lib/components/EditButton.svelte';
 	import { _ } from 'svelte-i18n';
 	import DataViewer from '$lib/components/DataViewer.svelte';
-	import GoogleMapDisplay from '$lib/components/GoogleMapDisplay.svelte'
+	import GoogleMapEmbed from '$lib/components/GoogleMapEmbed.svelte'
 	import Picture from '$lib/components/Picture.svelte';
 
 	export let organizationData: Organization, role: string, roleID: number;
@@ -189,11 +189,13 @@
 								<h2>{$_(`key.${k}`)}</h2>
 								{#if k.includes("location")}
 									{#if res[activeRolePrefix + '_location']?.location}
-										<div class="h-40 w-full">
-											<GoogleMapDisplay 
+										<div class="h-60 w-full mx-auto">
+											<GoogleMapEmbed 
 												place={res[activeRolePrefix + '_location']} 
 												name={res[activeRolePrefix + '_name']} 
 												id={res[activeRolePrefix + '_ID']}
+												width={300}
+												height={200}
 											/>
 										</div>
 									{/if}
@@ -226,6 +228,7 @@
 						data={res} 
 						type={activeRole === 'contentcreator'? 'content' : 'boardgame'}
 						dataTableColumns={getDataTableColumns(activeRole === 'contentcreator'? 'content' : 'boardgame')}
+						numColumns={3}
 					/>
 				{/if}
 			{:catch}

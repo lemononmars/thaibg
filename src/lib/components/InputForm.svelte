@@ -57,6 +57,8 @@
                   bind:value={inputs[k].formatted_address}
                />
             </div>
+         {:else if k.includes('_time')}
+            <input type="date" class="input" bind:value={inputs[k]}/>
          {:else if k.includes('show')}
             <input type="checkbox" bind:checked={inputs[k]} class="checkbox" />
          {:else if k.includes('description')}

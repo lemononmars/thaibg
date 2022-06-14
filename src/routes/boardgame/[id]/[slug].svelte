@@ -1,6 +1,6 @@
 <script lang="ts" context="module">
 	import { getImageURL } from '$lib/supabase';
-	import { personRoles, ContentTypeArray, ContentMediaArray} from '$lib/datatypes';
+	import { personRoles, ContentTypeArray, ContentMediaArray, getDataTableColumns} from '$lib/datatypes';
 	import type { Content, Honor, Boardgame, Shop, Event, Mechanics, Category, Type } from '$lib/datatypes';
 	import { WEBSITE_URL } from '$lib/constants';
 
@@ -222,9 +222,9 @@
 					<h2>({bg.TBG_name_th})</h2>
 				{/if}
 				<h2>{bg.TBG_released ? '(' + bg.TBG_released + ')' : ''}</h2>
-				<TBGStageIcons stage={bg.TBG_status} showText={true} />
 			</div>
 			<div>
+				<TBGStageIcons status={bg.TBG_status} showText={true} />
 				<div class="tooltip" data-tip={owned ? 'Remove owned' : 'Mark as owned'}>
 					<label>
 						<input type="checkbox" bind:checked={owned} class="hidden" />
@@ -353,7 +353,7 @@
 			{#if isLoadingContents}
 				<Spinner />
 			{:else if content}
-				<DataViewer type={'content'} data={filteredContents}/>
+				<DataViewer type={'content'} data={filteredContents} numColumns={2} dataTableColumns={getDataTableColumns('content')}/>
 			{:else}
 				$_('incomplete')
 			{/if}

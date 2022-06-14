@@ -9,21 +9,12 @@
 
    // support a single place and array of places
    export let places: ShopLocation[] = []
-   export let place: ShopLocation = {}
    // note that indices for names and places must match
    export let names: string[] = []
-   export let name: string = ''
    export let ids: number[] = []
-   export let id: number = 0
 
    export let placeIndex: number = 0
    // TODO: add listener
-
-   if(!places || places.length == 0) {
-      places = new Array(place)
-      names = new Array(name)
-      ids = new Array(id)
-   }
    
    let map: any
    let infowindow: any
