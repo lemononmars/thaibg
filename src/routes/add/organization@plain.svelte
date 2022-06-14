@@ -300,6 +300,7 @@
 				<InputForm
 					{submissionPackage}
 					bind:inputs={submission}
+					type={'organization'}
 				>
 				</InputForm>
 			</div>
@@ -354,6 +355,7 @@
 			<InputForm
 				submissionPackage={editingRolePackage}
 				bind:inputs={rolesAdded[editingRoleIndex]['data']}
+				{type}
 			>
 				<span slot="header">
 					Editing {editingRoleType}

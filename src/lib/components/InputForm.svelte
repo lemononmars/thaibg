@@ -1,11 +1,14 @@
 <script lang=ts>
+   import type { TypeName } from '$lib/datatypes';
    import {_} from 'svelte-i18n'
    import GoogleMapFinder from './GoogleMapFinder.svelte';
    import MultipleSelect from './MultipleSelect.svelte';
+   import NameVerifier from './NameVerifier.svelte';
    import UploadPicture from './UploadPicture.svelte';
 
    export let inputs: Record<string, any>
    export let submissionPackage: Record<string, any>
+   export let type: TypeName
    const {keys, selects, multiselects, required} = submissionPackage
 
    let needMap: boolean = false
@@ -65,6 +68,8 @@
             <textarea class="textarea textarea-bordered" bind:value={inputs[k]} />
          {:else if k.includes('_links')}
             <MultipleSelect bind:selects={inputs[k]} />
+         {:else if k.includes('_name')}
+            <NameVerifier {type} bind:searchString={inputs[k]} />
          {:else}
             <input type="text" class="input input-bordered" bind:value={inputs[k]} />
          {/if}

@@ -185,7 +185,7 @@
 											{#each d[t] as a}
 												<div class="badge badge-outline">{a}</div>
 											{/each}
-										{:else if t.includes('cache')}
+										{:else if t.includes('cache') && d[t.slice(0, t.indexOf('.'))]}
 											{@const cache = d[t.slice(0, t.indexOf('.'))]}
 											{#if t.includes('latestTBG')}
 												<a href='/boardgame/{cache.latestTBG.TBG_ID}'>{cache.latestTBG.TBG_name || cache.latestTBG.TBG_name_th || '-'}</a>

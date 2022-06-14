@@ -234,7 +234,7 @@ export function getFilterOptions(type: TypeName): FilterOption[] {
 				min: 0,
 				max: 120, 
 				step: 5,
-				pipStep: 15,
+				pipStep: 3,
 			},
 			{
 				type: 'range',
@@ -256,7 +256,7 @@ export function getFilterOptions(type: TypeName): FilterOption[] {
 				min: 1, 
 				max: 5, 
 				step: 0.1,
-				pipStep: 0.5
+				pipStep: 5
 			}
 		]
 		case 'organization':

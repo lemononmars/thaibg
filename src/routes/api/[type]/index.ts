@@ -1,5 +1,6 @@
 import { from, getTableName, getVarPrefix } from '$lib/supabase';
 import { TypeNamesArray } from '$lib/datatypes';
+import Fuse from 'fuse.js'
 
 /**
  * Returns ALL objects of desired [type]
@@ -10,7 +11,12 @@ import { TypeNamesArray } from '$lib/datatypes';
  */
 /** @type {import('/api/[type]/index.ts').RequestHandler} */
 export async function get({ params, url }) {
-	const {type} = params;
+	let {type} = params;
+
+	// in case i was stupid or something
+	if(type === 'TBG')
+		type = 'boardgame'
+		
 	// special case: admin settings
 	if(type === 'adminsettings') {
 		const {data, error} = await from('Admin_Settings').select('*')
@@ -66,11 +72,18 @@ export async function get({ params, url }) {
 			body: data
 		};
 
-	// case-insensitive, and also allow searching in Thai language
-	const searchedData = data.filter(d => 
-		d[nameColumn]?.toLowerCase().includes(searched) 
-		|| d[nameColumn + '_th']?.includes(searched)
-	);
+	// fuzzy search, powered by fuse.js
+	const options = {
+		keys: [
+			nameColumn,
+			nameColumn + '_th'
+		]
+	}
+
+	const fuse = new Fuse(data, options)
+	const searchedData = fuse.search(searched).map((result)=> result.item)
+	// fuse returns [{item: {}}, {item: {}}, ...]
+
 	return {
 		status: 200,
 		headers: { 'Content-Type': 'application/json' },

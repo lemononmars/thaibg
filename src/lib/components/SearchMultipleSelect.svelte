@@ -69,7 +69,7 @@
 		if(isStatic) 
 			search()
 		else
-			typingTimer = setTimeout(search, 500)
+			typingTimer = setTimeout(search, 300)
 	}
 
 	async function search() {

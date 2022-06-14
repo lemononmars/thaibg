@@ -209,6 +209,7 @@
 				<InputForm
 					{submissionPackage}
 					bind:inputs={submission}
+					{type}
 				>
 				</InputForm>
 			</div>

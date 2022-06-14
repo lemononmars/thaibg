@@ -250,18 +250,23 @@
 
 		const pictureFile = submission.Person_picture
 		if(pictureFile && (typeof pictureFile !== 'string')) {
-			const newPictureURL = 
-			await uploadpicture("person", pictureFile, slug);
+			const newPictureURL = await uploadpicture("person", pictureFile, slug);
 			submission.Person_picture = newPictureURL
-
-			// also add the same image url to other roles
 			for(const r in rolesAdded) {
 				const roleType = rolesAdded[r]['type']
 				const rolePrefix = getVarPrefix(roleType)
 				rolesAdded[r]['data'][rolePrefix + '_picture'] = newPictureURL
 			}
 		}
-
+		else {
+			// also add the same image url to other roles
+			for(const r in rolesAdded) {
+				const roleType = rolesAdded[r]['type']
+				const rolePrefix = getVarPrefix(roleType)
+				rolesAdded[r]['data'][rolePrefix + '_picture'] = currentData.Person_picture
+			}
+		}
+		
 		const rs = {}
 		for(const r of rolesAdded) {
 			if(!rs[r.type])
@@ -335,7 +340,7 @@
 		<!-- <p class="break-words w-screen">{JSON.stringify(currentData)} {JSON.stringify(rolesAdded)}</p> -->
 		{#if (editingRoleIndex == -1)}
 			<div class="flex flex-col justify-center items-center py-4" in:fly={{ duration: 1000, y: 20, easing: quintOut }} >
-				<div class="flex flex-row flex-wrap justify-center gap-1 m-1">
+				<div class="grid grid-rows-2 lg:grid-rows-1 grid-flow-col justify-center gap-1 m-1">
 					{#each submissionPackage.relations as role}
 						<div 
 							on:click={()=>addRole(role)} 
@@ -391,6 +396,7 @@
 					<InputForm
 						submissionPackage={editingRolePackage}
 						bind:inputs={rolesAdded[editingRoleIndex]['data']}
+						{type}
 					>
 						<span slot="header">
 							Adding {$_(`keyword.${editingRoleType}`)}

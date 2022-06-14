@@ -210,6 +210,7 @@
 						{...submissionPackage, 
 							keys:BoardgameDatabaseKeys1}
 					}
+					{type}
 					bind:inputs={submission}
 				>
 					<span name="header">
@@ -239,6 +240,7 @@
 						keys:BoardgameDatabaseKeys2}
 				}
 					bind:inputs={submission}
+					{type}
 				>
 				</InputForm>
 			</div>

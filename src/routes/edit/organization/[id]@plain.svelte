@@ -1,7 +1,7 @@
 <script context=module lang=ts>
 	import { getSubmissionPackage, organizationRoles} from '$lib/datatypes';
 	import type { SubmissionPackage, AdminSettings, Organization } from '$lib/datatypes';
-	import { generateSlug, fromBucket, getVarPrefix } from '$lib/supabase';
+	import { generateSlug, uploadPicture, getVarPrefix } from '$lib/supabase';
 	import type { SubmissionData } from '$lib/supabase'
 	import type {Alert} from '$lib/alert/alert.type'
 	import {handleAlert} from '$lib/alert/alert.store'
@@ -75,24 +75,6 @@
          body: JSON.stringify(data)
       })
 		return res;
-	}
-
-	export async function uploadpicture(type: string, file: File, slug: string): Promise<string> {
-		// TODO: convert file? resize?
-		const randomID = Math.floor(Math.random() * 1000);
-		const randomIDString = ('000' + randomID).slice(-4);
-		const pictureSlug = slug + '-' + randomIDString;
-
-		let { error: updateError } = await fromBucket('images').upload(
-			`${type}/${pictureSlug}`,
-			file,
-			{
-				upsert: false
-			}
-		);
-
-		if (updateError) throw updateError;
-		return pictureSlug
 	}
 </script>
 
@@ -244,7 +226,7 @@
 		const pictureFile = submission.Organization_picture
 		if(pictureFile && (typeof pictureFile !== 'string')) {
 			const newPictureURL = 
-			await uploadpicture("person", pictureFile, slug);
+			await uploadPicture("organization", pictureFile, slug);
 			submission.Organization_picture = newPictureURL
 		}
 
@@ -256,8 +238,7 @@
 				const rolPrefix = getVarPrefix(roleType)
 				const slug = generateSlug(rolesAdded[r]['data'][rolPrefix + '_name'])
 				rolesAdded[r]['data'][rolPrefix + '_slug'] = slug
-				rolesAdded[r]['data'][rolPrefix + '_picture'] = 
-				await uploadpicture(roleType, rolePictureFile, slug)
+				rolesAdded[r]['data'][rolPrefix + '_picture'] = await uploadPicture(roleType, rolePictureFile, slug)
 			}
 		}
 
@@ -388,6 +369,7 @@
 					<InputForm
 						submissionPackage={editingRolePackage}
 						bind:inputs={rolesAdded[editingRoleIndex]['data']}
+						{type}
 					>
 						<span slot="header">
 							Adding {$_(`keyword.${editingRoleType}`)}

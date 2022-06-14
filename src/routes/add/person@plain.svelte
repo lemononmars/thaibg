@@ -1,7 +1,7 @@
 <script context=module lang=ts>
-	import { getSubmissionPackage, type AdminSettings } from '$lib/datatypes';
-	import type { SubmissionPackage } from '$lib/datatypes';
-	import { generateSlug, fromBucket, getVarPrefix } from '$lib/supabase';
+	import { getSubmissionPackage } from '$lib/datatypes';
+	import type { SubmissionPackage, AdminSettings } from '$lib/datatypes';
+	import { generateSlug, uploadPicture, getVarPrefix } from '$lib/supabase';
 	import type { SubmissionData } from '$lib/supabase'
 	import type {Alert} from '$lib/alert/alert.type'
 	import {handleAlert} from '$lib/alert/alert.store'
@@ -55,24 +55,6 @@
          body: JSON.stringify(data)
       })
 		return res;
-	}
-
-	export async function uploadpicture(type: string, file: File, slug: string): Promise<string> {
-		// TODO: convert file? resize?
-		const randomID = Math.floor(Math.random() * 1000);
-		const randomIDString = ('000' + randomID).slice(-4);
-		const pictureSlug = slug + '-' + randomIDString;
-
-		let { error: updateError } = await fromBucket('images').upload(
-			`${type}/${pictureSlug}`,
-			file,
-			{
-				upsert: false
-			}
-		);
-
-		if (updateError) throw updateError;
-		return pictureSlug
 	}
 
 	export async function getNewPerson(id: number){
@@ -229,8 +211,7 @@
 
 		const pictureFile = submission.Person_picture
 		if(pictureFile) {
-			const newPictureURL = 
-			await uploadpicture("person", pictureFile, slug);
+			const newPictureURL = await uploadPicture("person", pictureFile, slug);
 			submission.Person_picture = newPictureURL
 
 			// also add the same image url to other roles
@@ -300,6 +281,7 @@
 				<InputForm
 					{submissionPackage}
 					bind:inputs={submission}
+					{type}
 				>
 					<span name="header">
 						Edit
@@ -364,6 +346,7 @@
 				<InputForm
 					submissionPackage={editingRolePackage}
 					bind:inputs={rolesAdded[editingRoleIndex]['data']}
+					{type}
 				>
 					<span slot="header">
 						Editing {$_(`keyword.${editingRoleType}`)}

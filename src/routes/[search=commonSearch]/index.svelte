@@ -188,7 +188,7 @@
 										<label class="label cursor-pointer text-xs">
 												<input 
 													type=checkbox bind:group={filterOptions[fidx]} 
-													name="flavours" value={oidx} class="checkbox checkbox-xs"
+													name="flavours" value={oidx} class="checkbox"
 													on:click={()=>activeFilterOptions[fidx] = true}
 												>
 												<span class="label-text mx-2">{$_(`option.${o}`)}</span>
@@ -205,7 +205,8 @@
 												id="rangeSlider"
 												range pushy float
 												disabled={!activeFilterOptions[fidx]}
-												min={f.min} max={f.max} 
+												min={f.min} max={f.max}
+												step={f.step}
 												pips all='label' pipstep={f.pipStep}
 											/>
 										{:else}
@@ -216,6 +217,7 @@
 												range="min"
 												disabled={!activeFilterOptions[fidx]}
 												min={f.min} max={f.max}
+												step={f.step}
 												pips all="label" pipstep={f.pipStep}
 											/>
 										{/if}

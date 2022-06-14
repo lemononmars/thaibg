@@ -4,6 +4,7 @@
 	import {_} from 'svelte-i18n'
 	import Spinner from './Spinner.svelte';
 	import RoleButton from './RoleButton.svelte';
+	import type { TypeName } from '$lib/datatypes';
 
 	interface simpleData {
 		id: number,
@@ -11,7 +12,8 @@
 		name_th?: string
 	}
 	
-	const searchTypes = ['boardgame', 'person', 'organization', 'mechanics']
+	export let searchTypes: TypeName[] = ['boardgame', 'person', 'organization', 'event', 'content']
+
 	let searchPromise: Record<string, Promise<any>> = {};
 	searchTypes.forEach(t => {
 		searchPromise[t] = null
@@ -36,11 +38,11 @@
 			})
 			isTyping = false
 		}
-		, 500)
+		, 300)
 	}
 
 	async function search(type: string) {
-		const res = await fetch(`/api/${type}?search=${searchString}`);
+		const res = await fetch(`/api/${type}?select=ID,name,name_th&search=${searchString}`);
 		if (res.ok) {
 			const data = await res.json();
 			const count = data.length
@@ -81,12 +83,12 @@
 		{:then data}
 			{#if data && !isTyping}
 				<ul
-					class="p-2 shadow rounded-box w-full"
+					class="p-2 shadow rounded-box w-4/5"
 					class:hidden={searchString.length == 0}
 				>
 				{#each data.simpleData as d}
-					<li><a href="/{st}/{d.id}">
-						<p class="truncate">
+					<li><a href="/{st}/{d.id}" target="_blank">
+						<p class="truncate text-left">
 							{d.name || ''}{d.name && d.name_th? ' - ' : ''}{d.name_th || ''}
 						</p>
 					</a></li>
@@ -94,7 +96,9 @@
 					<li class="text-error">No result</li>
 				{/each}
 				{#if data.count > DISPLAY_LIMIT}
-					<li><a href="/{st}?search={searchString}"><div class="btn btn-outline btn-xs btn-info">{data.count - DISPLAY_LIMIT} more...</div></a></li>
+					<li><a href="/{st}?search={searchString}" target="_blank">
+						<div class="btn btn-outline btn-xs btn-info">{data.count - DISPLAY_LIMIT} more...</div>
+					</a></li>
 				{/if}
 				</ul>
 			{/if}

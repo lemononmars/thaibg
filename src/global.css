@@ -37,7 +37,7 @@
 	}
 
 	#rangeSlider {
-		--range-slider: hsl(var(--p));
+		--range-slider: hsl(var(--b1));
 		--range-handle-inactive: hsl(var(--p));
 		--range-handle: hsl(var(--p));
 		--range-handle-focus: hsl(var(--pf));
