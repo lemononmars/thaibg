@@ -156,7 +156,7 @@
 				class="badge badge-outline w-full justify-between my-1"
 			>
 				<a href="/{type}/{s.id}" target="_blank">
-					<p class="truncate">{s.name}</p>
+					<p class="truncate">{s.name || s.name_th}</p>
 				</a>
 				<div 
 					class="hover:badge-error" 

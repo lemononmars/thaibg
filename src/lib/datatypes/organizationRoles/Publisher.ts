@@ -7,6 +7,7 @@ export interface Publisher extends PublisherSubmission {
 
 export const PublisherDatabaseKeys = [
 	'Publisher_name',
+	'Publisher_name_th',
 	'Publisher_description',
 	'Publisher_links',
 	'Publisher_picture',
@@ -15,6 +16,7 @@ export const PublisherDatabaseKeys = [
 
 export interface PublisherSubmission {
 	Publisher_name: string;
+	Publisher_name_th: string;
 	Publisher_links: string;
 	Publisher_description: string;
 	Publisher_picture: string;
@@ -38,8 +40,6 @@ export const PublisherSubmissionPackage = () => {
 		relations: PublisherRelationArray,
 		selects: {},
 		multiselects: {},
-		required: [
-			'Publisher_name'
-		]
+		required: []
 	};
 };

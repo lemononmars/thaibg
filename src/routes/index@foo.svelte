@@ -98,7 +98,7 @@
 			<div class="flex flex-col place-items-center">
 				<TBGIcons type={'organization'} class="w-12 aspect-square"/>
 				<div class="text-2xl">{stats.organization}</div>
-				<div><a href="/content">{$_('keyword.organization')}</a></div>
+				<div><a href="/organization">{$_('keyword.organization')}</a></div>
 			</div>
 		</div>
 		<p class="text-md text-secondary">

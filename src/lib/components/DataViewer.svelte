@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getVarPrefix } from '$lib/supabase';
 	import type { TypeName, DataTableColumns } from '$lib/datatypes';
-	import { BoardgameStatusArray, ShopStatusArray, personRoles, organizationRoles } from '$lib/datatypes';
+	import { BoardgameStatusArray, ShopStatusArray, personRoles } from '$lib/datatypes';
 
 	import { GridIcon, ListIcon, CheckCircleIcon, SlashIcon, SlidersIcon, ChevronDownIcon, ChevronUpIcon } from 'svelte-feather-icons';
 	import PersonCard from '$lib/components/PersonCard.svelte';
@@ -226,7 +226,9 @@
 												{cache[t.slice(t.indexOf('.')+1)]}
 											{/if}
 										{:else if t === 'Organization_relation'}
-											{Object.keys(d[t])}
+											{#each Object.keys(d[t]) as r, idx}
+												{idx == 0? '': ', '}{$_(`keyword.${r}`)}
+											{/each}
 										{:else}
 											{d[t] || '-'}
 										{/if}

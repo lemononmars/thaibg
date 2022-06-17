@@ -173,7 +173,7 @@
 						{#each res[role] as d}
 							<PlainLink type={role} object={d} />
 						{:else}
-							{$_('incomplete')}
+							<PlainLink type={role}/>
 						{/each}
 					</div>
 				{/each}
@@ -182,7 +182,7 @@
 					{#each res.publisher as p}
 						<PlainLink type="publisher" object={p} />
 					{:else}
-						{$_('incomplete')}
+						<PlainLink type="publisher"/>
 					{/each}
 				</div>
 				<div>
@@ -190,7 +190,7 @@
 					{#each res.sponsor as p}
 						<PlainLink type="sponsor" object={p} />
 					{:else}
-						{$_('incomplete')}
+						<PlainLink type="sponsor"/>
 					{/each}
 				</div>
 			{/if}
@@ -311,7 +311,7 @@
 			{#each bg.TBG_links || [] as l}
 				<div class="tooltip" data-tip="external link">
 					<div class="btn btn-square">
-						<a href={l} target="_blank">
+						<a href="//{l}" target="_blank">
 							<LinkIcon size="2x" />
 						</a>
 					</div>

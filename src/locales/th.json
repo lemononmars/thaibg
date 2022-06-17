@@ -152,7 +152,10 @@
 		"image": "ภาพ",
 		"name": "ชื่อ",
 		"released": "ปีที่ผลิต",
-		"status": "สถานะ"
+		"status": "สถานะ",
+		"type": "ประเภท",
+		"media": "สื่อ",
+		"relation": "ความสัมพันธ์"
 	},
 	"key": {
 		"Event_name": "ชื่องาน",
@@ -214,7 +217,8 @@
 		"Manufacturer_description": "คำอธิบาย",
 		"Manufacturer_picture": "รูปภาพ",
 		"Manufacturer_show": "แสดง?",
-		"Publisher_name": "ชื่อ",
+		"Publisher_name": "ชื่อ (อังกฤษ)",
+		"Publisher_name_th": "ชื่อ (ไทย)",
 		"Publisher_description": "คำอธิบาย",
 		"Publisher_links": "เว็บไซต์",
 		"Publisher_picture": "รูปภาพ",
@@ -285,6 +289,7 @@
 		"Organization_description": "คำอธิบาย",
 		"Organization_picture": "รูปภาพ",
 		"Organization_show": "แสดง?",
+		"Organization_relation": "ประเภทองค์กร",
 		"Type_description": "คำอธิบาย",
 		"Mech_category": "หมวดหมู่",
 		"Mech_links": "เว็บไซต์",
@@ -399,7 +404,12 @@
 		"partygame": "เกมปาร์ตี้",
 		"strategygame": "เกมกลยุทธ์",
 		"thematicgame": "เกมทางธีม",
-		"wargame": "เกมสงคราม"
+		"wargame": "เกมสงคราม",
+		"manufacturer": "ร้านผลิต/พิมพ์",
+		"publisher": "ค่ายเกม",
+		"sponsor": "ผู้สนับสนุน",
+		"contentcreator": "ผู้ผลิตเนื้อหา",
+		"shop": "ร้านค้า"
 	},
 	"mechanics": {
 		"action": "แอ็คชัน", 

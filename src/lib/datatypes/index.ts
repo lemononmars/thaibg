@@ -76,25 +76,26 @@ export interface SubmissionPackage {
 }
 
 import { ArtistSubmissionPackage } from './personRoles/Artist';
-import { BoardgameStatusArray, BoardgameSubmissionPackage, BoardGameTypeArray } from './Boardgame';
+import { BoardgameStatusArray, BoardgameSubmissionPackage } from './Boardgame';
 import { CategorySubmissionPackage } from './Category';
 import { ContentMediaArray, ContentSubmissionPackage, ContentTypeArray } from './Content';
 import { ContentcreatorSubmissionPackage } from './organizationRoles/Contentcreator';
 import { DesignerSubmissionPackage } from './personRoles/Designer';
 import { EventSubmissionPackage, EventTypeArray } from './Event';
 import { GraphicdesignerSubmissionPackage } from './personRoles/Graphicdesigner';
+import { PersonSubmissionPackage } from './Person';
+import { ProducerSubmissionPackage } from './personRoles/Producer';
+import { PlaytesterSubmissionPackage } from './personRoles/Playtester';
+import { RulebookeditorSubmissionPackage } from './personRoles/Rulebookeditor';
 import { HonorSubmissionPackage, HonorTypeArray } from './Honor';
 import { MechanicsSubmissionPackage} from './Mechanics';
 import { ManufacturerSubmissionPackage, ManufacturerServiceArray } from './organizationRoles/Manufacturer';
 import { OrganizationSubmissionPackage } from './Organization';
-import { PersonSubmissionPackage } from './Person';
-import { PlaytesterSubmissionPackage } from './personRoles/Playtester';
-import { ProducerSubmissionPackage } from './personRoles/Producer';
 import { PublisherSubmissionPackage } from './organizationRoles/Publisher';
-import { RulebookeditorSubmissionPackage } from './personRoles/Rulebookeditor';
 import { ShopSubmissionPackage, ShopStatusArray, ShopTypeArray, ThaiProvince } from './organizationRoles/Shop';
 import { SponsorSubmissionPackage } from './organizationRoles/Sponsor';
 import { TypeSubmissionPackage } from './Type';
+import { organizationRoles  } from './organizationRoles';
 /*
  * return necessary data for submission page
  */
@@ -261,6 +262,11 @@ export function getFilterOptions(type: TypeName): FilterOption[] {
 			}
 		]
 		case 'organization':
+			// return [{
+			// 	type: 'multiple',
+			// 	key: 'Organization_relation',
+			// 	options: organizationRoles
+			// }]
 			return []
 		case 'sponsor':
 			return []

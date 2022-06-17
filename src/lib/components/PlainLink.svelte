@@ -2,15 +2,18 @@
 	import Picture from '$lib/components/Picture.svelte'
 
 	import { getVarPrefix } from '$lib/supabase';
-	export let object;
+	export let object: any = false;
 	export let type: string;
 	export let comment: string = '';
 
 	const prefix = getVarPrefix(type)
-	const id = object[prefix + '_ID'];
-	const slug = object[prefix + '_slug'];
-	const picture = object[prefix + '_picture']
-	const name = object[prefix + '_name'] || object[prefix + '_name_th'] || 'untitled';
+	let id: number = 0, slug: string = 'uncredited', picture: string = '', name: string ='uncredited'
+	if(object) {
+		id = object[prefix + '_ID'];
+		slug = object[prefix + '_slug'];
+		picture = object[prefix + '_picture']
+		name = object[prefix + '_name'] || object[prefix + '_name_th'] || 'untitled';
+	}
 
 </script>
 

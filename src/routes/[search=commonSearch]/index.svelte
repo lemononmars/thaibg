@@ -38,11 +38,11 @@
 
 <script lang="ts">
 	import Seo from '$lib/components/SEO.svelte';
-	import { ChevronDownIcon, ChevronUpIcon } from 'svelte-feather-icons';
+	import { ChevronDownIcon, ChevronUpIcon, FilterIcon } from 'svelte-feather-icons';
 	import Searchbar from '$lib/components/SearchBar.svelte';
 	import { fly } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
-	import { _ } from 'svelte-i18n';
+	import { _, locale } from 'svelte-i18n';
 	import DataViewer from '$lib/components/DataViewer.svelte';
    import { getVarPrefix } from '$lib/supabase';
 	import RangeSlider from "svelte-range-slider-pips"
@@ -100,8 +100,7 @@
 						f.type === 'multiple' 
 						&&
 						(
-							(filterOptions[idx] as Array<any>).includes(-1) 
-							|| (filterOptions[idx] as Array<any>).includes(f.options?.indexOf(d[f.key]))
+							(filterOptions[idx] as Array<any>).includes(f.options?.indexOf(d[f.key]))
 						)
 					)
 					|| 
@@ -111,7 +110,7 @@
 						(
 							(!f.checkBetween && d[f.key] && d[f.key] <= filterOptions[idx][0]) // check if data is at least input
 							||
-							(d[f.keyMin] || d[f.keyMax])
+							(d[f.keyMin] || d[f.keyMax]) // either min or max exists
 							&& (!d[f.keyMin] || d[f.keyMin] <= filterOptions[idx][1]) // data min less than input max 
 							&& (!d[f.keyMax] || d[f.keyMax] >= filterOptions[idx][0]) // data max greater than input min
 						)
@@ -144,18 +143,19 @@
 
 <Seo title="{type}" />
 <div class="flex flex-col justify-center mx-auto">
-	<h1>List of {$_(`keyword.${type}`)}</h1>
+	<h1>{$_(`keyword.listof`)}{$_(`keyword.${type}`)}{$locale === 'en'? 's':''}</h1>
 	<DataViewer data={dataFiltered} {type} {dataTableColumns}>
 		<!-- Search box -->
-		<div class="flex flex-col lg:flex-row items-center gap-4">
+		<div class="flex flex-col lg:flex-row items-center m-2">
 			<Searchbar placeholder="Search {type} (en/th)" bind:searchString />
 			{#if filters?.length > 0}
 				<div
-					class="btn gap-2"
+					class="btn"
 					class:btn-active={showAdvancedFilter}
 					on:click={() => (showAdvancedFilter = !showAdvancedFilter)}
 				>
-					Advanced Filter
+					<FilterIcon size="1x"/>
+					<p class="mx-2">Advanced Filter</p>
 					{#if showAdvancedFilter}
 						<ChevronUpIcon size="1x" />
 					{:else}
@@ -169,7 +169,7 @@
 			<div in:fly={{ duration: 400, y: -20, easing: quintOut }} class="my-2 mx-auto bg-base-200 p-4 rounded-md w-full">
 				<div class="grid grid-cols-1 lg:grid-cols-2 justify-left gap-1">
 					{#each filters as f, fidx}
-						<div class="flex flex-col lg:flex-row gap-2 items-center">
+						<div class="flex flex-col lg:flex-row items-center">
 							<div class="flex flex-row lg:flex-col w-30 mx-auto">
 								<p class="text-xs">{$_(`key.${f.key}`)}</p>
 								<input type="checkbox" class="toggle toggle-xs mx-auto" bind:checked={activeFilterOptions[fidx]}/>
@@ -196,7 +196,7 @@
 										{/each}
 									</div>
 								{:else if f.type === 'range'}
-									<div class="flex flex-col gap-1 mx-auto lg:pr-8 -my-2"
+									<div class="flex flex-col gap-1 mx-auto pr-8 -my-2"
 										class:opacity-20={!activeFilterOptions[fidx]}
 									>
 										{#if f.checkBetween}

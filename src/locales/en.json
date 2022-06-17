@@ -164,7 +164,10 @@
     "released": "Released",
     "status": "Status",
     "latest_work": "Latest work",
-    "last_updated": "Last updated"
+    "last_updated": "Last updated",
+    "type": "Type",
+    "media": "Media",
+    "relation": "Relation"
   },
   "key": {
     "Event_name": "Name",
@@ -226,7 +229,8 @@
     "Manufacturer_description": "Description",
     "Manufacturer_picture": "Picture",
     "Manufacturer_show": "Public?",
-    "Publisher_name": "Name",
+    "Publisher_name": "Name (English)",
+    "Publisher_name_th": "Name (Thai)",
     "Publisher_description": "Description",
     "Publisher_links": "Link",
     "Publisher_picture": "Picture",
@@ -297,6 +301,7 @@
     "Organization_description": "Description",
     "Organization_picture": "Picture",
     "Organization_show": "Public?",
+    "Organization_relation": "Type of organization",
     "Type_description": "Description",
     "Mech_category": "Category",
     "Mech_links": "Link",
@@ -512,7 +517,12 @@
     "partygame": "Party Games",
     "strategygame": "Strategy Games",
     "thematicgame": "Thematic Games",
-    "wargame": "Wargames"
+    "wargame": "Wargames",
+    "contentcreator": "Content Creator",
+    "manufacturer": "Manufacturer",
+    "publisher": "Publisher",
+    "shop": "Shop",
+    "sponsor": "Sponsor"
   },
   "mechanics": {
     "action": "Actions",
