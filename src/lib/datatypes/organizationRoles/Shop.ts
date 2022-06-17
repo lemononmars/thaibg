@@ -40,7 +40,7 @@ export const ShopTypeArray = ['online shop', 'physical shop', 'cafe', 'club', 'm
 
 export const ShopRelationArray = ['boardgame', 'organization'];
 
-interface ShopRelation {
+export interface ShopRelation {
 	id: number;
 	Shop_ID: number;
 	TBG_ID: number;

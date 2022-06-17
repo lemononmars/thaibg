@@ -11,6 +11,7 @@
 
 <script lang=ts>
 	import { _, locale, locales, isLoading } from 'svelte-i18n';
+	import { locale as storeLocale } from '../../routes/store';
 	import { getAvatar, getCurrUserProfile } from '$lib/user/profile';
 	import { user, signOut } from '$lib/user';
 	import {
@@ -194,7 +195,9 @@
 		<div class="navbar-end flex flex-row items-center place-items-center gap-4 px-4">
 			<div class="hidden lg:flex lg:flex-row place-items-center">
 				{#if !$isLoading}
-					<select class="select select-md max-w-xs" bind:value={$locale}>
+					<select class="select select-md max-w-xs" bind:value={$locale}
+						on:change={()=>$storeLocale = $locale}
+					>
 						{#each $locales as l}
 							<option value={l} selected>{languageName[l]}</option>
 						{/each}
@@ -285,7 +288,9 @@
 				<ToggleTheme/>
 				<div>
 					{#if !$isLoading}
-						<select class="select select-md max-w-xs" bind:value={$locale}>
+						<select class="select select-md max-w-xs" bind:value={$locale}
+							on:change={()=>$storeLocale = $locale}
+						>
 							{#each $locales as l}
 								<option value={l} selected>{languageName[l]}</option>
 							{/each}

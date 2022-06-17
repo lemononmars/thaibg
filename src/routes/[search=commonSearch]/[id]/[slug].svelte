@@ -19,23 +19,12 @@
 			}
 		};
 	}
-
-	export async function getRelations(pageType: string, relationType: string, id: number) {
-		const res = await fetch(`/api/${pageType}/${id}/${relationType}`);
-		if (!res.ok)
-			return { 
-				status: 404, 
-				message: `cannot find any ${relationType} associated with that ${pageType}`
-			};
-		let data = await res.json();
-		return data;
-	}
 </script>
 
 <script lang="ts">
 	import Seo from '$lib/components/SEO.svelte';
 	import Spinner from '$lib/components/Spinner.svelte';
-	import HonorTables from '$lib/components/HonorTables.svelte';
+	import HonorRelationTable from '$lib/components/HonorRelationTable.svelte';
 	import Social from '$lib/components/Social.svelte';
 	import { onMount } from 'svelte';
 	import type { TypeName } from '$lib/datatypes';
@@ -46,6 +35,7 @@
 	import ContactLinks from '$lib/components/ContactLinks.svelte';
 	import GoogleMapEmbed from '$lib/components/GoogleMapEmbed.svelte';
 	import Picture from '$lib/components/Picture.svelte'
+import AddToCalendarButton from '$lib/components/AddToCalendarButton.svelte';
 
 	export let pageData, pageID: number, pageType: TypeName;
 	let prefix = getVarPrefix(pageType)
@@ -57,15 +47,13 @@
 		)
 	)
 	
-	let relations: TypeName[]
-	if(pageType === 'contentcreator')
-		relations = ['content']
-	else if(pageType === 'content')
+	let relations: TypeName[] = []
+	if (pageType === 'content')
 		relations = ['boardgame', 'contentcreator']
-	else if(pageType === 'honor')
-		relations = []	// use HonorTables component instead
-	else
+	else if (pageType === 'event') 
 		relations = ['boardgame']
+	else
+		relations = [] // for 'honor', use corresponding HonorRelationTable component instead
 	
 	let promiseRelations: Record<string, Promise<any[]>> = {}
 	relations.forEach((r) => promiseRelations[r] = null)
@@ -75,6 +63,17 @@
 			promiseRelations[r] = getRelations(pageType, r, pageID)
 	});
 
+	export async function getRelations(pageType: string, relationType: string, id: number) {
+		const res = await fetch(`/api/${pageType}/${id}/${relationType}`);
+		if (!res.ok)
+			return { 
+				status: 404, 
+				message: `cannot find any ${relationType} associated with that ${pageType}`
+			};
+		let data = await res.json();
+		return data;
+	}
+	
 	let pageName: string = pageData[prefix + '_name'] || pageData[prefix + '_name_th']
 
 	function getYoutubeID(link: string){
@@ -133,31 +132,60 @@
 			<h2>Share:</h2> 
 			<Social url={pageData[prefix + '_links']} title={pageData[prefix + '_name']} />
 		</div>
+		{#if pageType === 'event'}
+			<AddToCalendarButton 
+				eventID={pageData.Event_ID}
+				eventName={pageData.Event_name}
+				location={pageData.Event_location?.formatted_address || '-'}
+				date={pageData.Event_time_start + '/' + pageData.Event_time_end}
+			/>
+		{/if}
 		<h2>Edit this page:
 			<EditButton type={pageType} id={pageData[prefix + '_ID']}/>
 		</h2>
 	</div>
 	<!-- second column-->
 	<div class="flex flex-col w-full gap-4">
-		{#each relations as r}
-			<h1>List of {$_(`keyword.${r}`)} related to {pageData[prefix + '_name'] || pageData[prefix + '_name_th']}</h1>
-			{#await promiseRelations[r]}
-				<Spinner />
-			{:then data}
-				{#if data}
-					<DataViewer 
-						{data} 
-						type={r} 
-						dataTableColumns={{headers:[], body:[]}} 
-						listView="grid"
-						numColumns={3}
-					/>
-				{/if}
-			{/await}
-		{/each}
 
 		{#if pageType === 'honor'}
-			<HonorTables honorID={pageID}/>
+			<HonorRelationTable id={pageID}/>
+		{:else if pageType === 'content'}
+			<div class="flex flex-row gap-1">
+				<div class="w-1/2">
+					<h1>{$_(`keyword.boardgame`)}</h1>
+					{#await promiseRelations['boardgame']}
+						<Spinner />
+					{:then data}
+						{#if data}
+							<DataViewer 
+								{data} 
+								type={'boardgame'} 
+								dataTableColumns={{headers:[], body:[]}} 
+								listView="grid"
+								numColumns={2}
+								showPageNav={false}
+							/>
+						{/if}
+					{/await}
+				</div>
+				<div class="w-1/2">
+					<h1>{$_(`keyword.contentcreator`)}</h1>
+					{#await promiseRelations['contentcreator']}
+						<Spinner />
+					{:then data}
+						{#if data}
+							<DataViewer 
+								{data} 
+								type={'contentcreator'} 
+								dataTableColumns={{headers:[], body:[]}} 
+								listView="grid"
+								numColumns={2}
+								showPageNav={false}
+							/>
+						{/if}
+					{/await}
+				</div>
+			</div>
 		{/if}
 	</div>
 </div>

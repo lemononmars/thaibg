@@ -20,6 +20,7 @@
   },
   "keyword": {
     "all": "See all",
+    "name": "Name",
     "activity": "Activity",
     "boardgame": "Board Game",
     "contribute": "Add Data",

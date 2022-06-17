@@ -20,12 +20,12 @@
    let infowindow: any
 
    $: if(placeIndex > -1 && map && infowindow) {
-      map.panTo(places[placeIndex].location)
+      //map.panTo(places[placeIndex].location)
       infowindow.setPosition(places[placeIndex].location)
    }
 
    onMount(async()=>{
-   //    map = initMap()
+       map = initMap()
    })
 
    async function initMap(){
@@ -48,7 +48,7 @@
          marker.addListener("click", () => {
             infowindow.open(map, marker);
             placeIndex = index
-            map.panTo(places[index].location)
+            //map.panTo(places[index].location)
          });
 
          marker.setPlace({
@@ -74,7 +74,7 @@
    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
    <script
      src="https://maps.googleapis.com/maps/api/js?key={apiKey}&region=TH&language=th&libraries=places&v=weekly"
-     defer async on:load={initMap}
+     defer async
    />
 </svelte:head>
 

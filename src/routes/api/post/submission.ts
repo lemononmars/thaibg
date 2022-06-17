@@ -15,7 +15,7 @@ export async function post( {request} ){
 	let hookMessage = ':game_die: ' + username + ' - ' + type + ' - ' + pageType
 
 	hookMessage += url + pageType + res.index
-	sendhook(hookMessage)
+	//sendhook(hookMessage)
 
 	return res
 }

@@ -34,9 +34,10 @@ export const HonorTypeArray = ['contest', 'competition', 'award'];
 export type HonorType = 'contest' | 'competition' | 'award';
 
 export const HonorRelationArray = ['boardgame'];
-export const HonorPosition = ['winner', 'runner-up', '1st runner-up', '2nd runner-up', 'nominee', 'popular vote']
+export const HonorPosition = ['winner', 'runner-up', '1st runner-up', '2nd runner-up', 'nominee', 'recommended', 'popular vote', 'special']
 
 export interface HonorRelation {
+	id?: number,
 	Honor_ID: number;
 	TBG_ID: number;
 	Honor_position: string;

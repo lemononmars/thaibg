@@ -72,6 +72,7 @@
 	import DataViewer from '$lib/components/DataViewer.svelte';
 	import GoogleMapEmbed from '$lib/components/GoogleMapEmbed.svelte'
 	import Picture from '$lib/components/Picture.svelte';
+	import ShopRelationTable from '$lib/components/ShopRelationTable.svelte';
 
 	export let organizationData: Organization, role: string, roleID: number;
 	const orgRelation = organizationData.Organization_relation // already parsed from fetch
@@ -224,12 +225,16 @@
 				<Spinner />
 			{:then res}
 				{#if res}
-					<DataViewer 
-						data={res} 
-						type={activeRole === 'contentcreator'? 'content' : 'boardgame'}
-						dataTableColumns={getDataTableColumns(activeRole === 'contentcreator'? 'content' : 'boardgame')}
-						numColumns={3}
-					/>
+					{#if activeRole === 'shop'}
+						<ShopRelationTable id={activeRoleID}/>
+					{:else}
+						<DataViewer 
+							data={res} 
+							type={activeRole === 'contentcreator'? 'content' : 'boardgame'}
+							dataTableColumns={getDataTableColumns(activeRole === 'contentcreator'? 'content' : 'boardgame')}
+							numColumns={3}
+						/>
+					{/if}
 				{/if}
 			{:catch}
 				<p>Server is unavailable. Try again later.</p>

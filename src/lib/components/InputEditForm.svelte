@@ -57,6 +57,10 @@
 			editingKey = k
 		}
 	}
+   
+   function handleUpload(k: string) {
+      inputs[k] = currentData[k]
+   }
 </script>
 
 <div class="grid grid-cols-1 lg:grid-cols-3 content-start gap-2 py-4">
@@ -98,12 +102,13 @@
          {:else if multiselects[k]}
             <MultipleSelect selectOptions={multiselects[k]} bind:selects={currentData[k]} disabled={editingKey !== k}/>
          {:else if k.includes('_picture')}
-            <UploadPicture key={k} bind:pictureFile={currentData[k]}/>
+            <UploadPicture key={k} bind:pictureFile={currentData[k]} on:pictureUploaded={()=>handleUpload(k)}/>
          {:else if k.includes('_location')}
             <div class="flex flex-col gap-2">
                <div 
                   class="btn btn-accent" 
                   on:click={()=>openMapModal = true}
+                  class:btn-ghost={editingKey !== k}
                   class:btn-disabled={editingKey !== k}
                >Select in Google Map</div>
                <textarea 
@@ -114,7 +119,7 @@
                />
             </div>
          {:else if k.includes('_time')}
-            <input type="date" class="input" bind:value={inputs[k]}/>
+            <input type="date" class="input"  disabled={editingKey !== k} bind:value={currentData[k]}/>
          {:else if k.includes('show')}
             <input type="checkbox" bind:checked={currentData[k]} class="checkbox" disabled={editingKey !== k}/>
          {:else if k.includes('description')}

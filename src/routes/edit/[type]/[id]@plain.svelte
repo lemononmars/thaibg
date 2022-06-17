@@ -51,18 +51,6 @@
 		};
 	}
 
-	export async function postSubmission(data: SubmissionData): Promise<Response> {
-      const res = await fetch('/api/post/submission', {
-         method: 'POST',
-         cache: 'default',
-         credentials: 'same-origin',
-         headers: {
-            'Content-Type': 'application/json'
-         },
-         body: JSON.stringify(data)
-      })
-		return res;
-	}
 </script>
 
 <script lang="ts">
@@ -75,6 +63,8 @@
 	import InputEditForm from '$lib/components/InputEditForm.svelte';
 	import CreateCard from '../_createCard.svelte'
 	import { ChevronLeftIcon, ChevronRightIcon } from 'svelte-feather-icons';
+	import HonorRelationTable from '$lib/components/HonorRelationTable.svelte'
+	import ShopRelationTable from '$lib/components/ShopRelationTable.svelte'
 
 	export let submissionPackage: SubmissionPackage, 
 		type: string, 
@@ -203,6 +193,19 @@
 		}
 		handleAlert(newAlert)
 	}
+
+	export async function postSubmission(data: SubmissionData): Promise<Response> {
+      const res = await fetch('/api/post/submission', {
+         method: 'POST',
+         cache: 'default',
+         credentials: 'same-origin',
+         headers: {
+            'Content-Type': 'application/json'
+         },
+         body: JSON.stringify(data)
+      })
+		return res;
+	}
 </script>
 
 <Seo title="Edit {type}" />
@@ -246,15 +249,24 @@
 	</div>
 {:else if step == 1}
 	<CreateCard bind:dir title={stepTitles[1]}>
-		<div class="grid grid-cols2 lg:grid-cols-3 gap-y-4">
-			{#if loadingRelationalData}
-				<Spinner/>
-			{:else}
-				{#each relations as r}
-					<SearchMultipleSelect bind:selects={relationMultiSelects[r]} type={r} />
-				{/each}
-			{/if}
-		</div>
+		{#if type==='honor'}
+			<HonorRelationTable id={currentDataID} edit={true}/>
+		{:else if type === 'shop'}
+			<div class="w-1/3 mx-auto">
+				<SearchMultipleSelect bind:selects={relationMultiSelects['organization']} type={'organization'} />
+			</div>
+			<ShopRelationTable id={currentDataID} edit={true}/>
+		{:else}
+			<div class="grid grid-cols2 lg:grid-cols-3 gap-y-4">
+				{#if loadingRelationalData}
+					<Spinner/>
+				{:else}
+					{#each relations as r}
+						<SearchMultipleSelect bind:selects={relationMultiSelects[r]} type={r} />
+					{/each}
+				{/if}
+			</div>
+		{/if}
 	</CreateCard>
 	<div class="btn" on:click={()=>{step--; dir = -1}}>Prev</div>
 	<div class="btn" on:click={()=>{step++; dir = 1}}>Next</div>
@@ -271,7 +283,7 @@
 	</CreateCard>
 	<div class="btn hover:-translate-x-4" on:click={()=>{step = 1; dir = -1}}>Prev <ChevronLeftIcon size=20/></div>
 	<div 
-		class="btn btn-success" 
+		class="btn btn-wide btn-success" 
 		on:click|preventDefault={handleSubmit}
 	>
 		{$_('page.add.submit')}
