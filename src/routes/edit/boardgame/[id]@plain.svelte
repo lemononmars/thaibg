@@ -166,6 +166,12 @@
 		if(pictureFile && (typeof pictureFile !== 'string')) {
 			submission.TBG_picture = await uploadPicture(type, pictureFile, slug);
 		}
+		const coverPictureFile = submission.TBG_picture_cover
+		if(coverPictureFile && (typeof coverPictureFile !== 'string')) {
+			submission.TBG_picture_cover = await uploadPicture(type, coverPictureFile, slug);
+		}
+
+
 
 		let res = await postSubmission({
 			content: submission,

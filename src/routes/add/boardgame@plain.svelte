@@ -152,11 +152,11 @@
 		submission[typePrefix + '_slug'] = slug;
 
 		const pictureFile = submission.TBG_picture
-		if(pictureFile) {
-			const newPictureURL = 
-			await uploadPicture("boardgame", pictureFile, slug);
-			submission.TBG_picture = newPictureURL
-		}
+		if(pictureFile)
+			submission.TBG_picture = await uploadPicture("boardgame", pictureFile, slug);
+		const coverPictureFile = submission.TBG_picture_cover
+		if(coverPictureFile)
+			submission.TBG_picture_cover = await uploadPicture("boardgame", coverPictureFile, slug);
 
 		let res = await postSubmission({
 			content: submission,
