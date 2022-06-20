@@ -170,9 +170,9 @@
 				<div class="grid grid-cols-1 lg:grid-cols-2 justify-left gap-1">
 					{#each filters as f, fidx}
 						<div class="flex flex-col lg:flex-row items-center">
-							<div class="flex flex-row lg:flex-col w-30 mx-auto">
+							<div class="flex flex-row lg:flex-col w-30 mx-auto gap-1">
 								<p class="text-xs">{$_(`key.${f.key}`)}</p>
-								<input type="checkbox" class="toggle toggle-xs mx-auto" bind:checked={activeFilterOptions[fidx]}/>
+								<input type="checkbox" class="toggle mx-auto" bind:checked={activeFilterOptions[fidx]}/>
 							</div>
 							<div class="w-full lg:w-4/5">
 								{#if f.type === 'select'}

@@ -13,6 +13,7 @@ interface Links {
 export default [
    {
       image: Supporter3, 
+      name: 'Wizards of Learning',
       links: [
          "facebook.com/WizardsofLearning",
          "twitter.com/WizardsLearning",
@@ -20,18 +21,21 @@ export default [
    },
    {
       image: Supporter2, 
+      name: "Lunar Gravity Games",
       links: [
          "facebook.com/LunarGravityGames"
       ],
    },
    {
       image: Supporter1, 
+      name: "Board Game Designer Thailand",
       links: [
          "facebook.com/BoardGameDesignerThailand/"
       ],
    }, 
    {
       image: Supporter4, 
+      name: "Thailand Board Game Association",
       links: [
          "facebook.com/thailandboardgameassociation/"
       ],

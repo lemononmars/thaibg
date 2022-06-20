@@ -13,7 +13,7 @@
 </script>
 
 <footer
-	class="mx-auto w-screen p-10 footer bg-base-200 text-base-content"
+	class="mx-auto w-screen p-10 footer bg-base-200 text-base-content grid-cols-2 lg:grid-cols-none"
 >
 	<div class="justify-center">
 		<a href="/">

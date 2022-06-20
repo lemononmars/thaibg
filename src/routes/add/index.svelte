@@ -1,41 +1,35 @@
-<script context=module lang=ts>
-	export async function load({ fetch }) {
-		const res = await fetch('/api/stats');
-		const stats = await res.json();
-		return {
-			props: {
-				stats
-			}
-		};
-	}
-</script>
-
 <script lang="ts">
-	import { _ } from 'svelte-i18n';
+	import { _, locale } from 'svelte-i18n';
 	import {getTypeIcon} from '$lib/assets/icons'
 	
 	import boardGameStages from '$lib/assets/board-game-stages.svg'
-	//import { CoffeeIcon, PlayCircleIcon, UserCheckIcon } from 'svelte-feather-icons';
 	import VerticalBlock from './_createBlockVertical.svelte';
 	import HorizontalBlock from './_createBlockHorizontal.svelte';
 
-	//export let stats: Record<string, number>
-
 	const types = ['person', 'organization', 'boardgame', 'content', 'event', 'honor']
 	const icons = types.map((t:string) => getTypeIcon(t))
-	const descriptions = [
-		'A person who helps creating Thai board games',
-		'An organization who helps creating and promoting Thai board games',
-		'Thai board games',
-		'Articles, clips, and all sorts of contents relating to Thai board games',
-		'Conventions, playtest events, and all activities relating to Thai board games',
-		'Competitions, contests, and awards for Thai board games'
-	]
-
-	const blockProps = types.map((type:string, i:number) => ({
+	const descriptions = {
+		th: [
+			'ผู้ร่วมผลิตบอร์ดเกมไทย',
+			'องค์กรที่ช่วยผลิตและโปรโมทบอร์ดเกมไทย',
+			'บอร์ดเกมไทย',
+			'บทความ คลิป และสื่อต่าง ๆ ที่เกี่ยวกับบอร์ดเกมไทย',
+			'งานชุมนุม งาน playtest และกิจกรรมที่เกี่ยวกับบอร์ดเกมไทย',
+			'การแข่งขัน งานประกวด และรางวัลสำหรับบอร์ดเกมไทย'
+		],
+		en: [
+			'A person who helps creating Thai board games',
+			'An organization who helps creating and promoting Thai board games',
+			'Thai board games',
+			'Articles, clips, and all sorts of contents relating to Thai board games',
+			'Conventions, playtest events, and all activities relating to Thai board games',
+			'Competitions, contests, and awards for Thai board games'
+		]
+	}
+	$: blockProps = types.map((type:string, i:number) => ({
 		icon: icons[i],
 		type,
-		description: descriptions[i]
+		description: descriptions[$locale][i]
 	}))
 </script>
 

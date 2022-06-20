@@ -19,6 +19,11 @@ import { _ } from 'svelte-i18n';
 		'shop',
 		'contentcreator',
 	];
+	const pageGroup4 = [
+		'honor',
+		'event',
+		'content'
+	]
 </script>
 
 <div class="grid grid-cols-4 md:grid-cols-6 lg:grid-rows-2 justify-center gap-1 m-2">
@@ -37,4 +42,12 @@ import { _ } from 'svelte-i18n';
 			<RoleButton {role}/>
 		</a>
 	{/each}
+	{#each pageGroup4 as role}
+		<a href="/{role}" class="link-info">
+			<RoleButton {role}/>
+		</a>
+	{/each}
+	<a href="/add" class="link-primary">
+		<RoleButton role={"role"} text={"contribute"} icon={"add"}/>
+	</a>
 </div>

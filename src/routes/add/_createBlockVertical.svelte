@@ -6,6 +6,8 @@
       description: string,
       width: number = 1
 
+   console.log(description)
+
    const widthRatio = width == 1 ? '1/4':'1/2'
 </script>
 

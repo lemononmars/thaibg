@@ -126,7 +126,7 @@
 	{#if dataCurrentPage && data.length > 0}
 		{#if listView === 'grid'}
 			<!-- Grid view -->
-			<div class="w-full text-center mb-4 grid grid-cols-2 lg:{gridCols} lg:gap-4">
+			<div class="w-full text-center mb-4 grid grid-cols-2 lg:{gridCols} lg:gap-4 justify-items-center">
 				{#each dataCurrentPage as d (d[typePrefix + '_ID'])}
 					<div animate:flip={{ duration: 300 }}>
 						{#if type === 'person' || personRoles.includes(type)}
@@ -148,13 +148,13 @@
 		{:else}
 			<!-- Table view -->
 			<div class="w-full">
-				<table class="table table-zebra table-compact lg:table-normal table-fixed w-full overflow-hidden">
+				<table class="relative table table-zebra table-compact lg:table-normal table-fixed w-full overflow-hidden">
 					<thead>
 						<tr>
 							{#if type!=='content'}
 								<th class="w-20">{$_(`table.image`)}</th>
 							{/if}
-							<th class="w-1/2">
+							<th class="w-3/4 lg:w-1/2">
 								<div class="flex flex-row align-middle gap-2 ">
 								{$_(`table.name`)}
 								<div on:click={()=>sortData(-1)}>
@@ -190,7 +190,7 @@
 										<Picture {type} height={16} picture={d[typePrefix + '_picture']} mask='square'/>
 									</td>
 								{/if}
-								<td class="overflow-x-hidden">
+								<td>
 									<a href="/{type}/{d[typePrefix + '_ID']}">
 										<p class="break-words truncate">
 											{d[typePrefix + '_name'] || d[typePrefix + '_name_th'] || 'N/A'}
@@ -201,7 +201,7 @@
 									</a>
 								</td>
 								{#each dataTableColumns.body as t}
-									<td class="hidden lg:table-cell">
+									<td class="hidden lg:table-cell truncate">
 										{#if typeof d[t] === 'boolean'}
 											{#if d[t] == true}
 												<CheckCircleIcon size="1x" class="text-success" />

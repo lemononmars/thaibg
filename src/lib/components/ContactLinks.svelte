@@ -2,28 +2,30 @@
 	import SocialIcons from '@rodneylab/svelte-social-icons'
 	export let 
 		links: string[], 
-		email:string = null;
+		email: string = null;
 
 	if(!links)
 		links = []
 	function getIcon(url: string){
 		if(!url)
 			return 'squarespace' as const
-		if(url.includes('facebook'))
+		else if(url.includes('facebook'))
 			return 'facebook' as const
-		if(url.includes('twitter'))
+		else if(url.includes('twitter'))
 			return 'twitter' as const
-		if(url.includes('github'))
+		else if(url.includes('github'))
 			return 'github' as const
-		if(url.includes('youtube'))
+		else if(url.includes('youtube'))
 			return 'youtube' as const
-		if(url.includes('spotify'))
+		else if(url.includes('spotify'))
 			return 'spotify' as const
-		if(url.includes('discord'))
+		else if(url.includes('discord'))
 			return 'discord' as const
-		if(url.includes('@'))
+		else if(url.includes('tiktok'))
+			return 'tiktok' as const
+		else if(url.includes('@'))
 			return 'email' as const
-		if(url.includes('instagram'))
+		else if(url.includes('instagram'))
 			return 'instagram' as const
 		return 'squarespace' as const
 	}
@@ -31,7 +33,7 @@
 
 <div class="flex flex-col">
 	<h3>Contact:</h3>
-	<div class="flex flex-row items-center gap-1 flex-wrap">
+	<div class="flex flex-row items-center gap-1 flex-wrap self-center">
 		{#if email}
 			<a href="mailto:{email}" target="_blank" class="hover:opacity-50 hover:-translate-y-2">
 				<SocialIcons network="email" fgColor="#FFFFFF"/>

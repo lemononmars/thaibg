@@ -168,7 +168,7 @@
 	</div>
 </div>
 
-<div class="flex flex-col w-screen p-8">
+<div class="flex flex-col w-screen lg:p-8">
 	<div class="flex flex-row justify-between items-center">
 		<div>
 			<h1>Hotness Board Game</h1>
@@ -190,7 +190,7 @@
 		<div
 			class="btn btn-accent absolute rounded-full right-0 top-1/2 z-10 opacity-20 hover:opacity-80"
 			on:click={() => scrollCarousel(1)}
-			class:hidden={bgCarousel?.scrollLeft >= 9 * boardgameCarouselWidth}
+			class:hidden={bgCarousel?.scrollLeft >= 8 * boardgameCarouselWidth}
 		>
 			<ChevronRightIcon size="30" />
 		</div>
@@ -217,20 +217,19 @@
 
 <!-- supporters -->
 <div class="flex flex-col bg-base-300 w-screen py-4 px-4 lg:px-20">
-	<div>
-		<h1 class="text-left my-4">Collaborators</h1>
-	</div>
-	<div class="flex flex-col lg:flex-row place-content-center gap-2">
+	<h1 class="text-left my-4">Collaborators</h1>
+	<div class="grid grid-rows-2 lg:grid-rows-1 grid-flow-col place-content-between gap-2">
 		{#each shuffleSupporters as s}
-			<div class="flex flex-col gap-2 justify-center mx-auto lg:mx-none">
+			<div class="flex flex-col shrink gap-2 justify-center text-center mx-auto lg:mx-none w-30 lg:w-60">
 				<div class="avatar hover:animate-bounce">
-					<div class="w-60 mask mask-squircle">
+					<div class="mask mask-squircle">
 						<img 
 							src={s.image} 
 							alt="logo">
 					</div>
 				</div>
-				<div>
+				<div class="self-center">
+					<p class="line-clamp-2 break-words">{s.name}</p>
 					<ContactLinks links={s.links}/>
 				</div>
 			</div>
