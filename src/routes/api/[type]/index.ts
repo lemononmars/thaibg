@@ -62,8 +62,10 @@ export async function get({ params, url }) {
 		};
 
 	// parse from string in database table to array
-	if(type === 'organization')
-		data.forEach(d=> d.Organization_relation = JSON.parse(d.Organization_relation))
+	if(type === 'organization' && (!selected || selected.includes('relation')))
+		data.forEach(d=> 
+			d.Organization_relation = JSON.parse(d.Organization_relation)
+		)
 
 	if (!searched)
 		return {
@@ -82,7 +84,7 @@ export async function get({ params, url }) {
 
 	const fuse = new Fuse(data, options)
 	const searchedData = fuse.search(searched).map((result)=> result.item)
-	// fuse returns [{item: {}}, {item: {}}, ...]
+	// fuse returns [{item: {}}, {item: {}}, ...] so we need to extract the item key
 
 	return {
 		status: 200,

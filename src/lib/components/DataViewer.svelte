@@ -148,14 +148,14 @@
 		{:else}
 			<!-- Table view -->
 			<div class="w-full">
-				<table class="table table-zebra table-compact lg:table-normal w-full overflow-hidden">
+				<table class="table table-zebra table-compact lg:table-normal table-fixed w-full overflow-hidden">
 					<thead>
 						<tr>
 							{#if type!=='content'}
-								<th>{$_(`table.image`)}</th>
+								<th class="w-20">{$_(`table.image`)}</th>
 							{/if}
-							<th>
-								<div class="flex flex-row align-middle gap-2">
+							<th class="w-1/2">
+								<div class="flex flex-row align-middle gap-2 ">
 								{$_(`table.name`)}
 								<div on:click={()=>sortData(-1)}>
 									{#if sortingColumn == -1}
@@ -171,7 +171,7 @@
 										{$_(`table.${t}`)}
 										<div on:click={()=>sortData(idx)}>
 											{#if idx === sortingColumn}
-												<svelte:component this={sortingIcon} size=20/>
+												<svelte:component this={sortingIcon} size="20"/>
 											{:else}
 												<SlidersIcon size=20/>
 											{/if}
@@ -192,7 +192,7 @@
 								{/if}
 								<td class="overflow-x-hidden">
 									<a href="/{type}/{d[typePrefix + '_ID']}">
-										<p class="break-words line-clamp-2">
+										<p class="break-words truncate">
 											{d[typePrefix + '_name'] || d[typePrefix + '_name_th'] || 'N/A'}
 										</p>
 										{#if d[typePrefix + '_name'] && d[typePrefix + '_name_th']}

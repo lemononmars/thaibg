@@ -44,20 +44,16 @@ export const TypeNamesArray = [
 
 export type TypeName =
 	| TypeNameRole
+	| TypeNameOrganizationRole
 	| 'boardgame'
 	| 'person'
-	| 'shop'
-	| 'publisher'
 	| 'content'
 	| 'honor'
 	| 'event'
-	| 'sponsor'
 	| 'type'
 	| 'mechanics'
 	| 'category'
-	| 'manufacturer'
 	| 'organization'
-	| 'contentcreator'
 export type TypeNameRole =
 	| 'designer'
 	| 'graphicdesigner'
@@ -65,6 +61,12 @@ export type TypeNameRole =
 	| 'playtester'
 	| 'rulebookeditor'
 	| 'producer';
+export type TypeNameOrganizationRole =
+	| 'contentcreator'
+	| 'manufacturer'
+	| 'publisher'
+	| 'shop'
+	| 'sponsor';
 
 export interface SubmissionPackage {
 	submission: any;
@@ -95,7 +97,7 @@ import { PublisherSubmissionPackage } from './organizationRoles/Publisher';
 import { ShopSubmissionPackage, ShopStatusArray, ShopTypeArray, ThaiProvince } from './organizationRoles/Shop';
 import { SponsorSubmissionPackage } from './organizationRoles/Sponsor';
 import { TypeSubmissionPackage } from './Type';
-import { organizationRoles  } from './organizationRoles';
+import { personRoles } from './personRoles';
 /*
  * return necessary data for submission page
  */
@@ -329,17 +331,17 @@ export function getDataTableColumns(type: TypeName) {
 			}
 		case 'manufacturer':
 			return {
-				headers: ['service', 'published', 'latest', 'released'],
+				headers: ['service', 'published', 'latest_work', 'released'],
 				body: ['Manufacturer_service', 'Manufacturer_cache.numTBG', 'Manufacturer_cache.latestTBG', 'Manufacturer_cache.latestReleased']
 			}
 		case 'publisher':
 			return {
-				headers: ['published', 'latest', 'released'],
+				headers: ['published', 'latest_work', 'released'],
 				body: ['Publisher_cache.numTBG', 'Publisher_cache.latestTBG', 'Publisher_cache.latestReleased']
 			}
 		case 'sponsor':
 			return {
-				headers: ['published', 'latest', 'released'],
+				headers: ['published', 'latest_work', 'released'],
 				body: ['Sponsor_cache.numTBG', 'Sponsor_cache.latestTBG', 'Sponsor_cache.latestReleased']
 			}
 		case 'shop':
@@ -354,37 +356,37 @@ export function getDataTableColumns(type: TypeName) {
 			}
 		case 'artist':
 			return {
-				headers: ['published', 'latest', 'released'],
+				headers: ['published', 'latest_work', 'released'],
 				body: ['Artist_cache.numTBG', 'Artist_cache.latestTBG', 'Artist_cache.latestReleased']
 			}
 		case 'designer':
 			return {
-				headers: ['published', 'latest', 'released'],
+				headers: ['published', 'latest_work', 'released'],
 				body: ['Designer_cache.numTBG', 'Designer_cache.latestTBG', 'Designer_cache.latestReleased']
 			}
 		case 'graphicdesigner':
 			return {
-				headers: ['published', 'latest', 'released'],
+				headers: ['published', 'latest_work', 'released'],
 				body: ['Graphicdesigner_cache.numTBG', 'Graphicdesigner_cache.latestTBG', 'Graphicdesigner_cache.latestReleased']
 			}
 		case 'playtester':
 			return {
-				headers: ['published', 'latest', 'released'],
+				headers: ['published', 'latest_work', 'released'],
 				body: ['Playtester_cache.numTBG', 'Playtester_cache.latestTBG', 'Playtester_cache.latestReleased']
 			}
 		case 'rulebookeditor':
 			return {
-				headers: ['published', 'latest', 'released'],
+				headers: ['published', 'latest_work', 'released'],
 				body: ['Rulebookeditor_cache.numTBG', 'Rulebookeditor_cache.latestTBG', 'Rulebookeditor_cache.latestReleased']
 			}
 		case 'producer':
 			return {
-				headers: ['published', 'latest', 'released'],
+				headers: ['published', 'latest_work', 'released'],
 				body: ['Producer_cache.numTBG', 'Producer_cache.latestTBG', 'Producer_cache.latestReleased']
 			}
 		case 'contentcreator':
 			return {
-				headers: ['created', 'latest'],
+				headers: ['created', 'latest_work'],
 				body: ['Contentcreator_cache.numContent', 'Contentcreator_cache.latestContent']
 			}
 		default:

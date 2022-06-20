@@ -1,52 +1,48 @@
 <script lang=ts context=module>
-	export async function getCategories() {
-		let { data, error } = await from('Category').select('*');
+	import type {Category} from '$lib/datatypes'
+	export async function load({fetch}) {
+		const res = await fetch('/api/category')
+		const data = await res.json() 
 
-		let categories = data.map((c) => ({
+		const res2 = await fetch('/api/category/relation')
+		const data2 = await res2.json()
+
+		const counts = {}
+		for(const c of data2) {
+			if(!counts[c.Category_ID]) counts[c.Category_ID] = 0
+			counts[c.Category_ID]++
+		}
+
+		let categories = data.map((c:Category) => ({
 			id: c.Category_ID,
-			name: c.Category_name,
+			name: c.Category_name + ` (${counts[c.Category_ID] || 0})`,
 			slug: c.Category_slug,
 			picture: c.Category_picture,
 			type: 'category'
 		}));
 
-		return categories;
+		return  {
+			props: {
+				categories,
+			}
+		};
 	}
 </script>
 
 <script lang="ts">
 	import Seo from '$lib/components/SEO.svelte';
-	import { from } from '$lib/supabase';
-	import Spinner from '$lib/components/Spinner.svelte';
-	import { SearchIcon } from 'svelte-feather-icons';
 	import ListCard from '$lib/components/ListCard.svelte';
+	import {_} from 'svelte-i18n'
 
-	let promise = getCategories();
+	export let categories
 </script>
 
 <Seo title="Category" />
 <div class="flex flex-col justify-center items-center relative">
-	<div class="form-control m-4">
-		<div class="relative">
-			<input
-				type="text"
-				placeholder="Search category"
-				class="w-full pr-16 input input-primary input-bordered"
-			/>
-			<button class="absolute top-0 right-0 rounded-l-none btn btn-primary"
-				><SearchIcon size="20" /></button
-			>
-		</div>
-	</div>
+	<h1>{$_('keyword.category')}</h1>
 	<div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-3 lg:gap-4">
-		{#await promise}
-			<Spinner />
-		{:then categories}
-			{#each categories as ds}
-				<ListCard {...ds} />
-			{:else}
-				None
-			{/each}
-		{/await}
+		{#each categories as ds}
+			<ListCard {...ds} />
+		{/each}
 	</div>
 </div>

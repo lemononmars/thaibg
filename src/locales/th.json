@@ -83,12 +83,6 @@
 			"submit": "ส่งข้อมูล",
 			"comment": "เพิ่มโน้ตให้แอดมิน",
 			"select": "เลือก 1 ข้อ",
-			"status": {
-				"submitting": "กำลังส่งข้อมูล ... กรุณารอสักครู่",
-				"success": "เราได้รับข้อมูลเรียบร้อยแล้ว เมื่อแอดมินยืนยันความถูกต้องของข้อมูลแล้วจะขึ้นในฐานข้อมูล",
-				"submitmore": "กดปุ่มถัดไปถ้าต้องการส่งข้อมูลเพิ่ม",
-				"error": "ระบบมีปัญหา กรุณาส่งใหม่อีกที"
-			},
 			"add_roles": "เพิ่มบทบาท"
 		},
 		"edit": {
@@ -153,9 +147,17 @@
 		"name": "ชื่อ",
 		"released": "ปีที่ผลิต",
 		"status": "สถานะ",
+		"latest_work": "ผลงานล่าสุด",
+		"last_updated": "อัพเดทล่าสุด",
 		"type": "ประเภท",
 		"media": "สื่อ",
-		"relation": "ความสัมพันธ์"
+		"relation": "ความสัมพันธ์",
+		"province": "จังหวัด",
+		"published": "จำนวนผลงาน",
+		"created": "จำนวนสื่อ",
+		"service": "บริการ",
+		"start": "เริ่ม",
+		"end": "สิ้นสุด"
 	},
 	"key": {
 		"Event_name": "ชื่องาน",
@@ -247,8 +249,7 @@
 		"Artist_description": "คำอธิบาย",
 		"Artist_links": "เว็บไซต์",
 		"Artist_show": "แสดง?",
-		"Contentcreator_name": "ชื่อ (ภาษาอังกฤษ)",
-		"Contentcreator_name_th": "ชื่อ (ภาษาไทย)",
+		"Contentcreator_name": "ชื่อ",
 		"Contentcreator_links": "เว็บไซต์",
 		"Contentcreator_description": "คำอธิบาย",
 		"Contentcreator_picture": "รูปภาพ",
@@ -319,7 +320,7 @@
 		"pending": "รอดำเนินการ",
 		"planned": "วางแผน",
 		"prototype": "ต้นแบบ",
-		"published": "ผลิดแล้ว",
+		"published": "ผลิตแล้ว",
 		"krabi": "กระบี่",
 		"bangkok": "กรุงเทพมหานคร",
 		"kanchanaburi": "กาญจนบุรี",

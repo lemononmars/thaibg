@@ -65,6 +65,7 @@
 	import { ChevronLeftIcon, ChevronRightIcon } from 'svelte-feather-icons';
 	import HonorRelationTable from '$lib/components/HonorRelationTable.svelte'
 	import ShopRelationTable from '$lib/components/ShopRelationTable.svelte'
+	import SubmissionStatus from '$lib/components/SubmissionStatus.svelte'
 
 	export let submissionPackage: SubmissionPackage, 
 		type: string, 
@@ -290,15 +291,11 @@
 	</div>
 
 {/if}
-{/if}
 
-{#if submitState == State.SUBMITTING}
-	<p>{$_('page.add.status.submitting')}</p>
-	<Spinner />
-{:else if submitState == State.SUCCESS}
-	<p>{$_('page.add.status.success')}</p>
-	<p>Go back to <a href="/{type}/{currentData[getVarPrefix(type) + '_ID']}" class="text-info"> {currentData[getVarPrefix(type) + '_name']}</a></p>
-{:else if submitState == State.ERROR}
-	<p class="text-red">{$_('page.add.status.error')}</p>
-	<div class="btn" on:click|preventDefault={handleSubmit}>{$_('page.add.submit')}</div>
+{:else}
+	<SubmissionStatus {type} {submitState} submissionType={'edit'} requireApproval={adminSettings.requireApproval}>
+		<a href="/{type}/{currentData[getVarPrefix(type) + '_ID']}" class="text-info"> 
+			{currentData[getVarPrefix(type) + '_name']}
+		</a>
+	</SubmissionStatus>
 {/if}

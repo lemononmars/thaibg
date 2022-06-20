@@ -54,6 +54,7 @@
 		th: 'ไทย'
 	};
 	let avatar: string | Promise<string>;
+	let isMounted: boolean = true
 
 	onMount(async () => {
 		if ($user) {
@@ -63,6 +64,7 @@
 			else 
 				avatar = URL_DICEBEAR + 'randombear' + '.svg';
 		}
+		isMounted = false
 	});
 
 	let scrollY: number, mouseY: number;
@@ -323,34 +325,35 @@
 	</div>
 {/if}
 
-
-<!--report modal -->
-<input type="checkbox" id="report-modal" class="modal-toggle"/>
-<div class="modal modal-bottom sm:modal-middle" class:modal-open={openReportModal}>
-	<div class="modal-box">
-		<h1>Report / Suggestion</h1>
-		<h2>URL</h2>
-		{$page.url}
-		<h2>Message</h2>
-		<textarea class="textarea bg-base-300 w-full" placeholder="Tell us!" bind:value={reportString}></textarea>
-		<div class="modal-action">
-			<div class="btn" on:click={closeReport}>Cancel</div>
-			<div class="btn btn-secondary" on:click={handleReport} class:loading={isReporting}>Send</div>
+{#if !isMounted}
+	<!--report modal -->
+	<input type="checkbox" id="report-modal" class="modal-toggle"/>
+	<div class="modal modal-bottom sm:modal-middle" class:modal-open={openReportModal}>
+		<div class="modal-box">
+			<h1>Report / Suggestion</h1>
+			<h2>URL</h2>
+			{$page.url}
+			<h2>Message</h2>
+			<textarea class="textarea bg-base-300 w-full" placeholder="Tell us!" bind:value={reportString}></textarea>
+			<div class="modal-action">
+				<div class="btn" on:click={closeReport}>Cancel</div>
+				<div class="btn btn-secondary" on:click={handleReport} class:loading={isReporting}>Send</div>
+			</div>
 		</div>
 	</div>
-</div>
 
-<!--search modal -->
-<input type="checkbox" id="search-modal" class="modal-toggle"/>
-<div class="modal modal-bottom sm:modal-middle" class:modal-open={openSearchModal}>
-	<div class="modal-box">
-		<div class="flex flex-row justify-between items-center">
-			<div><h1>Search</h1></div>
-			<div class="btn btn-secondary btn-sm" on:click={closeSearch}>X</div>
-		</div>
-		<SearchGlobal/>
-		<div class="modal-action">
-			<div class="btn btn-secondary" on:click={closeSearch}>Close</div>
+	<!--search modal -->
+	<input type="checkbox" id="search-modal" class="modal-toggle"/>
+	<div class="modal modal-bottom sm:modal-middle" class:modal-open={openSearchModal}>
+		<div class="modal-box">
+			<div class="flex flex-row justify-between items-center">
+				<div><h1>Search</h1></div>
+				<div class="btn btn-secondary btn-sm" on:click={closeSearch}>X</div>
+			</div>
+			<SearchGlobal/>
+			<div class="modal-action">
+				<div class="btn btn-secondary" on:click={closeSearch}>Close</div>
+			</div>
 		</div>
 	</div>
-</div>
+{/if}

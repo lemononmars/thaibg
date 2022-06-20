@@ -19,7 +19,6 @@
 </script>
 
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import { _ } from 'svelte-i18n';
 	import Picture from './Picture.svelte';
 

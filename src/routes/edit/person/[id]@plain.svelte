@@ -1,7 +1,7 @@
 <script context=module lang=ts>
-	import { getSubmissionPackage, personRoles, type AdminSettings, type Person } from '$lib/datatypes';
-	import type { SubmissionPackage } from '$lib/datatypes';
-	import { generateSlug, fromBucket, getVarPrefix } from '$lib/supabase';
+	import { getSubmissionPackage, personRoles } from '$lib/datatypes';
+	import type { SubmissionPackage, TypeName, AdminSettings, Person } from '$lib/datatypes';
+	import { generateSlug, uploadPicture, getVarPrefix } from '$lib/supabase';
 	import type { SubmissionData } from '$lib/supabase'
 	import type {Alert} from '$lib/alert/alert.type'
 	import {handleAlert} from '$lib/alert/alert.store'
@@ -74,30 +74,11 @@
       })
 		return res;
 	}
-
-	export async function uploadpicture(type: string, file: File, slug: string): Promise<string> {
-		// TODO: convert file? resize?
-		const randomID = Math.floor(Math.random() * 1000);
-		const randomIDString = ('000' + randomID).slice(-4);
-		const pictureSlug = slug + '-' + randomIDString;
-
-		let { error: updateError } = await fromBucket('images').upload(
-			`${type}/${pictureSlug}`,
-			file,
-			{
-				upsert: false
-			}
-		);
-
-		if (updateError) throw updateError;
-		return pictureSlug
-	}
 </script>
 
 <script lang="ts">
 	import Seo from '$lib/components/SEO.svelte';
 	import { user, getCurrUserProfile } from '$lib/user';
-	import Spinner from '$lib/components/Spinner.svelte';
 	import { fly } from 'svelte/transition'
 	import { quintOut } from 'svelte/easing'
 	import { _ } from 'svelte-i18n';
@@ -106,12 +87,13 @@
 	import InputEditForm from '$lib/components/InputEditForm.svelte';
 	import CreateCard from '../_createCard.svelte'
 	import InputForm from '$lib/components/InputForm.svelte';
+	import SubmissionStatus from '$lib/components/SubmissionStatus.svelte'
 
 	export let submissionPackage: SubmissionPackage,
 		adminSettings: AdminSettings,
 		currentData: Person,
 		currentRolesData
-	const type: string = 'person';
+	const type: TypeName = 'person';
 	let { submission, keys, relations, selects, multiselects, required } = submissionPackage; // destruct
 	const varPrefix = getVarPrefix(type)
 	const currentDataID = currentData[varPrefix + '_ID']
@@ -250,7 +232,7 @@
 
 		const pictureFile = submission.Person_picture
 		if(pictureFile && (typeof pictureFile !== 'string')) {
-			const newPictureURL = await uploadpicture("person", pictureFile, slug);
+			const newPictureURL = await uploadPicture("person", pictureFile, slug);
 			submission.Person_picture = newPictureURL
 			for(const r in rolesAdded) {
 				const roleType = rolesAdded[r]['type']
@@ -428,20 +410,11 @@
 	>
 		{$_('page.add.submit')}
 	</div>
+	{/if}
+{:else}
+	<SubmissionStatus {type} {submitState} submissionType={'edit'} requireApproval={adminSettings.requireApproval}>
+		<a href="/person/{currentDataID}" class="text-info">
+			{currentData.Person_name || currentDataID.Person_name_th}
+		</a>
+	</SubmissionStatus>
 {/if}
-{/if}
-
-<div>
-{#if submitState == State.SUBMITTING}
-	<p>{$_('page.add.status.submitting')}</p>
-	<Spinner />
-{:else if submitState == State.SUCCESS}
-	<p>{$_('page.add.status.success')}</p>
-	<a href="/person/{currentDataID}">{currentData.Person_name || currentDataID.Person_name_th}</a>
-	<br>
-	<p>{$_('page.add.status.submitmore')}</p><a href='/'>Return home</a>
-{:else if submitState == State.ERROR}
-	<p class="text-red">{$_('page.add.status.error')}</p>
-	<div class="btn" on:click|preventDefault={handleSubmit}>{$_('page.add.submit')}</div>
-{/if}
-</div>

@@ -4,7 +4,7 @@
 	import {_} from 'svelte-i18n'
 	import Spinner from './Spinner.svelte';
 	import RoleButton from './RoleButton.svelte';
-	import type { TypeName } from '$lib/datatypes';
+	import { personRoles, type TypeName } from '$lib/datatypes';
 
 	interface simpleData {
 		id: number,
@@ -12,7 +12,7 @@
 		name_th?: string
 	}
 	
-	export let searchTypes: TypeName[] = ['boardgame', 'person', 'organization', 'event', 'content']
+	export let searchTypes: TypeName[] = ['boardgame', 'person', 'organization']
 
 	let searchPromise: Record<string, Promise<any>> = {};
 	searchTypes.forEach(t => {
@@ -42,7 +42,11 @@
 	}
 
 	async function search(type: string) {
-		const res = await fetch(`/api/${type}?select=ID,name,name_th&search=${searchString}`);
+		let selectString = 'ID,name'
+		if(personRoles.includes(type) || type === 'boardgame')
+			selectString += ',name_th'
+
+		const res = await fetch(`/api/${type}?select=${selectString}&search=${searchString}`);
 		if (res.ok) {
 			const data = await res.json();
 			const count = data.length

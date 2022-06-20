@@ -1,7 +1,7 @@
 <script context=module lang=ts>
-	import { getSubmissionPackage } from '$lib/datatypes';
-	import type { SubmissionPackage, AdminSettings } from '$lib/datatypes';
-	import { fromBucket, getVarPrefix, generateSlug } from '$lib/supabase';
+	import { getSubmissionPackage, organizationRoles } from '$lib/datatypes';
+	import type { SubmissionPackage, AdminSettings, TypeNameOrganizationRole } from '$lib/datatypes';
+	import { uploadPicture, getVarPrefix, generateSlug } from '$lib/supabase';
 	import type {SubmissionData} from '$lib/supabase'
 	import type {Alert} from '$lib/alert/alert.type'
 	import {handleAlert} from '$lib/alert/alert.store'
@@ -43,44 +43,6 @@
 		};
 	}
 
-	// TODO: make sure nothing breaks in production
-	export async function postSubmission(data: SubmissionData): Promise<Response> {
-      const res = await fetch('/api/post/submission', {
-         method: 'POST',
-         cache: 'default',
-         credentials: 'same-origin',
-         headers: {
-            'Content-Type': 'application/json'
-         },
-         body: JSON.stringify(data)
-      })
-		return res;
-	}
-
-	// TODO: make this a post request?
-	export async function uploadpicture(type: string, file: File, slug: string): Promise<string> {
-		// TODO: convert file? resize?
-		const randomID = Math.floor(Math.random() * 1000);
-		const randomIDString = ('000' + randomID).slice(-4);
-		const pictureSlug = slug + '-' + randomIDString;
-
-		let { error: updateError } = await fromBucket('images').upload(
-			`${type}/${pictureSlug}`,
-			file,
-			{
-				upsert: false
-			}
-		);
-
-		if (updateError) throw updateError;
-		return pictureSlug
-	}
-
-	export async function getNewOrganization(id: number){
-		const newOrganization = await fetch(`/api/organization/${id}`)
-		const data = await newOrganization.json()
-		return data
-	}
 </script>
 
 <script lang="ts">
@@ -95,6 +57,7 @@
 	import RoleButton from '$lib/components/RoleButton.svelte';
 	import InputForm from '$lib/components/InputForm.svelte';
 	import CreateCard from './_createCard.svelte'
+	import SubmissionStatus from '$lib/components/SubmissionStatus.svelte';
 
 	export let submissionPackage: SubmissionPackage; // from load fucntion
 	export let adminSettings: AdminSettings
@@ -112,13 +75,9 @@
 	// extra info
 	let comment: string;
 
-	const roleSubmissionPackage = {
-		'manufacturer': getSubmissionPackage('manufacturer'),
-		'shop': getSubmissionPackage('shop'),
-		'sponsor': getSubmissionPackage('sponsor'),
-		'publisher': getSubmissionPackage('publisher'),
-		'contentcreator': getSubmissionPackage('contentcreator'),
-	}
+	let roleSubmissionPackage = {}
+	organizationRoles.forEach((r:TypeNameOrganizationRole) => roleSubmissionPackage[r] = getSubmissionPackage(r))
+
 	let editingRoleIndex: number = -1;
 	$: editingRoleType = rolesAdded[editingRoleIndex]?.type
 	let editingRolePackage: SubmissionPackage
@@ -222,7 +181,7 @@
 		const pictureFile = submission.Organization_picture
 		if(pictureFile && (typeof pictureFile !== 'string')) {
 			submission.Organization_picture = 
-			await uploadpicture("organization", pictureFile, slug);
+			await uploadPicture("organization", pictureFile, slug);
 		}
 
 		// upload each role's picture individually
@@ -234,7 +193,7 @@
 				const slug = generateSlug(rolesAdded[r]['data'][rolPrefix + '_name'])
 				rolesAdded[r]['data'][rolPrefix + '_slug'] = slug
 				rolesAdded[r]['data'][rolPrefix + '_picture'] = 
-				await uploadpicture(roleType, rolePictureFile, slug)
+				await uploadPicture(roleType, rolePictureFile, slug)
 			}
 		}
 
@@ -278,6 +237,25 @@
 			}
 			handleAlert(newAlert)
 		}
+	}
+
+	export async function postSubmission(data: SubmissionData): Promise<Response> {
+      const res = await fetch('/api/post/submission', {
+         method: 'POST',
+         cache: 'default',
+         credentials: 'same-origin',
+         headers: {
+            'Content-Type': 'application/json'
+         },
+         body: JSON.stringify(data)
+      })
+		return res;
+	}
+
+	export async function getNewOrganization(id: number){
+		const newOrganization = await fetch(`/api/organization/${id}`)
+		const data = await newOrganization.json()
+		return data
 	}
 
 	function scrollTop() {
@@ -386,24 +364,15 @@
 	>
 		{$_('page.add.submit')}
 	</div>
+	{/if}
+{:else}
+	<SubmissionStatus type={'boardgame'} {submitState} submissionType={'new'} requireApproval={adminSettings.requireApproval}>
+		{#await promiseNewOrganization then res}
+			{#if res}
+				<div class="mx-auto">
+					<PlainCard object={res} type={"organization"}/>
+				</div>
+			{/if}
+		{/await}
+	</SubmissionStatus>
 {/if}
-{/if}
-
-<div>
-{#if submitState == State.SUBMITTING}
-	<p>{$_('page.add.status.submitting')}</p>
-	<Spinner />
-{:else if submitState == State.SUCCESS}
-	<p>{$_('page.add.status.success')}</p>
-	{#await promiseNewOrganization then res}
-		{#if res}
-			<div class="mx-auto">
-				<PlainCard object={res} type={"organization"}/>
-			</div>
-		{/if}
-	{/await}
-	
-	<br>
-	<p>{$_('page.add.status.submitmore')}</p><div class="btn" href="./add/{type}">Here</div>
-{/if}
-</div>

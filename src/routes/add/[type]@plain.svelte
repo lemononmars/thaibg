@@ -1,6 +1,6 @@
 <script context=module lang=ts>
 	import { getSubmissionPackage, TypeSubmissionAllowed } from '$lib/datatypes';
-	import type { SubmissionPackage, AdminSettings } from '$lib/datatypes';
+	import type { SubmissionPackage, AdminSettings, TypeName } from '$lib/datatypes';
 	import { uploadPicture, getVarPrefix, generateSlug } from '$lib/supabase';
 	import type { SubmissionData } from '$lib/supabase';
 	import type {Alert} from '$lib/alert/alert.type'
@@ -70,16 +70,17 @@
 <script lang="ts">
 	import Seo from '$lib/components/SEO.svelte';
 	import { user, getCurrUserProfile } from '$lib/user';
-	import Spinner from '$lib/components/Spinner.svelte';
 	import InputForm from '$lib/components/InputForm.svelte';
 	import SearchMultipleSelect from '$lib/components/SearchMultipleSelect.svelte'
 	import PlainCard from '$lib/components/PlainCard.svelte'
-	import { _, locale } from 'svelte-i18n';
+	import ContentCard from '$lib/components/ContentCard.svelte';
+	import { _ } from 'svelte-i18n';
 	import CreateCard from './_createCard.svelte'
 	import { ChevronLeftIcon } from 'svelte-feather-icons';
+	import SubmissionStatus from '$lib/components/SubmissionStatus.svelte'
 
 	export let submissionPackage: SubmissionPackage, 
-		type: string, // from load fucntion
+		type: TypeName, // from load fucntion
 		adminSettings: AdminSettings;
 	let {submission, relations, required} = submissionPackage; // destruct
 
@@ -194,84 +195,78 @@
 <Seo title="{$_('page.add._')}{type}" />
 
 {#if submitState == State.START || submitState == State.ERROR}
-<ul class="steps w-screen fixed top-0 -translate-x-1/2 glass z-10">
-	{#each stepTitles as s, idx}
-		<li class="step text-xs lg:text-md" class:step-primary={step >= idx}>
-			{s}
-		</li>
-	{/each}
- </ul>
-<div class="h-16"></div>
-{#if step == 0}
-	<CreateCard bind:dir title={stepTitles[0]}>
-		<form>
-			<div class="flex flex-col lg:flex-row lg:gap-10 place-items-start p-4">
-				<InputForm
-					{submissionPackage}
-					bind:inputs={submission}
-					{type}
-				>
-				</InputForm>
+	<ul class="steps w-screen fixed top-0 -translate-x-1/2 glass z-10">
+		{#each stepTitles as s, idx}
+			<li class="step text-xs lg:text-md" class:step-primary={step >= idx}>
+				{s}
+			</li>
+		{/each}
+	</ul>
+	<div class="h-16"></div>
+	{#if step == 0}
+		<CreateCard bind:dir title={stepTitles[0]}>
+			<form>
+				<div class="flex flex-col lg:flex-row lg:gap-10 place-items-start p-4">
+					<InputForm
+						{submissionPackage}
+						bind:inputs={submission}
+						{type}
+					>
+					</InputForm>
+				</div>
+			</form>
+		</CreateCard>
+		<div class="tooltip" data-tip={canSubmit? "":"please fill all required fields:"}>
+			<div 
+				class="btn"
+				on:click|preventDefault={()=>{step++; dir = 1}}
+				class:btn-disabled={!canSubmit}
+			>
+				Next
 			</div>
-		</form>
-	</CreateCard>
-	<div class="tooltip" data-tip={canSubmit? "":"please fill all required fields:"}>
+		</div>
+	{:else if step == 1}
+		<CreateCard bind:dir title={stepTitles[1]}>
+			<div class="grid grid-cols2 lg:grid-cols-3 gap-y-4">
+				{#each relations as r}
+					<SearchMultipleSelect bind:selects={relationMultiSelects[r]} type={r} />
+				{/each}
+			</div>
+		</CreateCard>
+		<div class="btn" on:click={()=>{step--; dir = -1}}>Prev</div>
+		<div class="btn" on:click={()=>{step++; dir = 1}}>Next</div>
+	{:else if step == 2}
+		<CreateCard bind:dir title={"Submit"}>
+			{#if adminSettings.requireApproval}
+				<div class="justify-self-end mx-2">{$_('page.add.comment')}</div>
+				<textarea
+					class="textarea textarea-bordered"
+					placeholder={$_('page.add.comment')}
+					bind:value={comment}
+				/><br />
+			{/if}
+		</CreateCard>
+		<div class="btn hover:-translate-x-4" on:click={()=>{step = 1; dir = -1}}>Prev <ChevronLeftIcon size=20/></div>
 		<div 
-			class="btn"
-			on:click|preventDefault={()=>{step++; dir = 1}}
-			class:btn-disabled={!canSubmit}
+			class="btn btn-success" 
+			on:click|preventDefault={handleSubmit}
 		>
-			Next
+			{$_('page.add.submit')}
 		</div>
-	</div>
-{:else if step == 1}
-	<CreateCard bind:dir title={stepTitles[1]}>
-		<div class="grid grid-cols2 lg:grid-cols-3 gap-y-4">
-			{#each relations as r}
-				<SearchMultipleSelect bind:selects={relationMultiSelects[r]} type={r} />
-			{/each}
-		</div>
-	</CreateCard>
-	<div class="btn" on:click={()=>{step--; dir = -1}}>Prev</div>
-	<div class="btn" on:click={()=>{step++; dir = 1}}>Next</div>
-{:else if step == 2}
-	<CreateCard bind:dir title={"Submit"}>
-		{#if adminSettings.requireApproval}
-			<div class="justify-self-end mx-2">{$_('page.add.comment')}</div>
-			<textarea
-				class="textarea textarea-bordered"
-				placeholder={$_('page.add.comment')}
-				bind:value={comment}
-			/><br />
-		{/if}
-	</CreateCard>
-	<div class="btn hover:-translate-x-4" on:click={()=>{step = 1; dir = -1}}>Prev <ChevronLeftIcon size=20/></div>
-	<div 
-		class="btn btn-success" 
-		on:click|preventDefault={handleSubmit}
-	>
-		{$_('page.add.submit')}
-	</div>
-
-{/if}
+	{/if}
+{:else}
+	<SubmissionStatus {type} {submitState} submissionType={'new'} requireApproval={adminSettings.requireApproval}>
+		{#await promiseNewType then res}
+			{#if res}
+				<div class="mx-auto">
+					{#if type === 'content'}
+						<ContentCard content={res}/>
+					{:else}
+						<PlainCard object={res} {type}/>
+					{/if}
+				</div>
+			{/if}
+		{/await}
+	</SubmissionStatus>
 {/if}
 
-
-
-{#if submitState == State.SUBMITTING}
-	<p>{$_('page.add.status.submitting')}</p>
-	<Spinner />
-{:else if submitState == State.SUCCESS}
-	<p>{$_('page.add.status.success')}</p>
-	{#await promiseNewType then res}
-		{#if res}
-			<div class="mx-auto">
-				<PlainCard object={res} {type}/>
-			</div>
-		{/if}
-	{/await}
-	<p>{$_('page.add.status.submitmore')}</p><div class="btn" href="./add/{type}">Here</div>
-{:else if submitState == State.ERROR}
-	<p class="text-red">{$_('page.add.status.error')}</p>
-	<div class="btn" on:click|preventDefault={handleSubmit}>{$_('page.add.submit')}</div>
-{/if}

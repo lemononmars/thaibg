@@ -1,11 +1,22 @@
 <script lang=ts context=module>
 
 	export async function load({ fetch }) {
-		const res = await fetch('/api/mechanics')
+		const res = await fetch('/api/mechanics?select=ID,name,category,picture,slug')
       const data = await res.json()
+
+		const res2 = await fetch('/api/mechanics/relation')
+		const data2 = await res2.json()
+
+		const counts = {}
+		for(const r of data2) {
+			if(!counts[r.Mech_ID]) counts[r.Mech_ID] = 0
+			counts[r.Mech_ID]++
+		}
+
 		return {
 			props: {
-				data
+				data,
+				counts
 			}
 		};
 	}
@@ -19,7 +30,7 @@
 	import type { Mechanics } from '$lib/datatypes'
 	import {_} from 'svelte-i18n';
 
-	export let data: Mechanics[];
+	export let data: Mechanics[], counts: Record<number, number>;
 	let categorizedMechanics = MechanicsCategoriesArray.reduce((prev,curr) => 
 		({
 			...prev, [curr]: []
@@ -33,7 +44,7 @@
 			category: m.Mech_category,
 			data: {
 				id: m.Mech_ID,
-				name: m.Mech_name,
+				name: m.Mech_name + ` (${counts[m.Mech_ID] || 0})`,
 				slug: m.Mech_slug,
 				picture: m.Mech_picture,
 				type: 'mechanics'

@@ -1,5 +1,5 @@
 import { from, getTableName, getVarPrefix } from '$lib/supabase';
-import { TypeNamesArray } from '$lib/datatypes';
+import { personRoles, TypeNamesArray } from '$lib/datatypes';
 
 /**
  * Returns the object of
@@ -123,26 +123,52 @@ export async function get({ url, params }) {
 		relation = type;
 	// However, for /api/content/9/contentcreator
 	// we look up Content_Contentcreator_Relation
-	// since Content_Relation is reserved for boardgame-content
+	// since Content_Relation is reserved for boardgame-related content
 	if ((relation === 'contentcreator' && type === 'content') || (relation === 'content' && type === 'contentcreator'))
 		relation = 'content_Contentcreator'
 	// in case of
 	// everything else stays the same
 	const selectStr = `${selectedColumns}, ${getTableName(relation)}_Relation!inner(*)`;
 	const eqStr = `${getTableName(relation)}_Relation.${getVarPrefix(type)}_ID`;
-	const { data, error } = await from(getTableName(params.relation))
-		.select(selectStr)
-		.eq(eqStr, id);
 
-	if (error)
+	let dataTemp, errorTemp
+	// MUST USE params.relation
+	// since relation might have been changed
+	if(id > 0 || (type === 'shop' || type === 'contentcreator')) {
+		const {data , error } = await from(getTableName(params.relation))
+			.select(selectStr)
+			.eq(eqStr, id);
+		dataTemp = data
+		errorTemp = error
+	}
+	else {
+		const { data, error } = await from(getTableName(params.relation))
+			.select(`${selectedColumns}`)
+		if(!error) {
+			// get all existing indices and then filter them out
+			const { data: relationData } = await from(getVarPrefix(type) + '_Relation')
+				.select(`${getVarPrefix(params.relation)}_ID`)
+
+			const existingIndices = new Set(relationData.map((r) => 
+				r[`${getVarPrefix(params.relation)}_ID`])
+			)
+			existingIndices.delete(0) // in case 'uncredited' has already been added
+
+			dataTemp = data.filter(d => 
+				!existingIndices.has(d[`${getVarPrefix(params.relation)}_ID`])
+			)
+		}
+	}
+
+	if (errorTemp)
 		return {
 			status: 404,
-			body: { message: `No ${relation} associated with ${type} found`, error: error }
+			body: { message: `No ${relation} associated with ${type} found`, error: errorTemp }
 		};
 	else
 		return {
 			status: 200,
 			headers: { 'Content-Type': 'application/json' },
-			body: data
+			body: dataTemp
 		};
 }

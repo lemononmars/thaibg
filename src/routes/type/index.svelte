@@ -1,45 +1,48 @@
-<script lang="ts">
-	import Seo from '$lib/components/SEO.svelte';
-	import { from } from '$lib/supabase';
-	import { onMount } from 'svelte';
-	import Spinner from '$lib/components/Spinner.svelte';
-	import { SearchIcon } from 'svelte-feather-icons';
-	import ListCard from '$lib/components/ListCard.svelte';
+<script lang=ts context=module>
+	import type {Type} from '$lib/datatypes'
 
-	let types = [];
-	onMount(async () => {
-		let { data, error } = await from('Type').select('*');
-		types = data.map((t) => ({
+	export async function load({fetch}) {
+		const res = await fetch('/api/type')
+		const data = await res.json()
+
+		const res2 = await fetch('/api/type/relation')
+		const data2 = await res2.json()
+
+		const counts = {}
+		for(const t of data2) {
+			if(!counts[t.Type_ID]) counts[t.Type_ID] = 0
+			counts[t.Type_ID]++
+		}
+
+		let types = data.map((t:Type) => ({
 			id: t.Type_ID,
-			name: t.Type_name,
+			name: t.Type_name + ` (${counts[t.Type_ID] || 0})`,
 			slug: t.Type_slug,
-			picture: t.Type_picture,
-			type: 'type'
+			type: 'category'
 		}));
 
-		if (error) throw error;
-	});
+		return  {
+			props: {
+				types,
+			}
+		};
+	}
+</script>
+
+<script lang="ts">
+	import Seo from '$lib/components/SEO.svelte';
+	import ListCard from '$lib/components/ListCard.svelte';
+	import {_} from 'svelte-i18n'
+
+	export let types = [];
 </script>
 
 <Seo title="Type" />
 <div class="flex flex-col justify-center items-center relative">
-	<div class="form-control m-4">
-		<div class="relative">
-			<input
-				type="text"
-				placeholder="Search Type"
-				class="w-full pr-16 input input-primary input-bordered"
-			/>
-			<button class="absolute top-0 right-0 rounded-l-none btn btn-primary"
-				><SearchIcon size="20" /></button
-			>
-		</div>
-	</div>
+	<h1>{$_('keyword.type')}</h1>
 	<div class="w-full text-center mb-4 grid grid-cols-2 lg:grid-cols-3 gap-4">
 		{#each types as ds}
 			<ListCard {...ds} />
-		{:else}
-			<Spinner />
 		{/each}
 	</div>
 </div>

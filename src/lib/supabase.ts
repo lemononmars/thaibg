@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { personRoles } from './datatypes';
+import { personRoles, type TypeName } from './datatypes';
 
 type SupaStorageBucket = 'avatars' | 'images' ;
 
@@ -151,6 +151,7 @@ export async function addToSubmission(
 		id: submissionIndex,
 		Submission_type: submissionData.type, // new, edit, report
 		Submission_content: JSON.stringify(submissionData.content),
+		Submission_roles: JSON.stringify(submissionData.rolesSubmission),
 		Submission_relations: JSON.stringify(submissionData.relations),
 		Submission_page_type: pageType,
 		Submission_page_ID: submissionData.type === 'new'? null: submissionData.content[getVarPrefix(pageType) + '_ID'],
@@ -172,41 +173,10 @@ export async function addToSubmission(
 	if(!requireApproval) {
 		// when creating a new person or organization, we also create new roles from extra submissions
 		if(pageType === 'person' || pageType === 'organization') {
-			let rolesContent = {}
-			for(const role of Object.keys(submissionData.rolesSubmission)) {
-				const rolePrefix = getVarPrefix(role)
-				// need to create an array because there can be multiple roles for each organization
-				if(pageType === 'organization')
-					rolesContent[role] = []
-				for(const data of submissionData.rolesSubmission[role]) {
-					// it is possible that you edit a person, while also adding new roles
-					// in this case, we determine whether to add or edit role by looking at relations
-					// person: find ROLE_ID in Person table
-					// organization: find ROLE_ID in data (about to be submitted)
-					let roleSubmissionType: string = data[rolePrefix + '_ID'] ? 'edit' : 'new'
-					const res = await addToDatabase(
-						JSON.stringify(data),
-						role,
-						roleSubmissionType
-					);
-
-					if(pageType === 'organization')
-						rolesContent[role] = [
-							...rolesContent[role],
-							roleSubmissionType === 'new' ? res.body.index : data[rolePrefix + '_ID']
-						]
-					else if(roleSubmissionType === 'new')
-						rolesContent[rolePrefix + '_ID'] = res.body.index
-				}
-			}
-			// match the shape for database table
-			if(pageType === 'organization')
-				rolesContent = {
-					Organization_relation: JSON.stringify(rolesContent)
-				}
+			const newRolesContent = addRolesContent(submissionData.rolesSubmission, pageType)
 			newSubmission.Submission_content = JSON.stringify({
 				...JSON.parse(newSubmission.Submission_content),
-				...rolesContent
+				...newRolesContent
 			})
 		}
 		// we add the person or organization after roles because we want to add new role IDs at once
@@ -251,10 +221,19 @@ export async function changeSubmissionStatus(
 	// make sure it hasn't been approved already
 	if (newStatus === 'approved' && metadata.Submission_status !== 'approved') {
 		const { data, error } = await from('Submission')
-			.select('Submission_content, Submission_page_type, Submission_relations')
+			.select('Submission_content, Submission_page_type, Submission_relations, Submission_roles')
 			.eq('id', id)
 			.single();
 		if (error) return { status: 500, body: error };
+
+		const pageType = data.pageType
+		if(pageType === 'person' || pageType === 'organization') {
+			const newRolesContent = addRolesContent(data.Submission_roles, pageType)
+			data.Submission_content = JSON.stringify({
+				...JSON.parse(data.Submission_content),
+				...newRolesContent
+			})
+		}
 
 		const res = await addToDatabase(
 			data.Submission_content,
@@ -287,6 +266,51 @@ export async function changeSubmissionStatus(
 	// TODO: deal with reject, for any reason (like bad data, incomplete entries, etc)
 }
 
+/**
+ * add new roles to supabase table, and return an object corresponding to the results
+ * @param {Record<string, any>} rolesSubmission of the shape {boardgame: [{}, {}, ...], person: [{}], ...}
+ * @param {string} pageType either person or organization
+ * @returns promise object with {status: ..., message: ...}
+ */
+async function addRolesContent(rolesSubmission: Record<string, any>, pageType: string)
+{
+	let newRolesContent: Record<string, any> = {}
+	for(const role of Object.keys(rolesSubmission)) {
+		const rolePrefix = getVarPrefix(role)
+		// need to create an array because there can be multiple roles for each organization
+		if(pageType === 'organization')
+			newRolesContent[role] = []
+		for(const data of rolesSubmission[role]) {
+			// it is possible that you edit a person, while also adding new roles
+			// in this case, we determine whether to add or edit role by looking at relations
+			// person: find ROLE_ID in Person table
+			// organization: find ROLE_ID in data (about to be submitted)
+			let roleSubmissionType: string = data[rolePrefix + '_ID'] ? 'edit' : 'new'
+			const res = await addToDatabase(
+				JSON.stringify(data),
+				role,
+				roleSubmissionType
+			);
+
+			if(pageType === 'organization') {
+				newRolesContent[role] = [
+					...newRolesContent[role],
+					roleSubmissionType === 'new' ? res.body.index : data[rolePrefix + '_ID']
+				]
+			}
+			else if(roleSubmissionType === 'new')
+				newRolesContent[rolePrefix + '_ID'] = res.body.index
+		}
+	}
+	// match the shape for database table
+	if(pageType === 'organization')
+		newRolesContent = {
+			Organization_relation: JSON.stringify(newRolesContent)
+		}
+
+	return newRolesContent
+}
+
 async function addToDatabase(
 	JSONstring: string,
 	type: string, 
@@ -296,50 +320,26 @@ async function addToDatabase(
 	if (submissionType === 'new') {
 		const IDColumn = getVarPrefix(type) + '_ID';
 		const index = await findNewUniqueID(type, IDColumn);
-		const { error: newError } = await from(getTableName(type)).insert(
-			[
-				{
-					...parse,
-					[IDColumn]: index
-				}
-			],
-			{
-				returning: 'minimal'
-			}
-		);
-		if (newError) throw newError;
-
-		return { 
-			status: 201, 
-			body: {
-				message: 'new entry created',
-				index
-			}
-	 	};
+		parse[IDColumn] = index
 	}
 
-  // in case of edit,
-  // we can simply upsert the new entry
-  // the ID of the data should have been passed from edit page already
-	if (submissionType === 'edit') {
-		const { error: editError } = await from(getTableName(type)).upsert([parse], {
-			returning: 'minimal'
-		});
-		if(editError)
-			return { 
-				status: 500, 
-				body: {
-					message: editError.message,
-				}
-			};
+	const { error: editError } = await from(getTableName(type)).upsert([parse], {
+		returning: 'minimal'
+	});
+	if(editError)
 		return { 
-			status: 202, 
+			status: 500, 
 			body: {
-				message: 'entry updated',
-				index: parse[getVarPrefix(type) + '_ID']
+				message: editError.message,
 			}
 		};
-	}
+	return { 
+		status: 201,
+		body: {
+			message: 'entry ' + submissionType === 'new' ? 'created' : 'updated',
+			index: parse[getVarPrefix(type) + '_ID']
+		}
+	};
 }
 
 interface Relation {
@@ -417,11 +417,19 @@ async function addToDatabaseRelation(
 		// special case for organization:
 		// simply replace the array (or rather stringified version)
 		if(type === 'organization') {
-			let newRelationObject = {}
+			const {data} = await from('Organization')
+				.select('Organization_relation')
+				.eq('Organization_ID', index)
+				.single()
+
+			let newRelationObject: Record<TypeName, number[]> = JSON.parse(data.Organization_relation)
 			// final result should be 
 			// {"publisher": [1,20], "shop": [0]}
 			for (const relationType of Object.keys(relationArrays))
-				newRelationObject[relationType] = relationArrays[relationType].map((r: Relation) => r.id) 
+				newRelationObject[relationType] = [
+					...newRelationObject[relationType],
+					...relationArrays[relationType].map((r: Relation) => r.id) 
+				]
 
 			const insertObject = {
 				Organization_ID: index,

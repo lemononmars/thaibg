@@ -42,32 +42,11 @@
 			}
 		};
 	}
-
-	// TODO: make sure nothing breaks in production
-	export async function postSubmission(data: SubmissionData): Promise<Response> {
-      const res = await fetch('/api/post/submission', {
-         method: 'POST',
-         cache: 'default',
-         credentials: 'same-origin',
-         headers: {
-            'Content-Type': 'application/json'
-         },
-         body: JSON.stringify(data)
-      })
-		return res;
-	}
-
-	export async function getNewPerson(id: number){
-		const newPerson = await fetch(`/api/person/${id}`)
-		const data = await newPerson.json()
-		return data
-	}
 </script>
 
 <script lang="ts">
 	import Seo from '$lib/components/SEO.svelte';
 	import { user, getCurrUserProfile } from '$lib/user';
-	import Spinner from '$lib/components/Spinner.svelte';
 	import { fly } from 'svelte/transition'
 	import { quintOut } from 'svelte/easing'
 	import { _ } from 'svelte-i18n';
@@ -76,6 +55,7 @@
 	import RoleButton from '$lib/components/RoleButton.svelte';
 	import InputForm from '$lib/components/InputForm.svelte';
 	import CreateCard from './_createCard.svelte'
+	import SubmissionStatus from '$lib/components/SubmissionStatus.svelte';
 
 	export let submissionPackage: SubmissionPackage; // from load fucntion
 	export let adminSettings: AdminSettings
@@ -261,6 +241,25 @@
 		}
 	}
 
+	export async function postSubmission(data: SubmissionData): Promise<Response> {
+      const res = await fetch('/api/post/submission', {
+         method: 'POST',
+         cache: 'default',
+         credentials: 'same-origin',
+         headers: {
+            'Content-Type': 'application/json'
+         },
+         body: JSON.stringify(data)
+      })
+		return res;
+	}
+
+	export async function getNewPerson(id: number){
+		const newPerson = await fetch(`/api/person/${id}`)
+		const data = await newPerson.json()
+		return data
+	}
+
 	function scrollTop() {
 		window.scroll({ top: 0, behavior: 'smooth' });
 	}
@@ -378,26 +377,15 @@
 		{$_('page.add.submit')}
 	</div>
 {/if}
+{:else}
+	<SubmissionStatus type={'person'} {submitState} submissionType={'new'} requireApproval={adminSettings.requireApproval}>
+		{#await promiseNewPerson then res}
+			{#if res}
+				<div class="mx-auto">
+					<PersonCard person={res}/>
+				</div>
+			{/if}
+		{/await}
+	</SubmissionStatus>
 {/if}
 
-<div>
-{#if submitState == State.SUBMITTING}
-	<p>{$_('page.add.status.submitting')}</p>
-	<Spinner />
-{:else if submitState == State.SUCCESS}
-	<p>{$_('page.add.status.success')}</p>
-	{#await promiseNewPerson then res}
-		{#if res}
-			<div class="mx-auto">
-				<PersonCard person={res}/>
-			</div>
-		{/if}
-	{/await}
-	
-	<br>
-	<p>{$_('page.add.status.submitmore')}</p><div class="btn" href="./add/{type}">Here</div>
-{:else if submitState == State.ERROR}
-	<p class="text-red">{$_('page.add.status.error')}</p>
-	<div class="btn" on:click|preventDefault={handleSubmit}>{$_('page.add.submit')}</div>
-{/if}
-</div>

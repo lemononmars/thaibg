@@ -88,17 +88,11 @@
       "obtainable": "Obtainable at these shops"
     },
     "add": {
-      "_": "Add",
+      "_": "Add ",
       "new": "new",
       "submit": "Submit",
-      "comment": "Add a comment for admin",
+      "comment": "Add a note for admin",
       "select": "Select one option",
-      "status": {
-        "submitting": "Submitting... please wait",
-        "success": "Your submission has been received. Please wait until we approve it",
-        "submitmore": "Click here if you want to submit another one!",
-        "error": "There was an error. Please try again"
-      },
       "add_roles": "Add roles"
     },
     "edit": {
@@ -167,7 +161,13 @@
     "last_updated": "Last updated",
     "type": "Type",
     "media": "Media",
-    "relation": "Relation"
+    "relation": "Relation",
+    "province": "Province",
+    "published": "Published",
+    "created": "Contents",
+    "service": "Services",
+    "start": "Start",
+    "end": "End"
   },
   "key": {
     "Event_name": "Name",
@@ -259,8 +259,7 @@
     "Artist_description": "Description",
     "Artist_links": "Link",
     "Artist_show": "Public?",
-    "Contentcreator_name": "Name (English)",
-    "Contentcreator_name_th": "Name (Thai)",
+    "Contentcreator_name": "Name",
     "Contentcreator_links": "Link",
     "Contentcreator_description": "Description",
     "Contentcreator_picture": "Picture",

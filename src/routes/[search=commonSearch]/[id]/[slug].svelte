@@ -35,7 +35,7 @@
 	import ContactLinks from '$lib/components/ContactLinks.svelte';
 	import GoogleMapEmbed from '$lib/components/GoogleMapEmbed.svelte';
 	import Picture from '$lib/components/Picture.svelte'
-import AddToCalendarButton from '$lib/components/AddToCalendarButton.svelte';
+	import AddToCalendarButton from '$lib/components/AddToCalendarButton.svelte';
 
 	export let pageData, pageID: number, pageType: TypeName;
 	let prefix = getVarPrefix(pageType)
@@ -48,10 +48,12 @@ import AddToCalendarButton from '$lib/components/AddToCalendarButton.svelte';
 	)
 	
 	let relations: TypeName[] = []
+	const TBGrelationTypes = ['event', 'mechanics', 'type', 'category']
 	if (pageType === 'content')
 		relations = ['boardgame', 'contentcreator']
-	else if (pageType === 'event') 
+	else if (TBGrelationTypes.includes(pageType)) {
 		relations = ['boardgame']
+	}
 	else
 		relations = [] // for 'honor', use corresponding HonorRelationTable component instead
 	
@@ -128,10 +130,12 @@ import AddToCalendarButton from '$lib/components/AddToCalendarButton.svelte';
 		{#if pageData[prefix + '_links']}
 			<ContactLinks links={pageData[prefix + '_links']}/>
 		{/if}
-		<div class="flex flex-row items-center gap-2">
-			<h2>Share:</h2> 
-			<Social url={pageData[prefix + '_links']} title={pageData[prefix + '_name']} />
-		</div>
+		{#if pageData[prefix + '_links'] && pageData[prefix + '_links'].length > 0}
+			<div class="flex flex-row items-center gap-2">
+				<h2>Share:</h2> 
+				<Social url={pageData[prefix + '_links']} title={pageData[prefix + '_name']} />
+			</div>
+		{/if}
 		{#if pageType === 'event'}
 			<AddToCalendarButton 
 				eventID={pageData.Event_ID}
@@ -140,9 +144,11 @@ import AddToCalendarButton from '$lib/components/AddToCalendarButton.svelte';
 				date={pageData.Event_time_start + '/' + pageData.Event_time_end}
 			/>
 		{/if}
-		<h2>Edit this page:
-			<EditButton type={pageType} id={pageData[prefix + '_ID']}/>
-		</h2>
+		{#if pageType !== 'mechanics'}
+			<h2>Edit this page:
+				<EditButton type={pageType} id={pageData[prefix + '_ID']}/>
+			</h2>
+		{/if}
 	</div>
 	<!-- second column-->
 	<div class="flex flex-col w-full gap-4">
@@ -186,6 +192,21 @@ import AddToCalendarButton from '$lib/components/AddToCalendarButton.svelte';
 					{/await}
 				</div>
 			</div>
-		{/if}
+		{:else if TBGrelationTypes.includes(pageType)}
+			<h1>{$_(`keyword.boardgame`)}</h1>
+				{#await promiseRelations['boardgame']}
+					<Spinner />
+				{:then data}
+					{#if data}
+						<DataViewer 
+							{data} 
+							type={'boardgame'} 
+							dataTableColumns={{headers:[], body:[]}} 
+							listView="grid"
+							numColumns={3}
+						/>
+					{/if}
+				{/await}
+			{/if}
 	</div>
 </div>

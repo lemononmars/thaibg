@@ -55,32 +55,19 @@
 			}
 		};
 	}
-
-	// TODO: make sure nothing breaks in production
-	export async function postSubmission(data: SubmissionData): Promise<Response> {
-      const res = await fetch('/api/post/submission', {
-         method: 'POST',
-         cache: 'default',
-         credentials: 'same-origin',
-         headers: {
-            'Content-Type': 'application/json'
-         },
-         body: JSON.stringify(data)
-      })
-		return res;
-	}
 </script>
 
 <script lang="ts">
 	import Seo from '$lib/components/SEO.svelte';
 	import { user, getCurrUserProfile } from '$lib/user';
-	import Spinner from '$lib/components/Spinner.svelte';
 	import { _ } from 'svelte-i18n';
 	import InputEditForm from '$lib/components/InputEditForm.svelte';
 	import SearchMultipleSelect from '$lib/components/SearchMultipleSelect.svelte';
 	import CreateCard from '../_createCard.svelte'
 	import { ChevronLeftIcon, ChevronRightIcon } from 'svelte-feather-icons';
 	import {onMount} from 'svelte'
+	import SubmissionStatus from '$lib/components/SubmissionStatus.svelte'
+
 
 	export let submissionPackage: SubmissionPackage,
 		adminSettings: AdminSettings,
@@ -208,6 +195,19 @@
 		}
 	}
 
+	export async function postSubmission(data: SubmissionData): Promise<Response> {
+      const res = await fetch('/api/post/submission', {
+         method: 'POST',
+         cache: 'default',
+         credentials: 'same-origin',
+         headers: {
+            'Content-Type': 'application/json'
+         },
+         body: JSON.stringify(data)
+      })
+		return res;
+	}
+
 </script>
 
 <Seo title="Create boardgame" />
@@ -310,22 +310,11 @@
 	>
 		{$_('page.add.submit')}
 	</div>
-
+	{/if}
+{:else}
+	<SubmissionStatus {type} {submitState} submissionType={'edit'} requireApproval={adminSettings.requireApproval}>
+		<a href="/{type}/{currentData[getVarPrefix(type) + '_ID']}" class="text-info"> 
+			{currentData.TBG_name || currentData.TBG_name_th}
+		</a>
+	</SubmissionStatus>
 {/if}
-{/if}
-
-<div>
-{#if submitState == State.SUBMITTING}
-	<p>{$_('page.add.status.submitting')}</p>
-	<Spinner />
-{:else if submitState == State.SUCCESS}
-	<p>{$_('page.add.status.success')}</p>
-	<p>Go back to <a href="/{type}/{currentData[getVarPrefix(type) + '_ID']}" class="text-info"> {currentData.TBG_name}</a></p>
-	
-	<br>
-	<p>{$_('page.add.status.submitmore')}</p><div class="btn" href="./add/{type}">Here</div>
-{:else if submitState == State.ERROR}
-	<p class="text-red">{$_('page.add.status.error')}</p>
-	<div class="btn" on:click|preventDefault={handleSubmit}>{$_('page.add.submit')}</div>
-{/if}
-</div>
