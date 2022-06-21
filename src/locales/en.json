@@ -167,7 +167,13 @@
     "created": "Contents",
     "service": "Services",
     "start": "Start",
-    "end": "End"
+    "end": "End",
+    "designer": "Designer",
+    "artist": "Artist",
+    "graphicdesigner": "Graphic Designer",
+    "playtester": "Playtester",
+    "rulebookeditor": "Rulebook Editor",
+    "producer": "Producer"
   },
   "key": {
     "Event_name": "Name",

@@ -157,7 +157,13 @@
 		"created": "จำนวนสื่อ",
 		"service": "บริการ",
 		"start": "เริ่ม",
-		"end": "สิ้นสุด"
+		"end": "สิ้นสุด",
+		"designer": "นักออกแบบ",
+		"artist": "ศิลปิน",
+		"graphicdesigner": "นักออกแบบกราฟิก",
+		"playtester": "นักทดสอบ",
+		"rulebookeditor": "นักเรียบเรียงคู่มือ",
+		"producer": "ผู้อำนวยการผลิต"
 	},
 	"key": {
 		"Event_name": "ชื่องาน",

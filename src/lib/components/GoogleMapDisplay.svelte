@@ -1,72 +1,90 @@
 <script lang=ts>
-   import type {ShopLocation} from '$lib/datatypes'
+   import type {ShopLocation, Shop} from '$lib/datatypes'
    import {onMount} from 'svelte'
+
+   interface ShopMinimal {
+      Shop_name: string,
+      Shop_ID: number,
+      Shop_location: ShopLocation,
+      Shop_province: string
+   }
 
    const apiKey = String(import.meta.env.VITE_GOOGLE_MAP_API_KEY)
 
    let mapArea: HTMLElement
    let infowindowContent: HTMLElement
+   let actionWindow: HTMLElement
 
    // support a single place and array of places
-   export let places: ShopLocation[] = []
-   // note that indices for names and places must match
-   export let names: string[] = []
-   export let ids: number[] = []
+   export let shops: ShopMinimal[] = []
 
-   export let placeIndex: number = 0
+   export let currentShopID: number = -1
    // TODO: add listener
    
-   let map: any
+   let map: google.maps.Map
    let infowindow: any
+   let bounds: any
 
-   $: if(placeIndex > -1 && map && infowindow) {
-      //map.panTo(places[placeIndex].location)
-      infowindow.setPosition(places[placeIndex].location)
+   $: if(currentShopID > -1 && map && infowindow) {
+      const location = getCurrentShop(currentShopID).Shop_location.location
+      map.panTo(location)
+      infowindow.setPosition(location)
+   }
+
+   function getCurrentShop(shopID: number){
+      return shops.filter(s=>s.Shop_ID === shopID)[0]
    }
 
    onMount(async()=>{
-       map = initMap()
+       initMap()
    })
 
-   async function initMap(){
-      const map = new google.maps.Map(
+   function initMap(): void{
+      map = new google.maps.Map(
          mapArea,
          {
-            center: places[0].location,
+            center: shops[0].Shop_location?.location,
             zoom: 15
          }
       );
 
       infowindow = new google.maps.InfoWindow();
       infowindow.setContent(infowindowContent);
+      infowindow.setPosition(shops[0].Shop_location.location)
 
-      const bounds = new google.maps.LatLngBounds();
+      map.controls[google.maps.ControlPosition.TOP].push(actionWindow);
+
+      bounds = new google.maps.LatLngBounds();
       // add markers
-      places.forEach((p: ShopLocation, index: number) => {
-         const marker = new google.maps.Marker({ map: map });
+      shops.forEach((s: Shop) => {
+         if(s.Shop_location?.location) {
+            const marker = new google.maps.Marker({ 
+               map: map,
+            });
 
-         marker.addListener("click", () => {
-            infowindow.open(map, marker);
-            placeIndex = index
-            //map.panTo(places[index].location)
-         });
+            marker.addListener("click", () => {
+               infowindow.open(map, marker);
+               currentShopID = s.Shop_ID
+               // map.setZoom(16)
+               map.setCenter(s.Shop_location.location)
+            });
 
-         marker.setPlace({
-            placeId: p.place_id,
-            location: p.location,
-         });
+            marker.setPlace({
+               placeId: s.Shop_location.place_id,
+               location: s.Shop_location.location,
+            });
 
-         marker.setVisible(true);
-         bounds.extend(p.location)
-
-         if(index == 0)
-            infowindow.open(map, marker);
+            marker.setVisible(true);
+            bounds.extend(s.Shop_location.location)
+         }
       })
 
-      if(places.length > 1)
+      if(shops.length > 1)
          map.fitBounds(bounds);
+   }
 
-      return map
+   function reset(){
+      map.fitBounds(bounds)
    }
 </script>
 
@@ -84,14 +102,22 @@
 >
 </div>
 
-
 <div
    class="text-black bg-white"
    bind:this={infowindowContent}
 >
-   {#if placeIndex > -1}
-      <a href="/shop/{ids[placeIndex]}" target="_blank">
-         {names[placeIndex]}
+   {#if currentShopID > -1}
+      <a href="/shop/{currentShopID}" target="_blank">
+         <p class="text-2xl">{getCurrentShop(currentShopID).Shop_name}</p>
       </a>
    {/if}
+</div>
+
+<div
+   class="text-black bg-white"
+   bind:this={actionWindow}
+>
+   <div class="btn absolute l-0 z-30" on:click={reset}>
+      Reset
+   </div>
 </div>

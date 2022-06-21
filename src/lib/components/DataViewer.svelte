@@ -80,11 +80,14 @@
 					return String(a[cacheKey][nestedKey])?.localeCompare(String(b[cacheKey][nestedKey]))
 				})
 		}
-		else {
+		else if(typeof data[0][key] === 'number')
+			data = data.sort((a,b)=>{
+				return (a[key] != null ? a[key]: Infinity) - (b[key]!= null ? b[key]: Infinity)
+			})
+		else 
 			data = data.sort((a,b)=>{
 				return String(a[key])?.localeCompare(String(b[key]))
 			})
-		}
 		if(sortDescend)
 			data = data.reverse()
 		else
@@ -154,28 +157,28 @@
 							{#if type!=='content'}
 								<th class="w-20">{$_(`table.image`)}</th>
 							{/if}
-							<th class="w-3/4 lg:w-1/2">
+							<th class="w-3/4 lg:w-2/5">
 								<div class="flex flex-row align-middle gap-2 ">
-								{$_(`table.name`)}
-								<div on:click={()=>sortData(-1)}>
-									{#if sortingColumn == -1}
+									<div on:click={()=>sortData(-1)}>
+										{#if sortingColumn == -1}
 										<svelte:component this={sortingIcon} size=20/>
-									{:else}
+										{:else}
 										<SlidersIcon size=20/>
-									{/if}
-								</div>
+										{/if}
+									</div>
+									{$_(`table.name`)}
 							</div></th>
 							{#each dataTableColumns.headers as t, idx}
 								<th class="hidden lg:table-cell">
-									<div class="flex flex-row align-middle gap-2">
-										{$_(`table.${t}`)}
+									<div class="flex flex-row gap-2 text-center truncate">
 										<div on:click={()=>sortData(idx)}>
 											{#if idx === sortingColumn}
-												<svelte:component this={sortingIcon} size="20"/>
+											<svelte:component this={sortingIcon} size="20"/>
 											{:else}
-												<SlidersIcon size=20/>
+											<SlidersIcon size=20/>
 											{/if}
 										</div>
+										{$_(`table.${t}`)}
 									</div>
 								</th>
 							{/each}
@@ -204,9 +207,9 @@
 									<td class="hidden lg:table-cell truncate">
 										{#if typeof d[t] === 'boolean'}
 											{#if d[t] == true}
-												<CheckCircleIcon size="1x" class="text-success" />
+												<CheckCircleIcon size="10" class="text-success" />
 											{:else}
-												<SlashIcon size="1x" class="text-error" />
+												<SlashIcon size="10" class="text-error" />
 											{/if}
 										{:else if BoardgameStatusArray.includes(d[t])}
 											<TBGStageIcons status={d[t]} showText={true} class="h-12"/>
@@ -230,7 +233,7 @@
 												{idx == 0? '': ', '}{$_(`keyword.${r}`)}
 											{/each}
 										{:else}
-											{d[t] || '-'}
+											{d[t] || (d[t] === 0? 0 : '-')}
 										{/if}
 									</td>
 								{/each}
