@@ -18,6 +18,13 @@
       "wargame": "Wargames"
     }
   },
+  "event":{
+    "_": "Event",
+    "all": "All event",
+    "past": "Past event",
+    "ongoing": "Ongoing event",
+    "upcoming": "Upcoming event"
+  },
   "keyword": {
     "all": "See all",
     "name": "Name",
