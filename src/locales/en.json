@@ -144,7 +144,8 @@
       "video": "Video",
       "podcast": "Podcast",
       "article": "Article",
-      "file": "File"
+      "file": "File",
+      "other": "Other"
     },
     "type": {
       "_": "Type",
@@ -154,7 +155,8 @@
       "playthrough": "Playthrough",
       "howtoplay": "How to Play",
       "rulebook": "Rulebook",
-      "analysis": "Analysis"
+      "analysis": "Analysis",
+      "other": "Other"
     }
   },
   "table": {

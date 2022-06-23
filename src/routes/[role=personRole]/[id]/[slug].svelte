@@ -74,7 +74,7 @@
 
 	export let person: Person, role: string;
 	let activeRoleTitles = personRoles.filter((r) => 
-		(!person[getVarPrefix(r) + '_ID'] || person[getVarPrefix(r) + '_ID'] == 0)
+		(person[getVarPrefix(r) + '_ID'] || person[getVarPrefix(r) + '_ID'] == 0)
 	);
 	let activeRole: string = role
 	if (role === 'person') 

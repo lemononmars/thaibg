@@ -6,5 +6,5 @@ const webhook = new WebhookClient({
 })
 
 export function sendhook(message: string) {
-	//webhook.send(message)
+	webhook.send(message)
 }

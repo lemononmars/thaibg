@@ -21,8 +21,8 @@ export interface ContentSubmission {
 	Content_type: ContentType;
 }
 
-export const ContentMediaArray = ['video', 'podcast', 'article', 'file'];
-export type ContentMedia = 'video' | 'podcast' | 'article' | 'file';
+export const ContentMediaArray = ['video', 'podcast', 'article', 'file', 'other'];
+export type ContentMedia = 'video' | 'podcast' | 'article' | 'file' | 'other';
 
 export const ContentTypeArray = [
 	'review',
@@ -30,7 +30,8 @@ export const ContentTypeArray = [
 	'playthrough',
 	'howtoplay',
 	'rulebook',
-	'analysis'
+	'analysis',
+	'other'
 ];
 export type ContentType =
 	| 'review'
@@ -38,7 +39,8 @@ export type ContentType =
 	| 'playthrough'
 	| 'howtoplay'
 	| 'rulebook'
-	| 'analysis';
+	| 'analysis'
+	| 'other';
 
 export const ContentRelationArray = ['boardgame', 'contentcreator'];
 

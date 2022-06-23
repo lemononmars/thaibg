@@ -23,8 +23,8 @@ export interface EventSubmission {
 	Event_links: string[];
 	Event_description: string;
 	Event_location: string;
-	Event_time_start: Date;
-	Event_time_end: Date;
+	Event_time_start: string; // ISO string timestamp (YYYY-MM-DD) in database 
+	Event_time_end: string;
 	Event_organizer: string;
 	Event_type: EventType;
 	Event_picture: string;

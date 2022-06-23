@@ -157,27 +157,36 @@
 </script>
 
 <Seo title="Profile" />
-<div class="flex flex-col justify-center items-center relative">
-	<div class="p-2 flex flex-col place-items-center">
-		<div class="mt-2">
-			<Avatar on:change={updAvatar} src={avatar_url} title={username} {loading} />
+<div class="flex flex-col lg:flex-row justify-center relative">
+	<div class="w-full lg:w-1/3">
+		<div class="p-2 flex flex-col place-items-center">
+			<div class="mt-2">
+				<Avatar on:change={updAvatar} src={avatar_url} title={username} {loading} />
+			</div>
 		</div>
+		<h2 class="text-4xl mb-1">Howdie, {username}!</h2>
+
+		{#if !user}
+			<small
+				>You've landed on a protected page. Please <a href="/">log in</a> to view the page's full content
+			</small>
+		{/if}
+		<h1>Profile</h1>
+
+		{#if user}
+			<div>
+				<button on:click={signOut} class="btn">Sign Out</button>
+			</div>
+		{/if}
+		</div>
+	<div class="w-full lg:w-2/3">
+		<h1>Contributions</h1>
+
+		<h1>Likes</h1>
+
+		<h1>Owns</h1>
+
+		<h1>Comments</h1>
 	</div>
-	<h2 class="text-4xl mb-1">Howdie, {username}!</h2>
 
-	{#if !user}
-		<small
-			>You've landed on a protected page. Please <a href="/">log in</a> to view the page's full content
-		</small>
-	{/if}
-	<div class="divider" />
-	<h1>Profile</h1>
-	<div class="divider" />
-	<h1>Contribution</h1>
-
-	{#if user}
-		<div>
-			<button on:click={signOut} class="btn">Sign Out</button>
-		</div>
-	{/if}
 </div>
