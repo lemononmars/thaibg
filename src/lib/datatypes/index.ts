@@ -74,7 +74,8 @@ export interface SubmissionPackage {
 	relations: string[];
 	selects?: Record<string, string[]>;
 	multiselects?: Record<string, string[]>;
-	required?: string[]
+	required?: string[],
+	numbers?: string[] // keys with type="number"
 }
 
 import { ArtistSubmissionPackage } from './personRoles/Artist';

@@ -35,31 +35,6 @@
 		};
 	}
 
-	export async function getRoleContent(role: string, person: Person) {
-		let personData: PersonRole;
-		let contents: Boardgame[];
-		let returnedData = [];
-		const roleVarPrefix = getVarPrefix(role)
-
-		// grab role information
-		const id = person[roleVarPrefix + '_ID'];
-		let res = await fetch(`/api/${role}/${id}`);
-		if (!res) return { status: res.status };
-		personData = await res.json();
-
-		// get the list of board games
-		const dataType = 'boardgame';
-		res = await fetch(`/api/${role}/${id}/${dataType}`);
-		if (!res.ok) return { status: res.status };
-		contents = await res.json();
-
-		// rename keys regardless of roles
-		const infoKeys = ['description', 'name', 'name_th', 'language', 'slug', 'link'];
-		infoKeys.forEach((i) => (returnedData[i] = personData[roleVarPrefix + '_' + i]));
-		returnedData['id'] = personData[roleVarPrefix + '_ID'];
-		returnedData['contents'] = contents;
-		return returnedData;
-	}
 </script>
 
 <script lang="ts">
@@ -89,6 +64,32 @@
 	async function changeTab(role: string) {
 		activeRole = role;
 		rolePromise = getRoleContent(activeRole, person);
+	}
+
+	export async function getRoleContent(role: string, person: Person) {
+		let personData: PersonRole;
+		let contents: Boardgame[];
+		let returnedData = [];
+		const roleVarPrefix = getVarPrefix(role)
+
+		// grab role information
+		const id = person[roleVarPrefix + '_ID'];
+		let res = await fetch(`/api/${role}/${id}`);
+		if (!res) return { status: res.status };
+		personData = await res.json();
+
+		// get the list of board games
+		const dataType = 'boardgame';
+		res = await fetch(`/api/${role}/${id}/${dataType}`);
+		if (!res.ok) return { status: res.status };
+		contents = await res.json();
+
+		// rename keys regardless of roles
+		const infoKeys = ['description', 'name', 'name_th', 'language', 'slug', 'link'];
+		infoKeys.forEach((i) => (returnedData[i] = personData[roleVarPrefix + '_' + i]));
+		returnedData['id'] = personData[roleVarPrefix + '_ID'];
+		returnedData['contents'] = contents;
+		return returnedData;
 	}
 </script>
 

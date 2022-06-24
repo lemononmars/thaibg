@@ -8,9 +8,7 @@
 </script>
 
 <Header/>
-<main class="w-full max-w-max h-full">
+<main class="w-full max-w-max h-full overflow-x-hidden">
 	<slot/>
 </main>
-
-
 <Footer />

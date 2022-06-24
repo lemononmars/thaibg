@@ -27,7 +27,7 @@ export interface ShopSubmission {
 	Shop_picture: string;
 	Shop_province: string;
 	Shop_location: ShopLocation;
-	Shop_start_year: number;
+	Shop_year_start: number;
 	Shop_capacity: number;
 	Shop_type: string[];
 	Shop_status: ShopStatus;
@@ -78,6 +78,10 @@ export const ShopSubmissionPackage = () => {
 			'Shop_province',
 			'Shop_status',
 			'Shop_type'
+		],
+		numbers: [
+			'Shop_start_year',
+			'Shop_capacity'
 		]
 	};
 };

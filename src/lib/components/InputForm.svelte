@@ -1,5 +1,5 @@
 <script lang=ts>
-   import type { TypeName } from '$lib/datatypes';
+   import type { TypeName, SubmissionPackage } from '$lib/datatypes';
    import {_} from 'svelte-i18n'
    import GoogleMapFinder from './GoogleMapFinder.svelte';
    import MultipleSelect from './MultipleSelect.svelte';
@@ -7,9 +7,9 @@
    import UploadPicture from './UploadPicture.svelte';
 
    export let inputs: Record<string, any>
-   export let submissionPackage: Record<string, any>
+   export let submissionPackage: SubmissionPackage
    export let type: TypeName
-   const {keys, selects, multiselects, required} = submissionPackage
+   const {keys, selects, multiselects, required, numbers} = submissionPackage
 
    let needMap: boolean = false
    const locationKeyArray = keys.filter((k:string) => k.includes("location"))
@@ -70,6 +70,8 @@
             <MultipleSelect bind:selects={inputs[k]} />
          {:else if k.includes('_name')}
             <NameVerifier {type} bind:searchString={inputs[k]} />
+         {:else if numbers.includes(k) && type !== 'content'}
+            <input type="number" class="input input-bordered" bind:value={inputs[k]} />
          {:else}
             <input type="text" class="input input-bordered" bind:value={inputs[k]} />
          {/if}

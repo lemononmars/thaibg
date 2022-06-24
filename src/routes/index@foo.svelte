@@ -94,7 +94,7 @@
 </script>
 
 <Seo title="Home" />
-<div class="flex flex-col lg:flex-row w-screen bg-base-200 lg:pt-10 px-4 lg:px-60 lg:gap-10 justify-between">
+<div class="flex flex-col lg:flex-row w-screen bg-base-300 lg:pt-10 px-4 lg:px-60 justify-between">
 	<div class="flex flex-col order-first lg:order-none text-center lg:justify-center w-full lg:w-1/3 place-self-center">
 		<h1>{$_('page.home.welcome.intro')}</h1>
 		<div class="grid grid-cols-3 items-start py-4">
@@ -129,7 +129,7 @@
 	</div>
 </div>
 
-<div class="flex flex-col w-screen px-4 py-10">
+<div class="flex flex-col w-screen px-4 py-20">
 	<h1 class="text-center">Upcoming Events</h1>
 	<div class="grid grid-cols-2 lg:grid-cols-3 place-items-center">
 		{#await promiseEvents}
@@ -146,7 +146,8 @@
 	</div>
 </div>
 
-<div class="flex flex-col lg:flex-row bg-base-300 w-screen p-4 lg:px-20">
+<div class="triangle-top"/>
+<div class="flex flex-col lg:flex-row bg-info w-screen p-4 lg:px-20 ">
 	<div class="flex flex-col text-left">
 		<h2>Media</h2>
 		<h1>Hotness Contents</h1>
@@ -167,6 +168,7 @@
 		{/await}
 	</div>
 </div>
+<div class="triangle-bottom"/>
 
 <div class="flex flex-col w-screen lg:p-8">
 	<div class="flex flex-row justify-between items-center">
@@ -216,8 +218,8 @@
 </div>
 
 <!-- supporters -->
-<div class="flex flex-col bg-base-300 w-screen py-4 px-4 lg:px-20">
-	<h1 class="text-left my-4">Collaborators</h1>
+<div class="flex flex-col bg-secondary text-secondary-content w-screen py-4 px-4 lg:px-20 relative bubble">
+	<h1 class="text-left my-4 text-secondary-content">Collaborators</h1>
 	<div class="grid grid-rows-2 lg:grid-rows-1 grid-flow-col place-content-between gap-2">
 		{#each shuffleSupporters as s}
 			<div class="flex flex-col shrink gap-2 justify-center text-center mx-auto lg:mx-none w-30 lg:w-60">
@@ -238,7 +240,7 @@
 </div>
 
 <!-- database creators -->
-<div class="flex flex-col w-screen py-4 px-4 lg:px-20">
+<div class="flex flex-col w-screen py-4 px-4 lg:px-20 mt-40">
 	<h1 class="text-left my-4">Team of Developers</h1>
 	{#await promiseDevs}
 		<Spinner />
@@ -256,5 +258,33 @@
 		{/if}
 	{/await}
 </div>
+
+
 <!-- <div class="relative bg-error skew-y-12 h-60 -translate-y-80 -z-10"></div>
 <div class="relative bg-error h-60 -z-10 -translate-y-96"></div> -->
+
+<style>
+	.bubble::after {
+		content: '';
+		border-bottom-left-radius: 50% 100%;
+		border-bottom-right-radius: 50% 100%;
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		height: 20%;
+		width: 100%;
+		background-color: hsl(var(--s));
+		z-index: -1;
+		transform: translate(0, 100%)
+	}
+
+	.triangle-bottom {
+		background-image: linear-gradient(to bottom right, hsl(var(--in)) 50%, hsl(var(--b1)) 50%);
+		height: 100px;
+	}
+
+	.triangle-top {
+		background-image: linear-gradient(to top left, hsl(var(--in)) 50%, hsl(var(--b1)) 50%);
+		height: 100px;
+	}
+</style>

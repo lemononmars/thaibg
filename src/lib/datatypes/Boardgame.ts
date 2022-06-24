@@ -113,6 +113,16 @@ export const BoardgameSubmissionPackage = () => {
 		},
 		required: [
 			"TBG_status",
+		],
+		numbers :[
+			'TBG_age',
+			'TBG_weight',
+			'BGG_ID',
+			'TBG_released',
+			'TBG_player_min',
+			'TBG_player_max',
+			'TBG_playtime_min',
+			'TBG_playtime_max',
 		]
 	};
 };

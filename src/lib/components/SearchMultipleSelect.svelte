@@ -17,7 +17,7 @@
 	let staticData: simpleData[] = []
 	const staticTypes = ['type', 'category', 'mechanics']
 	const isStatic: boolean = staticTypes.includes(type)
-
+	const dropdownDirection = staticTypes.includes(type)? 'dropdown-top' : 'dropdown-bottom'
 
 	onMount(async()=>{
 		if(isStatic) {
@@ -126,17 +126,17 @@
 			</label>
 			<ul
 				tabindex="0"
-				class="p-2 shadow menu dropdown-content bg-base-100 rounded-box w-full h-80 overflow-auto"
+				class="p-2 shadow menu dropdown-content bg-base-100 rounded-box w-full h-80 overflow-auto dropdown-top {dropdownDirection}"
 				class:hidden={searchString.length == 0 && !revealOptions}
 			>
 				{#if isTyping}
 					<li><Spinner /></li>
 				{:else if searchedData}
 					{#each searchedData as d}
-						<li>
-							<div class="btn btn-ghost btn-xs" on:click={() => select(d)}>
+						<li class="-p-2">
+							<a class="text-xs text-left" on:click={() => select(d)} href={null}>
 								{d.name || ''}{d.name && d.name_th? ' - ' : ''}{d.name_th || ''}
-							</div>
+							</a>
 						</li>
 					{:else}
 						{#if !isStatic}
