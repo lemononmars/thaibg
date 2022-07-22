@@ -35,6 +35,7 @@ export const CategorySubmissionPackage = () => {
 		relations: CategoryRelationArray,
 		selects: {},
 		multiselects: {},
-		required: []
+		required: [],
+		numbers: []
 	};
 };

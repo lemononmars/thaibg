@@ -56,6 +56,7 @@ export const HonorSubmissionPackage = () => {
 		required: [
 			"Honor_year",
 			"Honor_type"
-		]
+		],
+		numbers: []
 	};
 };

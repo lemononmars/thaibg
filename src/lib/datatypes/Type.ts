@@ -22,6 +22,7 @@ export const TypeSubmissionPackage = () => {
 		relations: [],
 		selects: {},
 		multiselects: {},
+		numbers: [],
 		required: []
 	};
 };

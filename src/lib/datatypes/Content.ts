@@ -59,6 +59,7 @@ export const ContentSubmissionPackage = () => {
 			"Content_media",
 			"Content_type",
 			"Content_links"
-		]
+		],
+		numbers: []
 	};
 };

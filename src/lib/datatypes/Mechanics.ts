@@ -29,6 +29,7 @@ export const MechanicsSubmissionPackage = () => {
 		relations: [],
 		selects: {},
 		multiselects: {},
-		required: []
+		required: [],
+		numbers: []
 	};
 };

@@ -70,7 +70,7 @@
             <MultipleSelect bind:selects={inputs[k]} />
          {:else if k.includes('_name')}
             <NameVerifier {type} bind:searchString={inputs[k]} />
-         {:else if numbers.includes(k) && type !== 'content'}
+         {:else if numbers?.includes(k) && type !== 'content'}
             <input type="number" class="input input-bordered" bind:value={inputs[k]} />
          {:else}
             <input type="text" class="input input-bordered" bind:value={inputs[k]} />

@@ -162,6 +162,8 @@ export async function addToSubmission(
 		Submission_status: requireApproval? 'pending' : 'accepted'
 	}
 
+	console.log(submissionData.relations)
+
 	const { error } = await from('Submission').insert([
 		newSubmission
 	], {
@@ -369,6 +371,7 @@ async function addToDatabaseRelation(
 	const relationArrays = JSON.parse(JSONstring);
 	const varPrefix = getVarPrefix(type)
 
+	console.log(submissionType, varPrefix, relationArrays)
 	// for new entries, simply create new rows
 	if(submissionType === 'new') {
 		for (const relationType of Object.keys(relationArrays)) {
@@ -384,10 +387,12 @@ async function addToDatabaseRelation(
 				:getTableName(mainRelation) + '_Relation';
 			const relationVarPrefix = getVarPrefix(relationType)
 
+			console.log(relationTableName + '<table,' + relationVarPrefix + ' index ' + index)
+
 			// Finally, we can create and insert a new row
 			for (const relation of relationObjects) {
 				const relationIndex = await findNewUniqueID(relationTableName, 'id');
-
+				console.log(relation)
 				let insertObject: Object = {
 					[relationVarPrefix + '_ID']: relation.id,
 					[varPrefix + '_ID']: index

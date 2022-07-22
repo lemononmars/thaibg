@@ -47,6 +47,7 @@ export const PersonSubmissionPackage = () => {
 		relations: PersonRelationArray,
 		selects: {},
 		multiselects: {},
+		number: [],
 		required: [
 			
 		]

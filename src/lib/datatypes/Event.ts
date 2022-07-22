@@ -72,6 +72,7 @@ export const EventSubmissionPackage = () => {
 			"Event_time_end",
 			"Event_location",
 			"Event_type",
-		]
+		],
+		numbers: []
 	};
 };
