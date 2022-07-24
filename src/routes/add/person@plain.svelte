@@ -356,8 +356,10 @@
 			</div>
 		{/if}
 	</CreateCard>
-	<div class="btn hover:-translate-x-4" on:click={()=>{step = 0; dir = -1; editingRoleIndex=-1}}> Prev <ChevronLeftIcon size=20/> </div>
-	<div class="btn hover:translate-x-4" on:click={()=>{step = 2; dir = 1; editingRoleIndex=-1}}> Next <ChevronRightIcon size=20/> </div>
+	{#if (editingRoleIndex == -1)}
+		<div class="btn hover:-translate-x-4" on:click={()=>{step = 0; dir = -1; editingRoleIndex=-1}}> Prev <ChevronLeftIcon size=20/> </div>
+		<div class="btn hover:translate-x-4" on:click={()=>{step = 2; dir = 1; editingRoleIndex=-1}}> Next <ChevronRightIcon size=20/> </div>
+	{/if}
 {:else if step == 2}
 	<CreateCard bind:dir title={"Submit"}>
 		{#if adminSettings.requireApproval}

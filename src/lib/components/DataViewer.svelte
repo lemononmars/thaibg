@@ -229,9 +229,11 @@
 												{cache[t.slice(t.indexOf('.')+1)]}
 											{/if}
 										{:else if t === 'Organization_relation'}
+											{#if d[t]}
 											{#each Object.keys(d[t]) as r, idx}
 												{idx == 0? '': ', '}{$_(`keyword.${r}`)}
 											{/each}
+											{/if}
 										{:else}
 											{d[t] || (d[t] === 0? 0 : '-')}
 										{/if}

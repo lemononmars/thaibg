@@ -344,8 +344,10 @@
 		</div>
 	{/if}
 	</CreateCard>
-	<div class="btn" on:click={()=>{step = 0; dir = -1}}>Prev</div>
-	<div class="btn" on:click={()=>{step = 2; dir = 1}}>Next</div>
+	{#if (editingRoleIndex == -1)}
+		<div class="btn" on:click={()=>{step = 0; dir = -1}}>Prev</div>
+		<div class="btn" on:click={()=>{step = 2; dir = 1}}>Next</div>
+	{/if}
 {:else if step == 2}
 	<CreateCard bind:dir title={"Submit"}>
 		{#if adminSettings.requireApproval}
