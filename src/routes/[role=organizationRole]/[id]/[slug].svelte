@@ -130,8 +130,8 @@
 
 <Seo title="Organization" />
 
-<div class="w-full h-60">
-	<img src="https://picsum.photos/800/600" class="object-cover w-full h-60" alt="cover" />
+<div class="w-full h-60 bg-gradient-to-b from-primary to-secondary">
+	<!--img src="https://picsum.photos/800/600" class="object-cover w-full h-60" alt="cover" /-->
 </div>
 <div class="flex flex-col lg:flex-row justify-center items-start relative">
 	<!-- First column: Organization's name, bio, and contacts-->

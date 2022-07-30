@@ -115,6 +115,7 @@
   "status": "Status",
   "minutes": "minutes",
   "age": "Age",
+  "designer": "Designer",
   "numPlayers": "Number of players",
   "playtime": "Playtime",
   "weight": "Weight",

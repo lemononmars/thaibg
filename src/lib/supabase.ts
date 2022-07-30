@@ -162,8 +162,6 @@ export async function addToSubmission(
 		Submission_status: requireApproval? 'pending' : 'accepted'
 	}
 
-	console.log(submissionData.relations)
-
 	const { error } = await from('Submission').insert([
 		newSubmission
 	], {
@@ -175,13 +173,13 @@ export async function addToSubmission(
 	if(!requireApproval) {
 		// when creating a new person or organization, we also create new roles from extra submissions
 		if(pageType === 'person' || pageType === 'organization') {
-			const newRolesContent = addRolesContent(submissionData.rolesSubmission, pageType)
+			const newRolesContent = await addRolesContent(submissionData.rolesSubmission, pageType)
 			newSubmission.Submission_content = JSON.stringify({
 				...JSON.parse(newSubmission.Submission_content),
 				...newRolesContent
 			})
 		}
-		// we add the person or organization after roles because we want to add new role IDs at once
+		// we add the person or organization first to get its ID
 		const res = await addToDatabase(
 			newSubmission.Submission_content,
 			newSubmission.Submission_page_type,
@@ -189,7 +187,7 @@ export async function addToSubmission(
 		);
 		index = res.body.index
 		
-		// finally, we add relational data if any
+		// then we pass on the newly created ID to add relational data, if any
 		if(newSubmission.Submission_relations) 
 			await addToDatabaseRelation(
 				newSubmission.Submission_relations,
@@ -209,7 +207,7 @@ export async function addToSubmission(
 }
 
 // happen on admin page
-// after admin makes a judgement, do the job
+// admin checks the data and decides whether to accept it or not
 export async function changeSubmissionStatus(
 	id: number,
 	newStatus: string
@@ -230,7 +228,7 @@ export async function changeSubmissionStatus(
 
 		const pageType = data.pageType
 		if(pageType === 'person' || pageType === 'organization') {
-			const newRolesContent = addRolesContent(data.Submission_roles, pageType)
+			const newRolesContent = await addRolesContent(data.Submission_roles, pageType)
 			data.Submission_content = JSON.stringify({
 				...JSON.parse(data.Submission_content),
 				...newRolesContent
@@ -242,11 +240,13 @@ export async function changeSubmissionStatus(
 			data.Submission_page_type,
 			metadata.Submission_type
 		);
+
+		let index = res.body.index
 		await addToDatabaseRelation(
 			data.Submission_relations,
 			data.Submission_page_type,
 			metadata.Submission_type,
-      	res.body.index
+      	index
 		);
 	}
 
@@ -371,7 +371,6 @@ async function addToDatabaseRelation(
 	const relationArrays = JSON.parse(JSONstring);
 	const varPrefix = getVarPrefix(type)
 
-	console.log(submissionType, varPrefix, relationArrays)
 	// for new entries, simply create new rows
 	if(submissionType === 'new') {
 		for (const relationType of Object.keys(relationArrays)) {
@@ -392,7 +391,6 @@ async function addToDatabaseRelation(
 			// Finally, we can create and insert a new row
 			for (const relation of relationObjects) {
 				const relationIndex = await findNewUniqueID(relationTableName, 'id');
-				console.log(relation)
 				let insertObject: Object = {
 					[relationVarPrefix + '_ID']: relation.id,
 					[varPrefix + '_ID']: index

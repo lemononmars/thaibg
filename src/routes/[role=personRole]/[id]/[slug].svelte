@@ -1,7 +1,4 @@
 <script lang="ts" context="module">
-	/*
-		This whole page is identical to /person/ID/SLUG
-	*/
 	import { getVarPrefix } from '$lib/supabase';
 	import { personRoles, getDataTableColumns } from '$lib/datatypes';
 	import type { Person, PersonRole, Boardgame } from '$lib/datatypes';
@@ -46,6 +43,7 @@
 	import { _ } from 'svelte-i18n';
 	import DataViewer from '$lib/components/DataViewer.svelte';
 	import Picture from '$lib/components/Picture.svelte';
+	import ColorThief from 'colorthief'
 
 	export let person: Person, role: string;
 	let activeRoleTitles = personRoles.filter((r) => 
@@ -56,9 +54,38 @@
 		activeRole = activeRoleTitles[0]
 
 	let rolePromise: Promise<any>;
-
+	let coverColorHexPrimary: string = '#666666'
+	let coverColorHexSecondary: string = '#666666'
 	onMount(async () => {
 		rolePromise = getRoleContent(activeRole, person);
+
+		const CT = new ColorThief()
+		const img = document.querySelector('img');
+
+		if (img.complete) {
+			const palette = CT.getPalette(img)
+			coverColorHexPrimary = '#' + palette[0].map(x => {
+				const hex = x.toString(16)
+				return hex.length === 1 ? '0' + hex : hex
+			}).join('')
+			coverColorHexSecondary = '#' + palette[1].map(x => {
+				const hex = x.toString(16)
+				return hex.length === 1 ? '0' + hex : hex
+			}).join('')
+		} 
+		else {
+			img.addEventListener('load', function() {
+				const palette = CT.getPalette(img)
+				coverColorHexPrimary = '#' + palette[0].map(x => {
+					const hex = x.toString(16)
+					return hex.length === 1 ? '0' + hex : hex
+				}).join('')
+				coverColorHexSecondary = '#' + palette[1].map(x => {
+					const hex = x.toString(16)
+					return hex.length === 1 ? '0' + hex : hex
+				}).join('')
+			})
+		}
 	});
 
 	async function changeTab(role: string) {
@@ -95,8 +122,8 @@
 
 <Seo title="Person" />
 
-<div class="w-full h-60">
-	<img src="https://picsum.photos/800/600" class="object-cover w-full h-60" alt="cover" />
+<div class="w-full h-60 bg-gradient-to-b from-[{coverColorHexPrimary}] to-[{coverColorHexSecondary}]">
+	<!--img src="https://picsum.photos/800/600" class="object-cover w-full h-60" alt="cover" /-->
 </div>
 
 <div class="flex flex-col lg:flex-row justify-center items-start relative">

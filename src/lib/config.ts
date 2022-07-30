@@ -16,9 +16,9 @@ export const siteSeoOpenGraphBase = {
 	type: 'website',
 	images: [
 		{
-			url: 'https://www.example.com/images/og-image.jpg',
-			width: 850,
-			height: 650,
+			url: 'https://raw.githubusercontent.com/lemononmars/thaibg/main/src/lib/assets/logos/THBDDB-Logo.png',
+			width: 800,
+			height: 800,
 			alt: 'Og Image Alt'
 		}
 	]
@@ -27,15 +27,14 @@ export const siteSeoOpenGraphBase = {
 export const siteSeoOpenGraphArticle = {
 	type: 'article',
 	article: {
-		publishedTime: '2020-08-03T17:31:37Z',
-		modifiedTime: '2020-08-20T09:31:37Z',
+		publishedTime: '2022-07-01T17:31:37Z',
+		modifiedTime: '2022-07-01T09:31:37Z',
 		expirationTime: '2025-12-21T17:31:37Z',
-		section: 'Section II',
+		section: 'Section I',
 		authors: [
-			'https://www.example.com/authors/@firstnameA-lastnameA',
-			'https://www.example.com/authors/@firstnameB-lastnameB'
+			'https://github.com/lemononmars',
 		],
-		tags: ['Tag A', 'Tag B', 'Tag C']
+		tags: ['board game', 'database', 'TBG', 'thailand', 'event', 'designer', 'publisher']
 	}
 };
 
@@ -43,6 +42,6 @@ export const siteSeoTwitter = {
 	site: '@username',
 	title: 'Thai BG Database',
 	description: 'Database for boardgames from Thai designersd',
-	image: 'https://www.example.com/images/cover.jpg',
+	image: 'https://raw.githubusercontent.com/lemononmars/thaibg/main/src/lib/assets/logos/THBDDB-Logo.png',
 	imageAlt: 'Cover image'
 };

@@ -16,6 +16,7 @@
          src={getImageURL(type, picture)}
          alt="image of {type}"
          on:error|once={(ev) => (ev.target.src = getDefaultImageURL(type))}
+         crossorigin="anonymous"
       />
    </div>
 </div>
