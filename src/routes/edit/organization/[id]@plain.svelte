@@ -275,6 +275,12 @@
 		return res;
 	}
 
+	let isEditing:boolean = false
+	function handleEdit(event){
+		console.log('handling', event)
+		isEditing = event.detail
+	}
+
 	function scrollTop() {
 		window.scroll({ top: 0, behavior: 'smooth' });
 	}
@@ -294,6 +300,7 @@
 			{submissionPackage}
 			bind:inputs={submission}
 			{currentData}
+			on:updateEditState={handleEdit}
 		/>
 	</CreateCard>
 
@@ -357,6 +364,7 @@
 						submissionPackage={editingRolePackage}
 						bind:inputs={rolesAdded[editingRoleIndex]['data']}
 						currentData={currentRolesData[editingRoleIndex]['data']}
+						on:updateEditState={handleEdit}
 					>
 						<span slot="header">
 							Editing {$_(`keyword.${editingRoleType}`)}

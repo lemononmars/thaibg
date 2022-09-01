@@ -122,7 +122,7 @@
 		'producer': getSubmissionPackage('producer'),
 		'rulebookeditor': getSubmissionPackage('rulebookeditor'),
 	}
-	let editingRoleIndex: number = -1;
+	let editingRoleIndex: number = -1
 	$: editingRoleType = rolesAdded[editingRoleIndex]?.type
 	let editingRolePackage: SubmissionPackage
 
@@ -285,6 +285,12 @@
 		}
 	}
 
+	let isEditing:boolean = false
+	function handleEdit(event){
+		console.log('handling', event)
+		isEditing = event.detail
+	}
+
 	function scrollTop() {
 		window.scroll({ top: 0, behavior: 'smooth' });
 	}
@@ -304,10 +310,13 @@
 			{submissionPackage}
 			bind:inputs={submission}
 			{currentData}
+			on:updateEditState={handleEdit}
 		/>
 	</CreateCard>
 
-	<div class="tooltip" data-tip={canSubmit? "":"please fill in either English or Thai name"}>
+	<div class="tooltip" data-tip={canSubmit? "":"please fill in either English or Thai name"}
+		class:invisible={isEditing}
+	>
 		<div 
 			class="btn hover:translate-x-4"
 			on:click|preventDefault={()=>{step = 1; dir = 1}}
@@ -369,6 +378,7 @@
 						submissionPackage={editingRolePackage}
 						bind:inputs={rolesAdded[editingRoleIndex]['data']}
 						currentData={currentRolesData[editingRoleIndex]['data']}
+						on:updateEditState={handleEdit}
 					>
 						<span slot="header">
 							Editing {$_(`keyword.${editingRoleType}`)}
@@ -379,18 +389,21 @@
 						submissionPackage={editingRolePackage}
 						bind:inputs={rolesAdded[editingRoleIndex]['data']}
 						{type}
+						on:updateEditState={handleEdit}
 					>
 						<span slot="header">
 							Adding {$_(`keyword.${editingRoleType}`)}
 						</span>
 					</InputForm>
 				{/if}
-				<div class="btn btn-error col-span-1" on:click={()=>removeRole(editingRoleIndex)}> Remove	</div>
-				<div class="btn btn-success col-span-2" on:click={handleSave}>Save</div>
+				{#if !isEditing}
+					<div class="btn btn-error col-span-1" on:click={()=>removeRole(editingRoleIndex)}> Remove	</div>
+					<div class="btn btn-success col-span-2" on:click={handleSave}>Save</div>
+				{/if}
 			</div>
 		{/if}
 	</CreateCard>
-	{#if (editingRoleIndex == -1)}
+	{#if (editingRoleIndex == -1) && !isEditing}
 	<div class="btn hover:-translate-x-4" on:click={()=>{step = 0; dir = -1; editingRoleIndex=-1}}> Prev <ChevronLeftIcon size=20/> </div>
 	<div class="btn hover:translate-x-4" on:click={()=>{step = 2; dir = 1; editingRoleIndex=-1}}> Next <ChevronRightIcon size=20/> </div>
 	{/if}

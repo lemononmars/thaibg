@@ -60,7 +60,7 @@
 	import EventCard from '$lib/components/EventCard.svelte';
 	import { _ } from 'svelte-i18n';
 	import Supporters from '$lib/assets/logos'
-	import heroImage from '$lib/assets/logos/database main image.png'
+	import heroImage from '$lib/assets/logos/database main image.svg'
 	import TBGIcons from '$lib/assets/icons/TBGIcons.svelte'
 	import ContactLinks from '$lib/components/ContactLinks.svelte';
 
@@ -95,7 +95,7 @@
 
 <Seo title="Home" />
 <div class="flex flex-col lg:flex-row w-screen bg-base-300 lg:pt-10 px-4 lg:px-60 justify-between">
-	<div class="flex flex-col order-first lg:order-none text-center lg:justify-center w-full lg:w-1/3 place-self-center">
+	<div class="flex flex-col order-first lg:order-none text-center lg:justify-center w-full lg:w-1/3 place-self-center pb-4">
 		<h1>{$_('page.home.welcome.intro')}</h1>
 		<div class="grid grid-cols-3 items-start py-4">
 			<div class="flex flex-col place-items-center">
@@ -125,7 +125,7 @@
 	</div>
 
 	<div class="order-last lg:order-none flex items-end lg:w-2/3">
-		<img src={heroImage} alt="hero" class="object-scale-down">
+		<img src={heroImage} alt="hero" >
 	</div>
 </div>
 
@@ -248,7 +248,7 @@
 		{#if res}
 			<div class="grid grid-cols-2 lg:grid-cols-3 justify-start mx-auto gap-4">
 				{#each res.developers as d, idx}
-					{@const developerRoles = ['UI Designer', 'Web Developer', 'Database Engineer']}
+					{@const developerRoles = ['UI Designer', 'Web Developer', 'Data Engineer']}
 					<div>
 						<PersonCard person={d}/>
 						<div class="my-4">{developerRoles[idx]}</div>

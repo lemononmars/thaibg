@@ -180,6 +180,7 @@
 			{#each menuTitles as title, idx}
 				<div 
 					class="flex flex-row items-center hover:{hoverColors[idx]}  hover:{menuColors[idx]}"
+					class:text-secondary={idx == menuTitles.length-1}
 					on:mouseover={()=>openTab(idx)}
 					on:focus={()=> hoveringTab = hoveringTab}
 				>

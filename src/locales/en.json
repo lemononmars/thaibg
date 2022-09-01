@@ -18,6 +18,11 @@
       "wargame": "Wargames"
     }
   },
+  "consent":{
+    "publish": "I affirm that these data are accurate, and allow them to be displayed publicly on this website.",
+    "forward": "I allow these data to be forwarded to public and private organizations to build networks of creative business.",
+    "opendata": "I allow these data to be used as Open Data via api."
+  },
   "event":{
     "_": "Event",
     "all": "All event",
@@ -424,6 +429,7 @@
     "Producer_show": "Public?"
   },
   "option": {
+    "other": "Other",
     "video": "Video",
     "podcast": "Podcast",
     "article": "Article",

@@ -4,6 +4,13 @@
    import GoogleMapFinder from './GoogleMapFinder.svelte';
    import MultipleSelect from './MultipleSelect.svelte';
    import UploadPicture from './UploadPicture.svelte';
+   import { createEventDispatcher } from 'svelte';
+
+   const dispatch = createEventDispatcher();
+
+   function toggleEdit(state:boolean) {
+      dispatch('updateEditState', state);
+   }
 
    export let inputs: Record<string, any>
    export let submissionPackage: Record<string, any>
@@ -50,11 +57,13 @@
             isEditted[k] = true
          }
 			editingKey = null
+         toggleEdit(false)
 		}
       // start editing
 		else if(!editingKey) {
 			editingContent = currentData[k]
 			editingKey = k
+         toggleEdit(true)
 		}
 	}
    

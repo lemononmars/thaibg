@@ -260,6 +260,11 @@
 		return data
 	}
 
+	let consents:boolean[] = [true, false, false]
+	function submitConsent() {
+
+	}
+
 	function scrollTop() {
 		window.scroll({ top: 0, behavior: 'smooth' });
 	}
@@ -361,7 +366,7 @@
 		<div class="btn hover:translate-x-4" on:click={()=>{step = 2; dir = 1; editingRoleIndex=-1}}> Next <ChevronRightIcon size=20/> </div>
 	{/if}
 {:else if step == 2}
-	<CreateCard bind:dir title={"Submit"}>
+	<CreateCard bind:dir title={$_("page.add.submit")}>
 		{#if adminSettings.requireApproval}
 			<div class="justify-self-end mx-2">{$_('page.add.comment')}</div>
 			<textarea
@@ -370,6 +375,22 @@
 				bind:value={comment}
 			/><br />
 		{/if}
+		<table class="table-auto text-left border-separate border-spacing-2">
+			<tbody>
+				<tr class="border">
+					<td class="p-2"><input type="checkbox" bind:checked={consents[0]} class="checkbox shrink" /></td> 
+					<td>{$_('consent.publish')}</td>
+				</tr>
+				<tr class="border">
+					<td class="p-2"><input type="checkbox" bind:checked={consents[1]} class="checkbox shrink" /></td> 
+					<td>{$_('consent.forward')}</td>
+				</tr>
+				<tr class="border">
+					<td class="p-2"><input type="checkbox" bind:checked={consents[2]} class="checkbox shrink" /></td> 
+					<td>{$_('consent.opendata')}</td>
+				</tr>
+			</tbody>
+		</table>
 	</CreateCard>
 	<div class="btn hover:-translate-x-4" on:click={()=>{step = 1; dir = -1}}>Prev <ChevronLeftIcon size=20/></div>
 	<div 

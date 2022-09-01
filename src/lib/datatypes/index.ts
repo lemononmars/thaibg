@@ -99,6 +99,7 @@ import { ShopSubmissionPackage, ShopStatusArray, ShopTypeArray, ThaiProvince } f
 import { SponsorSubmissionPackage } from './organizationRoles/Sponsor';
 import { TypeSubmissionPackage } from './Type';
 import { personRoles } from './personRoles';
+import { organizationRoles } from './organizationRoles'
 /*
  * return necessary data for submission page
  */
@@ -265,12 +266,12 @@ export function getFilterOptions(type: TypeName): FilterOption[] {
 			}
 		]
 		case 'organization':
-			// return [{
-			// 	type: 'multiple',
-			// 	key: 'Organization_relation',
-			// 	options: organizationRoles
-			// }]
-			return []
+			return [{
+				type: 'multiple',
+				key: 'Organization_relation',
+				options: organizationRoles
+			}]
+			//return []
 		case 'sponsor':
 			return []
 		case 'shop':

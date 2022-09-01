@@ -207,6 +207,12 @@
       })
 		return res;
 	}
+
+	let isEditing:boolean = false
+	function handleEdit(event){
+		console.log('handling', event)
+		isEditing = event.detail
+	}
 </script>
 
 <Seo title="Edit {type}" />
@@ -235,6 +241,7 @@
 			{submissionPackage}
 			bind:inputs={submission}
 			{currentData}
+			on:updateEditState={handleEdit}
 		>
 		</InputEditForm>
 	</CreateCard>
