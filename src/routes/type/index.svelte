@@ -18,7 +18,7 @@
 			id: t.Type_ID,
 			name: t.Type_name + ` (${counts[t.Type_ID] || 0})`,
 			slug: t.Type_slug,
-			type: 'category'
+			type: 'type'
 		}));
 
 		return  {

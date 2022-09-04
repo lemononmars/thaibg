@@ -42,6 +42,12 @@ export const TypeNamesArray = [
 	'type',
 ];
 
+export const activityTypes = [
+	'content',
+	'event',
+	'honor',
+]
+
 export type TypeName =
 	| TypeNameRole
 	| TypeNameOrganizationRole

@@ -16,6 +16,7 @@
 		// * type is invalid 
 		// * creating a new entry is not allowed
 		// * creating a new entry is allowed for registered user, not guest
+		console.log(data)
 		if ((!data[0].allowCreate)
 			|| (!data[0].allowGuestCreate && !user)) {
 
@@ -218,7 +219,8 @@
 			id,
 			username,
 			type: 'new',
-			comment
+			comment,
+			consent
 		});
 		if (res.ok) {
 			submitState = State.SUCCESS;
@@ -260,10 +262,7 @@
 		return data
 	}
 
-	let consents:boolean[] = [true, false, false]
-	function submitConsent() {
-
-	}
+	let consent:boolean[] = [true, false, false]
 
 	function scrollTop() {
 		window.scroll({ top: 0, behavior: 'smooth' });
@@ -378,15 +377,15 @@
 		<table class="table-auto text-left border-separate border-spacing-2">
 			<tbody>
 				<tr class="border">
-					<td class="p-2"><input type="checkbox" bind:checked={consents[0]} class="checkbox shrink" /></td> 
+					<td class="p-2"><input type="checkbox" bind:checked={consent[0]} class="checkbox shrink" /></td> 
 					<td>{$_('consent.publish')}</td>
 				</tr>
 				<tr class="border">
-					<td class="p-2"><input type="checkbox" bind:checked={consents[1]} class="checkbox shrink" /></td> 
+					<td class="p-2"><input type="checkbox" bind:checked={consent[1]} class="checkbox shrink" /></td> 
 					<td>{$_('consent.forward')}</td>
 				</tr>
 				<tr class="border">
-					<td class="p-2"><input type="checkbox" bind:checked={consents[2]} class="checkbox shrink" /></td> 
+					<td class="p-2"><input type="checkbox" bind:checked={consent[2]} class="checkbox shrink" /></td> 
 					<td>{$_('consent.opendata')}</td>
 				</tr>
 			</tbody>

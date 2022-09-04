@@ -28,7 +28,7 @@
 	import Social from '$lib/components/Social.svelte';
 	import { onMount } from 'svelte';
 	import type { TypeName } from '$lib/datatypes';
-	import {getSubmissionPackage} from '$lib/datatypes'
+	import {getSubmissionPackage, activityTypes} from '$lib/datatypes'
 	import {_} from 'svelte-i18n'
 	import EditButton from '$lib/components/EditButton.svelte';
 	import DataViewer from '$lib/components/DataViewer.svelte';
@@ -81,74 +81,116 @@
 	function getYoutubeID(link: string){
 		return link.slice(link.indexOf('=')+1)
 	}
+
+	// special layout for activity (honor, event, content)
+	// might be better to add a new folder ?
+	const isActivityType = activityTypes.includes(pageType)
+	const activityLayoutFlex = isActivityType ? '':'lg:flex-row'
+	const activityLayoutWidth = isActivityType? '':'lg:w-1/5'
+	const activityLayoutColumns = isActivityType? 'lg:flex-row':''
+	const activityLayoutShare = isActivityType? 'lg:hidden':''
 </script>
 
 <Seo title="{pageType}" />
-<div class="flex flex-col lg:flex-row text-left gap-6 p-4">
+<div class="flex flex-col {activityLayoutFlex} text-left gap-6 p-4">
 	<!-- first column-->
-	<div class="flex flex-col w-full lg:w-1/5 max-w-none gap-2">
-		{#if pageType !== 'content'}
-			<Picture type={pageType} picture={pageData[prefix + '_picture']}/>
-		{/if}
-		<h1>{pageName}</h1>
-		<h2>{pageData[prefix + '_name'] ? pageData[prefix + '_name_th'] || '': ''} </h2>
-		<div class="divider" />
-		{#each filteredKeys as k}
-			<h2>{$_(`key.${k}`)}</h2>
-			{#if k.includes("location")}
-				{#if pageData[prefix + '_location']?.location}
-					<div class="h-100 w-full">
-						<GoogleMapEmbed 
-							place={pageData[prefix + '_location']} 
-							name={pageName} 
-							id={pageID}
-							width={250}
-							height={150}
-						/>
-					</div>
+	<div class="flex flex-col {activityLayoutColumns} w-full {activityLayoutWidth} max-w-none gap-2">
+		<div>
+			<div class="flex flex-col justify-center">
+				{#if pageType !== 'content'}
+					<Picture type={pageType} picture={pageData[prefix + '_picture']}/>
 				{/if}
-				<p class="text-sm">{pageData[k]? pageData[k].formatted_address : $_('incomplete')}</p>
-			{:else}
-				<p class="whitespace-pre-wrap">{pageData[k] || $_('incomplete')}</p>
+				<h1>{pageName}</h1>
+				<h2>{pageData[prefix + '_name'] ? pageData[prefix + '_name_th'] || '': ''} </h2>
+				<div class="divider" />
+			</div>
+			{#if isActivityType}
+				<div class="hidden lg:block">
+					{#if pageData[prefix + '_links']}
+						<ContactLinks links={pageData[prefix + '_links']}/>
+					{/if}
+					{#if pageData[prefix + '_links'] && pageData[prefix + '_links'].length > 0}
+						<div class="flex flex-row items-center gap-2">
+							<h2>Share:</h2> 
+							<Social url={pageData[prefix + '_links']} title={pageData[prefix + '_name']} />
+						</div>
+					{/if}
+					{#if pageType === 'event'}
+						<AddToCalendarButton 
+							eventID={pageData.Event_ID}
+							eventName={pageData.Event_name}
+							location={pageData.Event_location?.formatted_address || '-'}
+							date={pageData.Event_time_start + '/' + pageData.Event_time_end}
+						/>
+					{/if}
+					{#if pageType !== 'mechanics'}
+						<h2>Edit this page:
+							<EditButton type={pageType} id={pageData[prefix + '_ID']}/>
+						</h2>
+					{/if}
+				</div>
 			{/if}
-		{/each}
-		{#if allKeys.includes('Content_links')}
-			{#each pageData.Content_links as link}
-				{#if link.includes('youtube')}
-					<iframe width="250" height="150" 
-						src="https://www.youtube.com/embed/{getYoutubeID(link)}?controls=0" 
-						title="YouTube video player" 
-						frameborder="0" 
-						allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-						allowfullscreen
-						class="mx-auto"
-					/>
+		</div>
+		<div class="w-full lg:w-2/3">
+			{#each filteredKeys as k}
+				<h2>{$_(`key.${k}`)}</h2>
+				{#if k.includes("location")}
+					{#if pageData[prefix + '_location']?.location}
+						<div class="h-100 w-full">
+							<GoogleMapEmbed 
+								place={pageData[prefix + '_location']} 
+								name={pageName} 
+								id={pageID}
+								width={250}
+								height={150}
+							/>
+						</div>
+					{/if}
+					<p class="text-sm">{pageData[k]? pageData[k].formatted_address : $_('incomplete')}</p>
+				{:else}
+					<p class="whitespace-pre-wrap">{pageData[k] || $_('incomplete')}</p>
 				{/if}
 			{/each}
-		{/if}
-		<div class="divider" />
-		{#if pageData[prefix + '_links']}
-			<ContactLinks links={pageData[prefix + '_links']}/>
-		{/if}
-		{#if pageData[prefix + '_links'] && pageData[prefix + '_links'].length > 0}
-			<div class="flex flex-row items-center gap-2">
-				<h2>Share:</h2> 
-				<Social url={pageData[prefix + '_links']} title={pageData[prefix + '_name']} />
+			{#if allKeys.includes('Content_links')}
+				{#each pageData.Content_links as link}
+					{#if link.includes('youtube')}
+						<iframe
+							class="mx-auto w-full aspect-video"
+							src="https://www.youtube.com/embed/{getYoutubeID(link)}?controls=0" 
+							title="YouTube video player" 
+							frameborder="0" 
+							allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+							allowfullscreen
+						/>
+					{/if}
+				{/each}
+				{/if}
+			<div class="divider" />
+			<div class="{activityLayoutShare}">
+				{#if pageData[prefix + '_links']}
+					<ContactLinks links={pageData[prefix + '_links']}/>
+				{/if}
+				{#if pageData[prefix + '_links'] && pageData[prefix + '_links'].length > 0}
+					<div class="flex flex-row items-center gap-2">
+						<h2>Share:</h2> 
+						<Social url={pageData[prefix + '_links']} title={pageData[prefix + '_name']} />
+					</div>
+				{/if}
+				{#if pageType === 'event'}
+					<AddToCalendarButton 
+						eventID={pageData.Event_ID}
+						eventName={pageData.Event_name}
+						location={pageData.Event_location?.formatted_address || '-'}
+						date={pageData.Event_time_start + '/' + pageData.Event_time_end}
+					/>
+				{/if}
+				{#if pageType !== 'mechanics'}
+					<h2>Edit this page:
+						<EditButton type={pageType} id={pageData[prefix + '_ID']}/>
+					</h2>
+				{/if}
 			</div>
-		{/if}
-		{#if pageType === 'event'}
-			<AddToCalendarButton 
-				eventID={pageData.Event_ID}
-				eventName={pageData.Event_name}
-				location={pageData.Event_location?.formatted_address || '-'}
-				date={pageData.Event_time_start + '/' + pageData.Event_time_end}
-			/>
-		{/if}
-		{#if pageType !== 'mechanics'}
-			<h2>Edit this page:
-				<EditButton type={pageType} id={pageData[prefix + '_ID']}/>
-			</h2>
-		{/if}
+		</div>
 	</div>
 	<!-- second column-->
 	<div class="flex flex-col w-full gap-4">

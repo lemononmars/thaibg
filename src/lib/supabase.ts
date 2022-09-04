@@ -34,7 +34,8 @@ export const from = (table: string) => supabaseClient.from(table);
 export const fromBucket = (bucket: SupaStorageBucket) => supabaseClient.storage.from(bucket);
 
 /*
- * c
+ * Return the name of the table in supabase
+ * Currently, we simply capitalize the word
  */
 export function getTableName(type: string): string {
 	return type[0].toUpperCase() + type.slice(1);
@@ -127,6 +128,7 @@ export interface SubmissionData {
 	id: string;
 	username: string;
 	comment: string;
+	consent?: boolean[];
 }
 
 /**
@@ -145,7 +147,6 @@ export async function addToSubmission(
 	const submissionIndex = await findNewUniqueID('Submission', IDColumn);
 	const pageType = submissionData.pageType
 	let index: number
-
 	// create an object to be added to the database table
 	let newSubmission = {
 		id: submissionIndex,
@@ -158,6 +159,7 @@ export async function addToSubmission(
 		Submission_user_ID: submissionData.id,
 		Submission_username: submissionData.username,
 		Submission_comment: submissionData.comment,
+		Submission_consent: submissionData.consent,
 		Submission_date: new Date(),
 		Submission_status: requireApproval? 'pending' : 'accepted'
 	}
@@ -183,7 +185,8 @@ export async function addToSubmission(
 		const res = await addToDatabase(
 			newSubmission.Submission_content,
 			newSubmission.Submission_page_type,
-			newSubmission.Submission_type
+			newSubmission.Submission_type,
+			newSubmission.Submission_consent
 		);
 		index = res.body.index
 		
@@ -238,7 +241,8 @@ export async function changeSubmissionStatus(
 		const res = await addToDatabase(
 			data.Submission_content,
 			data.Submission_page_type,
-			metadata.Submission_type
+			metadata.Submission_type,
+			data.Submission_consent
 		);
 
 		let index = res.body.index
@@ -274,8 +278,10 @@ export async function changeSubmissionStatus(
  * @param {string} pageType either person or organization
  * @returns promise object with {status: ..., message: ...}
  */
-async function addRolesContent(rolesSubmission: Record<string, any>, pageType: string)
-{
+async function addRolesContent(
+	rolesSubmission: Record<string, any>, 
+	pageType: string
+) {
 	let newRolesContent: Record<string, any> = {}
 	for(const role of Object.keys(rolesSubmission)) {
 		const rolePrefix = getVarPrefix(role)
@@ -316,11 +322,13 @@ async function addRolesContent(rolesSubmission: Record<string, any>, pageType: s
 async function addToDatabase(
 	JSONstring: string,
 	type: string, 
-	submissionType: string
+	submissionType: string,
+	consent?: boolean[]
 ): Promise<Record<string, any>> {
 	const parse = JSON.parse(JSONstring);
+	const IDColumn = getVarPrefix(type) + '_ID';
+	
 	if (submissionType === 'new') {
-		const IDColumn = getVarPrefix(type) + '_ID';
 		const index = await findNewUniqueID(type, IDColumn);
 		parse[IDColumn] = index
 	}
@@ -335,6 +343,21 @@ async function addToDatabase(
 				message: editError.message,
 			}
 		};
+
+	if(consent) {
+		let consentInsert = {
+			Consent_publish: consent[0],
+			Consent_forward: consent[1],
+			Consent_opendata: consent[2],
+			Consent_data_type: type,
+			Consent_data_ID: parse[IDColumn]
+		}
+		const { error: consentError } = await from('Consent').upsert([consentInsert], {
+			returning: 'minimal'
+		});
+		if(consentError)
+			throw consentError
+	}
 	return { 
 		status: 201,
 		body: {
@@ -385,8 +408,6 @@ async function addToDatabaseRelation(
 				? 'Content_Contentcreator_Relation'
 				:getTableName(mainRelation) + '_Relation';
 			const relationVarPrefix = getVarPrefix(relationType)
-
-			console.log(relationTableName + '<table,' + relationVarPrefix + ' index ' + index)
 
 			// Finally, we can create and insert a new row
 			for (const relation of relationObjects) {
