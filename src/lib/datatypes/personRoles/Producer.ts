@@ -36,6 +36,7 @@ export const ProducerSubmissionPackage = () => {
 		submission: <ProducerSubmission>{},
 		keys: ProducerDatabaseKeys,
 		relations: ProducerRelationArray,
+		required: [],
 		selects: {},
 		multiselects: {}
 	};

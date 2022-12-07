@@ -37,6 +37,7 @@ export const GraphicdesignerSubmissionPackage = () => {
 		keys: GraphicdesignerDatabaseKeys,
 		relations: GraphicdesignerRelationArray,
 		selects: {},
+		required: [],
 		multiselects: {
 			Graphicdesigner_links: []
 		}

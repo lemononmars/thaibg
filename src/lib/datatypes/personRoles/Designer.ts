@@ -38,6 +38,7 @@ export const DesignerSubmissionPackage = () => {
 		keys: DesignerDatabaseKeys,
 		relations: DesignerRelationArray,
 		selects: {},
+		required: [],
 		multiselects: {},
 	};
 };

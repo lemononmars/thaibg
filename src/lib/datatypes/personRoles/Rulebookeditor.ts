@@ -40,6 +40,7 @@ export const RulebookeditorSubmissionPackage = () => {
 		keys: RulebookeditorDatabaseKeys,
 		relations: RulebookeditorRelationArray,
 		selects: {},
+		required: [],
 		multiselects: {
 			Rulebookeditor_language: RulebookeditorLanguage,
 		}

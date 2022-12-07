@@ -36,6 +36,7 @@ export const ArtistSubmissionPackage = () => {
 		submission: <ArtistSubmission>{},
 		keys: ArtistDatabaseKeys,
 		relations: ArtistRelationArray,
+		required: [],
 		selects: {},
 		multiselects: {}
 	};

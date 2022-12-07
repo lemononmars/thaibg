@@ -139,7 +139,7 @@
 				links={person.Person_links}
 				email={person.Person_email}
 			/>
-			<EditButton type={'person'} id={person.Person_ID}/>
+			<!--EditButton type={'person'} id={person.Person_ID}/-->
 		</div>
 	</div>
 

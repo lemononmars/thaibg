@@ -37,6 +37,7 @@ export const PlaytesterSubmissionPackage = () => {
 		keys: PlaytesterDatabaseKeys,
 		relations: PlaytesterRelationArray,
 		selects: {},
+		required: [],
 		multiselects: {}
 	};
 };
