@@ -211,7 +211,7 @@
 							<ContactLinks
 								links={res[activeRolePrefix + '_links']}
 							/>
-							<EditButton type={activeRole} id={activeRoleID}/>
+							<!-- <EditButton type={activeRole} id={activeRoleID}/> -->
 							<h2>{$_(`key.${activeRolePrefix + '_description'}`)}</h2>
 							<p class="whitespace-pre-wrap">{res[activeRolePrefix + '_description']}</p>
 						</div>

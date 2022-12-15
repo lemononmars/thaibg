@@ -139,7 +139,7 @@
 				links={person.Person_links}
 				email={person.Person_email}
 			/>
-			<!--EditButton type={'person'} id={person.Person_ID}/-->
+			<EditButton type={'person'} id={person.Person_ID}/>
 		</div>
 	</div>
 
@@ -172,7 +172,7 @@
 							<h2>Languages</h2>
 							<p>{res.language}</p>
 						{/if}
-						<EditButton type={activeRole} id={res.id}/>
+						<!-- <EditButton type={activeRole} id={res.id}/> -->
 					</div>
 
 					<div class="divider" />
