@@ -221,7 +221,7 @@
 				{#if bg.TBG_name && bg.TBG_name_th}
 					<h2>({bg.TBG_name_th})</h2>
 				{/if}
-				<h2>{bg.TBG_released ? '(' + bg.TBG_released + ')' : ''}</h2>
+				<h2>{bg.TBG_released ? '(' + $_('key.TBG_released_AC') + bg.TBG_released + ')' : ''}</h2>
 			</div>
 			<div>
 				<TBGStageIcons status={bg.TBG_status} showText={true} />

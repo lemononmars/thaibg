@@ -212,6 +212,7 @@
     "BGG_links": "Board Game Geek link",
     "TBG_keyword": "Keyword",
     "TBG_released": "Released",
+    "TBG_released_AC": "AC.",
     "TBG_player": "Number of players",
     "TBG_player_min": "Minimum number of players",
     "TBG_player_max": "Maximum number of players",
