@@ -11,7 +11,8 @@
 		"format": "prettier --write .",
 		"format-check": "prettier -- --list-different",
 		"validate": "npm-run-all --parallel type-check lint build",
-		"prepare": "husky install"
+		"prepare": "husky install",
+		"postinstall": "node patch-svelte-kit.js"
 	},
 	"devDependencies": {
 		"@supabase/supabase-js": "^1.30.0",
