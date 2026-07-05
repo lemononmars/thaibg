@@ -11,6 +11,8 @@ export default {
 		})
 	],
 	kit: {
-		adapter: vercel()
+		adapter: vercel({
+			external: ['colorthief', 'canvas', 'discord.js']
+		})
 	}
 };
