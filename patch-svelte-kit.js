@@ -30,10 +30,11 @@ for (const file of files) {
 	}
 }
 
-// Patch @sveltejs/adapter-vercel/files/serverless.js to use installFetch
+// Patch @sveltejs/adapter-vercel/files/serverless.js to use installFetch and handle server.init
 const serverlessFile = path.join('node_modules', '@sveltejs/adapter-vercel', 'files', 'serverless.js');
 if (fs.existsSync(serverlessFile)) {
 	let content = fs.readFileSync(serverlessFile, 'utf8');
+	// Replace polyfills
 	if (content.includes("'@sveltejs/kit/node/polyfills'")) {
 		content = content.replace(
 			"import { installPolyfills } from '@sveltejs/kit/node/polyfills';",
@@ -43,7 +44,15 @@ if (fs.existsSync(serverlessFile)) {
 			"installPolyfills();",
 			"installFetch();"
 		);
-		fs.writeFileSync(serverlessFile, content);
 		console.log(`Patched polyfills in: ${serverlessFile}`);
 	}
+	// Make server.init conditional since SvelteKit next.334 doesn't have it
+	if (content.includes("await server.init({")) {
+		content = content.replace(
+			"await server.init({",
+			"if (server.init) await server.init({"
+		);
+		console.log(`Patched server.init in: ${serverlessFile}`);
+	}
+	fs.writeFileSync(serverlessFile, content);
 }
