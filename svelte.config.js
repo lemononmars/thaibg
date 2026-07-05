@@ -1,7 +1,5 @@
 import sveltePreprocess from 'svelte-preprocess';
-//import vercel from '@sveltejs/adapter-vercel';
-import node from '@sveltejs/adapter-node';
-// import pkg from './package.json';
+import vercel from '@sveltejs/adapter-vercel';
 
 /** @type {import('@sveltejs/kit').Config} */
 export default {
@@ -13,13 +11,6 @@ export default {
 		})
 	],
 	kit: {
-		adapter: node(),
-		//adapter: vercel(),
-
-		// vite: {
-		// 	ssr: {
-		// 		noExternal: Object.keys(pkg.dependencies || {})
-		// 	}
-		// }
+		adapter: vercel()
 	}
 };

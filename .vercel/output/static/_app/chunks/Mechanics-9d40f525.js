@@ -1,0 +1,1 @@
+const e=["Mech_name","Mech_category","Mech_links","Mech_description"],c=["action","areacontrol","auction","card","common","economics","gameend","gamestructure","movement","resolution","setcollection","turnorder","uncertainty","workerplacement"],s=()=>({submission:{},keys:e,relations:[],selects:{},multiselects:{},required:[],numbers:[]});export{s as M,c as a};

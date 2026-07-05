@@ -1,0 +1,1418 @@
+{
+  ".svelte-kit/runtime/client/start.js": {
+    "file": "start-8c0dfe54.js",
+    "src": ".svelte-kit/runtime/client/start.js",
+    "isEntry": true,
+    "imports": [
+      "_index-87f8004d.js",
+      "_index-fe597fd6.js",
+      "_index-40cf43ac.js",
+      "_singletons-d1fb5791.js",
+      "_index-8b5688bc.js",
+      "_index-d8d96671.js",
+      "_Mechanics-9d40f525.js"
+    ],
+    "dynamicImports": [
+      "src/routes/__layout.svelte",
+      "src/routes/__error.svelte",
+      "src/routes/__layout-foo.svelte",
+      "src/routes/__layout-plain.svelte",
+      "src/routes/[role=organizationRole]/[id]/[slug].svelte",
+      "src/routes/[role=organizationRole]/[id]/index.svelte",
+      "src/routes/[role=personRole]/[id]/[slug].svelte",
+      "src/routes/[role=personRole]/[id]/index.svelte",
+      "src/routes/[search=commonSearch]/[id]/[slug].svelte",
+      "src/routes/[search=commonSearch]/[id]/index.svelte",
+      "src/routes/[search=commonSearch]/index.svelte",
+      "src/routes/about.svelte",
+      "src/routes/add/[type]@plain.svelte",
+      "src/routes/add/boardgame@plain.svelte",
+      "src/routes/add/index.svelte",
+      "src/routes/add/organization@plain.svelte",
+      "src/routes/add/person@plain.svelte",
+      "src/routes/admin@plain.svelte",
+      "src/routes/auth.svelte",
+      "src/routes/boardgame/[id]/[slug].svelte",
+      "src/routes/boardgame/[id]/index.svelte",
+      "src/routes/category/index.svelte",
+      "src/routes/contact.svelte",
+      "src/routes/edit/[type]/[id]@plain.svelte",
+      "src/routes/edit/boardgame/[id]@plain.svelte",
+      "src/routes/edit/organization/[id]@plain.svelte",
+      "src/routes/edit/person/[id]@plain.svelte",
+      "src/routes/event/index.svelte",
+      "src/routes/glossary.svelte",
+      "src/routes/index@foo.svelte",
+      "src/routes/mechanics/index.svelte",
+      "src/routes/profile.svelte",
+      "src/routes/recentchanges.svelte",
+      "src/routes/shop/map@plain.svelte",
+      "src/routes/termofuse.svelte",
+      "src/routes/tool/weightcal.svelte",
+      "src/routes/type/index.svelte"
+    ]
+  },
+  "src/routes/__layout.svelte": {
+    "file": "pages/__layout.svelte-017bc5ca.js",
+    "src": "src/routes/__layout.svelte",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-87f8004d.js",
+      "_i18n-9c288979.js",
+      "_Footer-00d492c3.js",
+      "_alert.store-a6a29ca5.js",
+      "_index-fe597fd6.js",
+      "_index-17074200.js",
+      "_index-0400e8b0.js",
+      "_CheckCircleIcon-b6de3bc1.js",
+      "_runtime.esm-fe8bc3c1.js",
+      "_user.store-9066738e.js",
+      "_supabase-b8dab6e7.js",
+      "_index-40cf43ac.js",
+      "_navigation-0e6511d1.js",
+      "_singletons-d1fb5791.js",
+      "_ChevronDownIcon-fc6fdaba.js",
+      "_ChevronUpIcon-83250d76.js",
+      "_SearchIcon-c95459fd.js",
+      "_UserIcon-206bed00.js",
+      "_stores-5e23521c.js",
+      "_RoleButton-346631b3.js",
+      "_index-ed69b869.js",
+      "_index-d8d96671.js",
+      "_PlusCircleIcon-26a21601.js",
+      "_TBGIcons-a2762b4f.js",
+      "_iconStrings-b47472a3.js",
+      "_Spinner-e47e8906.js"
+    ]
+  },
+  "src/routes/__error.svelte": {
+    "file": "pages/__error.svelte-abd8b847.js",
+    "src": "src/routes/__error.svelte",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-87f8004d.js"
+    ]
+  },
+  "src/routes/__layout-foo.svelte": {
+    "file": "pages/__layout-foo.svelte-622d87ea.js",
+    "src": "src/routes/__layout-foo.svelte",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-87f8004d.js",
+      "_i18n-9c288979.js",
+      "_Footer-00d492c3.js",
+      "_alert.store-a6a29ca5.js",
+      "_index-fe597fd6.js",
+      "_index-17074200.js",
+      "_index-0400e8b0.js",
+      "_CheckCircleIcon-b6de3bc1.js",
+      "_runtime.esm-fe8bc3c1.js",
+      "_user.store-9066738e.js",
+      "_supabase-b8dab6e7.js",
+      "_index-40cf43ac.js",
+      "_navigation-0e6511d1.js",
+      "_singletons-d1fb5791.js",
+      "_ChevronDownIcon-fc6fdaba.js",
+      "_ChevronUpIcon-83250d76.js",
+      "_SearchIcon-c95459fd.js",
+      "_UserIcon-206bed00.js",
+      "_stores-5e23521c.js",
+      "_RoleButton-346631b3.js",
+      "_index-ed69b869.js",
+      "_index-d8d96671.js",
+      "_PlusCircleIcon-26a21601.js",
+      "_TBGIcons-a2762b4f.js",
+      "_iconStrings-b47472a3.js",
+      "_Spinner-e47e8906.js"
+    ]
+  },
+  "src/routes/__layout-plain.svelte": {
+    "file": "pages/__layout-plain.svelte-7127c558.js",
+    "src": "src/routes/__layout-plain.svelte",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-87f8004d.js",
+      "_i18n-9c288979.js",
+      "_runtime.esm-fe8bc3c1.js",
+      "_index-17074200.js",
+      "_alert.store-a6a29ca5.js",
+      "_index-fe597fd6.js",
+      "_CheckCircleIcon-b6de3bc1.js",
+      "_index-0400e8b0.js"
+    ]
+  },
+  "src/routes/[role=organizationRole]/[id]/[slug].svelte": {
+    "file": "pages/_role_organizationRole_/_id_/_slug_.svelte-2c607118.js",
+    "src": "src/routes/[role=organizationRole]/[id]/[slug].svelte",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-87f8004d.js",
+      "_index-8b5688bc.js",
+      "_supabase-b8dab6e7.js",
+      "_SEO-4841ffe5.js",
+      "_Spinner-e47e8906.js",
+      "_ContactLinks-256abb89.js",
+      "_EditButton-2fbff712.js",
+      "_runtime.esm-fe8bc3c1.js",
+      "_DataViewer-9fd9d10b.js",
+      "_GoogleMapEmbed-f89283af.js",
+      "_Picture-99da41d6.js",
+      "_ShopRelationTable-b01d9a7d.js",
+      "_index-40cf43ac.js",
+      "_Mechanics-9d40f525.js",
+      "_index-d8d96671.js",
+      "_EditIcon-1bd3ce15.js",
+      "_index-fe597fd6.js",
+      "_CheckCircleIcon-b6de3bc1.js",
+      "_ChevronDownIcon-fc6fdaba.js",
+      "_ChevronUpIcon-83250d76.js",
+      "_PersonCard-5ef5bac0.js",
+      "_BoardgameCard-039723dc.js",
+      "_PlainCard-a4f75f0f.js",
+      "_EventCard-8dd3387f.js",
+      "_ContentCard-3b58baca.js",
+      "_index-0400e8b0.js",
+      "_iconStrings-b47472a3.js",
+      "_XCircleIcon-c69a396c.js",
+      "_SaveIcon-68d50172.js",
+      "_SearchIcon-c95459fd.js",
+      "_alert.store-a6a29ca5.js"
+    ]
+  },
+  "src/routes/[role=organizationRole]/[id]/index.svelte": {
+    "file": "pages/_role_organizationRole_/_id_/index.svelte-a21a0c50.js",
+    "src": "src/routes/[role=organizationRole]/[id]/index.svelte",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-87f8004d.js",
+      "_supabase-b8dab6e7.js",
+      "_index-40cf43ac.js"
+    ]
+  },
+  "src/routes/[role=personRole]/[id]/[slug].svelte": {
+    "file": "pages/_role_personRole_/_id_/_slug_.svelte-62a6c4d8.js",
+    "src": "src/routes/[role=personRole]/[id]/[slug].svelte",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-87f8004d.js",
+      "_index-8b5688bc.js",
+      "_supabase-b8dab6e7.js",
+      "_SEO-4841ffe5.js",
+      "_Spinner-e47e8906.js",
+      "_ContactLinks-256abb89.js",
+      "_EditButton-2fbff712.js",
+      "_runtime.esm-fe8bc3c1.js",
+      "_DataViewer-9fd9d10b.js",
+      "_Picture-99da41d6.js",
+      "_index-40cf43ac.js",
+      "_Mechanics-9d40f525.js",
+      "_index-d8d96671.js",
+      "_EditIcon-1bd3ce15.js",
+      "_index-fe597fd6.js",
+      "_CheckCircleIcon-b6de3bc1.js",
+      "_ChevronDownIcon-fc6fdaba.js",
+      "_ChevronUpIcon-83250d76.js",
+      "_PersonCard-5ef5bac0.js",
+      "_BoardgameCard-039723dc.js",
+      "_PlainCard-a4f75f0f.js",
+      "_EventCard-8dd3387f.js",
+      "_ContentCard-3b58baca.js",
+      "_index-0400e8b0.js",
+      "_iconStrings-b47472a3.js",
+      "_XCircleIcon-c69a396c.js"
+    ]
+  },
+  "src/routes/[role=personRole]/[id]/index.svelte": {
+    "file": "pages/_role_personRole_/_id_/index.svelte-f2c0be17.js",
+    "src": "src/routes/[role=personRole]/[id]/index.svelte",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-87f8004d.js",
+      "_supabase-b8dab6e7.js",
+      "_index-40cf43ac.js"
+    ]
+  },
+  "src/routes/[search=commonSearch]/[id]/[slug].svelte": {
+    "file": "pages/_search_commonSearch_/_id_/_slug_.svelte-719a9149.js",
+    "src": "src/routes/[search=commonSearch]/[id]/[slug].svelte",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-87f8004d.js",
+      "_supabase-b8dab6e7.js",
+      "_SEO-4841ffe5.js",
+      "_Spinner-e47e8906.js",
+      "_HonorRelationTable-6ec6d019.js",
+      "_Social-f29774cb.js",
+      "_index-8b5688bc.js",
+      "_runtime.esm-fe8bc3c1.js",
+      "_EditButton-2fbff712.js",
+      "_DataViewer-9fd9d10b.js",
+      "_ContactLinks-256abb89.js",
+      "_GoogleMapEmbed-f89283af.js",
+      "_Picture-99da41d6.js",
+      "_index-40cf43ac.js",
+      "_EditIcon-1bd3ce15.js",
+      "_SaveIcon-68d50172.js",
+      "_SearchIcon-c95459fd.js",
+      "_XCircleIcon-c69a396c.js",
+      "_alert.store-a6a29ca5.js",
+      "_index-fe597fd6.js",
+      "_Mechanics-9d40f525.js",
+      "_index-d8d96671.js",
+      "_CheckCircleIcon-b6de3bc1.js",
+      "_ChevronDownIcon-fc6fdaba.js",
+      "_ChevronUpIcon-83250d76.js",
+      "_PersonCard-5ef5bac0.js",
+      "_BoardgameCard-039723dc.js",
+      "_PlainCard-a4f75f0f.js",
+      "_EventCard-8dd3387f.js",
+      "_ContentCard-3b58baca.js",
+      "_index-0400e8b0.js",
+      "_iconStrings-b47472a3.js"
+    ]
+  },
+  "src/routes/[search=commonSearch]/[id]/index.svelte": {
+    "file": "pages/_search_commonSearch_/_id_/index.svelte-abb065b4.js",
+    "src": "src/routes/[search=commonSearch]/[id]/index.svelte",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-87f8004d.js",
+      "_supabase-b8dab6e7.js",
+      "_alert.store-a6a29ca5.js",
+      "_index-40cf43ac.js",
+      "_index-fe597fd6.js"
+    ]
+  },
+  "src/routes/[search=commonSearch]/index.svelte": {
+    "file": "pages/_search_commonSearch_/index.svelte-57744522.js",
+    "src": "src/routes/[search=commonSearch]/index.svelte",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-87f8004d.js",
+      "_index-8b5688bc.js",
+      "_SEO-4841ffe5.js",
+      "_ChevronDownIcon-fc6fdaba.js",
+      "_ChevronUpIcon-83250d76.js",
+      "_SearchBar-439f1215.js",
+      "_index-17074200.js",
+      "_index-0400e8b0.js",
+      "_runtime.esm-fe8bc3c1.js",
+      "_DataViewer-9fd9d10b.js",
+      "_supabase-b8dab6e7.js",
+      "_RangeSlider-64e645a9.js",
+      "_index-40cf43ac.js",
+      "_Mechanics-9d40f525.js",
+      "_index-d8d96671.js",
+      "_SearchIcon-c95459fd.js",
+      "_index-fe597fd6.js",
+      "_CheckCircleIcon-b6de3bc1.js",
+      "_PersonCard-5ef5bac0.js",
+      "_Picture-99da41d6.js",
+      "_BoardgameCard-039723dc.js",
+      "_PlainCard-a4f75f0f.js",
+      "_EventCard-8dd3387f.js",
+      "_ContentCard-3b58baca.js",
+      "_iconStrings-b47472a3.js",
+      "_XCircleIcon-c69a396c.js"
+    ]
+  },
+  "src/routes/about.svelte": {
+    "file": "pages/about.svelte-17f42a62.js",
+    "src": "src/routes/about.svelte",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-87f8004d.js",
+      "_SEO-4841ffe5.js"
+    ]
+  },
+  "src/routes/add/[type]@plain.svelte": {
+    "file": "pages/add/_type_@plain.svelte-99fb4047.js",
+    "src": "src/routes/add/[type]@plain.svelte",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-87f8004d.js",
+      "_alert.store-a6a29ca5.js",
+      "_supabase-b8dab6e7.js",
+      "_index-8b5688bc.js",
+      "_SEO-4841ffe5.js",
+      "_navigation-0e6511d1.js",
+      "_user.store-9066738e.js",
+      "_InputForm-20282aaf.js",
+      "_SearchMultipleSelect-b8c5e6dd.js",
+      "_PlainCard-a4f75f0f.js",
+      "_ContentCard-3b58baca.js",
+      "_runtime.esm-fe8bc3c1.js",
+      "__createCard-776c58bf.js",
+      "_ChevronLeftIcon-141da66a.js",
+      "_SubmissionStatus-d599a3cc.js",
+      "_index-fe597fd6.js",
+      "_index-40cf43ac.js",
+      "_Mechanics-9d40f525.js",
+      "_index-d8d96671.js",
+      "_singletons-d1fb5791.js",
+      "_SearchIcon-c95459fd.js",
+      "_ChevronDownIcon-fc6fdaba.js",
+      "_Spinner-e47e8906.js",
+      "_index-ed69b869.js",
+      "_Picture-99da41d6.js",
+      "_index-17074200.js",
+      "_index-0400e8b0.js",
+      "_PlusCircleIcon-26a21601.js",
+      "_XCircleIcon-c69a396c.js"
+    ]
+  },
+  "src/routes/add/boardgame@plain.svelte": {
+    "file": "pages/add/boardgame@plain.svelte-0401f20f.js",
+    "src": "src/routes/add/boardgame@plain.svelte",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-87f8004d.js",
+      "_alert.store-a6a29ca5.js",
+      "_supabase-b8dab6e7.js",
+      "_index-40cf43ac.js",
+      "_index-8b5688bc.js",
+      "_SEO-4841ffe5.js",
+      "_navigation-0e6511d1.js",
+      "_user.store-9066738e.js",
+      "_runtime.esm-fe8bc3c1.js",
+      "_BoardgameCard-039723dc.js",
+      "_InputForm-20282aaf.js",
+      "_SearchMultipleSelect-b8c5e6dd.js",
+      "__createCard-776c58bf.js",
+      "_ChevronLeftIcon-141da66a.js",
+      "_ChevronRightIcon-51e7c557.js",
+      "_SubmissionStatus-d599a3cc.js",
+      "_index-fe597fd6.js",
+      "_Mechanics-9d40f525.js",
+      "_index-d8d96671.js",
+      "_singletons-d1fb5791.js",
+      "_Picture-99da41d6.js",
+      "_SearchIcon-c95459fd.js",
+      "_ChevronDownIcon-fc6fdaba.js",
+      "_Spinner-e47e8906.js",
+      "_index-ed69b869.js",
+      "_index-17074200.js",
+      "_index-0400e8b0.js",
+      "_PlusCircleIcon-26a21601.js",
+      "_XCircleIcon-c69a396c.js"
+    ]
+  },
+  "src/routes/add/index.svelte": {
+    "file": "pages/add/index.svelte-d6db6780.js",
+    "src": "src/routes/add/index.svelte",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-87f8004d.js",
+      "_runtime.esm-fe8bc3c1.js",
+      "_index-ed69b869.js",
+      "_TBGIcons-a2762b4f.js",
+      "_index-fe597fd6.js",
+      "_index-40cf43ac.js",
+      "_index-d8d96671.js",
+      "_iconStrings-b47472a3.js"
+    ],
+    "assets": [
+      "assets/board-game-stages-e04db402.svg"
+    ]
+  },
+  "src/routes/add/organization@plain.svelte": {
+    "file": "pages/add/organization@plain.svelte-fb226ec7.js",
+    "src": "src/routes/add/organization@plain.svelte",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-87f8004d.js",
+      "_alert.store-a6a29ca5.js",
+      "_supabase-b8dab6e7.js",
+      "_index-8b5688bc.js",
+      "_SEO-4841ffe5.js",
+      "_navigation-0e6511d1.js",
+      "_user.store-9066738e.js",
+      "_Spinner-e47e8906.js",
+      "_index-17074200.js",
+      "_index-0400e8b0.js",
+      "_runtime.esm-fe8bc3c1.js",
+      "_ChevronLeftIcon-141da66a.js",
+      "_ChevronRightIcon-51e7c557.js",
+      "_EditIcon-1bd3ce15.js",
+      "_MinusCircleIcon-0170e35c.js",
+      "_PlainCard-a4f75f0f.js",
+      "_RoleButton-346631b3.js",
+      "_InputForm-20282aaf.js",
+      "__createCard-776c58bf.js",
+      "_SubmissionStatus-d599a3cc.js",
+      "_index-d8d96671.js",
+      "_index-fe597fd6.js",
+      "_index-40cf43ac.js",
+      "_Mechanics-9d40f525.js",
+      "_singletons-d1fb5791.js",
+      "_Picture-99da41d6.js",
+      "_index-ed69b869.js",
+      "_PlusCircleIcon-26a21601.js",
+      "_SearchIcon-c95459fd.js",
+      "_TBGIcons-a2762b4f.js",
+      "_iconStrings-b47472a3.js",
+      "_XCircleIcon-c69a396c.js"
+    ]
+  },
+  "src/routes/add/person@plain.svelte": {
+    "file": "pages/add/person@plain.svelte-9b332a24.js",
+    "src": "src/routes/add/person@plain.svelte",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-87f8004d.js",
+      "_alert.store-a6a29ca5.js",
+      "_supabase-b8dab6e7.js",
+      "_index-8b5688bc.js",
+      "_SEO-4841ffe5.js",
+      "_navigation-0e6511d1.js",
+      "_user.store-9066738e.js",
+      "_index-17074200.js",
+      "_index-0400e8b0.js",
+      "_runtime.esm-fe8bc3c1.js",
+      "_ChevronLeftIcon-141da66a.js",
+      "_ChevronRightIcon-51e7c557.js",
+      "_EditIcon-1bd3ce15.js",
+      "_MinusCircleIcon-0170e35c.js",
+      "_PersonCard-5ef5bac0.js",
+      "_RoleButton-346631b3.js",
+      "_InputForm-20282aaf.js",
+      "__createCard-776c58bf.js",
+      "_SubmissionStatus-d599a3cc.js",
+      "_index-fe597fd6.js",
+      "_index-40cf43ac.js",
+      "_Mechanics-9d40f525.js",
+      "_index-d8d96671.js",
+      "_singletons-d1fb5791.js",
+      "_Picture-99da41d6.js",
+      "_index-ed69b869.js",
+      "_PlusCircleIcon-26a21601.js",
+      "_SearchIcon-c95459fd.js",
+      "_TBGIcons-a2762b4f.js",
+      "_iconStrings-b47472a3.js",
+      "_XCircleIcon-c69a396c.js",
+      "_Spinner-e47e8906.js"
+    ]
+  },
+  "src/routes/admin@plain.svelte": {
+    "file": "pages/admin@plain.svelte-b90be8e7.js",
+    "src": "src/routes/admin@plain.svelte",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-87f8004d.js",
+      "_alert.store-a6a29ca5.js",
+      "_supabase-b8dab6e7.js",
+      "_Spinner-e47e8906.js",
+      "_navigation-0e6511d1.js",
+      "_SEO-4841ffe5.js",
+      "_index-40cf43ac.js",
+      "_index-d8d96671.js",
+      "_index-fe597fd6.js",
+      "_singletons-d1fb5791.js"
+    ]
+  },
+  "src/routes/auth.svelte": {
+    "file": "pages/auth.svelte-62057d00.js",
+    "src": "src/routes/auth.svelte",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-87f8004d.js",
+      "_supabase-b8dab6e7.js",
+      "_navigation-0e6511d1.js",
+      "_stores-5e23521c.js",
+      "_SEO-4841ffe5.js",
+      "_alert.store-a6a29ca5.js",
+      "_Spinner-e47e8906.js",
+      "_index-40cf43ac.js",
+      "_singletons-d1fb5791.js",
+      "_index-fe597fd6.js"
+    ]
+  },
+  "src/routes/boardgame/[id]/[slug].svelte": {
+    "file": "pages/boardgame/_id_/_slug_.svelte-1d186c58.js",
+    "src": "src/routes/boardgame/[id]/[slug].svelte",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-87f8004d.js",
+      "_user.store-9066738e.js",
+      "_index-8b5688bc.js",
+      "_supabase-b8dab6e7.js",
+      "_SEO-4841ffe5.js",
+      "_Picture-99da41d6.js",
+      "_Spinner-e47e8906.js",
+      "_navigation-0e6511d1.js",
+      "_runtime.esm-fe8bc3c1.js",
+      "_UserIcon-206bed00.js",
+      "_DataViewer-9fd9d10b.js",
+      "_Social-f29774cb.js",
+      "_index-17074200.js",
+      "_EditButton-2fbff712.js",
+      "_index-40cf43ac.js",
+      "_index-fe597fd6.js",
+      "_Mechanics-9d40f525.js",
+      "_index-d8d96671.js",
+      "_singletons-d1fb5791.js",
+      "_CheckCircleIcon-b6de3bc1.js",
+      "_ChevronDownIcon-fc6fdaba.js",
+      "_ChevronUpIcon-83250d76.js",
+      "_PersonCard-5ef5bac0.js",
+      "_BoardgameCard-039723dc.js",
+      "_PlainCard-a4f75f0f.js",
+      "_EventCard-8dd3387f.js",
+      "_ContentCard-3b58baca.js",
+      "_index-0400e8b0.js",
+      "_iconStrings-b47472a3.js",
+      "_XCircleIcon-c69a396c.js",
+      "_EditIcon-1bd3ce15.js"
+    ]
+  },
+  "src/routes/boardgame/[id]/index.svelte": {
+    "file": "pages/boardgame/_id_/index.svelte-eed5a897.js",
+    "src": "src/routes/boardgame/[id]/index.svelte",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-87f8004d.js",
+      "_supabase-b8dab6e7.js",
+      "_index-40cf43ac.js"
+    ]
+  },
+  "src/routes/category/index.svelte": {
+    "file": "pages/category/index.svelte-d7d674dd.js",
+    "src": "src/routes/category/index.svelte",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-87f8004d.js",
+      "_SEO-4841ffe5.js",
+      "_ListCard-07a9f06f.js",
+      "_runtime.esm-fe8bc3c1.js",
+      "_Picture-99da41d6.js",
+      "_supabase-b8dab6e7.js",
+      "_index-40cf43ac.js",
+      "_index-fe597fd6.js"
+    ]
+  },
+  "src/routes/contact.svelte": {
+    "file": "pages/contact.svelte-171254b2.js",
+    "src": "src/routes/contact.svelte",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-87f8004d.js",
+      "_SEO-4841ffe5.js",
+      "_runtime.esm-fe8bc3c1.js",
+      "_index-fe597fd6.js"
+    ]
+  },
+  "src/routes/edit/[type]/[id]@plain.svelte": {
+    "file": "pages/edit/_type_/_id_@plain.svelte-d316340b.js",
+    "src": "src/routes/edit/[type]/[id]@plain.svelte",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-87f8004d.js",
+      "_alert.store-a6a29ca5.js",
+      "_supabase-b8dab6e7.js",
+      "_index-8b5688bc.js",
+      "_SEO-4841ffe5.js",
+      "_navigation-0e6511d1.js",
+      "_user.store-9066738e.js",
+      "_Spinner-e47e8906.js",
+      "_SearchMultipleSelect-b8c5e6dd.js",
+      "_runtime.esm-fe8bc3c1.js",
+      "__createCard-c87919dc.js",
+      "_ChevronLeftIcon-141da66a.js",
+      "_ChevronRightIcon-51e7c557.js",
+      "_HonorRelationTable-6ec6d019.js",
+      "_ShopRelationTable-b01d9a7d.js",
+      "_SubmissionStatus-d599a3cc.js",
+      "_index-fe597fd6.js",
+      "_index-40cf43ac.js",
+      "_Mechanics-9d40f525.js",
+      "_index-d8d96671.js",
+      "_singletons-d1fb5791.js",
+      "_ChevronDownIcon-fc6fdaba.js",
+      "_SearchIcon-c95459fd.js",
+      "_index-ed69b869.js",
+      "_EditIcon-1bd3ce15.js",
+      "_SaveIcon-68d50172.js",
+      "_index-17074200.js",
+      "_index-0400e8b0.js",
+      "_XCircleIcon-c69a396c.js",
+      "_Picture-99da41d6.js",
+      "_CheckCircleIcon-b6de3bc1.js",
+      "_PlusCircleIcon-26a21601.js"
+    ]
+  },
+  "src/routes/edit/boardgame/[id]@plain.svelte": {
+    "file": "pages/edit/boardgame/_id_@plain.svelte-7bb5182d.js",
+    "src": "src/routes/edit/boardgame/[id]@plain.svelte",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-87f8004d.js",
+      "_alert.store-a6a29ca5.js",
+      "_supabase-b8dab6e7.js",
+      "_index-40cf43ac.js",
+      "_index-8b5688bc.js",
+      "_SEO-4841ffe5.js",
+      "_navigation-0e6511d1.js",
+      "_user.store-9066738e.js",
+      "_runtime.esm-fe8bc3c1.js",
+      "__createCard-c87919dc.js",
+      "_SearchMultipleSelect-b8c5e6dd.js",
+      "_ChevronLeftIcon-141da66a.js",
+      "_ChevronRightIcon-51e7c557.js",
+      "_SubmissionStatus-d599a3cc.js",
+      "_index-fe597fd6.js",
+      "_Mechanics-9d40f525.js",
+      "_index-d8d96671.js",
+      "_singletons-d1fb5791.js",
+      "_EditIcon-1bd3ce15.js",
+      "_SaveIcon-68d50172.js",
+      "_index-17074200.js",
+      "_index-0400e8b0.js",
+      "_ChevronDownIcon-fc6fdaba.js",
+      "_SearchIcon-c95459fd.js",
+      "_Spinner-e47e8906.js",
+      "_index-ed69b869.js",
+      "_PlusCircleIcon-26a21601.js",
+      "_XCircleIcon-c69a396c.js"
+    ]
+  },
+  "src/routes/edit/organization/[id]@plain.svelte": {
+    "file": "pages/edit/organization/_id_@plain.svelte-378e3f75.js",
+    "src": "src/routes/edit/organization/[id]@plain.svelte",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-87f8004d.js",
+      "_alert.store-a6a29ca5.js",
+      "_supabase-b8dab6e7.js",
+      "_index-8b5688bc.js",
+      "_SEO-4841ffe5.js",
+      "_navigation-0e6511d1.js",
+      "_user.store-9066738e.js",
+      "_index-17074200.js",
+      "_index-0400e8b0.js",
+      "_runtime.esm-fe8bc3c1.js",
+      "_ChevronLeftIcon-141da66a.js",
+      "_ChevronRightIcon-51e7c557.js",
+      "_EditIcon-1bd3ce15.js",
+      "_MinusCircleIcon-0170e35c.js",
+      "_RoleButton-346631b3.js",
+      "__createCard-c87919dc.js",
+      "_InputForm-20282aaf.js",
+      "_SubmissionStatus-d599a3cc.js",
+      "_index-d8d96671.js",
+      "_index-fe597fd6.js",
+      "_index-40cf43ac.js",
+      "_Mechanics-9d40f525.js",
+      "_singletons-d1fb5791.js",
+      "_index-ed69b869.js",
+      "_PlusCircleIcon-26a21601.js",
+      "_SearchIcon-c95459fd.js",
+      "_TBGIcons-a2762b4f.js",
+      "_iconStrings-b47472a3.js",
+      "_SaveIcon-68d50172.js",
+      "_XCircleIcon-c69a396c.js",
+      "_Spinner-e47e8906.js"
+    ]
+  },
+  "src/routes/edit/person/[id]@plain.svelte": {
+    "file": "pages/edit/person/_id_@plain.svelte-38013444.js",
+    "src": "src/routes/edit/person/[id]@plain.svelte",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-87f8004d.js",
+      "_alert.store-a6a29ca5.js",
+      "_supabase-b8dab6e7.js",
+      "_index-8b5688bc.js",
+      "_SEO-4841ffe5.js",
+      "_navigation-0e6511d1.js",
+      "_user.store-9066738e.js",
+      "_index-17074200.js",
+      "_index-0400e8b0.js",
+      "_runtime.esm-fe8bc3c1.js",
+      "_ChevronLeftIcon-141da66a.js",
+      "_ChevronRightIcon-51e7c557.js",
+      "_EditIcon-1bd3ce15.js",
+      "_MinusCircleIcon-0170e35c.js",
+      "_RoleButton-346631b3.js",
+      "__createCard-c87919dc.js",
+      "_InputForm-20282aaf.js",
+      "_SubmissionStatus-d599a3cc.js",
+      "_index-40cf43ac.js",
+      "_index-fe597fd6.js",
+      "_Mechanics-9d40f525.js",
+      "_index-d8d96671.js",
+      "_singletons-d1fb5791.js",
+      "_index-ed69b869.js",
+      "_PlusCircleIcon-26a21601.js",
+      "_SearchIcon-c95459fd.js",
+      "_TBGIcons-a2762b4f.js",
+      "_iconStrings-b47472a3.js",
+      "_SaveIcon-68d50172.js",
+      "_XCircleIcon-c69a396c.js",
+      "_Spinner-e47e8906.js"
+    ]
+  },
+  "src/routes/event/index.svelte": {
+    "file": "pages/event/index.svelte-92ce4096.js",
+    "src": "src/routes/event/index.svelte",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-87f8004d.js",
+      "_index-8b5688bc.js",
+      "_SEO-4841ffe5.js",
+      "_ChevronDownIcon-fc6fdaba.js",
+      "_ChevronUpIcon-83250d76.js",
+      "_SearchBar-439f1215.js",
+      "_index-17074200.js",
+      "_index-0400e8b0.js",
+      "_runtime.esm-fe8bc3c1.js",
+      "_DataViewer-9fd9d10b.js",
+      "_supabase-b8dab6e7.js",
+      "_RangeSlider-64e645a9.js",
+      "_index-40cf43ac.js",
+      "_Mechanics-9d40f525.js",
+      "_index-d8d96671.js",
+      "_SearchIcon-c95459fd.js",
+      "_index-fe597fd6.js",
+      "_CheckCircleIcon-b6de3bc1.js",
+      "_PersonCard-5ef5bac0.js",
+      "_Picture-99da41d6.js",
+      "_BoardgameCard-039723dc.js",
+      "_PlainCard-a4f75f0f.js",
+      "_EventCard-8dd3387f.js",
+      "_ContentCard-3b58baca.js",
+      "_iconStrings-b47472a3.js",
+      "_XCircleIcon-c69a396c.js"
+    ]
+  },
+  "src/routes/glossary.svelte": {
+    "file": "pages/glossary.svelte-f90e80c2.js",
+    "src": "src/routes/glossary.svelte",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-87f8004d.js",
+      "_SEO-4841ffe5.js"
+    ]
+  },
+  "src/routes/index@foo.svelte": {
+    "file": "pages/index@foo.svelte-836d7b30.js",
+    "src": "src/routes/index@foo.svelte",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-87f8004d.js",
+      "_SEO-4841ffe5.js",
+      "_Spinner-e47e8906.js",
+      "_supabase-b8dab6e7.js",
+      "_BoardgameCard-039723dc.js",
+      "_PersonCard-5ef5bac0.js",
+      "_ChevronLeftIcon-141da66a.js",
+      "_ChevronRightIcon-51e7c557.js",
+      "_ContentCard-3b58baca.js",
+      "_EventCard-8dd3387f.js",
+      "_runtime.esm-fe8bc3c1.js",
+      "_TBGIcons-a2762b4f.js",
+      "_ContactLinks-256abb89.js",
+      "_index-40cf43ac.js",
+      "_Picture-99da41d6.js",
+      "_index-fe597fd6.js",
+      "_iconStrings-b47472a3.js",
+      "_index-d8d96671.js"
+    ],
+    "css": [
+      "assets/pages/index@foo.svelte-86b59165.css"
+    ],
+    "assets": [
+      "assets/bgdt logo-ac2797cb.jpg",
+      "assets/lunar gravity logo-1f8491f9.png",
+      "assets/wizards-of-learning-89a7f68a.jpg",
+      "assets/TBGA-logo-32f1724f.png",
+      "assets/database main image-7eead0a2.svg"
+    ]
+  },
+  "src/routes/mechanics/index.svelte": {
+    "file": "pages/mechanics/index.svelte-37707536.js",
+    "src": "src/routes/mechanics/index.svelte",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-87f8004d.js",
+      "_SEO-4841ffe5.js",
+      "_Spinner-e47e8906.js",
+      "_ListCard-07a9f06f.js",
+      "_index-40cf43ac.js",
+      "_Mechanics-9d40f525.js",
+      "_runtime.esm-fe8bc3c1.js",
+      "_Picture-99da41d6.js",
+      "_supabase-b8dab6e7.js",
+      "_index-fe597fd6.js"
+    ]
+  },
+  "src/routes/profile.svelte": {
+    "file": "pages/profile.svelte-359d6c84.js",
+    "src": "src/routes/profile.svelte",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-87f8004d.js",
+      "_user.store-9066738e.js",
+      "_index-fe597fd6.js",
+      "_alert.store-a6a29ca5.js",
+      "_SEO-4841ffe5.js",
+      "_supabase-b8dab6e7.js",
+      "_index-40cf43ac.js",
+      "_navigation-0e6511d1.js",
+      "_singletons-d1fb5791.js"
+    ]
+  },
+  "src/routes/recentchanges.svelte": {
+    "file": "pages/recentchanges.svelte-d7e875c6.js",
+    "src": "src/routes/recentchanges.svelte",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-87f8004d.js"
+    ]
+  },
+  "src/routes/shop/map@plain.svelte": {
+    "file": "pages/shop/map@plain.svelte-b487ab58.js",
+    "src": "src/routes/shop/map@plain.svelte",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-87f8004d.js",
+      "_Picture-99da41d6.js",
+      "_supabase-b8dab6e7.js",
+      "_index-40cf43ac.js"
+    ]
+  },
+  "src/routes/termofuse.svelte": {
+    "file": "pages/termofuse.svelte-65c706aa.js",
+    "src": "src/routes/termofuse.svelte",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-87f8004d.js",
+      "_SEO-4841ffe5.js",
+      "_runtime.esm-fe8bc3c1.js",
+      "_index-fe597fd6.js"
+    ]
+  },
+  "src/routes/tool/weightcal.svelte": {
+    "file": "pages/tool/weightcal.svelte-5fe3b307.js",
+    "src": "src/routes/tool/weightcal.svelte",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-87f8004d.js",
+      "_SEO-4841ffe5.js",
+      "_runtime.esm-fe8bc3c1.js",
+      "_RangeSlider-64e645a9.js",
+      "_index-fe597fd6.js"
+    ]
+  },
+  "src/routes/type/index.svelte": {
+    "file": "pages/type/index.svelte-264b9692.js",
+    "src": "src/routes/type/index.svelte",
+    "isEntry": true,
+    "isDynamicEntry": true,
+    "imports": [
+      "_index-87f8004d.js",
+      "_SEO-4841ffe5.js",
+      "_ListCard-07a9f06f.js",
+      "_runtime.esm-fe8bc3c1.js",
+      "_Picture-99da41d6.js",
+      "_supabase-b8dab6e7.js",
+      "_index-40cf43ac.js",
+      "_index-fe597fd6.js"
+    ]
+  },
+  "_index-87f8004d.js": {
+    "file": "chunks/index-87f8004d.js"
+  },
+  "_index-fe597fd6.js": {
+    "file": "chunks/index-fe597fd6.js",
+    "imports": [
+      "_index-87f8004d.js"
+    ]
+  },
+  "_singletons-d1fb5791.js": {
+    "file": "chunks/singletons-d1fb5791.js"
+  },
+  "_index-40cf43ac.js": {
+    "file": "chunks/index-40cf43ac.js"
+  },
+  "_index-8b5688bc.js": {
+    "file": "chunks/index-8b5688bc.js",
+    "imports": [
+      "_index-40cf43ac.js",
+      "_Mechanics-9d40f525.js",
+      "_index-d8d96671.js"
+    ]
+  },
+  "_index-d8d96671.js": {
+    "file": "chunks/index-d8d96671.js"
+  },
+  "_Mechanics-9d40f525.js": {
+    "file": "chunks/Mechanics-9d40f525.js"
+  },
+  "_i18n-9c288979.js": {
+    "file": "chunks/i18n-9c288979.js",
+    "imports": [
+      "_index-87f8004d.js",
+      "_alert.store-a6a29ca5.js",
+      "_index-17074200.js",
+      "_CheckCircleIcon-b6de3bc1.js",
+      "_runtime.esm-fe8bc3c1.js",
+      "_index-fe597fd6.js"
+    ],
+    "css": [
+      "assets/i18n-6ce2af5a.css"
+    ]
+  },
+  "_Footer-00d492c3.js": {
+    "file": "chunks/Footer-00d492c3.js",
+    "imports": [
+      "_index-87f8004d.js",
+      "_runtime.esm-fe8bc3c1.js",
+      "_i18n-9c288979.js",
+      "_user.store-9066738e.js",
+      "_ChevronDownIcon-fc6fdaba.js",
+      "_ChevronUpIcon-83250d76.js",
+      "_SearchIcon-c95459fd.js",
+      "_UserIcon-206bed00.js",
+      "_index-17074200.js",
+      "_stores-5e23521c.js",
+      "_alert.store-a6a29ca5.js",
+      "_RoleButton-346631b3.js",
+      "_supabase-b8dab6e7.js",
+      "_Spinner-e47e8906.js",
+      "_index-40cf43ac.js"
+    ],
+    "css": [
+      "assets/Footer-10197845.css"
+    ],
+    "assets": [
+      "assets/THBDDB-Logo-bd8ff76a.png"
+    ]
+  },
+  "_stores-5e23521c.js": {
+    "file": "chunks/stores-5e23521c.js",
+    "imports": [
+      "_index-87f8004d.js"
+    ]
+  },
+  "_runtime.esm-fe8bc3c1.js": {
+    "file": "chunks/runtime.esm-fe8bc3c1.js",
+    "imports": [
+      "_index-fe597fd6.js"
+    ]
+  },
+  "_user.store-9066738e.js": {
+    "file": "chunks/user.store-9066738e.js",
+    "imports": [
+      "_supabase-b8dab6e7.js",
+      "_index-fe597fd6.js",
+      "_navigation-0e6511d1.js"
+    ]
+  },
+  "_ChevronDownIcon-fc6fdaba.js": {
+    "file": "chunks/ChevronDownIcon-fc6fdaba.js",
+    "imports": [
+      "_index-87f8004d.js"
+    ]
+  },
+  "_ChevronUpIcon-83250d76.js": {
+    "file": "chunks/ChevronUpIcon-83250d76.js",
+    "imports": [
+      "_index-87f8004d.js"
+    ]
+  },
+  "_SearchIcon-c95459fd.js": {
+    "file": "chunks/SearchIcon-c95459fd.js",
+    "imports": [
+      "_index-87f8004d.js"
+    ]
+  },
+  "_UserIcon-206bed00.js": {
+    "file": "chunks/UserIcon-206bed00.js",
+    "imports": [
+      "_index-87f8004d.js"
+    ]
+  },
+  "_index-17074200.js": {
+    "file": "chunks/index-17074200.js",
+    "imports": [
+      "_index-0400e8b0.js",
+      "_index-87f8004d.js"
+    ]
+  },
+  "_alert.store-a6a29ca5.js": {
+    "file": "chunks/alert.store-a6a29ca5.js",
+    "imports": [
+      "_index-fe597fd6.js"
+    ]
+  },
+  "_RoleButton-346631b3.js": {
+    "file": "chunks/RoleButton-346631b3.js",
+    "imports": [
+      "_index-87f8004d.js",
+      "_index-ed69b869.js",
+      "_PlusCircleIcon-26a21601.js",
+      "_SearchIcon-c95459fd.js",
+      "_runtime.esm-fe8bc3c1.js",
+      "_TBGIcons-a2762b4f.js"
+    ]
+  },
+  "_supabase-b8dab6e7.js": {
+    "file": "chunks/supabase-b8dab6e7.js",
+    "imports": [
+      "_index-40cf43ac.js"
+    ]
+  },
+  "_navigation-0e6511d1.js": {
+    "file": "chunks/navigation-0e6511d1.js",
+    "imports": [
+      "_singletons-d1fb5791.js"
+    ]
+  },
+  "_index-0400e8b0.js": {
+    "file": "chunks/index-0400e8b0.js",
+    "imports": [
+      "_index-87f8004d.js"
+    ]
+  },
+  "_Spinner-e47e8906.js": {
+    "file": "chunks/Spinner-e47e8906.js",
+    "imports": [
+      "_index-87f8004d.js"
+    ],
+    "css": [
+      "assets/Spinner-d2b2eb7c.css"
+    ]
+  },
+  "_index-ed69b869.js": {
+    "file": "chunks/index-ed69b869.js",
+    "imports": [
+      "_index-40cf43ac.js",
+      "_index-d8d96671.js"
+    ],
+    "assets": [
+      "assets/icon-boardgame-f536944d.svg",
+      "assets/icon-content-6809276f.svg",
+      "assets/icon-event-4ff4fd79.svg",
+      "assets/icon-honor-6df8fe43.svg",
+      "assets/icon-organization-f432c875.svg",
+      "assets/icon-mechanics-47f6fd2e.svg",
+      "assets/icon-person-16e36d63.svg",
+      "assets/icon-role-e5e02851.svg",
+      "assets/icon-shop-45d90420.svg"
+    ]
+  },
+  "_PlusCircleIcon-26a21601.js": {
+    "file": "chunks/PlusCircleIcon-26a21601.js",
+    "imports": [
+      "_index-87f8004d.js"
+    ]
+  },
+  "_TBGIcons-a2762b4f.js": {
+    "file": "chunks/TBGIcons-a2762b4f.js",
+    "imports": [
+      "_index-87f8004d.js",
+      "_iconStrings-b47472a3.js",
+      "_index-40cf43ac.js",
+      "_index-d8d96671.js"
+    ]
+  },
+  "_CheckCircleIcon-b6de3bc1.js": {
+    "file": "chunks/CheckCircleIcon-b6de3bc1.js",
+    "imports": [
+      "_index-87f8004d.js"
+    ]
+  },
+  "_iconStrings-b47472a3.js": {
+    "file": "chunks/iconStrings-b47472a3.js"
+  },
+  "_SEO-4841ffe5.js": {
+    "file": "chunks/SEO-4841ffe5.js",
+    "imports": [
+      "_index-87f8004d.js"
+    ]
+  },
+  "_ContactLinks-256abb89.js": {
+    "file": "chunks/ContactLinks-256abb89.js",
+    "imports": [
+      "_index-87f8004d.js"
+    ]
+  },
+  "_EditButton-2fbff712.js": {
+    "file": "chunks/EditButton-2fbff712.js",
+    "imports": [
+      "_index-87f8004d.js",
+      "_EditIcon-1bd3ce15.js"
+    ]
+  },
+  "_DataViewer-9fd9d10b.js": {
+    "file": "chunks/DataViewer-9fd9d10b.js",
+    "imports": [
+      "_index-87f8004d.js",
+      "_supabase-b8dab6e7.js",
+      "_index-40cf43ac.js",
+      "_index-8b5688bc.js",
+      "_CheckCircleIcon-b6de3bc1.js",
+      "_ChevronDownIcon-fc6fdaba.js",
+      "_ChevronUpIcon-83250d76.js",
+      "_PersonCard-5ef5bac0.js",
+      "_BoardgameCard-039723dc.js",
+      "_PlainCard-a4f75f0f.js",
+      "_Picture-99da41d6.js",
+      "_EventCard-8dd3387f.js",
+      "_ContentCard-3b58baca.js",
+      "_index-0400e8b0.js",
+      "_runtime.esm-fe8bc3c1.js",
+      "_iconStrings-b47472a3.js",
+      "_XCircleIcon-c69a396c.js"
+    ]
+  },
+  "_GoogleMapEmbed-f89283af.js": {
+    "file": "chunks/GoogleMapEmbed-f89283af.js",
+    "imports": [
+      "_index-87f8004d.js"
+    ]
+  },
+  "_Picture-99da41d6.js": {
+    "file": "chunks/Picture-99da41d6.js",
+    "imports": [
+      "_index-87f8004d.js",
+      "_supabase-b8dab6e7.js"
+    ]
+  },
+  "_ShopRelationTable-b01d9a7d.js": {
+    "file": "chunks/ShopRelationTable-b01d9a7d.js",
+    "imports": [
+      "_index-87f8004d.js",
+      "_runtime.esm-fe8bc3c1.js",
+      "_Spinner-e47e8906.js",
+      "_CheckCircleIcon-b6de3bc1.js",
+      "_EditIcon-1bd3ce15.js",
+      "_SaveIcon-68d50172.js",
+      "_SearchIcon-c95459fd.js",
+      "_XCircleIcon-c69a396c.js",
+      "_Picture-99da41d6.js",
+      "_alert.store-a6a29ca5.js"
+    ]
+  },
+  "_EditIcon-1bd3ce15.js": {
+    "file": "chunks/EditIcon-1bd3ce15.js",
+    "imports": [
+      "_index-87f8004d.js"
+    ]
+  },
+  "_PersonCard-5ef5bac0.js": {
+    "file": "chunks/PersonCard-5ef5bac0.js",
+    "imports": [
+      "_index-87f8004d.js",
+      "_supabase-b8dab6e7.js",
+      "_Picture-99da41d6.js"
+    ]
+  },
+  "_BoardgameCard-039723dc.js": {
+    "file": "chunks/BoardgameCard-039723dc.js",
+    "imports": [
+      "_index-87f8004d.js",
+      "_Picture-99da41d6.js"
+    ],
+    "css": [
+      "assets/BoardgameCard-101ee5b3.css"
+    ]
+  },
+  "_PlainCard-a4f75f0f.js": {
+    "file": "chunks/PlainCard-a4f75f0f.js",
+    "imports": [
+      "_index-87f8004d.js",
+      "_supabase-b8dab6e7.js",
+      "_Picture-99da41d6.js"
+    ]
+  },
+  "_EventCard-8dd3387f.js": {
+    "file": "chunks/EventCard-8dd3387f.js",
+    "imports": [
+      "_index-87f8004d.js",
+      "_runtime.esm-fe8bc3c1.js",
+      "_Picture-99da41d6.js"
+    ]
+  },
+  "_ContentCard-3b58baca.js": {
+    "file": "chunks/ContentCard-3b58baca.js",
+    "imports": [
+      "_index-87f8004d.js",
+      "_runtime.esm-fe8bc3c1.js",
+      "_Picture-99da41d6.js"
+    ]
+  },
+  "_SaveIcon-68d50172.js": {
+    "file": "chunks/SaveIcon-68d50172.js",
+    "imports": [
+      "_index-87f8004d.js"
+    ]
+  },
+  "_XCircleIcon-c69a396c.js": {
+    "file": "chunks/XCircleIcon-c69a396c.js",
+    "imports": [
+      "_index-87f8004d.js"
+    ]
+  },
+  "_HonorRelationTable-6ec6d019.js": {
+    "file": "chunks/HonorRelationTable-6ec6d019.js",
+    "imports": [
+      "_index-87f8004d.js",
+      "_index-40cf43ac.js",
+      "_index-8b5688bc.js",
+      "_runtime.esm-fe8bc3c1.js",
+      "_Spinner-e47e8906.js",
+      "_EditIcon-1bd3ce15.js",
+      "_SaveIcon-68d50172.js",
+      "_SearchIcon-c95459fd.js",
+      "_XCircleIcon-c69a396c.js",
+      "_Picture-99da41d6.js",
+      "_alert.store-a6a29ca5.js"
+    ]
+  },
+  "_Social-f29774cb.js": {
+    "file": "chunks/Social-f29774cb.js",
+    "imports": [
+      "_index-87f8004d.js"
+    ],
+    "css": [
+      "assets/Social-979b045f.css"
+    ]
+  },
+  "_SearchBar-439f1215.js": {
+    "file": "chunks/SearchBar-439f1215.js",
+    "imports": [
+      "_index-87f8004d.js",
+      "_SearchIcon-c95459fd.js"
+    ]
+  },
+  "_RangeSlider-64e645a9.js": {
+    "file": "chunks/RangeSlider-64e645a9.js",
+    "imports": [
+      "_index-87f8004d.js",
+      "_index-fe597fd6.js"
+    ],
+    "css": [
+      "assets/RangeSlider-a1710558.css"
+    ]
+  },
+  "_InputForm-20282aaf.js": {
+    "file": "chunks/InputForm-20282aaf.js",
+    "imports": [
+      "_index-87f8004d.js",
+      "_runtime.esm-fe8bc3c1.js",
+      "_SubmissionStatus-d599a3cc.js",
+      "_supabase-b8dab6e7.js",
+      "_SearchIcon-c95459fd.js"
+    ],
+    "css": [
+      "assets/_createCard-d70cb6fd.css"
+    ]
+  },
+  "_SearchMultipleSelect-b8c5e6dd.js": {
+    "file": "chunks/SearchMultipleSelect-b8c5e6dd.js",
+    "imports": [
+      "_index-87f8004d.js",
+      "_supabase-b8dab6e7.js",
+      "_ChevronDownIcon-fc6fdaba.js",
+      "_SubmissionStatus-d599a3cc.js",
+      "_SearchIcon-c95459fd.js",
+      "_runtime.esm-fe8bc3c1.js",
+      "_Spinner-e47e8906.js",
+      "_index-ed69b869.js"
+    ]
+  },
+  "__createCard-776c58bf.js": {
+    "file": "chunks/_createCard-776c58bf.js",
+    "imports": [
+      "_index-87f8004d.js",
+      "_index-17074200.js"
+    ]
+  },
+  "_ChevronLeftIcon-141da66a.js": {
+    "file": "chunks/ChevronLeftIcon-141da66a.js",
+    "imports": [
+      "_index-87f8004d.js"
+    ]
+  },
+  "_SubmissionStatus-d599a3cc.js": {
+    "file": "chunks/SubmissionStatus-d599a3cc.js",
+    "imports": [
+      "_index-87f8004d.js",
+      "_PlusCircleIcon-26a21601.js",
+      "_XCircleIcon-c69a396c.js",
+      "_supabase-b8dab6e7.js",
+      "_Spinner-e47e8906.js",
+      "_runtime.esm-fe8bc3c1.js"
+    ]
+  },
+  "_ChevronRightIcon-51e7c557.js": {
+    "file": "chunks/ChevronRightIcon-51e7c557.js",
+    "imports": [
+      "_index-87f8004d.js"
+    ]
+  },
+  "_MinusCircleIcon-0170e35c.js": {
+    "file": "chunks/MinusCircleIcon-0170e35c.js",
+    "imports": [
+      "_index-87f8004d.js"
+    ]
+  },
+  "_ListCard-07a9f06f.js": {
+    "file": "chunks/ListCard-07a9f06f.js",
+    "imports": [
+      "_index-87f8004d.js",
+      "_Picture-99da41d6.js"
+    ]
+  },
+  "__createCard-c87919dc.js": {
+    "file": "chunks/_createCard-c87919dc.js",
+    "imports": [
+      "_index-87f8004d.js",
+      "_EditIcon-1bd3ce15.js",
+      "_SaveIcon-68d50172.js",
+      "_runtime.esm-fe8bc3c1.js",
+      "_SubmissionStatus-d599a3cc.js",
+      "_index-17074200.js"
+    ],
+    "css": [
+      "assets/_createCard-d70cb6fd.css"
+    ]
+  }
+}
