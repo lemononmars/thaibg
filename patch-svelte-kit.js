@@ -29,20 +29,3 @@ for (const file of files) {
 		fs.writeFileSync(file, content);
 	}
 }
-
-// Patch @sveltejs/adapter-vercel
-const vercelAdapterIndex = path.join('node_modules', '@sveltejs/adapter-vercel', 'index.js');
-if (fs.existsSync(vercelAdapterIndex)) {
-	let content = fs.readFileSync(vercelAdapterIndex, 'utf8');
-	if (content.includes('nodeFileTrace([entry], { base })')) {
-		content = content.replace(
-			'nodeFileTrace([entry], { base })',
-			`nodeFileTrace([entry], {
-		base,
-		ignore: (p) => p.includes('colorthief') || p.includes('sharp') || p.includes('canvas') || p.includes('discord.js')
-	})`
-		);
-		fs.writeFileSync(vercelAdapterIndex, content);
-		console.log(`Patched @vercel/nft tracing in: ${vercelAdapterIndex}`);
-	}
-}
