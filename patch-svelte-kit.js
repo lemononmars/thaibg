@@ -29,3 +29,21 @@ for (const file of files) {
 		fs.writeFileSync(file, content);
 	}
 }
+
+// Patch @sveltejs/adapter-vercel/files/serverless.js to use installFetch
+const serverlessFile = path.join('node_modules', '@sveltejs/adapter-vercel', 'files', 'serverless.js');
+if (fs.existsSync(serverlessFile)) {
+	let content = fs.readFileSync(serverlessFile, 'utf8');
+	if (content.includes("'@sveltejs/kit/node/polyfills'")) {
+		content = content.replace(
+			"import { installPolyfills } from '@sveltejs/kit/node/polyfills';",
+			"import { installFetch } from '@sveltejs/kit/install-fetch';"
+		);
+		content = content.replace(
+			"installPolyfills();",
+			"installFetch();"
+		);
+		fs.writeFileSync(serverlessFile, content);
+		console.log(`Patched polyfills in: ${serverlessFile}`);
+	}
+}
