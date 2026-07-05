@@ -10,7 +10,7 @@ Transfer env vars from Heroku to Vercel Project Settings > Environment Variables
 - `VITE_GOOGLE_MAP_API_KEY`: Google Maps API key
 
 ## 2. Configuration changes
-- Package: `@sveltejs/adapter-node` → `@sveltejs/adapter-vercel@1.0.0-next.14`
+- Package: `@sveltejs/adapter-node` → `@sveltejs/adapter-vercel@6.3.4` (requires SvelteKit v2)
 - Config: `svelte.config.js` adapter switched to `vercel()`
 - Build: Vercel automatically detects SvelteKit and builds via `npm run build`
 
