@@ -43,7 +43,6 @@
 	import { _ } from 'svelte-i18n';
 	import DataViewer from '$lib/components/DataViewer.svelte';
 	import Picture from '$lib/components/Picture.svelte';
-	import ColorThief from 'colorthief'
 
 	export let person: Person, role: string;
 	let activeRoleTitles = personRoles.filter((r) => 
@@ -59,6 +58,7 @@
 	onMount(async () => {
 		rolePromise = getRoleContent(activeRole, person);
 
+		const ColorThief = (await import('colorthief')).default;
 		const CT = new ColorThief()
 		const img = document.querySelector('img');
 
