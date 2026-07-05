@@ -5,4 +5,5 @@ node_modules
 /functions
 .env
 .env.local
-.svelte-kit
+/.svelte-kit
+/.vercel
