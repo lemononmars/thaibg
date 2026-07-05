@@ -48,7 +48,7 @@
 	},
 	"type": "module",
 	"engines": {
-		"node": "16.x",
+		"node": "24.x",
 		"npm": "8.x"
 	},
 	"husky": {
